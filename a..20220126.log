@@ -1,0 +1,427 @@
+[2022-01-26T10:24:19.865] [INFO] default - start!
+[2022-01-26T10:24:19.868] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T10:24:20.780] [INFO] default - こっちに来たね
+[2022-01-26T10:31:23.294] [INFO] default - start!
+[2022-01-26T10:31:23.296] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T10:31:23.822] [INFO] default - こっちに来たね
+[2022-01-26T10:31:45.756] [INFO] default - start!
+[2022-01-26T10:31:45.758] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T10:31:46.246] [INFO] default - こっちに来たね
+[2022-01-26T11:15:58.519] [INFO] default - start!
+[2022-01-26T11:15:58.525] [INFO] default - 0
+[2022-01-26T11:15:58.521] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T11:15:58.722] [INFO] default - 1
+[2022-01-26T11:15:58.522] [INFO] default - 33
+[2022-01-26T11:15:58.731] [INFO] default - 2
+[2022-01-26T11:15:59.001] [INFO] default - 3
+[2022-01-26T11:15:59.002] [INFO] default - 4
+[2022-01-26T11:15:59.077] [INFO] default - 5
+[2022-01-26T11:15:59.080] [INFO] default - こっちに来たね
+[2022-01-26T11:15:59.282] [INFO] default - /home/saito/works/sss/bin
+[2022-01-26T11:15:59.282] [INFO] default - desuyoehn
+[2022-01-26T11:15:59.283] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-01-26T11:22:08.819] [INFO] default - start!
+[2022-01-26T11:22:08.824] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js' ]
+[2022-01-26T11:22:08.826] [INFO] default - 33
+[2022-01-26T11:22:08.826] [INFO] default - 0
+[2022-01-26T11:22:09.145] [INFO] default - 1
+[2022-01-26T11:22:09.146] [INFO] default - 2
+[2022-01-26T11:22:09.380] [INFO] default - 3
+[2022-01-26T11:22:09.381] [INFO] default - 4
+[2022-01-26T11:22:09.448] [INFO] default - 5
+[2022-01-26T11:22:24.857] [INFO] default - start!
+[2022-01-26T11:22:24.870] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js' ]
+[2022-01-26T11:22:24.872] [INFO] default - 33
+[2022-01-26T11:23:22.734] [INFO] default - 0
+[2022-01-26T11:23:52.856] [INFO] default - 1
+[2022-01-26T11:23:52.856] [INFO] default - 2
+[2022-01-26T11:23:53.037] [INFO] default - 3
+[2022-01-26T11:23:53.039] [INFO] default - 4
+[2022-01-26T11:23:53.119] [INFO] default - 5
+[2022-01-26T11:26:58.334] [INFO] default - start!
+[2022-01-26T11:26:58.337] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T11:26:58.338] [INFO] default - 33
+[2022-01-26T11:26:58.338] [INFO] default - 0
+[2022-01-26T11:26:58.513] [INFO] default - 1
+[2022-01-26T11:26:58.513] [INFO] default - 2
+[2022-01-26T11:26:58.596] [INFO] default - 3
+[2022-01-26T11:26:58.598] [INFO] default - 4
+[2022-01-26T11:26:58.672] [INFO] default - 5
+[2022-01-26T11:28:14.040] [INFO] default - start!
+[2022-01-26T11:28:14.042] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T11:28:14.043] [INFO] default - 33
+[2022-01-26T11:28:14.044] [INFO] default - 0
+[2022-01-26T11:28:14.204] [INFO] default - 1
+[2022-01-26T11:28:14.205] [INFO] default - 2
+[2022-01-26T11:28:14.346] [INFO] default - 3
+[2022-01-26T11:28:14.347] [INFO] default - 4
+[2022-01-26T11:28:14.420] [INFO] default - 5
+[2022-01-26T11:29:07.934] [INFO] default - start!
+[2022-01-26T11:29:07.936] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T11:29:07.937] [INFO] default - 33
+[2022-01-26T11:29:07.938] [INFO] default - 0
+[2022-01-26T11:29:08.106] [INFO] default - 1
+[2022-01-26T11:29:08.106] [INFO] default - 2
+[2022-01-26T11:29:08.298] [INFO] default - 3
+[2022-01-26T11:29:08.299] [INFO] default - 4
+[2022-01-26T11:29:08.373] [INFO] default - 5
+[2022-01-26T11:29:29.643] [INFO] default - start!
+[2022-01-26T11:29:29.645] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T11:29:29.646] [INFO] default - 33
+[2022-01-26T11:29:29.647] [INFO] default - 0
+[2022-01-26T11:29:29.806] [INFO] default - 1
+[2022-01-26T11:29:29.807] [INFO] default - 2
+[2022-01-26T11:29:29.998] [INFO] default - 3
+[2022-01-26T11:29:30.000] [INFO] default - 4
+[2022-01-26T11:29:30.072] [INFO] default - 5
+[2022-01-26T11:29:53.862] [INFO] default - start!
+[2022-01-26T11:29:53.864] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T11:29:53.865] [INFO] default - 33
+[2022-01-26T11:29:53.866] [INFO] default - 0
+[2022-01-26T11:29:54.025] [INFO] default - 1
+[2022-01-26T11:29:54.025] [INFO] default - 2
+[2022-01-26T11:29:54.160] [INFO] default - 3
+[2022-01-26T11:29:54.162] [INFO] default - 4
+[2022-01-26T11:29:54.259] [INFO] default - 5
+[2022-01-26T11:30:35.602] [INFO] default - start!
+[2022-01-26T11:30:35.608] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T11:30:35.609] [INFO] default - 33
+[2022-01-26T11:30:35.609] [INFO] default - 0
+[2022-01-26T11:30:35.786] [INFO] default - 1
+[2022-01-26T11:30:35.787] [INFO] default - 2
+[2022-01-26T11:30:35.949] [INFO] default - 3
+[2022-01-26T11:30:35.950] [INFO] default - 4
+[2022-01-26T11:30:36.008] [INFO] default - 5
+[2022-01-26T11:30:53.422] [INFO] default - start!
+[2022-01-26T11:30:53.425] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T11:30:53.426] [INFO] default - 33
+[2022-01-26T11:30:53.426] [INFO] default - 0
+[2022-01-26T11:30:53.591] [INFO] default - 1
+[2022-01-26T11:30:53.591] [INFO] default - 2
+[2022-01-26T11:30:53.771] [INFO] default - 3
+[2022-01-26T11:30:53.773] [INFO] default - 4
+[2022-01-26T11:30:53.844] [INFO] default - 5
+[2022-01-26T11:32:46.120] [INFO] default - start!
+[2022-01-26T11:32:46.122] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T11:32:46.123] [INFO] default - 33
+[2022-01-26T11:32:46.124] [INFO] default - 0
+[2022-01-26T11:32:46.285] [INFO] default - 1
+[2022-01-26T11:32:46.285] [INFO] default - 2
+[2022-01-26T11:32:46.586] [INFO] default - 3
+[2022-01-26T11:32:46.587] [INFO] default - 4
+[2022-01-26T11:32:46.695] [INFO] default - 5
+[2022-01-26T11:32:46.698] [INFO] default - こっちに来たね
+[2022-01-26T11:32:46.895] [INFO] default - /home/saito/works/sss/bin
+[2022-01-26T11:32:46.895] [INFO] default - desuyoehn
+[2022-01-26T11:32:46.896] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-01-26T11:33:09.995] [INFO] default - start!
+[2022-01-26T11:33:09.997] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T11:33:09.998] [INFO] default - 33
+[2022-01-26T11:33:09.998] [INFO] default - 0
+[2022-01-26T11:33:10.165] [INFO] default - 1
+[2022-01-26T11:33:10.165] [INFO] default - 2
+[2022-01-26T11:33:10.988] [INFO] default - 3
+[2022-01-26T11:33:10.990] [INFO] default - 4
+[2022-01-26T11:33:11.127] [INFO] default - 5
+[2022-01-26T11:33:21.930] [INFO] default - start!
+[2022-01-26T11:33:21.933] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T11:33:21.934] [INFO] default - 33
+[2022-01-26T11:33:21.934] [INFO] default - 0
+[2022-01-26T11:33:22.088] [INFO] default - 1
+[2022-01-26T11:33:22.088] [INFO] default - 2
+[2022-01-26T11:33:22.594] [INFO] default - 3
+[2022-01-26T11:33:22.596] [INFO] default - 4
+[2022-01-26T11:33:22.663] [INFO] default - 5
+[2022-01-26T11:48:17.705] [INFO] default - start!
+[2022-01-26T11:48:17.707] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T11:48:17.708] [INFO] default - 33
+[2022-01-26T11:48:17.709] [INFO] default - 0
+[2022-01-26T11:48:17.872] [INFO] default - 1
+[2022-01-26T11:48:17.872] [INFO] default - 2
+[2022-01-26T11:48:17.968] [INFO] default - 3
+[2022-01-26T11:48:17.970] [INFO] default - 4
+[2022-01-26T11:48:18.029] [INFO] default - 5
+[2022-01-26T11:48:18.032] [INFO] default - こっちに来たね
+[2022-01-26T11:48:18.239] [INFO] default - /home/saito/works/sss/bin
+[2022-01-26T11:48:18.240] [INFO] default - desuyoehn
+[2022-01-26T11:48:18.240] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-01-26T11:48:42.998] [INFO] default - start!
+[2022-01-26T11:48:43.001] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T11:48:43.002] [INFO] default - 33
+[2022-01-26T11:48:43.003] [INFO] default - 0
+[2022-01-26T11:48:43.151] [INFO] default - 1
+[2022-01-26T11:48:43.152] [INFO] default - 2
+[2022-01-26T11:48:43.768] [INFO] default - 3
+[2022-01-26T11:48:43.769] [INFO] default - 4
+[2022-01-26T11:48:43.903] [INFO] default - 5
+[2022-01-26T12:02:37.087] [INFO] default - start!
+[2022-01-26T12:02:37.089] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T12:02:37.091] [INFO] default - 33
+[2022-01-26T12:02:37.092] [INFO] default - 0
+[2022-01-26T12:02:37.260] [INFO] default - 1
+[2022-01-26T12:02:37.260] [INFO] default - 2
+[2022-01-26T12:02:37.559] [INFO] default - 3
+[2022-01-26T12:02:37.561] [INFO] default - 4
+[2022-01-26T12:02:37.619] [INFO] default - 5
+[2022-01-26T12:02:37.622] [INFO] default - こっちに来たね
+[2022-01-26T12:02:37.816] [INFO] default - /home/saito/works/sss/bin
+[2022-01-26T12:02:37.816] [INFO] default - desuyoehn
+[2022-01-26T12:02:37.816] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-01-26T12:02:42.735] [INFO] default - res true
+[2022-01-26T12:20:05.367] [INFO] default - start!
+[2022-01-26T12:20:05.369] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T12:20:05.370] [INFO] default - 33
+[2022-01-26T12:20:05.371] [INFO] default - 0
+[2022-01-26T12:20:05.535] [INFO] default - 1
+[2022-01-26T12:20:05.536] [INFO] default - 2
+[2022-01-26T12:20:05.536] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T12:20:05.790] [INFO] default - 3
+[2022-01-26T12:20:05.791] [INFO] default - 4
+[2022-01-26T12:20:05.892] [INFO] default - 5
+[2022-01-26T12:24:07.640] [INFO] default - start!
+[2022-01-26T12:24:07.642] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T12:24:07.643] [INFO] default - 33
+[2022-01-26T12:24:07.644] [INFO] default - 0
+[2022-01-26T12:24:07.833] [INFO] default - 1
+[2022-01-26T12:24:07.834] [INFO] default - 2
+[2022-01-26T12:24:07.835] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T12:24:07.966] [INFO] default - 3
+[2022-01-26T12:24:07.967] [INFO] default - 4
+[2022-01-26T12:24:08.030] [INFO] default - 5
+[2022-01-26T12:24:08.033] [INFO] default - こっちに来たね
+[2022-01-26T12:24:08.033] [INFO] default - 0
+[2022-01-26T12:24:08.033] [INFO] default - 1
+[2022-01-26T12:24:08.033] [INFO] default - 2
+[2022-01-26T12:24:08.034] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T12:24:08.067] [INFO] default - 3
+[2022-01-26T12:24:08.068] [INFO] default - 4
+[2022-01-26T12:24:08.112] [INFO] default - 5
+[2022-01-26T12:24:08.302] [INFO] default - /home/saito/works/sss/bin
+[2022-01-26T12:24:08.302] [INFO] default - desuyoehn
+[2022-01-26T12:24:08.303] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-01-26T12:24:14.273] [INFO] default - res true
+[2022-01-26T12:31:31.784] [INFO] default - start!
+[2022-01-26T12:31:31.786] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T12:31:31.787] [INFO] default - 33
+[2022-01-26T12:31:31.788] [INFO] default - 0
+[2022-01-26T12:31:31.955] [INFO] default - 1
+[2022-01-26T12:31:31.955] [INFO] default - 2
+[2022-01-26T12:31:31.955] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T12:31:32.173] [INFO] default - 3
+[2022-01-26T12:31:32.175] [INFO] default - 4
+[2022-01-26T12:31:32.175] [INFO] default - 5
+[2022-01-26T12:31:32.180] [INFO] default - こっちに来たね
+[2022-01-26T12:31:32.180] [INFO] default - 0
+[2022-01-26T12:31:32.180] [INFO] default - 1
+[2022-01-26T12:31:32.181] [INFO] default - 2
+[2022-01-26T12:31:32.181] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T12:31:32.205] [INFO] default - 3
+[2022-01-26T12:31:32.206] [INFO] default - 4
+[2022-01-26T12:31:32.266] [INFO] default - 5
+[2022-01-26T12:31:32.268] [INFO] default - rec [
+  {
+    _id: new ObjectId("61e792c0638db1eac051edcc"),
+    kind: 'data-traffic',
+    code: 'raku',
+    entry_url: 'https://network.mobile.rakuten.co.jp/',
+    comment: '多分1日で10G超えると速度制限'
+  },
+  {
+    _id: new ObjectId("61e796ba638db1eac051eea2"),
+    kind: 'data-traffic',
+    code: 'uqmo',
+    entry_url: 'https://www.uqwimax.jp/mobile/support/member/',
+    comment: '月3G（翌月持ち越し3G）'
+  },
+  {
+    _id: new ObjectId("61e79812638db1eac051eef2"),
+    kind: 'data-traffic',
+    code: 'wima',
+    entry_url: 'https://login.sso.biglobe.ne.jp/scpf_op/auth.php?custom_id=mypage',
+    comment: '多分3日で10G超えると速度制限'
+  },
+  {
+    _id: new ObjectId("61e79f95638db1eac051f077"),
+    kind: 'data-traffic',
+    code: 'moba',
+    entry_url: 'https://www.mobile-kun.jp/mypage/',
+    comment: '月500M（翌月持ち越し500M）'
+  }
+]
+[2022-01-26T12:31:32.451] [INFO] default - /home/saito/works/sss/bin
+[2022-01-26T12:31:32.452] [INFO] default - desuyoehn
+[2022-01-26T12:31:32.452] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-01-26T12:31:37.203] [INFO] default - res true
+[2022-01-26T12:37:27.386] [INFO] default - start!
+[2022-01-26T12:37:27.388] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T12:37:27.389] [INFO] default - 33
+[2022-01-26T12:37:27.390] [INFO] default - 0
+[2022-01-26T12:37:27.561] [INFO] default - 1
+[2022-01-26T12:37:27.561] [INFO] default - 2
+[2022-01-26T12:37:27.562] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T12:37:27.792] [INFO] default - 3
+[2022-01-26T12:37:27.796] [INFO] default - 4
+[2022-01-26T12:37:27.796] [INFO] default - 5
+[2022-01-26T12:37:27.800] [INFO] default - こっちに来たね
+[2022-01-26T12:37:27.800] [INFO] default - 0
+[2022-01-26T12:37:27.801] [INFO] default - 1
+[2022-01-26T12:37:27.801] [INFO] default - 2
+[2022-01-26T12:37:27.801] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T12:37:27.874] [INFO] default - 3
+[2022-01-26T12:37:27.875] [INFO] default - 4
+[2022-01-26T12:37:27.939] [INFO] default - 5
+[2022-01-26T12:37:28.135] [INFO] default - /home/saito/works/sss/bin
+[2022-01-26T12:37:28.136] [INFO] default - desuyoehn
+[2022-01-26T12:37:28.136] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-01-26T12:37:28.841] [INFO] default - rec {
+  _id: new ObjectId("61e792c0638db1eac051edcc"),
+  kind: 'data-traffic',
+  code: 'raku',
+  entry_url: 'https://network.mobile.rakuten.co.jp/',
+  comment: '多分1日で10G超えると速度制限'
+}
+[2022-01-26T12:37:52.610] [INFO] default - rec {
+  _id: new ObjectId("61e796ba638db1eac051eea2"),
+  kind: 'data-traffic',
+  code: 'uqmo',
+  entry_url: 'https://www.uqwimax.jp/mobile/support/member/',
+  comment: '月3G（翌月持ち越し3G）'
+}
+[2022-01-26T12:38:01.928] [INFO] default - rec {
+  _id: new ObjectId("61e79812638db1eac051eef2"),
+  kind: 'data-traffic',
+  code: 'wima',
+  entry_url: 'https://login.sso.biglobe.ne.jp/scpf_op/auth.php?custom_id=mypage',
+  comment: '多分3日で10G超えると速度制限'
+}
+[2022-01-26T12:38:06.237] [INFO] default - rec {
+  _id: new ObjectId("61e79f95638db1eac051f077"),
+  kind: 'data-traffic',
+  code: 'moba',
+  entry_url: 'https://www.mobile-kun.jp/mypage/',
+  comment: '月500M（翌月持ち越し500M）'
+}
+[2022-01-26T12:38:11.548] [INFO] default - res true
+[2022-01-26T12:43:34.228] [INFO] default - start!
+[2022-01-26T12:43:34.230] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T12:43:34.231] [INFO] default - 33
+[2022-01-26T12:43:34.232] [INFO] default - 0
+[2022-01-26T12:43:34.419] [INFO] default - 1
+[2022-01-26T12:43:34.419] [INFO] default - 2
+[2022-01-26T12:43:34.420] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T12:43:34.657] [INFO] default - 3
+[2022-01-26T12:43:34.660] [INFO] default - 4
+[2022-01-26T12:43:34.661] [INFO] default - 5
+[2022-01-26T12:43:34.666] [INFO] default - こっちに来たね
+[2022-01-26T12:43:34.666] [INFO] default - 0
+[2022-01-26T12:43:34.666] [INFO] default - 1
+[2022-01-26T12:43:34.666] [INFO] default - 2
+[2022-01-26T12:43:34.667] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T12:43:34.742] [INFO] default - 3
+[2022-01-26T12:43:34.743] [INFO] default - 4
+[2022-01-26T12:43:34.815] [INFO] default - 5
+[2022-01-26T12:43:35.007] [INFO] default - /home/saito/works/sss/bin
+[2022-01-26T12:43:35.007] [INFO] default - desuyoehn
+[2022-01-26T12:43:35.007] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-01-26T12:43:35.749] [INFO] default - rec {
+  _id: new ObjectId("61e792c0638db1eac051edcc"),
+  kind: 'data-traffic',
+  code: 'raku',
+  entry_url: 'https://network.mobile.rakuten.co.jp/',
+  comment: '多分1日で10G超えると速度制限'
+}
+[2022-01-26T12:43:58.218] [INFO] default - res true
+[2022-01-26T12:44:47.967] [INFO] default - start!
+[2022-01-26T12:44:47.969] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T12:44:47.970] [INFO] default - 33
+[2022-01-26T12:44:47.971] [INFO] default - 0
+[2022-01-26T12:44:48.178] [INFO] default - 1
+[2022-01-26T12:44:48.178] [INFO] default - 2
+[2022-01-26T12:44:48.179] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T12:44:48.381] [INFO] default - 3
+[2022-01-26T12:44:48.383] [INFO] default - 4
+[2022-01-26T12:44:48.384] [INFO] default - 5
+[2022-01-26T12:44:48.388] [INFO] default - こっちに来たね
+[2022-01-26T12:44:48.388] [INFO] default - 0
+[2022-01-26T12:44:48.389] [INFO] default - 1
+[2022-01-26T12:44:48.389] [INFO] default - 2
+[2022-01-26T12:44:48.389] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T12:44:48.465] [INFO] default - 3
+[2022-01-26T12:44:48.466] [INFO] default - 4
+[2022-01-26T12:44:48.524] [INFO] default - 5
+[2022-01-26T12:44:48.730] [INFO] default - /home/saito/works/sss/bin
+[2022-01-26T12:44:48.730] [INFO] default - desuyoehn
+[2022-01-26T12:44:48.731] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-01-26T12:44:49.442] [INFO] default - rec {
+  _id: new ObjectId("61e792c0638db1eac051edcc"),
+  kind: 'data-traffic',
+  code: 'raku',
+  entry_url: 'https://network.mobile.rakuten.co.jp/',
+  comment: '多分1日で10G超えると速度制限'
+}
+[2022-01-26T12:45:09.739] [INFO] default - res true
+[2022-01-26T12:48:54.963] [INFO] default - start!
+[2022-01-26T12:48:54.965] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T12:48:54.966] [INFO] default - 33
+[2022-01-26T12:48:54.967] [INFO] default - 0
+[2022-01-26T12:48:55.150] [INFO] default - 1
+[2022-01-26T12:48:55.150] [INFO] default - 2
+[2022-01-26T12:48:55.151] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T12:48:55.254] [INFO] default - 3
+[2022-01-26T12:48:55.257] [INFO] default - 4
+[2022-01-26T12:48:55.258] [INFO] default - 5
+[2022-01-26T12:48:55.263] [INFO] default - こっちに来たね
+[2022-01-26T12:48:55.263] [INFO] default - 0
+[2022-01-26T12:48:55.263] [INFO] default - 1
+[2022-01-26T12:48:55.263] [INFO] default - 2
+[2022-01-26T12:48:55.264] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T12:48:55.298] [INFO] default - 3
+[2022-01-26T12:48:55.299] [INFO] default - 4
+[2022-01-26T12:48:55.352] [INFO] default - 5
+[2022-01-26T12:48:55.553] [INFO] default - /home/saito/works/sss/bin
+[2022-01-26T12:48:55.554] [INFO] default - desuyoehn
+[2022-01-26T12:48:55.554] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-01-26T12:48:56.252] [INFO] default - rec {
+  _id: new ObjectId("61e792c0638db1eac051edcc"),
+  kind: 'data-traffic',
+  code: 'raku',
+  entry_url: 'https://network.mobile.rakuten.co.jp/',
+  comment: '多分1日で10G超えると速度制限'
+}
+[2022-01-26T12:49:13.556] [INFO] default - res true
+[2022-01-26T13:23:35.888] [INFO] default - start!
+[2022-01-26T13:23:35.890] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T13:23:35.892] [INFO] default - 33
+[2022-01-26T13:23:35.894] [INFO] default - こっちに来たね class版
+[2022-01-26T13:23:35.896] [INFO] default - 0
+[2022-01-26T13:23:36.149] [INFO] default - 1
+[2022-01-26T13:23:36.150] [INFO] default - 2
+[2022-01-26T13:23:36.150] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T13:23:36.325] [INFO] default - 3
+[2022-01-26T13:23:36.327] [INFO] default - 4
+[2022-01-26T13:23:36.390] [INFO] default - 5
+[2022-01-26T13:23:36.584] [INFO] default - /home/saito/works/sss/bin
+[2022-01-26T13:23:36.584] [INFO] default - desuyoehn
+[2022-01-26T13:23:36.584] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-01-26T13:24:00.394] [INFO] default - start!
+[2022-01-26T13:24:00.396] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-01-26T13:24:00.397] [INFO] default - 33
+[2022-01-26T13:24:00.399] [INFO] default - こっちに来たね class版
+[2022-01-26T13:24:00.399] [INFO] default - 0
+[2022-01-26T13:24:00.589] [INFO] default - 1
+[2022-01-26T13:24:00.589] [INFO] default - 2
+[2022-01-26T13:24:00.590] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-01-26T13:24:00.726] [INFO] default - 3
+[2022-01-26T13:24:00.729] [INFO] default - 4
+[2022-01-26T13:24:00.783] [INFO] default - 5
+[2022-01-26T13:24:00.985] [INFO] default - /home/saito/works/sss/bin
+[2022-01-26T13:24:00.985] [INFO] default - desuyoehn
+[2022-01-26T13:24:00.986] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-01-26T13:24:01.821] [INFO] default - rec {
+  _id: new ObjectId("61e792c0638db1eac051edcc"),
+  kind: 'data-traffic',
+  code: 'raku',
+  entry_url: 'https://network.mobile.rakuten.co.jp/',
+  comment: '多分1日で10G超えると速度制限'
+}
+[2022-01-26T13:24:21.073] [INFO] default - res true

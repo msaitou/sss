@@ -1,0 +1,5 @@
+パスを通す
+$vi ~/.profile
+
+webdriver-managerをインストール
+

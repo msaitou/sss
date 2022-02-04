@@ -1,0 +1,27 @@
+saitoUbuntuでの、pointGetter改は
+今時点最新のfirefox、selenium-webdriverで、javascriptで構築する。
+
+ブレスト：：
+今動いてるマシン（saitonote,saitonote2,saitonote4）と、共存ができない。
+　→firefoxとsereniumのバージョンが
+
+とりあえず、今動いてる環境で、もったいないをなくしたい。
+
+となると、エラーのときのアラート方法、修正が楽になるようなログ出力や、
+タスク実行ロジックを見直したい。
+
+見直すのは置いといて、
+
+単発のタスク実行関数だけ作るのでもよい
+
+どのサイト
+どのミッション
+いつ
+
+・タスクの未実行・実行済み・完了を登録できる
+・ポイントサイトのURLリストをいつでも見れるようにする。
+★・ローカルネットワーク内でファイルの共有ができるようにする
+★・robo3t導入
+
+// ubuntuに意図するバージョンのnodejsをインストール
+https://github.com/nodesource/distributions/blob/master/README.md

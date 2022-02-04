@@ -1,0 +1,43 @@
+[2022-02-04T22:09:19.462] [INFO] default - start!
+[2022-02-04T22:09:19.465] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-02-04T22:09:19.467] [INFO] default - 33
+[2022-02-04T22:09:19.469] [INFO] default - こっちに来たね class版
+[2022-02-04T22:09:19.469] [INFO] default - 0
+[2022-02-04T22:09:19.730] [INFO] default - 1
+[2022-02-04T22:09:19.731] [INFO] default - 2
+[2022-02-04T22:09:19.731] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-02-04T22:09:22.193] [INFO] default - 3
+[2022-02-04T22:09:22.195] [INFO] default - 4
+[2022-02-04T22:09:23.096] [INFO] default - 5
+[2022-02-04T22:09:23.430] [INFO] default - /home/saito/works/sss/bin
+[2022-02-04T22:09:23.430] [INFO] default - desuyoehn
+[2022-02-04T22:09:23.431] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-02-04T22:09:25.881] [INFO] default - rec {
+  _id: new ObjectId("61e792c0638db1eac051edcc"),
+  kind: 'data-traffic',
+  code: 'raku',
+  entry_url: 'https://network.mobile.rakuten.co.jp/',
+  comment: '多分1日で10G超えると速度制限'
+}
+[2022-02-04T22:31:13.367] [INFO] default - start!
+[2022-02-04T22:31:13.369] [INFO] default - [ '/usr/bin/node', '/home/saito/works/sss/index.js', 'L_UTL' ]
+[2022-02-04T22:31:13.370] [INFO] default - 33
+[2022-02-04T22:31:13.371] [INFO] default - こっちに来たね class版
+[2022-02-04T22:31:13.372] [INFO] default - 0
+[2022-02-04T22:31:13.606] [INFO] default - 1
+[2022-02-04T22:31:13.606] [INFO] default - 2
+[2022-02-04T22:31:13.607] [INFO] default - conf Config { db: { host: '192.168.100.106:27017' } }
+[2022-02-04T22:31:17.438] [INFO] default - 3
+[2022-02-04T22:31:17.441] [INFO] default - 4
+[2022-02-04T22:31:17.514] [INFO] default - 5
+[2022-02-04T22:31:17.832] [INFO] default - /home/saito/works/sss/bin
+[2022-02-04T22:31:17.832] [INFO] default - desuyoehn
+[2022-02-04T22:31:17.832] [INFO] default - driver/home/saito/works/sss/bin/chromedriver
+[2022-02-04T22:31:19.754] [INFO] default - rec {
+  _id: new ObjectId("61e792c0638db1eac051edcc"),
+  kind: 'data-traffic',
+  code: 'raku',
+  entry_url: 'https://network.mobile.rakuten.co.jp/',
+  comment: '多分1日で10G超えると速度制限'
+}
+[2022-02-04T22:31:37.858] [INFO] default - res true
