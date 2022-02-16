@@ -1,5 +1,5 @@
 const { initBrowserDriver, db } = require("../initter.js");
-const { util } = require("../lib/util.js");
+const { libUtil: util, libUtil } = require("../lib/util.js");
 const { Builder, By, until } = require("selenium-webdriver");
 
 // driverのインスタンス生成
@@ -43,12 +43,63 @@ class BaseExecuter {
       }
     }
   }
-  isExistEle(selector, showFlag) {
-    let register = By.css(selector);
-    let is = isExistEle(this.driver.findElements(register));
+  // 取得結果をDBに書き込み
+  async updateLutl(cond, doc) {
+    let rec = await db("life_util", "update", cond, doc);
+    this.logInfo('update!!!', rec);
+  }
+  // 単位付きのサイズ数の文字列を数値だけ抽出
+  getNumSize(pureText) {
+    let text = pureText.trim();
+    let num = "";
+    ["GB"].forEach((unit) => {
+      num = text.replace(unit, "");
+    });
+    return Number(num.trim());
+  }
+
+  // TODO 多分もう一つ親クラス作ってそこに実装がいいかも
+  async getEle(sele, i, time) {
+    try {
+      if (!sele || !libUtil.isZeroOver(i)) throw "is not param[0] or param[1] is invalid";
+      let eles = await this.getEles(sele, time);
+      return eles[i];
+    } catch (e) {
+      this.logWarn(e);
+    }
+  }
+  async getEles(sele, time) {
+    try {
+      if (!sele) throw "is not param[0]";
+      time = time ? time : 0;
+      return await this.driver.wait(until.elementsLocated(By.css(sele)), time);
+    } catch (e) {
+      this.logWarn(e);
+    }
+  }
+  async isExistEle(sele, showFlag, time) {
+    try {
+      if (!sele) throw "is not param[0]";
+      showFlag = showFlag === void 0 ? true : false;
+      time = time ? time : 0;
+      // let register = By.css(selector);
+      // let is = isExistEle(this.driver.findElements(register));
+      var eles = await this.driver.wait(until.elementsLocated(By.css(sele)), time);
+      this.logInfo(`showFlag[${showFlag}] elelen[${eles.length}]`);
+      if (showFlag && !!eles.length) {
+        return true;
+      } else if (!showFlag && !eles.length) {
+        return true;
+      }
+    } catch (e) {
+      this.logWarn(e);
+    }
   }
   logInfo(...a) {
     this.logger.info(a);
+  }
+  logWarn(...a) {
+    this.logger.warn(a);
   }
 
   sleep(time) {

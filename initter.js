@@ -2,7 +2,7 @@ const conf = require("config");
 const { Builder, By, until } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 
-exports.db = async function (coll, method, cond = {}) {
+exports.db = async function (coll, method, cond = {}, doc) {
   let log = getLogInstance();
   log.info(0);
   const mdb = require("mongodb");
@@ -22,9 +22,20 @@ exports.db = async function (coll, method, cond = {}) {
       case "find":
         res = await collection.find(cond).toArray();
         break;
-      case "update":
       case "findOne":
         res = await collection.findOne(cond);
+        break;
+      case "update":
+        let cnt = 0;
+        if (cond) {
+          cnt = await collection.find(cond).count();
+        }
+        if (cnt) {
+          res = await collection.updateOne(cond, { $set: doc });
+        } else {
+          // insert
+          res = await collection.insertOne(doc);
+        }
         break;
       case "remove":
       default:
@@ -97,7 +108,7 @@ exports.initBrowserDriver = async function (isMob = false, headless = true) {
   let service = new chrome.ServiceBuilder(driverPath).build();
   chrome.setDefaultService(service);
   const chromeOptions = new chrome.Options();
-  chromeOptions.addArguments("--headless");
+  // chromeOptions.addArguments("--headless");
   if (isMob) {
     chromeOptions.setMobileEmulation({
       deviceName: "Nexus 6",

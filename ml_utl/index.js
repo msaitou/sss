@@ -33,7 +33,7 @@ class LifeUtilCls {
         this.logger.info("rec", rec);
         // TODO ログインアカウントとパスワードを取得して、次の処理に渡す
         let aca = await db("config", "findOne", { type: "login" });
-        this.logger.info('aca', aca);
+        // this.logger.info('aca', aca);
         //   await driver.get("http://google.com/");
         // ここで各サイトのスクレイピングクラスに処理を移す
         await getOperatorCls(rec.code, rec, aca);

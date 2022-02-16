@@ -1,6 +1,6 @@
 // const { BaseExecuter } = require("./BaseExecuter.js");
 const { Builder, By, until } = require("selenium-webdriver");
-const { util } = require("../lib/util.js");
+const { libUtil: util } = require("../lib/util.js");
 
 class rakuCommon {
   retryCnt;
@@ -19,9 +19,9 @@ class rakuCommon {
   async login() {
     // ログイン処理は共通化できるよね-- ここから
     await this.driver.get(this.siteInfo.entry_url); // エントリーページ表示
-    let a = await this.driver.findElement(By.css("html"));
-    this.logInfo(await a.getAttribute('innerHTML'));
-  // ログインページへのリンクをクリック
+    // let a = await this.driver.findElement(By.css("html"));
+    // this.logInfo(await a.getAttribute('innerHTML'));
+    // ログインページへのリンクをクリック
     // リンクが存在することを確認
     let ele = await this.driver.findElements(By.css('a[href*="my-rakuten-mobile"]'));
     // this.logInfo(ele.length);
