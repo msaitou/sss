@@ -1,6 +1,5 @@
 const conf = require("config");
-const webdriver = require("selenium-webdriver");
-const { Builder, By, until } = webdriver;
+const { Builder, By, until } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 
 exports.db = async function (coll, method, cond = {}) {
@@ -16,7 +15,7 @@ exports.db = async function (coll, method, cond = {}) {
     let db = await dbClient.connect(`mongodb://${conf.db.host}/`);
     log.info(3);
     const dbName = db.db("sm");
-    const collection = dbName.collection("www");
+    const collection = dbName.collection(coll);
     let res;
     log.info(4);
     switch (method) {
@@ -25,6 +24,8 @@ exports.db = async function (coll, method, cond = {}) {
         break;
       case "update":
       case "findOne":
+        res = await collection.findOne(cond);
+        break;
       case "remove":
       default:
     }
@@ -48,7 +49,7 @@ const thisLog = () => {
   log.configure({
     appenders: {
       out: { type: "stdout" },
-      app: { type: "dateFile", filename: "a.log", pattern: ".yyyyMMdd", keepFileExt: true },
+      app: { type: "dateFile", filename: "log/a.log", pattern: ".yyyyMMdd", keepFileExt: true },
     },
     categories: { default: { appenders: ["out", "app"], level: "all" } },
   });
@@ -96,6 +97,7 @@ exports.initBrowserDriver = async function (isMob = false, headless = true) {
   let service = new chrome.ServiceBuilder(driverPath).build();
   chrome.setDefaultService(service);
   const chromeOptions = new chrome.Options();
+  chromeOptions.addArguments("--headless");
   if (isMob) {
     chromeOptions.setMobileEmulation({
       deviceName: "Nexus 6",
