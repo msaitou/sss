@@ -17,7 +17,6 @@ class rakuCommon {
     this.logger.debug("rakuCommon constructor");
   }
   async login() {
-    // ログイン処理は共通化できるよね-- ここから
     await this.driver.get(this.siteInfo.entry_url); // エントリーページ表示
     // let a = await this.driver.findElement(By.css("html"));
     // this.logInfo(await a.getAttribute('innerHTML'));
@@ -42,7 +41,6 @@ class rakuCommon {
       let a = await this.driver.findElement(By.css("html"));
       this.logInfo(a);
     }
-    // -- ここまで
   }
   // 共通--
   logInfo(...a) {

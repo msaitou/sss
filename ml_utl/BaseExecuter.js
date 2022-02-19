@@ -39,6 +39,7 @@ class BaseExecuter {
         if (this.driver) {
           await this.driver.quit();
           this.driver = null;
+          // this.driver.kill();
         }
       }
     }
@@ -46,14 +47,17 @@ class BaseExecuter {
   // 取得結果をDBに書き込み
   async updateLutl(cond, doc) {
     let rec = await db("life_util", "update", cond, doc);
-    this.logInfo('update!!!', rec);
+    this.logInfo("update!!!", rec);
   }
   // 単位付きのサイズ数の文字列を数値だけ抽出
   getNumSize(pureText) {
     let text = pureText.trim();
     let num = "";
-    ["GB"].forEach((unit) => {
-      num = text.replace(unit, "");
+    ["GB", "MB"].some((unit) => {
+      if (text.indexOf(unit) > -1) {
+        num = text.replace(unit, "");
+        return true;
+      }
     });
     return Number(num.trim());
   }
@@ -77,6 +81,16 @@ class BaseExecuter {
       this.logWarn(e);
     }
   }
+  async getElesFromEle(ele, sele, time) {
+    try {
+      if (!sele) throw "is not param[1]";
+      time = time ? time : 0;
+      return await ele.findElements(By.css(sele), time);
+    } catch (e) {
+      this.logWarn(e);
+    }
+  }
+
   async isExistEle(sele, showFlag, time) {
     try {
       if (!sele) throw "is not param[0]";

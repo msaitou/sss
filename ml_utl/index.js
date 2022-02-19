@@ -1,5 +1,8 @@
 const { initBrowserDriver, db } = require("../initter.js");
 const { raku } = require("./raku.js");
+const { moba } = require("./moba.js");
+const { uqmo } = require("./uqmo.js");
+const { wima} = require("./wima.js");
 // exports.main = async (logger) => {
 //   global.log.info("こっちに来たね");
 //   // site数で回す
@@ -26,7 +29,10 @@ class LifeUtilCls {
     this.logger.info("こっちに来たね class版");
     // site数で回す
     // DBからsiteを取得
-    let recs = await db("www", "find", { kind: "data-traffic" });
+    let recs = await db("www", "find", {
+      kind: "data-traffic",
+      // code: "wima", // test中　TODO
+    });
     if (recs.length) {
       // let driver = await initBrowserDriver();
       for (let rec of recs) {
@@ -39,7 +45,7 @@ class LifeUtilCls {
         await getOperatorCls(rec.code, rec, aca);
 
         // await driver.get(rec.entry_url);
-        break; // test中
+        // break; // test中
       }
       // await driver.quit();
     }
@@ -52,10 +58,18 @@ async function getOperatorCls(code, siteInfo, aca) {
   switch (code) {
     case "raku":
       opeCls = new raku(0, siteInfo, aca);
-      await opeCls.main();
-      return;
+      break;
     case "uqmo":
+      opeCls = new uqmo(0, siteInfo, aca);
+      break;
     case "wima":
+      opeCls = new wima(0, siteInfo, aca);
+      break;
     case "moba":
+      opeCls = new moba(0, siteInfo, aca);
+      break;
+  }
+  if (opeCls) {
+    await opeCls.main();
   }
 }

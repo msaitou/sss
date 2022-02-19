@@ -106,16 +106,25 @@ exports.initBrowserDriver = async function (isMob = false, headless = true) {
 
   // # Driverのパスを渡す
   let service = new chrome.ServiceBuilder(driverPath).build();
-  chrome.setDefaultService(service);
   const chromeOptions = new chrome.Options();
-  // chromeOptions.addArguments("--headless");
-  if (isMob) {
-    chromeOptions.setMobileEmulation({
-      deviceName: "Nexus 6",
-    });
+  let defoSer = null;
+  try {
+    defoSer = chrome.getDefaultService();
   }
-  // const chromeOptions = new chrome.Options().setMobileEmulation({
-  //   deviceName: "Nexus 6",
-  // });
+  catch(e) {
+
+  }
+  if (defoSer && defoSer.isRunning()) {
+    defoSer.kill();
+  }
+  if (!defoSer || !defoSer.isRunning()) {
+    chrome.setDefaultService(service);
+    // chromeOptions.addArguments("--headless");
+    if (isMob) {
+      chromeOptions.setMobileEmulation({
+        deviceName: "Nexus 6",
+      });
+    }
+  }
   return new Builder().forBrowser("chrome").setChromeOptions(chromeOptions).build();
 };

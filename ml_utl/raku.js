@@ -36,6 +36,7 @@ class raku extends BaseExecuter {
           // trimしてGB（単位）削って利用 加算が必要
           // 1.3 GB だったはず
           sum3 += this.getNumSize(pureText);
+          this.logInfo("楽", i,pureText);
         }
         let mes = `${this.code} ${sum3}GB`;
         // DBに書き込む

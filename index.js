@@ -20,8 +20,6 @@ async function start(mode) {
       case MODE.P_MIL:
         break;
       case MODE.L_UTL:
-        // let a = require("./ml_utl/index.js").main;
-        // await a(logger);
         const Life = require("./ml_utl/index.js").LifeUtilClass;
         const lUtil = new Life();
         await lUtil.main();
