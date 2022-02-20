@@ -91,7 +91,7 @@ const getDriverPath = async function () {
       log.info(ee);
     }
     // # ChromeDriverのパスを返す。
-    return `${path}/chromedriver`;
+    return `${path}/${process.platform === "win32" ? "chromedriver.exe" : "chromedriver"}`;
   } catch (error) {
     throw error;
   }
@@ -110,10 +110,7 @@ exports.initBrowserDriver = async function (isMob = false, headless = true) {
   let defoSer = null;
   try {
     defoSer = chrome.getDefaultService();
-  }
-  catch(e) {
-
-  }
+  } catch (e) {}
   if (defoSer && defoSer.isRunning()) {
     defoSer.kill();
   }
