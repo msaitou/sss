@@ -14,6 +14,11 @@ async function start(mode) {
     // await db();
     switch (mode) {
       case MODE.P_WEB:
+        // testしたい。pexにログインした状態でアクセスできること。プロファイルが使えること。
+      console.log('pex');
+        const exam = require("./exam.js");
+        // const exam = new Exam();
+        await exam.main(logger);
         break;
       case MODE.P_MOB:
         break;

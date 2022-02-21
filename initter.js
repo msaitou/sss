@@ -107,6 +107,15 @@ exports.initBrowserDriver = async function (isMob = false, headless = true) {
   // # Driverのパスを渡す
   let service = new chrome.ServiceBuilder(driverPath).build();
   const chromeOptions = new chrome.Options();
+  // https://selenium-world.net/selenium-tips/3519/
+  chromeOptions.addArguments(`--user-data-dir=${conf.chrome['user-data-dir']}`);
+  chromeOptions.addArguments(`--profile-directory=${conf.chrome['profile']}`);
+  chromeOptions.addArguments("--lang=en");
+  // アプリ外で操作したプロファイルでログイン中にし、アプリでそのプロファイルを利用する。
+  // アプリ外で、どのプロファイルを使うか、デフォルトどのプロファイルを使うのがいいか。
+  // アプリ内にプロファイルは保存しておきたい気がする。
+  // pexのクッキーでログインの期限ぽいもの　削除すればログインが切れた。期限を過去にするのは意味なかった。
+  // _pex_session
   let defoSer = null;
   try {
     defoSer = chrome.getDefaultService();

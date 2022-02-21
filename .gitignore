@@ -1,4 +1,6 @@
 log/
 node_modules/
 bin/
-
+config/default.json
+config/prof/
+backup/

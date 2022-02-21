@@ -5,12 +5,18 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "debug P_WEB",
+      "program": "${workspaceFolder}/index.js",
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node",
+      "args": ["P_WEB"]
+    },
+    {
       "type": "pwa-node",
       "request": "launch",
-      "name": "Launch Program",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "name": "debug L_UTL",
+      "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/index.js",
       "args": ["L_UTL"]
     }
