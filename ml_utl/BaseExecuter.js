@@ -52,7 +52,7 @@ class BaseExecuter {
   // 単位付きのサイズ数の文字列を数値だけ抽出
   getNumSize(pureText) {
     let text = pureText.trim();
-    let num = "";
+    let num = pureText;
     ["GB", "MB"].some((unit) => {
       if (text.indexOf(unit) > -1) {
         num = text.replace(unit, "");
