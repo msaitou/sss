@@ -12,6 +12,7 @@
     "config": "^3.3.7",
     "log4js": "^6.4.0",
     "mongodb": "^4.3.1",
+    "node-imap": "^0.9.6",
     "selenium-download": "^2.0.16",
     "selenium-webdriver": "^3.6.0"
   }

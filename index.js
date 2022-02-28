@@ -23,6 +23,11 @@ async function start(mode) {
       case MODE.P_MOB:
         break;
       case MODE.P_MIL:
+        // 開封済みにする
+        // ここにメールボックス作って、未受信のメールを受信する方法にしたい
+        const Mail = require("./mp_mil/index.js").PointMailClass;
+        const PMil = new Mail();
+        await PMil.main();
         break;
       case MODE.L_UTL:
         const Life = require("./ml_utl/index.js").LifeUtilClass;
