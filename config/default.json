@@ -1,6 +1,0 @@
-{
-  "db": {
-    "host": "192.168.100.106:27017"
-  },
-  "chrome": { "user-data-dir": "/home/saito/works/sss/config/prof", "profile": "sss" }
-}
