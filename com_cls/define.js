@@ -1,0 +1,18 @@
+exports.Define = {
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+  CODE_RAKU:'raku',
+}

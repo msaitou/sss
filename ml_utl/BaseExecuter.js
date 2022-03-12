@@ -1,27 +1,26 @@
 const { initBrowserDriver, db } = require("../initter.js");
 const { libUtil: util, libUtil } = require("../lib/util.js");
 const { Builder, By, until } = require("selenium-webdriver");
+const { BaseWebDriverWrapper } = require("../BaseWebDriverWrapper");
 
 // driverのインスタンス生成
 // インスタンス終了
 
 // 例外キャッチ
 // リトライ管理
-class BaseExecuter {
+class BaseExecuter extends BaseWebDriverWrapper {
   logger;
   retryMax = 0;
   driver;
   siteInfo;
   account;
   constructor(retryCnt, siteInfo, aca) {
+    super();
     this.logger = global.log;
     this.retryMax = retryCnt ? retryCnt : 1;
     this.siteInfo = siteInfo;
     this.account = aca;
     this.logger.info("base constructor");
-  }
-  async webDriver() {
-    return await initBrowserDriver();
   }
   async main() {
     this.logger.info("BaseExecuter", "start");
@@ -32,7 +31,7 @@ class BaseExecuter {
         }
         await this.exec();
       } catch (e) {
-        this.logger.info(e);
+        this.logInfo(e);
         await this.driver.quit();
         this.driver = null;
       } finally {
@@ -44,6 +43,8 @@ class BaseExecuter {
       }
     }
   }
+
+
   // 取得結果をDBに書き込み
   async updateLutl(cond, doc) {
     let rec = await db("life_util", "update", cond, doc);
@@ -108,21 +109,6 @@ class BaseExecuter {
     } catch (e) {
       this.logWarn(e);
     }
-  }
-  logInfo(...a) {
-    this.logger.info(a);
-  }
-  logWarn(...a) {
-    this.logger.warn(a);
-  }
-
-  sleep(time) {
-    return util.sleep(time);
-    // return new Promise((resolve) => {
-    //   setTimeout(() => {
-    //     resolve();
-    //   }, time);
-    // });
   }
 }
 exports.BaseExecuter = BaseExecuter;

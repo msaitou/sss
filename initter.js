@@ -4,20 +4,20 @@ const chrome = require("selenium-webdriver/chrome");
 
 exports.db = async function (coll, method, cond = {}, doc) {
   let log = getLogInstance();
-  log.info(0);
+  // log.info(0);
   const mdb = require("mongodb");
   //   global.db = db;
-  log.info(1);
+  // log.info(1);
   const dbClient = mdb.MongoClient;
-  log.info(2);
+  // log.info(2);
   try {
     log.info("conf", conf);
     let db = await dbClient.connect(`mongodb://${conf.db.host}/`);
-    log.info(3);
+    // log.info(3);
     const dbName = db.db("sm");
     const collection = dbName.collection(coll);
     let res;
-    log.info(4);
+    // log.info(4);
     switch (method) {
       case "find":
         res = await collection.find(cond).toArray();
