@@ -14,36 +14,37 @@ const { url } = require("inspector");
 const labelmap = {
   // code:{dir:メールフォルダ名, key:ポイントありの印}
   raku: { dir: "p/rakuten01", key: "" },
-  // rin: { dir: "p/depoint", key: "" },
-  gmy: { dir: "p/getmoney", key: "Pt]" },
-  osa: { dir: "p/osaifu", key: "付>" },
-  pto: { dir: "p/ポイントタウン", key: "" },
-  pex: { dir: "p/PEX", key: "クリック1P" },
-  ecn: { dir: "p/ECナビ", key: "" },
-  i2i: { dir: "p/i2iポイント", key: "ptあり" },
-  gen: { dir: "p/げん玉", key: "【クリック", key2: "】オススメサービス" },
-  mop: { dir: "p/モッピー", key: "付" },
-  war: { dir: "p/warau", key: "じゃんけんちゃん", key2: "ワラウマガジン" },
-  sug: {
-    dir: "p/sugutama",
-    key: "号外",
-    key2: "週刊すぐたま",
-    key3: "すぐたまグレードステータス",
-  },
-  pmo: { dir: "p/pointmonkey", key: "ポイモン南の島NEWS" },
-  pil: { dir: "p/pointisland", key: "" },
-  pst: { key: "", dir: "p/pointstadium" },
-  ntm: { dir: "p/netmairu", key: "週刊ネットマイル" },
-  koz: { dir: "p/kozukai", key: "【ポイント探し】" },
-  hap: {
-    dir: "p/hapitas",
-    key: "【クリック",
-    key2: "宝くじ交換券付き",
-  },
-  cri: { dir: "p/chobi", key: "おみくじ付き" },
-  cit: { dir: "p/chanceit", key: "ポイントメール", key2: "チャンス通信" },
+  rin: { dir: "p/depoint", key: "" }, // UIからクリックする！
+  cit: { dir: "p/chanceit", key: "" },
+  gmy: { dir: "p/getmoney", key: "" },
   pic: { dir: "p/pointincome", key: "クリック" },
-  test: { dir: "p/test", key: "" },
+  mitaiou: {
+    pto: { dir: "p/ポイントタウン", key: "" },
+    pex: { dir: "p/PEX", key: "クリック1P" },
+    ecn: { dir: "p/ECナビ", key: "" },
+    i2i: { dir: "p/i2iポイント", key: "ptあり" },
+    gen: { dir: "p/げん玉", key: "【クリック", key2: "】オススメサービス" },
+    mop: { dir: "p/モッピー", key: "付" },
+    war: { dir: "p/warau", key: "じゃんけんちゃん", key2: "ワラウマガジン" },
+    sug: {
+      dir: "p/sugutama",
+      key: "号外",
+      key2: "週刊すぐたま",
+      key3: "すぐたまグレードステータス",
+    },
+    pmo: { dir: "p/pointmonkey", key: "ポイモン南の島NEWS" },
+    pil: { dir: "p/pointisland", key: "" },
+    pst: { key: "", dir: "p/pointstadium" },
+    ntm: { dir: "p/netmairu", key: "週刊ネットマイル" },
+    koz: { dir: "p/kozukai", key: "【ポイント探し】" },
+    hap: {
+      dir: "p/hapitas",
+      key: "【クリック",
+      key2: "宝くじ交換券付き",
+    },
+    cri: { dir: "p/chobi", key: "おみくじ付き" },
+    test: { dir: "p/test", key: "" },
+  },
 };
 const targetList = conf.p_mil.target;
 
@@ -72,7 +73,7 @@ class PointMailClass extends BaseWebDriverWrapper {
       // debug: console.debug,
     });
     let before = new Date();
-    before.setHours(0, 0, 0, 0);
+    before.setHours(18, 0, 0, 0);
     let beforeNum = conf.p_mil.before ? conf.p_mil.before : 1;
     before.setDate(before.getDate() - beforeNum);
     this.logInfo(`${before}以降のメールを抽出します`);
@@ -82,18 +83,33 @@ class PointMailClass extends BaseWebDriverWrapper {
       let { logInfo, logWarn } = this;
       // this.logInfo();
       async function openInbox() {
-        await Promise.all(
-          targetList.map(async (target) => {
-            await promiseTargetBox(target);
-          })
-        );
+        // await Promise.all(
+        //   // await targetList.map(async (target) => {
+        //   //   console.log(target);
+        //   //   return await promiseTargetBox(target);
+        //   // })
+        //   [
+        //     await promiseTargetBox('gmy'),
+        //     await promiseTargetBox('cit'),
+        //     await promiseTargetBox('raku'),
+        //   ]
+        // ).then(a=>{
+        //   imap.end();
+        // });
+        await targetList.reduce((promise, target) => {
+          return promise.then(async () => {
+            await await promiseTargetBox(target);
+          });
+        }, Promise.resolve());
         imap.end();
+
         function promiseTargetBox(target) {
-          return new Promise((res2, rej2) => {
-            imap.openBox(labelmap[target].dir, true, (err, box) => {
+          return new Promise(async (res2, rej2) => {
+            const targetInfo = labelmap[target];
+            await imap.openBox(targetInfo.dir, true, async (err, box) => {
               if (err) throw err;
               // "Mar 1, 2022"
-              imap.search([["SINCE", before]], (err, results) => {
+              await imap.search([["SINCE", before]], (err, results) => {
                 if (err) throw err;
                 logInfo(results);
                 if (results.length) {
@@ -101,13 +117,19 @@ class PointMailClass extends BaseWebDriverWrapper {
                   f.on("message", (msg, seqno) => {
                     // logInfo("Message #%d", seqno);
                     // var prefix = "(#" + seqno + ") ";
-
                     msg.on("body", (stream, info) => {
                       simpleParser(stream, null, (err, parsed) => {
-                        // TODO ここでポイントになるURLを抽出する
                         logInfo("date,subject", parsed.date, parsed.subject);
                         logInfo("headers", parsed.headers.get("content-type").value);
                         // 件名をチェック。
+                        if (targetInfo.key || targetInfo.key2) {
+                          if (targetInfo.key && parsed.subject.indexOf(targetInfo.key) === -1) {
+                            return;
+                          }
+                          if (targetInfo.key2 && parsed.subject.indexOf(targetInfo.key2) === -1) {
+                            return;
+                          }
+                        }
                         let content = "";
                         if (parsed.headers.get("content-type").value == "text/html") {
                           content = parsed.html;
@@ -118,7 +140,6 @@ class PointMailClass extends BaseWebDriverWrapper {
                         getPointUrls(urlMap, target, content);
                       });
                     });
-
                     // msg.once("attributes", function (attrs) {
                     //   logInfo(prefix + "Attributes: %s", inspect(attrs, false, 8));
                     // });
@@ -140,15 +161,12 @@ class PointMailClass extends BaseWebDriverWrapper {
           });
         }
       }
-      imap.once("ready", function () {
-        // promiseAllで、対象すべてを抽出する　全部終わったらendをコール
+      imap.once("ready", () => {
         openInbox();
       });
-
       imap.once("error", function (err) {
         reject(), logWarn(err);
       });
-
       imap.once("end", function (a) {
         logInfo("Connection ended", a);
         resolve();
@@ -185,10 +203,10 @@ class PointMailClass extends BaseWebDriverWrapper {
           }
           // siteごとに処理を分けたいかも
           // url = "https://r.rakuten.co.jp/2Ec9C56IK1AVeYT81V51t5hI?mpe=552111"; // test
-          url = "https://pmrd.rakuten.co.jp/?r=MzI1MDQ3fDE%3D&p=C92DE7E&u=BAB68077";
+          // url = "https://pmrd.rakuten.co.jp/?r=MzI1MDQ3fDE%3D&p=C92DE7E&u=BAB68077";
           await this.driver.get(url); // エントリーページ表示
           this.sleep(1000);
-          break; // test
+          // break; // test
         } catch (e) {
           this.logInfo(e);
           await this.driver.quit();
@@ -259,6 +277,7 @@ class PointMailClass extends BaseWebDriverWrapper {
 function getPointUrls(urlMap, target, content) {
   let contentRow = content.split("\n");
   let urls = [];
+  let signs = [];
   for (let row of contentRow) {
     switch (target) {
       case D.CODE_RAKU:
@@ -281,6 +300,62 @@ function getPointUrls(urlMap, target, content) {
                 urls.push(url);
               }
             }
+          }
+        }
+        break;
+      case "rin":
+        for (let key of ["https://r.rakuten.co.jp/", "https://pmrd.rakuten.co.jp/?r="]) {
+          if (row.indexOf(key) > -1) {
+            let url = "";
+            if (row.indexOf('"', row.indexOf(key)) > 0) {
+              url = row.substring(row.indexOf(key), row.indexOf('"', row.indexOf(key)));
+            } else {
+              console.log(row);
+              url = row.substring(row.indexOf(key));
+            }
+            if (url) {
+              // .gif が含まれてるやつ、?fbu= が含まれてるやつをスキップ
+              if (url.indexOf(".gif") === -1 && url.indexOf("?fbu=") === -1) {
+                urls.push(url);
+              }
+            }
+          }
+        }
+        break;
+      case D.CODE_CIT:
+        for (let key of ["&s="]) {
+          if (row.indexOf(key) > -1) {
+            let url = "";
+            // text/plain　前提
+            url = row.substring(row.indexOf("https://"));
+            if (url) {
+              urls.push(url.trim());
+            }
+          }
+        }
+        break;
+      case D.CODE_GMY:
+        // https://dietnavi.com/click.php?cid=51513&id=2539124&sec=a38c5a03
+        signs = ["cid=", "sec="];
+        if (row.indexOf(signs[0]) > -1 && row.indexOf(signs[1]) > -1) {
+          let url = "";
+          // text/plain　前提
+          url = row.substring(row.indexOf("https://"));
+          if (url) {
+            urls.push(url.trim());
+          }
+        }
+        break;
+      case D.CODE_PIC:
+        // https://pointi.jp/al/click_mail_magazine.php?no=109510&hash=58ef3a987844c9f74d905c3c3463a94b&html=1&a=2880110292mpf9u7him3t5qlfo09
+        // https://pointi.jp/al/click_mail_magazine.php?no=109525&hash=62647bae009fc978b5adadeef5e3f305&html=1&a=2880110292mpf9u7him3t5qlfo09
+        signs = ["no=", "&a="];
+        if (row.indexOf(signs[0]) > -1 && row.indexOf(signs[1]) > -1) {
+          let url = "";
+          // text/plain　前提
+          url = row.substring(row.indexOf("https://"));
+          if (url) {
+            urls.push(url.trim());
           }
         }
         break;
