@@ -12,3 +12,13 @@ exports.main = async (logger) => {
   await driver.quit();
   // }
 };
+exports.alone = async (logger) => {
+  return new Promise((resolve, reject) => {
+    try {
+      let driver = initBrowserDriver();
+    } catch (e) {
+      logger.info("owata");
+      resolve();
+    }
+  });
+};

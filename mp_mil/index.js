@@ -18,11 +18,12 @@ const labelmap = {
   cit: { dir: "p/chanceit", key: "" },
   gmy: { dir: "p/getmoney", key: "" },
   pic: { dir: "p/pointincome", key: "クリック" },
+  cri: { dir: "p/chobi", key: "おみくじ付き" },
+  ecn: { dir: "p/ECナビ", key: "" }, // webdriver起動中にログインしないと記憶してくれないポイ
+  i2i: { dir: "p/i2iポイント", key: "pt付" },
   mitaiou: {
     pto: { dir: "p/ポイントタウン", key: "" },
     pex: { dir: "p/PEX", key: "クリック1P" },
-    ecn: { dir: "p/ECナビ", key: "" },
-    i2i: { dir: "p/i2iポイント", key: "ptあり" },
     gen: { dir: "p/げん玉", key: "【クリック", key2: "】オススメサービス" },
     mop: { dir: "p/モッピー", key: "付" },
     war: { dir: "p/warau", key: "じゃんけんちゃん", key2: "ワラウマガジン" },
@@ -42,7 +43,6 @@ const labelmap = {
       key: "【クリック",
       key2: "宝くじ交換券付き",
     },
-    cri: { dir: "p/chobi", key: "おみくじ付き" },
     test: { dir: "p/test", key: "" },
   },
 };
@@ -176,8 +176,8 @@ class PointMailClass extends BaseWebDriverWrapper {
     this.logInfo("直前の前よね");
     let loginSiteList = [D.CODE_RAKU, "rin"];
     let aca = await db("config", "findOne", { type: "login" });
-    let loginCls = null;
     for (let site in urlMap) {
+      let loginCls = null;
       let urls = urlMap[site];
       let uniqueUrls = [];
       for (let url of urls) {
@@ -187,6 +187,7 @@ class PointMailClass extends BaseWebDriverWrapper {
       }
       let isLoginNow = false;
       for (let i in uniqueUrls) {
+        this.logInfo("1");
         let url = uniqueUrls[i];
         try {
           if (!this.driver) {
@@ -197,6 +198,7 @@ class PointMailClass extends BaseWebDriverWrapper {
             // ログインが必要そうなサイトだけログイン
             if (!loginCls) {
               loginCls = new Login(0, aca, this.logger, this.driver, null);
+              this.logInfo("ログいんしました");
             }
             await loginCls.login(site);
             isLoginNow = true;
@@ -204,13 +206,21 @@ class PointMailClass extends BaseWebDriverWrapper {
           // siteごとに処理を分けたいかも
           // url = "https://r.rakuten.co.jp/2Ec9C56IK1AVeYT81V51t5hI?mpe=552111"; // test
           // url = "https://pmrd.rakuten.co.jp/?r=MzI1MDQ3fDE%3D&p=C92DE7E&u=BAB68077";
-          await this.driver.get(url); // エントリーページ表示
+          let a = await this.driver.get(url); // エントリーページ表示
+          this.logInfo("3", a);
+          if (site === "cri") {
+            this.logInfo("２分待ってみる");
+            this.sleep(120000); // 2分待ってみる
+          }
           this.sleep(1000);
+          this.logInfo("4");
           // break; // test
         } catch (e) {
           this.logInfo(e);
           await this.driver.quit();
           this.driver = null;
+          loginCls = null;
+          isLoginNow = false;
         }
       }
     }
@@ -354,6 +364,49 @@ function getPointUrls(urlMap, target, content) {
           let url = "";
           // text/plain　前提
           url = row.substring(row.indexOf("https://"));
+          if (url) {
+            urls.push(url.trim());
+          }
+        }
+        break;
+      case D.CODE_CRI:
+        signs = ["/cm/om/"];
+        if (row.indexOf(signs[0]) > -1) {
+          let url = "";
+          // text/plain　前提
+          url = row.substring(row.indexOf("http"));
+          if (url) {
+            urls.push(url.trim());
+          }
+        }
+        break;
+      case D.CODE_ECN:
+        // https://ecnavi.jp/m/go/5QrIrSbi90/
+        // https://ecnavi.jp/shopping_magazine/?p=zNck05beUJ1KRwb21PW3kh1nJhenUtpz7Qokd5Fen%2BbgGraEoeEGTF7Pg6mWB2fjKp1%2FCIEilXInjSbwM7Z0F8Qkc6YKlRLx7D2A0vNGO39Etlg7Kp%2FUyynjJIdgaPs8HyNsDXMtApbakvHB9xphdPfqbAA%2Byfc4Laqav1DCdfdLxujsHzpTF%2FH2Qo%2BRGnD0
+        signs = ["/m/go/", "https://ecnavi.jp/shopping_magazine/?p="];
+        if (row.indexOf(signs[0]) > -1) {
+          let url = "";
+          // text/plain　前提
+          url = row.substring(row.indexOf("https"));
+          if (url) {
+            urls.push(url.trim());
+          }
+        } else if (row.indexOf(signs[1]) > -1) {
+          let url = "";
+          // text/html　前提
+          url = row.substring(row.indexOf(signs[1]), row.indexOf('"', row.indexOf(signs[1])));
+          if (url) {
+            urls.push(url.trim());
+          }
+        }
+        break;
+      case D.CODE_I2I:
+        // https://point.i2i.jp/click/M9sdyWbq
+        signs = ["https://point.i2i.jp/click/"];
+        if (row.indexOf(signs[0]) > -1) {
+          let url = "";
+          // text/plain　前提
+          url = row.substring(row.indexOf(signs[0]));
           if (url) {
             urls.push(url.trim());
           }
