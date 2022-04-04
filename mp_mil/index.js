@@ -79,101 +79,104 @@ class PointMailClass extends BaseWebDriverWrapper {
     before.setDate(before.getDate() - beforeNum);
     this.logInfo(`${before}以降のメールを抽出します`);
     let urlMap = {};
-    await new Promise((resolve, reject) => {
-      // let targeList = this.targetList;
-      let { logInfo, logWarn } = this;
-      // this.logInfo();
-      async function openInbox() {
-        // await Promise.all(
-        //   // await targetList.map(async (target) => {
-        //   //   console.log(target);
-        //   //   return await promiseTargetBox(target);
-        //   // })
-        //   [
-        //     await promiseTargetBox('gmy'),
-        //     await promiseTargetBox('cit'),
-        //     await promiseTargetBox('raku'),
-        //   ]
-        // ).then(a=>{
-        //   imap.end();
-        // });
-        await targetList.reduce((promise, target) => {
-          return promise.then(async () => {
-            await await promiseTargetBox(target);
-          });
-        }, Promise.resolve());
-        imap.end();
+    if (true) {
+      await new Promise((resolve, reject) => {
+        // let targeList = this.targetList;
+        let { logInfo, logWarn } = this;
+        // this.logInfo();
+        async function openInbox() {
+          // await Promise.all(
+          //   // await targetList.map(async (target) => {
+          //   //   console.log(target);
+          //   //   return await promiseTargetBox(target);
+          //   // })
+          //   [
+          //     await promiseTargetBox('gmy'),
+          //     await promiseTargetBox('cit'),
+          //     await promiseTargetBox('raku'),
+          //   ]
+          // ).then(a=>{
+          //   imap.end();
+          // });
+          await targetList.reduce((promise, target) => {
+            return promise.then(async () => {
+              await await promiseTargetBox(target);
+            });
+          }, Promise.resolve());
+          imap.end();
 
-        function promiseTargetBox(target) {
-          return new Promise(async (res2, rej2) => {
-            const targetInfo = labelmap[target];
-            await imap.openBox(targetInfo.dir, true, async (err, box) => {
-              if (err) throw err;
-              // "Mar 1, 2022"
-              await imap.search([["SINCE", before]], (err, results) => {
+          function promiseTargetBox(target) {
+            return new Promise(async (res2, rej2) => {
+              const targetInfo = labelmap[target];
+              await imap.openBox(targetInfo.dir, true, async (err, box) => {
                 if (err) throw err;
-                logInfo(results);
-                if (results.length) {
-                  var f = imap.fetch(results, { bodies: "" });
-                  f.on("message", (msg, seqno) => {
-                    // logInfo("Message #%d", seqno);
-                    // var prefix = "(#" + seqno + ") ";
-                    msg.on("body", (stream, info) => {
-                      simpleParser(stream, null, (err, parsed) => {
-                        logInfo("date,subject", parsed.date, parsed.subject);
-                        logInfo("headers", parsed.headers.get("content-type").value);
-                        // 件名をチェック。
-                        if (targetInfo.key || targetInfo.key2) {
-                          if (targetInfo.key && parsed.subject.indexOf(targetInfo.key) === -1) {
-                            return;
+                // "Mar 1, 2022"
+                await imap.search([["SINCE", before]], (err, results) => {
+                  if (err) throw err;
+                  logInfo(results);
+                  if (results.length) {
+                    var f = imap.fetch(results, { bodies: "" });
+                    f.on("message", (msg, seqno) => {
+                      // logInfo("Message #%d", seqno);
+                      // var prefix = "(#" + seqno + ") ";
+                      msg.on("body", (stream, info) => {
+                        simpleParser(stream, null, (err, parsed) => {
+                          logInfo("date,subject", parsed.date, parsed.subject);
+                          logInfo("headers", parsed.headers.get("content-type").value);
+                          // 件名をチェック。
+                          if (targetInfo.key || targetInfo.key2) {
+                            if (targetInfo.key && parsed.subject.indexOf(targetInfo.key) === -1) {
+                              return;
+                            }
+                            if (targetInfo.key2 && parsed.subject.indexOf(targetInfo.key2) === -1) {
+                              return;
+                            }
                           }
-                          if (targetInfo.key2 && parsed.subject.indexOf(targetInfo.key2) === -1) {
-                            return;
+                          let content = "";
+                          if (parsed.headers.get("content-type").value == "text/html") {
+                            content = parsed.html;
+                          } else {
+                            content = parsed.text;
                           }
-                        }
-                        let content = "";
-                        if (parsed.headers.get("content-type").value == "text/html") {
-                          content = parsed.html;
-                        } else {
-                          content = parsed.text;
-                        }
-                        // 対象のメールだったら、ヘッダーからhtmlかtextを判別して、テキストを抽出。
-                        getPointUrls(urlMap, target, content);
+                          // 対象のメールだったら、ヘッダーからhtmlかtextを判別して、テキストを抽出。
+                          getPointUrls(urlMap, target, content);
+                        });
+                      });
+                      // msg.once("attributes", function (attrs) {
+                      //   logInfo(prefix + "Attributes: %s", inspect(attrs, false, 8));
+                      // });
+                      msg.once("end", () => {
+                        // logInfo(prefix + "Finished");
                       });
                     });
-                    // msg.once("attributes", function (attrs) {
-                    //   logInfo(prefix + "Attributes: %s", inspect(attrs, false, 8));
-                    // });
-                    msg.once("end", () => {
-                      // logInfo(prefix + "Finished");
+                    f.once("error", function (err) {
+                      rej2(), logInfo("Fetch error: " + err);
                     });
-                  });
-                  f.once("error", function (err) {
-                    rej2(), logInfo("Fetch error: " + err);
-                  });
-                  f.once("end", () => {
-                    res2(), logInfo("Done fetching all messages!");
-                  });
-                } else {
-                  res2(), logInfo("no result!");
-                }
-              });
-            }); // ラベル名は完全一致なので注意　大文字
-          });
+                    f.once("end", () => {
+                      res2(), logInfo("Done fetching all messages!");
+                    });
+                  } else {
+                    res2(), logInfo("no result!");
+                  }
+                });
+              }); // ラベル名は完全一致なので注意　大文字
+            });
+          }
         }
-      }
-      imap.once("ready", () => {
-        openInbox();
+        imap.once("ready", () => {
+          openInbox();
+        });
+        imap.once("error", function (err) {
+          reject(), logWarn(err);
+        });
+        imap.once("end", function (a) {
+          logInfo("Connection ended", a);
+          resolve();
+        });
+        imap.connect();
       });
-      imap.once("error", function (err) {
-        reject(), logWarn(err);
-      });
-      imap.once("end", function (a) {
-        logInfo("Connection ended", a);
-        resolve();
-      });
-      imap.connect();
-    });
+    }
+    // urlMap = { pto: ["https://www.pointtown.com/ptu/r.g?rid=RUNYbxEkTDHj"] };
     this.logInfo("直前の前よね");
     let loginSiteList = [D.CODE_RAKU, "rin"];
     let aca = await db("config", "findOne", { type: "login" });
@@ -207,15 +210,19 @@ class PointMailClass extends BaseWebDriverWrapper {
           // siteごとに処理を分けたいかも
           // url = "https://r.rakuten.co.jp/2Ec9C56IK1AVeYT81V51t5hI?mpe=552111"; // test
           // url = "https://pmrd.rakuten.co.jp/?r=MzI1MDQ3fDE%3D&p=C92DE7E&u=BAB68077";
-          let a = await this.driver.get(url); // エントリーページ表示
-          this.logInfo("3", a);
+          // let a = await this.driver.get(url); // エントリーページ表示
+          // this.logInfo("3", a);
+          // if (site === "cri") {
+          //   this.logInfo("２分待ってみる");
+          //   this.sleep(120000); // 2分待ってみる
+          // }
+          // this.sleep(1000);
+          // this.logInfo("4");
+          await this.openUrl(url);
           if (site === "cri") {
             this.logInfo("２分待ってみる");
-            this.sleep(120000); // 2分待ってみる
+            await this.driver.sleep(120000); // 2分待ってみる
           }
-          this.sleep(1000);
-          this.logInfo("4");
-          // break; // test
         } catch (e) {
           this.logInfo(e);
           await this.driver.quit();
@@ -232,6 +239,26 @@ class PointMailClass extends BaseWebDriverWrapper {
     }
     this.logInfo("やりきりました");
   }
+  async openUrl(url) {
+    let a = this.driver.get(url); // エントリーページ表示
+    let isComp = false,
+      cnt = 0;
+    while (!isComp) {
+      this.logInfo("sleep前");
+      await this.driver.sleep(1000);
+      this.logInfo("sleep後");
+      if (a.state_ === "fulfilled") {
+        // fullfiledになってれば
+        isComp = true;
+      } else {
+        if (cnt++ == 30) {
+          isComp = true;
+          this.logInfo('30超えたので強制終了です');
+        }
+      }
+    }
+  }
+
   // TODO 多分もう一つ親クラス作ってそこに実装がいいかも
   async getEle(sele, i, time) {
     try {
@@ -421,13 +448,18 @@ function getPointUrls(urlMap, target, content) {
           let url = "";
           // text/plain　前提
           url = row.substring(row.indexOf(signs[0]) + signs[0].length);
-          if (url) {
+          if (url.indexOf(signs[1]) > -1) {
             urls.push(url.trim());
           }
         } else if (row.indexOf(signs[1]) > -1) {
-          let url = "";
           // text/html　前提
-          url = row.substring(row.indexOf(signs[1]), row.indexOf('"', row.indexOf(signs[1])));
+          let url = "";
+          let lastIndex = row.indexOf('"', row.indexOf(signs[1]));
+          if (lastIndex > -1) {
+            url = row.substring(row.indexOf(signs[1]), lastIndex);
+          } else {
+            url = row.substring(row.indexOf(signs[1]));
+          }
           if (url) {
             urls.push(url.trim());
           }

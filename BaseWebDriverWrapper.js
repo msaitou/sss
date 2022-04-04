@@ -108,8 +108,8 @@ class BaseWebDriverWrapper {
     this.logger.warn(a);
   }
 
-  sleep(time) {
-    return util.sleep(time);
+  async sleep(time) {
+    return await util.sleep(time);
   }
 }
 exports.BaseWebDriverWrapper = BaseWebDriverWrapper;
