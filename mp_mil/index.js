@@ -21,22 +21,23 @@ const labelmap = {
   cri: { dir: "p/chobi", key: "おみくじ付き" },
   ecn: { dir: "p/ECナビ", key: "" }, // webdriver起動中にログインしないと記憶してくれないポイ
   i2i: { dir: "p/i2iポイント", key: "pt付" },
+  pto: { dir: "p/ポイントタウン", key: "" },
+  mop: { dir: "p/モッピー", key: "付" },
+
+  gen: { dir: "p/げん玉", key: "【クリック", key2: "】オススメサービス" },
+  sug: {
+    dir: "p/sugutama",
+    key: "号外",
+    key2: "週刊すぐたま",
+    key3: "すぐたまグレードステータス",
+  },
+  pil: { dir: "p/pointisland", key: "" },
+  pst: { key: "", dir: "p/pointstadium" },
+  ntm: { dir: "p/netmairu", key: "週刊ネットマイル" },
   mitaiou: {
-    pto: { dir: "p/ポイントタウン", key: "" },
     pex: { dir: "p/PEX", key: "クリック1P" },
-    gen: { dir: "p/げん玉", key: "【クリック", key2: "】オススメサービス" },
-    mop: { dir: "p/モッピー", key: "付" },
     war: { dir: "p/warau", key: "じゃんけんちゃん", key2: "ワラウマガジン" },
-    sug: {
-      dir: "p/sugutama",
-      key: "号外",
-      key2: "週刊すぐたま",
-      key3: "すぐたまグレードステータス",
-    },
     pmo: { dir: "p/pointmonkey", key: "ポイモン南の島NEWS" },
-    pil: { dir: "p/pointisland", key: "" },
-    pst: { key: "", dir: "p/pointstadium" },
-    ntm: { dir: "p/netmairu", key: "週刊ネットマイル" },
     koz: { dir: "p/kozukai", key: "【ポイント探し】" },
     hap: {
       dir: "p/hapitas",
@@ -403,6 +404,38 @@ function getPointUrls(urlMap, target, content) {
       case D.CODE_I2I:
         // https://point.i2i.jp/click/M9sdyWbq
         signs = ["https://point.i2i.jp/click/"];
+        if (row.indexOf(signs[0]) > -1) {
+          let url = "";
+          // text/plain　前提
+          url = row.substring(row.indexOf(signs[0]));
+          if (url) {
+            urls.push(url.trim());
+          }
+        }
+        break;
+      case D.CODE_PTO:
+        // [Point] https://www.pointtown.com/ptu/r.g?rid=K3QaDpdq2kTJ
+        // https://www.pointtown.com/ptu/r.g?rid=cD6dGTZgBfVv
+        signs = ["[Point] ", "https://www.pointtown.com/ptu/r.g?rid="];
+        if (row.indexOf(signs[0]) > -1) {
+          let url = "";
+          // text/plain　前提
+          url = row.substring(row.indexOf(signs[0]) + signs[0].length);
+          if (url) {
+            urls.push(url.trim());
+          }
+        } else if (row.indexOf(signs[1]) > -1) {
+          let url = "";
+          // text/html　前提
+          url = row.substring(row.indexOf(signs[1]), row.indexOf('"', row.indexOf(signs[1])));
+          if (url) {
+            urls.push(url.trim());
+          }
+        }
+        break;
+      case D.CODE_MOP:
+        // https://pc.moppy.jp/clc/?clc_tag=LP33116563YToxOntpOjA7czo4OiIxMTE0NjYzMiI7fQ==
+        signs = ["https://pc.moppy.jp/clc/?clc_tag="];
         if (row.indexOf(signs[0]) > -1) {
           let url = "";
           // text/plain　前提
