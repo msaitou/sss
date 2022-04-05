@@ -1,7 +1,7 @@
 // pointgetter(web),pointgetter(mobile),life-utility,pointgetter(mail)
 // の4種で同じプログラム（入り口）を利用する。
 // 起動時に、どのモードか分ける。
-const MODE = { P_WEB: "P_WEB", P_MOB: "P_MOB", P_MIL: "P_MIL", L_UTL: "L_UTL" };
+const MODE = { P_WEB_S: "P_WEB_S", P_WEB_H: "P_WEB_H", P_MOB: "P_MOB", P_MIL: "P_MIL", L_UTL: "L_UTL" ,manual:"manual"};
 const logger = require("./initter.js").log();
 global.log = logger;
 logger.info("start!");
@@ -17,12 +17,14 @@ async function start(mode) {
         const man = require("./exam.js");
         await man.alone(logger);
         break;
-      case MODE.P_WEB:
-        // testしたい。pexにログインした状態でアクセスできること。プロファイルが使えること。
-        console.log("pex");
-        const exam = require("./exam.js");
-        // const exam = new Exam();
-        await exam.main(logger);
+      case MODE.P_WEB_S:  // 単発（開発用）
+        // console.log("pex");
+        // const exam = require("./exam.js");
+        // // const exam = new Exam();
+        // await exam.main(logger);
+        const Web = require("./mp_web/index.js").PointWebCls;
+        const PWeb = new Web();
+        await PWeb.main();
         break;
       case MODE.P_MOB:
         break;
@@ -53,12 +55,10 @@ async function start(mode) {
       process.exit();
     });
 }
-start(process.argv[2]);
-
-// モードの並列実行が可能か。可能ではない場合、終わりを検知できる必要があり、できない場合、起動タイミングは終了タイミングを予測し猶予する必要がある。
-// プロセスに名前をつけて、チェック可能にし、終了するまで。もしくは、終了させてから実行するような仕組みにしたい。
-
-// また、vaiosaito側では、DBから必要な情報を取得して、デスクトップにファイルを作成するみたいなシェルを作りたい。
-
-// log書くやつとdriverとDBの読み書きは独立クラス
-// logを表示するwebアプリを作る。
+if (process.argv[2] && MODE[process.argv[2]]) {
+  start(process.argv[2]);
+}
+else {
+  console.log(`引数は、${Object.keys(MODE)} のどれかです！`);
+  process.exit();
+}

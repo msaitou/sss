@@ -109,7 +109,7 @@ class BaseWebDriverWrapper {
   }
 
   async sleep(time) {
-    return await util.sleep(time);
+    await util.sleep(time);
   }
 }
 exports.BaseWebDriverWrapper = BaseWebDriverWrapper;

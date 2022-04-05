@@ -175,8 +175,10 @@ class PointMailClass extends BaseWebDriverWrapper {
         });
         imap.connect();
       });
+    } else {
+      urlMap = { pto: ["https://www.pointtown.com/ptu/r.g?rid=RUNYbxEkTDHj", "https://www.pointtown.com/ptu/r.g?rid=z4sT9FVdPEr4","https://www.pointtown.com/ptu/r.g?rid=ZRMrJipVe78k", "https://www.pointtown.com/ptu/r.g?rid=rYb2EnBicdPx"
+    ,"https://www.pointtown.com/ptu/r.g?rid=ev6dGTZgBfVv"] };
     }
-    // urlMap = { pto: ["https://www.pointtown.com/ptu/r.g?rid=RUNYbxEkTDHj"] };
     this.logInfo("直前の前よね");
     let loginSiteList = [D.CODE_RAKU, "rin"];
     let aca = await db("config", "findOne", { type: "login" });
@@ -218,10 +220,17 @@ class PointMailClass extends BaseWebDriverWrapper {
           // }
           // this.sleep(1000);
           // this.logInfo("4");
-          await this.openUrl(url);
-          if (site === "cri") {
-            this.logInfo("２分待ってみる");
-            await this.driver.sleep(120000); // 2分待ってみる
+          let res = await this.openUrl(url);
+          if (res) {
+            if (site === "cri") {
+              this.logInfo("２分待ってみる");
+              await this.driver.sleep(120000); // 2分待ってみる
+            }
+          } else {
+            await this.driver.quit();
+            this.driver = null;
+            loginCls = null;
+            isLoginNow = false;
           }
         } catch (e) {
           this.logInfo(e);
@@ -240,23 +249,35 @@ class PointMailClass extends BaseWebDriverWrapper {
     this.logInfo("やりきりました");
   }
   async openUrl(url) {
-    let a = this.driver.get(url); // エントリーページ表示
-    let isComp = false,
-      cnt = 0;
-    while (!isComp) {
-      this.logInfo("sleep前");
-      await this.driver.sleep(1000);
-      this.logInfo("sleep後");
-      if (a.state_ === "fulfilled") {
-        // fullfiledになってれば
-        isComp = true;
-      } else {
-        if (cnt++ == 30) {
-          isComp = true;
-          this.logInfo('30超えたので強制終了です');
+    return new Promise(async (resolve, reject) => {
+      try {
+        let a = this.driver.get(url); // エントリーページ表示
+        let isComp = false,
+          cnt = 0;
+        while (!isComp) {
+          this.logInfo("sleep", cnt++);
+          await this.sleep(1000);
+          if (a.state_ === "fulfilled") {
+            // fullfiledになってれば
+            this.logInfo("大丈夫らしい");
+            isComp = true;
+          } else {
+            if (cnt == 30) {
+              isComp = true;
+              this.logInfo("30超えたので強制終了です");
+              reject(false);
+            }
+          }
         }
+        resolve(isComp);
+      } catch (e) {
+        // throw e;
+        reject(false);
       }
-    }
+    }).catch((ee) => {
+      this.logInfo(ee);
+      return false;
+    });
   }
 
   // TODO 多分もう一つ親クラス作ってそこに実装がいいかも
