@@ -4,7 +4,7 @@ const { Builder, By, until } = require("selenium-webdriver");
 const { resolveObjectURL } = require("buffer");
 const { BaseWebDriverWrapper } = require("../BaseWebDriverWrapper");
 const { Login } = require("../com_cls/login");
-const D = require("../com_cls/define").Define;
+const D = require("../com_cls/define").Def;
 
 const Imap = require("node-imap"),
   inspect = require("util").inspect;
@@ -180,7 +180,7 @@ class PointMailClass extends BaseWebDriverWrapper {
     ,"https://www.pointtown.com/ptu/r.g?rid=ev6dGTZgBfVv"] };
     }
     this.logInfo("直前の前よね");
-    let loginSiteList = [D.CODE_RAKU, "rin"];
+    let loginSiteList = [D.CODE.RAKU, "rin"];
     let aca = await db("config", "findOne", { type: "login" });
     for (let site in urlMap) {
       let loginCls = null;
@@ -339,7 +339,7 @@ function getPointUrls(urlMap, target, content) {
   let signs = [];
   for (let row of contentRow) {
     switch (target) {
-      case D.CODE_RAKU:
+      case D.CODE.RAKU:
         for (let key of [
           "https://r.rakuten.co.jp/",
           "http://ac.rakuten-card.co.jp/s.p",
@@ -381,7 +381,7 @@ function getPointUrls(urlMap, target, content) {
           }
         }
         break;
-      case D.CODE_CIT:
+      case D.CODE.CIT:
         for (let key of ["&s="]) {
           if (row.indexOf(key) > -1) {
             let url = "";
@@ -393,7 +393,7 @@ function getPointUrls(urlMap, target, content) {
           }
         }
         break;
-      case D.CODE_GMY:
+      case D.CODE.GMY:
         // https://dietnavi.com/click.php?cid=51513&id=2539124&sec=a38c5a03
         signs = ["cid=", "sec="];
         if (row.indexOf(signs[0]) > -1 && row.indexOf(signs[1]) > -1) {
@@ -405,7 +405,7 @@ function getPointUrls(urlMap, target, content) {
           }
         }
         break;
-      case D.CODE_PIC:
+      case D.CODE.PIC:
         // https://pointi.jp/al/click_mail_magazine.php?no=109510&hash=58ef3a987844c9f74d905c3c3463a94b&html=1&a=2880110292mpf9u7him3t5qlfo09
         // https://pointi.jp/al/click_mail_magazine.php?no=109525&hash=62647bae009fc978b5adadeef5e3f305&html=1&a=2880110292mpf9u7him3t5qlfo09
         signs = ["no=", "&a="];
@@ -418,7 +418,7 @@ function getPointUrls(urlMap, target, content) {
           }
         }
         break;
-      case D.CODE_CRI:
+      case D.CODE.CRI:
         signs = ["/cm/om/"];
         if (row.indexOf(signs[0]) > -1) {
           let url = "";
@@ -429,7 +429,7 @@ function getPointUrls(urlMap, target, content) {
           }
         }
         break;
-      case D.CODE_ECN:
+      case D.CODE.ECN:
         // https://ecnavi.jp/m/go/5QrIrSbi90/
         // https://ecnavi.jp/shopping_magazine/?p=zNck05beUJ1KRwb21PW3kh1nJhenUtpz7Qokd5Fen%2BbgGraEoeEGTF7Pg6mWB2fjKp1%2FCIEilXInjSbwM7Z0F8Qkc6YKlRLx7D2A0vNGO39Etlg7Kp%2FUyynjJIdgaPs8HyNsDXMtApbakvHB9xphdPfqbAA%2Byfc4Laqav1DCdfdLxujsHzpTF%2FH2Qo%2BRGnD0
         signs = ["/m/go/", "https://ecnavi.jp/shopping_magazine/?p="];
@@ -449,7 +449,7 @@ function getPointUrls(urlMap, target, content) {
           }
         }
         break;
-      case D.CODE_I2I:
+      case D.CODE.I2I:
         // https://point.i2i.jp/click/M9sdyWbq
         signs = ["https://point.i2i.jp/click/"];
         if (row.indexOf(signs[0]) > -1) {
@@ -461,7 +461,7 @@ function getPointUrls(urlMap, target, content) {
           }
         }
         break;
-      case D.CODE_PTO:
+      case D.CODE.PTO:
         // [Point] https://www.pointtown.com/ptu/r.g?rid=K3QaDpdq2kTJ
         // https://www.pointtown.com/ptu/r.g?rid=cD6dGTZgBfVv
         signs = ["[Point] ", "https://www.pointtown.com/ptu/r.g?rid="];
@@ -486,7 +486,7 @@ function getPointUrls(urlMap, target, content) {
           }
         }
         break;
-      case D.CODE_MOP:
+      case D.CODE.MOP:
         // https://pc.moppy.jp/clc/?clc_tag=LP33116563YToxOntpOjA7czo4OiIxMTE0NjYzMiI7fQ==
         signs = ["https://pc.moppy.jp/clc/?clc_tag="];
         if (row.indexOf(signs[0]) > -1) {

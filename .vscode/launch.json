@@ -4,6 +4,7 @@
   // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+
     
     {
       "name": "debug P_MIL",
@@ -14,12 +15,12 @@
       "args": ["P_MIL"]
     },
     {
-      "name": "debug P_WEB",
+      "name": "debug P_WEB_S",
       "program": "${workspaceFolder}/index.js",
       "request": "launch",
       "skipFiles": ["<node_internals>/**"],
       "type": "pwa-node",
-      "args": ["P_WEB"]
+      "args": ["P_WEB_S"]
     },
     {
       "type": "pwa-node",

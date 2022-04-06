@@ -1,8 +1,7 @@
 const { initBrowserDriver, db } = require("../initter.js");
-const { raku } = require("../ml_utl/raku.js");
-const { moba } = require("../ml_utl/moba.js");
-const { uqmo } = require("../ml_utl/uqmo.js");
-const { wima} = require("../ml_utl/wima.js");
+const { pex } = require("./pexBase.js");
+const config = require("config");
+const { Entry } = require("selenium-webdriver/lib/logging");
 // exports.main = async (logger) => {
 //   global.log.info("こっちに来たね");
 //   // site数で回す
@@ -22,54 +21,69 @@ const { wima} = require("../ml_utl/wima.js");
 
 class PointWebCls {
   logger;
-  constructor() {
+  exeKind;
+  constructor(kind) {
     this.logger = global.log;
+    this.exeKind = kind ? kind.toLowerCase() : "";
   }
   async main() {
-    this.logger.info("こっちに来たね class版");
-    // site数で回す
-    // DBからsiteを取得
-    let recs = await db("www", "find", {
-      kind: "data-traffic",
-      // code: "wima", // test中　TODO
-    });
-    if (recs.length) {
-      // let driver = await initBrowserDriver();
-      for (let rec of recs) {
-        this.logger.info("rec", rec);
-        // TODO ログインアカウントとパスワードを取得して、次の処理に渡す
-        let aca = await db("config", "findOne", { type: "login" });
-        // this.logger.info('aca', aca);
-        //   await driver.get("http://google.com/");
-        // ここで各サイトのスクレイピングクラスに処理を移す
-        await getOperatorCls(rec.code, rec, aca);
-
-        // await driver.get(rec.entry_url);
-        // break; // test中
+    this.logger.info("PointWebCls main");
+    let targetAll = config[this.exeKind];
+    // console.log(new Date().getHours());
+    let firstKey = this.exeKind == "p_web_h" ? new Date().getHours() : "";
+    let targetMap = targetAll[firstKey];  // 今の時間のサイト毎のミッションを抽出
+    if (targetMap && Object.keys(targetMap).length) {
+      let aca = await db("config", "findOne", { type: "login" });
+      for (let [key, line] of Object.entries(targetMap)) {
+        console.log(key, line);
+        this.execOperator(key, line, aca);
       }
-      // await driver.quit();
+    } else this.logInfo("ミッションは登録されていません");
+
+    // // site数で回す
+    // // DBからsiteを取得
+    // let recs = await db("www", "find", {
+    //   kind: "data-traffic",
+    //   // code: "wima", // test中　TODO
+    // });
+    // if (recs.length) {
+    //   // let driver = await initBrowserDriver();
+    //   for (let rec of recs) {
+    //     this.logger.info("rec", rec);
+    //     // TODO ログインアカウントとパスワードを取得して、次の処理に渡す
+    //     let aca = await db("config", "findOne", { type: "login" });
+    //     // this.logger.info('aca', aca);
+    //     //   await driver.get("http://google.com/");
+    //     // ここで各サイトのスクレイピングクラスに処理を移す
+    //     await getOperatorCls(rec.code, rec, aca);
+
+    //     // await driver.get(rec.entry_url);
+    //     // break; // test中
+    //   }
+    //   // await driver.quit();
+    // }
+  }
+  logInfo(...a) {
+    (this ? this.logger : global.log).info(a);
+  }
+  logWarn(...a) {
+    (this ? this.logger : global.log).warn(a);
+  }
+  async execOperator(code, missionList, aca) {
+    let opeCls = null;
+    switch (code) {
+      case "raku":
+        opeCls = new pex(0, missionList, aca);
+        break;
+      case "pex":
+        opeCls = new pex(0, missionList, aca);
+        break;
+    }
+    if (opeCls) {
+      await opeCls.main().catch(e =>{
+        this.logWarn(e);
+      });
     }
   }
 }
 exports.PointWebCls = PointWebCls;
-
-async function getOperatorCls(code, siteInfo, aca) {
-  let opeCls = null;
-  switch (code) {
-    case "raku":
-      opeCls = new raku(0, siteInfo, aca);
-      break;
-    case "uqmo":
-      opeCls = new uqmo(0, siteInfo, aca);
-      break;
-    case "wima":
-      opeCls = new wima(0, siteInfo, aca);
-      break;
-    case "moba":
-      opeCls = new moba(0, siteInfo, aca);
-      break;
-  }
-  if (opeCls) {
-    await opeCls.main();
-  }
-}

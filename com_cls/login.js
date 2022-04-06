@@ -1,5 +1,5 @@
 const { rakuCommon } = require("../com_cls/c_raku.js");
-const D = require("./define").Define;
+const D = require("./define").Def;
 
 class Login {
   cPara = {};
@@ -9,9 +9,13 @@ class Login {
   async login(code) {
     switch (code) {
       case 'rin':
-      case D.CODE_RAKU:
+      case D.CODE.RAKU:
         let rakuCom = new rakuCommon(this.cPara);
         await rakuCom.login2();
+        break;
+      case D.CODE.PEX:
+        let pexCom = new pexCommon(this.cPara);
+        await pexCom.login();
         break;
     }
   }

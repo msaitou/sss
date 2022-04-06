@@ -1,9 +1,9 @@
 const { BaseExecuter } = require("./BaseExecuter.js");
 const { Builder, By, until } = require("selenium-webdriver");
 const { rakuCommon } = require("../com_cls/c_raku.js");
-const D = require("../com_cls/define").Define;
+const D = require("../com_cls/define").Def;
 class raku extends BaseExecuter {
-  code = D.CODE_RAKU;
+  code = D.CODE.RAKU;
   constructor(retryCnt, siteInfo, aca) {
     super(retryCnt, siteInfo, aca);
     this.logger.debug("raku constructor");

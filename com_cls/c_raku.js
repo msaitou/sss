@@ -1,10 +1,10 @@
 // const { BaseExecuter } = require("./BaseExecuter.js");
 const { Builder, By, until } = require("selenium-webdriver");
 const { libUtil: util } = require("../lib/util.js");
-const D = require("./define").Define;
+const D = require("./define").Def;
 
 class rakuCommon {
-  code = D.CODE_RAKU;
+  code = D.CODE.RAKU;
   retryCnt;
   account;
   logger;

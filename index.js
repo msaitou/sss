@@ -18,12 +18,13 @@ async function start(mode) {
         await man.alone(logger);
         break;
       case MODE.P_WEB_S:  // 単発（開発用）
+      case MODE.P_WEB_H:  // 定期実行用
         // console.log("pex");
         // const exam = require("./exam.js");
         // // const exam = new Exam();
         // await exam.main(logger);
         const Web = require("./mp_web/index.js").PointWebCls;
-        const PWeb = new Web();
+        const PWeb = new Web(mode);
         await PWeb.main();
         break;
       case MODE.P_MOB:
