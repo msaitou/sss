@@ -27,7 +27,7 @@ exports.db = async function (coll, method, cond = {}, doc) {
       case "update":
         let cnt = 0;
         if (cond) {
-          cnt = await collection.find(cond).countDocuments();
+          cnt = await collection.countDocuments(cond);
         }
         if (cnt) {
           res = await collection.updateOne(cond, { $set: doc });
