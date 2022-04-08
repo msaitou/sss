@@ -1,11 +1,12 @@
 const { BaseExecuter } = require("./BaseExecuter.js");
 const { Builder, By, until } = require("selenium-webdriver");
+const D = require("../com_cls/define").Def;
 
 class uqmo extends BaseExecuter {
-  code = "uqmo";
+  code = D.CODE.UQMO;
   constructor(retryCnt, siteInfo, aca) {
     super(retryCnt, siteInfo, aca);
-    this.logger.debug("uqmo constructor");
+    this.logDebug(`${this.code} constructor`);
   }
   async exec() {
     this.logInfo("きた？", this.siteInfo.entry_url);

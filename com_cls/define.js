@@ -1,5 +1,9 @@
 exports.Def = {
   CODE: {
+    MOBA: "moba",
+    WIMA: "wima",
+    UQMO: "uqmo",
+
     RAKU: "raku",
     CIT: "cit",
     GMY: "gmy",

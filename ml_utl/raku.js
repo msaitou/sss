@@ -6,7 +6,7 @@ class raku extends BaseExecuter {
   code = D.CODE.RAKU;
   constructor(retryCnt, siteInfo, aca) {
     super(retryCnt, siteInfo, aca);
-    this.logger.debug("raku constructor");
+    this.logDebug(`${this.code} constructor`);
   }
   async exec() {
     this.logInfo("きた？", this.siteInfo.entry_url);

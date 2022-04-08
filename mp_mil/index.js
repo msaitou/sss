@@ -176,8 +176,15 @@ class PointMailClass extends BaseWebDriverWrapper {
         imap.connect();
       });
     } else {
-      urlMap = { pto: ["https://www.pointtown.com/ptu/r.g?rid=RUNYbxEkTDHj", "https://www.pointtown.com/ptu/r.g?rid=z4sT9FVdPEr4","https://www.pointtown.com/ptu/r.g?rid=ZRMrJipVe78k", "https://www.pointtown.com/ptu/r.g?rid=rYb2EnBicdPx"
-    ,"https://www.pointtown.com/ptu/r.g?rid=ev6dGTZgBfVv"] };
+      urlMap = {
+        pto: [
+          "https://www.pointtown.com/ptu/r.g?rid=RUNYbxEkTDHj",
+          "https://www.pointtown.com/ptu/r.g?rid=z4sT9FVdPEr4",
+          "https://www.pointtown.com/ptu/r.g?rid=ZRMrJipVe78k",
+          "https://www.pointtown.com/ptu/r.g?rid=rYb2EnBicdPx",
+          "https://www.pointtown.com/ptu/r.g?rid=ev6dGTZgBfVv",
+        ],
+      };
     }
     this.logInfo("直前の前よね");
     let loginSiteList = [D.CODE.RAKU, "rin"];
@@ -252,6 +259,11 @@ class PointMailClass extends BaseWebDriverWrapper {
     return new Promise(async (resolve, reject) => {
       try {
         let a = this.driver.get(url); // エントリーページ表示
+        a.catch((e) => {
+          isComp = true;
+          this.logWarn(e);
+          reject(false);
+        });
         let isComp = false,
           cnt = 0;
         while (!isComp) {
@@ -326,12 +338,12 @@ class PointMailClass extends BaseWebDriverWrapper {
       this.logWarn(e);
     }
   }
-  logInfo(...a) {
-    (this ? this.logger : global.log).info(a);
-  }
-  logWarn(...a) {
-    (this ? this.logger : global.log).warn(a);
-  }
+  // logInfo(...a) {
+  //   (this ? this.logger : global.log).info(a);
+  // }
+  // logWarn(...a) {
+  //   (this ? this.logger : global.log).warn(a);
+  // }
 }
 function getPointUrls(urlMap, target, content) {
   let contentRow = content.split("\n");

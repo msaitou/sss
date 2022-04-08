@@ -1,11 +1,12 @@
 const { BaseExecuter } = require("./BaseExecuter.js");
 const { Builder, By, until } = require("selenium-webdriver");
+const D = require("../com_cls/define").Def;
 
 class wima extends BaseExecuter {
-  code = "wima";
+  code = D.CODE.WIMA;
   constructor(retryCnt, siteInfo, aca) {
     super(retryCnt, siteInfo, aca);
-    this.logger.debug("wima constructor");
+    this.logDebug(`${this.code} constructor`);
   }
   async exec() {
     this.logInfo("きた？", this.siteInfo.entry_url);

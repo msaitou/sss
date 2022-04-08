@@ -1,23 +1,7 @@
 const { initBrowserDriver, db } = require("../initter.js");
-const { pex } = require("./pexBase.js");
+const pBase = require("./pexBase");
 const config = require("config");
 const { Entry } = require("selenium-webdriver/lib/logging");
-// exports.main = async (logger) => {
-//   global.log.info("こっちに来たね");
-//   // site数で回す
-//   // DBからsiteを取得
-//   let recs = await db("www", "find", { kind: "data-traffic" });
-//   if (recs.length) {
-//     let driver = await initBrowserDriver();
-//     for (let rec of recs) {
-//       logger.info("rec", rec);
-//       //   await driver.get("http://google.com/");
-//       await driver.get(rec.entry_url);
-//       break; // test中
-//     }
-//     await driver.quit();
-//   }
-// };
 
 class PointWebCls {
   logger;
@@ -31,21 +15,20 @@ class PointWebCls {
     let targetAll = config[this.exeKind];
     // console.log(new Date().getHours());
     let firstKey = this.exeKind == "p_web_h" ? new Date().getHours() : "";
-    let targetMap = targetAll[firstKey];  // 今の時間のサイト毎のミッションを抽出
+    let targetMap = targetAll[firstKey]; // 今の時間のサイト毎のミッションを抽出
     if (targetMap && Object.keys(targetMap).length) {
+      let targetKeys = Object.keys(targetMap);
       let aca = await db("config", "findOne", { type: "login" });
+      let siteInfos = await db("www", "find", {
+        kind: "web-pc",
+        code: { $in: targetKeys },
+      });
       for (let [key, line] of Object.entries(targetMap)) {
         console.log(key, line);
-        this.execOperator(key, line, aca);
+        await this.execOperator(key, line, aca, siteInfos.filter(i => i.code === key)[0]);
       }
     } else this.logInfo("ミッションは登録されていません");
 
-    // // site数で回す
-    // // DBからsiteを取得
-    // let recs = await db("www", "find", {
-    //   kind: "data-traffic",
-    //   // code: "wima", // test中　TODO
-    // });
     // if (recs.length) {
     //   // let driver = await initBrowserDriver();
     //   for (let rec of recs) {
@@ -69,18 +52,18 @@ class PointWebCls {
   logWarn(...a) {
     (this ? this.logger : global.log).warn(a);
   }
-  async execOperator(code, missionList, aca) {
+  async execOperator(code, missionList, aca, siteInfo) {
     let opeCls = null;
     switch (code) {
       case "raku":
-        opeCls = new pex(0, missionList, aca);
+        // opeCls = new pex(0, missionList, aca);
         break;
       case "pex":
-        opeCls = new pex(0, missionList, aca);
+        opeCls = new pBase.pex(0, siteInfo, aca, missionList);
         break;
     }
     if (opeCls) {
-      await opeCls.main().catch(e =>{
+      await opeCls.main().catch((e) => {
         this.logWarn(e);
       });
     }

@@ -6,12 +6,11 @@ exports.db = async function (coll, method, cond = {}, doc) {
   let log = getLogInstance();
   // log.info(0);
   const mdb = require("mongodb");
-  //   global.db = db;
   // log.info(1);
   const dbClient = mdb.MongoClient;
   // log.info(2);
   try {
-    log.info("conf", conf);
+    // log.debug("conf", conf);
     let db = await dbClient.connect(`mongodb://${conf.db.host}/`);
     // log.info(3);
     const dbName = db.db("sm");
@@ -28,7 +27,7 @@ exports.db = async function (coll, method, cond = {}, doc) {
       case "update":
         let cnt = 0;
         if (cond) {
-          cnt = await collection.find(cond).count();
+          cnt = await collection.find(cond).countDocuments();
         }
         if (cnt) {
           res = await collection.updateOne(cond, { $set: doc });
@@ -76,7 +75,7 @@ const getDriverPath = async function () {
     const selenium = require("selenium-download");
     // Driverをダウンロードするディレクトリを指定
     const path = __dirname + "/bin";
-    log.info(path);
+    log.debug(path);
     try {
       // # Driverのダウンロードとアップデート
       await new Promise((resolve, reject) => {

@@ -3,22 +3,6 @@ const { raku } = require("./raku.js");
 const { moba } = require("./moba.js");
 const { uqmo } = require("./uqmo.js");
 const { wima} = require("./wima.js");
-// exports.main = async (logger) => {
-//   global.log.info("こっちに来たね");
-//   // site数で回す
-//   // DBからsiteを取得
-//   let recs = await db("www", "find", { kind: "data-traffic" });
-//   if (recs.length) {
-//     let driver = await initBrowserDriver();
-//     for (let rec of recs) {
-//       logger.info("rec", rec);
-//       //   await driver.get("http://google.com/");
-//       await driver.get(rec.entry_url);
-//       break; // test中
-//     }
-//     await driver.quit();
-//   }
-// };
 
 class LifeUtilCls {
   logger;
