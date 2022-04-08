@@ -62,7 +62,7 @@ class wima extends BaseExecuter {
                   cnt++;
                 }
               }
-              let mes = `${this.code} ${cnt}日分で${sum3}MBused`;
+              let mes = `${this.code} ${cnt}日分で${sum3}MB利`;
               // DBに書き込む
               await this.updateLutl(
                 { code: this.code },

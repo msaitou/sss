@@ -36,7 +36,7 @@ class moba extends BaseExecuter {
         // trimしてGB（単位）削って利用 加算が必要
         // 1.3 GB だったはず
         sum3 += this.getNumSize(pureText);
-        let mes = `${this.code} ${sum3}MB`;
+        let mes = `${this.code} ${sum3}MB残`;
         // DBに書き込む
         await this.updateLutl(
           { code: this.code },

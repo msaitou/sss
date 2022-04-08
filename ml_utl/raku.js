@@ -38,7 +38,7 @@ class raku extends BaseExecuter {
           sum3 += this.getNumSize(pureText);
           this.logInfo("楽", i, pureText);
         }
-        let mes = `${this.code} ${sum3}GB`;
+        let mes = `${this.code} 3日分で${sum3}GB利`;
         // DBに書き込む
         await this.updateLutl(
           { code: this.code },

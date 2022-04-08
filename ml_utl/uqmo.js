@@ -36,7 +36,7 @@ class uqmo extends BaseExecuter {
         // trimしてGB（単位）削って利用 加算が必要
         // 1.3 GB だったはず
         sum3 += this.getNumSize(pureText);
-        let mes = `${this.code} ${sum3}GBUsed`;
+        let mes = `${this.code} ${sum3}GB利`;
         // DBに書き込む
         await this.updateLutl(
           { code: this.code },
