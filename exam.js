@@ -22,3 +22,44 @@ exports.alone = async (logger) => {
     }
   });
 };
+
+// https://developers.google.com/gmail/api
+const { google } = require('googleapis');
+const path = require('path');
+const fs = require('fs');
+const credentials = require('./config/gCre.json');
+
+// // なんか認証トークンを取得するためのコードを取得する？
+// const { client_secret, client_id, redirect_uris } = credentials.installed;
+// const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+
+// const GMAIL_SCOPES = ['https://mail.google.com/'];
+
+// const url = oAuth2Client.generateAuthUrl({
+//   access_type: 'offline',
+//   prompt: 'consent',
+//   scope: GMAIL_SCOPES,
+// });
+
+// console.log('Authorize this app by visiting this url:', url);
+// //ブラウザで認証用URLを開く
+// const exec = require('child_process').exec;
+// exec('start ' + url.replaceAll('&', '^&')); //^&は&のエスケープ処理
+
+// // 認証コードの取得
+// Replace with the code you received from Google
+const code = '4/0AX4XfWhU_qkIidmjHZ7BPUR1gz8TInle66nQJwzxs42FVEYuR4Y6nmYSSmfYpEBYllSy2w';
+const { client_secret, client_id, redirect_uris } = credentials.installed;
+const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+
+const tokens = require('./config/token.json'); // 1度取得したtoken.json（refreshtoken）があれば
+oAuth2Client.setCredentials(tokens);  // 許可を取り消さない限り、永久に利用可能。
+
+oAuth2Client.getAccessToken().then(({token}) => {
+  console.log('retoken',token);
+});
+// oAuth2Client.getToken(code).then(({ tokens }) => {
+//   const tokenPath = path.join(__dirname, 'token.json');
+//   fs.writeFileSync(tokenPath, JSON.stringify(tokens));
+//   console.log('Access token and refresh token stored to token.json');
+// });

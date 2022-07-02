@@ -5,6 +5,9 @@ const { resolveObjectURL } = require("buffer");
 const { BaseWebDriverWrapper } = require("../BaseWebDriverWrapper");
 const { Login } = require("../com_cls/login");
 const D = require("../com_cls/define").Def;
+// https://developers.google.com/gmail/api
+const { google } = require('googleapis');
+const gCredential = require("../config/gCre.json");
 
 const Imap = require("node-imap"),
   inspect = require("util").inspect;
@@ -65,14 +68,36 @@ class PointMailClass extends BaseWebDriverWrapper {
     // このプロジェクトでは、通常のmailの期間を指定して受信に制限し、捌くのみとする。
     // DBからmailアカウントを取得
     let rec = await db("config", "findOne", { type: "mail" });
+    const { client_secret, client_id, redirect_uris } = gCredential.installed;
+    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+
+    const tokens = require("../config/token.json"); // 1度取得したtoken.json（refreshtoken）があれば
+    oAuth2Client.setCredentials(tokens); // 許可を取り消さない限り、永久に利用可能。
+
+    let tokenObj = await oAuth2Client.getAccessToken();
+    log.info(`token: ${tokenObj.token}`);
+    // .then(({token}) => {
+    //   console.log('retoken',token);
+    // });
+
+    // user=someuser@example.com^Aauth=Bearer ya29.vF9dft4qmTc2Nvb3RlckBhdHRhdmlzdGEuY29tCg^A^A
+    const _build_XOAuth2_token = (user = "", access_token = "") =>
+      Buffer.from(
+        [`user=${user}`, `auth=Bearer ${access_token}`, "", ""].join("\x01"),
+        "utf-8"
+      ).toString("base64");
+
     let imap = new Imap({
       user: rec.user,
       password: rec.password,
       host: rec.host,
       port: rec.port,
       tls: true,
+      xoauth2: _build_XOAuth2_token(rec.user, tokenObj.token),
       // debug: console.debug,
     });
+    // clonecopyfakeのgmailapiのoauthクライアントID
+    // {"installed":{"client_id":"565402329685-uuvouldfci20inm8b6ndr8848ug7khsn.apps.googleusercontent.com","project_id":"just-experience-353604","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"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","redirect_uris":["http://localhost"]}}
     let before = new Date();
     before.setHours(18, 0, 0, 0);
     let beforeNum = conf.p_mil.before ? conf.p_mil.before : 1;
