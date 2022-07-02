@@ -34,27 +34,29 @@ const { client_secret, client_id, redirect_uris } = credentials.installed;
 const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 // const GET_CODE_FLAG = true;
 const GET_CODE_FLAG = false;
-if (GET_CODE_FLAG) {
-  const GMAIL_SCOPES = ["https://mail.google.com/"];
-  const url = oAuth2Client.generateAuthUrl({
-    access_type: "offline",
-    prompt: "consent",
-    scope: GMAIL_SCOPES,
-  });
-  console.log("Authorize this app by visiting this url:", url);
-  // //ブラウザで認証用URLを開く
-  // const exec = require('child_process').exec;
-  // exec('start ' + url.replaceAll('&', '^&')); //^&は&のエスケープ処理
-} else {
-  // // 認証コードの取得
-  // Replace with the code you received from Google
-  const code = "4/0AX4XfWhpU4pDFr2mOd2FrijV32sPzgLd-9-nDBmaagYqyLJFJeChj_EvZPNrpBZ3MadbXg";
+if (!global.manual) {
+  if (GET_CODE_FLAG) {
+    const GMAIL_SCOPES = ["https://mail.google.com/"];
+    const url = oAuth2Client.generateAuthUrl({
+      access_type: "offline",
+      prompt: "consent",
+      scope: GMAIL_SCOPES,
+    });
+    console.log("Authorize this app by visiting this url:", url);
+    // //ブラウザで認証用URLを開く
+    // const exec = require('child_process').exec;
+    // exec('start ' + url.replaceAll('&', '^&')); //^&は&のエスケープ処理
+  } else {
+    // // 認証コードの取得
+    // Replace with the code you received from Google
+    const code = "4/0AX4XfWhpU4pDFr2mOd2FrijV32sPzgLd-9-nDBmaagYqyLJFJeChj_EvZPNrpBZ3MadbXg";
 
-  oAuth2Client.getToken(code).then(({ tokens }) => {
-    const tokenPath = path.join(__dirname, "token.json");
-    fs.writeFileSync(tokenPath, JSON.stringify(tokens));
-    console.log("Access token and refresh token stored to token.json");
-  });
+    oAuth2Client.getToken(code).then(({ tokens }) => {
+      const tokenPath = path.join(__dirname, "token.json");
+      fs.writeFileSync(tokenPath, JSON.stringify(tokens));
+      console.log("Access token and refresh token stored to token.json");
+    });
+  }
 }
 
 // 下リフレッシュトークンを利用した試し

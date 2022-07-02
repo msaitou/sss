@@ -14,6 +14,7 @@ async function start(mode) {
     // await db();
     switch (mode) {
       case "manual":
+        global.manual = true;
         const man = require("./exam.js");
         await man.alone(logger);
         break;
