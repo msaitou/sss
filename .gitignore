@@ -2,6 +2,6 @@ log/
 node_modules/
 bin/
 config/default.json
-config/token.json
+config/___________token.json
 config/prof/
 backup/

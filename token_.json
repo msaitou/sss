@@ -1,7 +1,0 @@
-{
-  "access_token": "ya29.a0ARrdaM8GO_MxdEDqiZXrK7uxS8QVcYy6_0LHr46AusDsGn4GrZCHxLzMbuWe18WL5E1Wi_tABD0ddevJm2AMt4VvXZG2yOE3uQPPMx7pr0UcENCEj9f5ZoqucMyXAtQBv6L85O0nn_Jt4488XTLzpHmpzqgX",
-  "refresh_token": "1//0ePlk8wqdpghOCgYIARAAGA4SNwF-L9IrIeeSrrjDRsxcNnapyjCCvf1jkvoZ__ca5gpKPZXoIdvLCutrKd-ec5I6mNYdVAGM0a8",
-  "scope": "https://www.googleapis.com/auth/gmail.readonly",
-  "token_type": "Bearer",
-  "expiry_date": 1655522572399
-}

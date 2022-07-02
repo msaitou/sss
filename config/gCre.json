@@ -1,11 +1,11 @@
 {
   "installed": {
-    "client_id": "565402329685-uuvouldfci20inm8b6ndr8848ug7khsn.apps.googleusercontent.com",
+    "client_id": "565402329685-el3m4a5gcrqg34cj3f8mn37sqp8diomd.apps.googleusercontent.com",
     "project_id": "just-experience-353604",
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
     "token_uri": "https://oauth2.googleapis.com/token",
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_secret": "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",
+    "client_secret": "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",
     "redirect_uris": ["http://localhost"]
   }
 }
