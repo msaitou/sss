@@ -2,16 +2,17 @@
   // IntelliSense を使用して利用可能な属性を学べます。
   // 既存の属性の説明をホバーして表示します。
   // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
+  // デバッグコンソールに標準出力が出ないのの対処記事↓
+  // https://komari.co.jp/blog/develop/frontend/355/
   "version": "0.2.0",
   "configurations": [
-
-    
     {
       "name": "debug P_MIL",
       "program": "${workspaceFolder}/index.js",
       "request": "launch",
       "skipFiles": ["<node_internals>/**"],
       "type": "pwa-node",
+      "outputCapture": "std",
       "args": ["P_MIL"]
     },
     {
@@ -20,6 +21,7 @@
       "request": "launch",
       "skipFiles": ["<node_internals>/**"],
       "type": "pwa-node",
+      "outputCapture": "std",
       "args": ["P_WEB_S"]
     },
     {
@@ -28,6 +30,7 @@
       "name": "debug L_UTL",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/index.js",
+      "outputCapture": "std",
       "args": ["L_UTL"]
     }
   ]

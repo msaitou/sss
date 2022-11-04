@@ -1,3 +1,4 @@
+// MissionPointMaILの大文字をファイル名にしてるつもり
 const { initBrowserDriver, db } = require("../initter");
 const { libUtil: util, libUtil } = require("../lib/util");
 const { Builder, By, until } = require("selenium-webdriver");
@@ -98,11 +99,10 @@ class PointMailClass extends BaseWebDriverWrapper {
     });
     // clonecopyfakeのgmailapiのoauthクライアントID
     // {"installed":{"client_id":"565402329685-uuvouldfci20inm8b6ndr8848ug7khsn.apps.googleusercontent.com","project_id":"just-experience-353604","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"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","redirect_uris":["http://localhost"]}}
-    let before = new Date();
-    before.setHours(18, 0, 0, 0);
-    let beforeNum = conf.p_mil.before ? conf.p_mil.before : 1;
-    before.setDate(before.getDate() - beforeNum);
-    this.logInfo(`${before}以降のメールを抽出します`);
+
+    // 抽出対象の　いつから（いつまで）の日付情報を作成
+    let sinceDates = this.setSinceDates();
+    this.logInfo(`${sinceDates[0].toLocaleString()} から ${sinceDates[1]?sinceDates[1].toLocaleString() + ' まで' : ''}のメールを抽出します`);
     let urlMap = {};
     if (true) {
       await new Promise((resolve, reject) => {
@@ -136,7 +136,11 @@ class PointMailClass extends BaseWebDriverWrapper {
               await imap.openBox(targetInfo.dir, true, async (err, box) => {
                 if (err) throw err;
                 // "Mar 1, 2022"
-                await imap.search([["SINCE", before]], (err, results) => {
+                let cond = [["SINCE", sinceDates[0]]];
+                if (sinceDates[1]) {
+                  cond.push(["SENTBEFORE", sinceDates[1]]);
+                }
+                await imap.search(cond, (err, results) => {
                   if (err) throw err;
                   logInfo(results);
                   if (results.length) {
@@ -211,6 +215,8 @@ class PointMailClass extends BaseWebDriverWrapper {
         ],
       };
     }
+
+
     this.logInfo("直前の前よね");
     let loginSiteList = [D.CODE.RAKU, "rin"];
     let aca = await db("config", "findOne", { type: "login" });
@@ -292,11 +298,11 @@ class PointMailClass extends BaseWebDriverWrapper {
         let isComp = false,
           cnt = 0;
         while (!isComp) {
-          this.logInfo("sleep", cnt++);
+          this.logDebug("sleep", cnt++);
           await this.sleep(1000);
           if (a.state_ === "fulfilled") {
             // fullfiledになってれば
-            this.logInfo("大丈夫らしい");
+            this.logInfo("大丈夫らしい", cnt+"秒");
             isComp = true;
           } else {
             if (cnt == 30) {
@@ -363,6 +369,33 @@ class PointMailClass extends BaseWebDriverWrapper {
       this.logWarn(e);
     }
   }
+  // 抽出対象の　いつから（いつまで）の日付情報を作成
+  setSinceDates() {
+    let dates = [];
+    ['since', 'since_to'].some(field => {
+      let tmpDate = new Date();
+      let minusDayNum = 1, hour = 18;
+      if (conf.p_mil[field] && conf.p_mil[field][0]) {
+        minusDayNum = conf.p_mil[field][0];
+        hour = conf.p_mil[field].length == 2 ? conf.p_mil[field][1] : hour; // 2つ目は時間
+      }
+      else if ('since_to' === field) {
+        // こっちのない場合はスキップ
+        return false; // continue
+      }
+      tmpDate.setHours(hour, 0, 0, 0);
+      tmpDate.setDate(tmpDate.getDate() - minusDayNum);
+      dates.push(tmpDate);
+    });
+    if (!conf.p_mil.since && conf.p_mil.before) {
+      // 古いbeforeの設定があれば一応採用
+      let tmpDate0 = new Date();
+      tmpDate0.setHours(18, 0, 0, 0);
+      tmpDate0.setDate(tmpDate0.getDate() - conf.p_mil.before);
+      dates[0] = tmpDate0;
+    }
+    return dates;
+  }
   // logInfo(...a) {
   //   (this ? this.logger : global.log).info(a);
   // }
@@ -370,6 +403,7 @@ class PointMailClass extends BaseWebDriverWrapper {
   //   (this ? this.logger : global.log).warn(a);
   // }
 }
+
 function getPointUrls(urlMap, target, content) {
   let contentRow = content.split("\n");
   let urls = [];
@@ -499,9 +533,9 @@ function getPointUrls(urlMap, target, content) {
         }
         break;
       case D.CODE.PTO:
-        // [Point] https://www.pointtown.com/ptu/r.g?rid=K3QaDpdq2kTJ
+        // 【コイン付】 https://www.pointtown.com/mail/click?t=zf&u=91c0ed988dd18aab3015b30f18294bde2326631e9575dfc21a60d7705037357b
         // https://www.pointtown.com/ptu/r.g?rid=cD6dGTZgBfVv
-        signs = ["[Point] ", "https://www.pointtown.com/ptu/r.g?rid="];
+        signs = ["【コイン付】", "https://www.pointtown.com/mail/click?t="];
         if (row.indexOf(signs[0]) > -1) {
           let url = "";
           // text/plain　前提

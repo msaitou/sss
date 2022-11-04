@@ -59,9 +59,12 @@ const thisLog = () => {
   log.configure({
     appenders: {
       out: { type: "stdout" },
-      app: { type: "dateFile", filename: "log/a.log", pattern: ".yyyyMMdd", keepFileExt: true },
+      app: { type: "dateFile", filename: "log/a.log", pattern: ".yyMMdd", keepFileExt: true },
+      wrapInfo: { type: 'logLevelFilter', appender: 'app', level: 'info' }
     },
-    categories: { default: { appenders: ["out", "app"], level: "all" } },
+    // categories: { default: { appenders: ["out", "app"], level: "all" } },
+    categories: { default: { appenders: ["out", 'wrapInfo'], level: "all" } },
+    
   });
   const logger = log.getLogger();
   logger.level = "all";

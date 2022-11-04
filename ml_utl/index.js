@@ -1,3 +1,4 @@
+// MissionLifeUTiLの大文字をファイル名にしてるつもり
 const { initBrowserDriver, db } = require("../initter.js");
 const { raku } = require("./raku.js");
 const { moba } = require("./moba.js");
