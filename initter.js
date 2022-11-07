@@ -58,13 +58,25 @@ const thisLog = () => {
   const log = require("log4js");
   log.configure({
     appenders: {
-      out: { type: "stdout" },
-      app: { type: "dateFile", filename: "log/a.log", pattern: ".yyMMdd", keepFileExt: true },
-      wrapInfo: { type: 'logLevelFilter', appender: 'app', level: 'info' }
+      // フォーマットリファレンス　https://log4js-node.github.io/log4js-node/layouts.html#pattern-format
+      out: {
+        type: "stdout",
+        layout: { type: "pattern", pattern: "[%d{yy-MM-dd hh:mm:ss} %[%.4p%]] %m ->%f{2} %l" },
+      },
+      app: {
+        type: "dateFile",
+        filename: "log/a.log",
+        pattern: "yyMMdd",
+        keepFileExt: true,
+        layout: { type: "pattern", pattern: "[%d{yy-MM-dd hh:mm:ss} %.4p] %m ->%f{2} %l" },
+      },
+      wrapInfo: { type: "logLevelFilter", appender: "app", level: "info" },
     },
     // categories: { default: { appenders: ["out", "app"], level: "all" } },
-    categories: { default: { appenders: ["out", 'wrapInfo'], level: "all" } },
-    
+    categories: {
+      // enableCallStack: true でフォーマットの%fや%lが有効になる
+      default: { appenders: ["out", "wrapInfo"], level: "all", enableCallStack: true },
+    },
   });
   const logger = log.getLogger();
   logger.level = "all";
@@ -110,9 +122,9 @@ exports.initBrowserDriver = async function (isMob = false, headless = true) {
   let service = new chrome.ServiceBuilder(driverPath).build();
   const chromeOptions = new chrome.Options();
   // https://selenium-world.net/selenium-tips/3519/
-  chromeOptions.addArguments(`--user-data-dir=${conf.chrome['user-data-dir']}`);
-  chromeOptions.addArguments(`--profile-directory=${conf.chrome['profile']}`);
-  chromeOptions.addArguments('--disable-blink-features=AutomationControlled');
+  chromeOptions.addArguments(`--user-data-dir=${conf.chrome["user-data-dir"]}`);
+  chromeOptions.addArguments(`--profile-directory=${conf.chrome["profile"]}`);
+  chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
   chromeOptions.addArguments("--lang=en");
   // アプリ外で操作したプロファイルでログイン中にし、アプリでそのプロファイルを利用する。
   // アプリ外で、どのプロファイルを使うか、デフォルトどのプロファイルを使うのがいいか。

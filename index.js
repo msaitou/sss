@@ -5,7 +5,7 @@ const MODE = { P_WEB_S: "P_WEB_S", P_WEB_H: "P_WEB_H", P_MOB: "P_MOB", P_MIL: "P
 const logger = require("./initter.js").log();
 global.log = logger;
 logger.info("start!");
-logger.info(process.argv);
+logger.debug(process.argv);
 const db = require("./initter.js").db;
 
 async function start(mode) {
@@ -31,7 +31,6 @@ async function start(mode) {
       case MODE.P_MOB:
         break;
       case MODE.P_MIL:
-        // 開封済みにする
         // ここにメールボックス作って、未受信のメールを受信する方法にしたい
         const Mail = require("./mp_mil/index.js").PointMailClass;
         const PMil = new Mail();

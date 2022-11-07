@@ -14,10 +14,7 @@ class Login {
         let rakuCom = new rakuCommon(this.cPara);
         await rakuCom.login2();
         break;
-      // ログインの振る舞いは共通にしたい。
-      // TOPページでログインしてることを確認。
-      // ログインしてなければ、ログインページへ遷移（遷移しなくてもいいやつはあると思う。）
-      // アカウントとパスワード入れて、ログイン
+      // これ不要なクラスの気がしてるので、以降ここに追加しないつもり。
       case D.CODE.PEX:
         let pexCom = new pBase.pexCommon(this.cPara);
         await pexCom.login();

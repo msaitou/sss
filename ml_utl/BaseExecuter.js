@@ -25,7 +25,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
         }
         await this.exec();
       } catch (e) {
-        this.logInfo(e);
+        this.logger.info(e);
         await this.driver.quit();
         this.driver = null;
       } finally {
@@ -42,7 +42,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
   // 取得結果をDBに書き込み
   async updateLutl(cond, doc) {
     let rec = await db("life_util", "update", cond, doc);
-    this.logInfo("update!!!");
+    this.logger.info("update!!!");
   }
   // 単位付きのサイズ数の文字列を数値だけ抽出
   getNumSize(pureText) {
@@ -94,7 +94,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
       // let register = By.css(selector);
       // let is = isExistEle(this.driver.findElements(register));
       var eles = await this.driver.wait(until.elementsLocated(By.css(sele)), time);
-      this.logInfo(`showFlag[${showFlag}] elelen[${eles.length}]`);
+      this.logger.info(`showFlag[${showFlag}] elelen[${eles.length}]`);
       if (showFlag && !!eles.length) {
         return true;
       } else if (!showFlag && !eles.length) {

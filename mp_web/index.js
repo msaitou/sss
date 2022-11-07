@@ -11,7 +11,7 @@ class PointWebCls {
     this.exeKind = kind ? kind.toLowerCase() : "";
   }
   async main() {
-    this.logger.info("PointWebCls main");
+    this.logger.info("PointWebCls main begin!");
     let targetAll = config[this.exeKind];
     // console.log(new Date().getHours());
     let firstKey = this.exeKind == "p_web_h" ? new Date().getHours() : "";
