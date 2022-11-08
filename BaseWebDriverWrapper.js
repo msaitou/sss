@@ -62,7 +62,7 @@ class BaseWebDriverWrapper {
   async isExistEle(sele, showFlag, time) {
     try {
       if (!sele) throw "is not param[0]";
-      showFlag = showFlag === void 0 ? true : false;
+      showFlag = showFlag === void 0 ? true : showFlag;
       time = time ? time : 0;
       let eles, exception;
       try {

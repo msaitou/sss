@@ -2,7 +2,6 @@ const { BaseExecuter } = require("./BaseExecuter.js");
 const { BaseWebDriverWrapper } = require("../BaseWebDriverWrapper");
 const { Builder, By, until } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
-const { Login } = require("../com_cls/login");
 
 class pexBase extends BaseExecuter {
   code = D.CODE.PEX;
@@ -10,92 +9,70 @@ class pexBase extends BaseExecuter {
   constructor(retryCnt, siteInfo, aca, missionList) {
     super(retryCnt, siteInfo, aca);
     this.missionList = missionList;
-    this.logger.debug(`${this.code} constructor`);
+    this.logger.debug(`${this.constructor.name} constructor`);
   }
   async exec() {
     // ■基本機能
-    // ログイン処理追加(最初に実行でも例外で落ちたあとこいつがキャプチャ必要で、失敗したらアテンション→DBに書いて、定期実行。日時も出す。)
     // ポイント取得処理追加(最後に実行)
     // 実行ミッションを実施
-
-    // this.logger.info("きた？", this.siteInfo.entry_url);
-    // let rakuCom = new rakuCommon({
-    //   retryCnt: this.retryCnt,
-    //   account: this.account,
-    //   logger: this.logger,
-    //   driver: this.driver,
-    //   siteInfo: this.siteInfo,
-    // });
-
-    // ログイン用の処理の中で、ログインしてなかったらそのページ開いて、何もしないことを統一
-    // let loginCls = new Login(0, this.account, this.logger, this.driver, this.siteInfo);
-    // await loginCls.login(this.code);
-    let pexCom = new pexCommon({
+    let para = {
       retryCnt: 0,
       account: this.account,
       logger: this.logger,
       driver: this.driver,
       siteInfo: this.siteInfo,
-    });
-    await pexCom.login();
-
-    // if (!isLoginNow) {
-    //   if (!loginCls) {
-    //     loginCls = new Login(0, aca, this.logger, this.driver, null);
-    //     this.logger.info("ログいんしました");
-    //   }
-    //   await loginCls.login(site);
-    //   isLoginNow = true;
-    // }
-
-    //$('rktn-btn[ratid="web-ecare-6"] button').click() // ログイン後の通信量ページへのリンク
-    // const seleList = [
-    //   "#d_home_2-5 > div > button > span.rktn-btn-name.ng-star-inserted", // 日毎データ量ページへのリンク
-    //   "div.daily__table div._last-column", // １日のデータ量テキスト
-    // ];
-    // if (this.isExistEle(seleList[0], true, 6000)) {
-    //   let ele = await this.getEle(seleList[0], 0);
-    //   await ele.click(); // 日毎のデータ量ページに遷移
-    //   // await this.driver.sleep(5000);
-    //   if (this.isExistEle(seleList[1], true, 6000)) {
-    //     let eles = await this.getEles(seleList[1]); // 日毎の数字
-    //     let sum3 = 0;
-    //     for (let i = 1; i < 4; i++) {
-    //       let pureText = await eles[i].getText();
-    //       // trimしてGB（単位）削って利用 加算が必要
-    //       // 1.3 GB だったはず
-    //       sum3 += this.getNumSize(pureText);
-    //       this.logger.info("楽", i, pureText);
-    //     }
-    //     let mes = `${this.code} ${sum3}GB`;
-    //     // DBに書き込む
-    //     await this.updateLutl(
-    //       { code: this.code },
-    //       { date: new Date(), used: sum3, disp_mess: mes, code: this.code }
-    //     );
-    //   }
-    // }
+    };
+    let pexCom = new pexCommon(para);
+    let islogin = await pexCom.login();
+    if (islogin) {
+      for (let i in this.missionList) {
+        let mission = this.missionList[i];
+        let execCls = null;
+        switch (mission.main) {
+          case D.MISSION.chirashi:
+            execCls = new pexChirashi(para);
+            break;
+          case D.MISSION.news:
+            break;
+        }
+        if (execCls) {
+          await execCls.do();
+        }
+        // ミッションの状況更新
+        // サブミッションの場合、次のサブミッション開始日を更新
+      }
+      // this.missionList.forEach(async (mission) => {
+      //   let execCls = null;
+      //   switch (mission.main) {
+      //     case D.MISSION.chirashi:
+      //       execCls = new pexChirashi(para);
+      //       break;
+      //     case D.MISSION.news:
+      //       break;
+      //   }
+      //   await execCls.do();
+      //   // ミッションの状況更新
+      //   // サブミッションの場合、次のサブミッション開始日を更新
+      // });
+      // ポイント数抽出
+    }
   }
-  // isExistEle(selector, showFlag) {
-  //   By register = By.cssSelector(selector);
-  //   boolean is = isExistEle(driver.findElements(register), logg);
-  // }
 }
-
-// class pexCommon extends loginBase {
-class pexCommon extends BaseWebDriverWrapper {
+class pexMissonSupper extends BaseWebDriverWrapper {
   code = D.CODE.PEX;
   para;
-  // retryCnt;
-  // account;
-  // logger;
-  // driver;
-  // siteInfo;
   constructor(para) {
     super();
     this.para = para;
     this.setDriver(this.para.driver);
-    this.logger.debug("pexCommon constructor");
+    // this.logger.debug(`${this.constructor.name} constructor`);
+  }
+}
+// このサイトの共通処理クラス
+class pexCommon extends pexMissonSupper {
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
   }
   async login() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
@@ -106,12 +83,12 @@ class pexCommon extends BaseWebDriverWrapper {
     // let ele = await driver.findElements(By.css(seleIsLoggedIn));
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
-    if (this.isExistEle(seleIsLoggedIn, false, 2000)) {
+    if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
       // リンクが存在することを確認
       let seleLoginLink = "li.header-mymenu_login>a";
       // logger.info(ele.length);
-      if (this.isExistEle(seleLoginLink, true, 2000)) {
+      if (await this.isExistEle(seleLoginLink, true, 2000)) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
         await ele.click();
@@ -158,20 +135,63 @@ class pexCommon extends BaseWebDriverWrapper {
         await ele.click();
         this.sleep(4000);
         // ログインできてるか、チェック
-        if (this.isExistEle(seleIsLoggedIn, true, 2000)) {
+        if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
           // ログインできてるのでOK
           logger.info("ログインできました！");
+          return true;
         } else {
           // ログインできてないので、メール
           logger.info("ログインできませんでした");
+          return;
         }
-
-
       } else {
         // 未ログインで、ログインボタンが見つかりません。
+        return;
       }
     } else logger.debug("ログイン中なのでログインしません");
-
+    return true;
+  }
+}
+// オリチラ
+class pexChirashi extends pexMissonSupper {
+  firstUrl = "https://pex.jp/";
+  targetUrl = "https://pex.jp/chirashi";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // ポイントゲットのチャンスは1日2回チラシが更新される朝6時と夜20時
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await driver.get(this.firstUrl); // 最初のページ表示
+    // URLをクリックか抽出してURLを開く　これ以降は共通？
+    await driver.get(this.targetUrl); // チラシの最初のページ表示
+    // pexは同一ページを更新（タブ変更不要）
+    // 多分共通なのでパーツを読み込んでそっちで処理をやる
+    let sele = ["ul>li>figure a"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      logger.debug('kita?');
+      let ele = await this.getEles(sele[0], 2000);
+      await ele[0].click(); // 多分別タブ
+      await this.closeOtherWindow(this.driver);
+    }
+  }
+  /**
+   * TODO 親クラスとかに移植予定
+   * @param driver
+   */
+  async closeOtherWindow(driver) {
+    let wid = await driver.getWindowHandle();
+    let widSet = await driver.getAllWindowHandles();
+    for (let id of widSet) {
+      if (id != wid) {
+        // 最後に格納したウインドウIDにスイッチして閉じる
+        await driver.switchTo().window(id);
+        await driver.close();
+      }
+    }
+    // 元のウインドウIDにスイッチ
+    await driver.switchTo().window(wid);
   }
 }
 // module.

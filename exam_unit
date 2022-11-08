@@ -1,0 +1,32 @@
+const { Executor } = require("selenium-webdriver/lib/command.js");
+const { initBrowserDriver, db } = require("./initter.js");
+// DBへの試しのデータ挿入更新
+async function dbPointUpsert() {
+  let date = new Date();
+  let idStr =
+    date.getFullYear().toString().substring(2) +
+    (date.getMonth() + 1).toString().padStart(2, "0") +
+    date.getDate().toString().padStart(2, "0");
+  let doc = {
+    _id: idStr,
+    pex: { p: 0, date: date, exch: null, diff: 0 },
+    mod_date: date,
+    diff: 0,
+    total: 0,
+  };
+  console.log("1");
+  // coll, method, cond = {}, doc
+  await db("point", "update", { _id: idStr }, doc);
+  console.log("2");
+}
+
+async function exe() {
+  console.log(process.argv);
+  switch (process.argv[2]) {
+    case "dbPointInsert":
+      await dbPointUpsert();
+      break;
+  }
+  console.log("end--");
+}
+exe();
