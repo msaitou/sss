@@ -1,7 +1,7 @@
 const { initBrowserDriver, db } = require("../initter.js");
 const { libUtil: util, libUtil } = require("../lib/util.js");
 const { Builder, By, until } = require("selenium-webdriver");
-const { BaseWebDriverWrapper } = require("../BaseWebDriverWrapper");
+const { BaseWebDriverWrapper } = require("../base-webdriver-wrapper");
 
 class BaseExecuter extends BaseWebDriverWrapper {
   logger;

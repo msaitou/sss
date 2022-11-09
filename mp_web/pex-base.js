@@ -1,9 +1,10 @@
-const { BaseExecuter } = require("./BaseExecuter.js");
-const { BaseWebDriverWrapper } = require("../BaseWebDriverWrapper");
+const { BaseExecuter } = require("./base-executer.js");
+const { BaseWebDriverWrapper } = require("../base-webdriver-wrapper");
+const { libUtil } = require("../lib/util.js");
 const { Builder, By, until } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 
-class pexBase extends BaseExecuter {
+class PexBase extends BaseExecuter {
   code = D.CODE.PEX;
   missionList;
   constructor(retryCnt, siteInfo, aca, missionList) {
@@ -22,7 +23,7 @@ class pexBase extends BaseExecuter {
       driver: this.driver,
       siteInfo: this.siteInfo,
     };
-    let pexCom = new pexCommon(para);
+    let pexCom = new PexCommon(para);
     let islogin = await pexCom.login();
     if (islogin) {
       for (let i in this.missionList) {
@@ -30,9 +31,10 @@ class pexBase extends BaseExecuter {
         let execCls = null;
         switch (mission.main) {
           case D.MISSION.chirashi:
-            execCls = new pexChirashi(para);
+            execCls = new PexChirashi(para);
             break;
           case D.MISSION.news:
+            execCls = new PexNewsWatch(para);
             break;
         }
         if (execCls) {
@@ -58,7 +60,7 @@ class pexBase extends BaseExecuter {
     }
   }
 }
-class pexMissonSupper extends BaseWebDriverWrapper {
+class PexMissonSupper extends BaseWebDriverWrapper {
   code = D.CODE.PEX;
   para;
   constructor(para) {
@@ -69,7 +71,7 @@ class pexMissonSupper extends BaseWebDriverWrapper {
   }
 }
 // このサイトの共通処理クラス
-class pexCommon extends pexMissonSupper {
+class PexCommon extends PexMissonSupper {
   constructor(para) {
     super(para);
     this.logger.debug(`${this.constructor.name} constructor`);
@@ -152,51 +154,79 @@ class pexCommon extends pexMissonSupper {
     return true;
   }
 }
+const { PartsChirashi } = require("./parts/parts-chirashi.js");
 // オリチラ
-class pexChirashi extends pexMissonSupper {
+class PexChirashi extends PexMissonSupper {
   firstUrl = "https://pex.jp/";
   targetUrl = "https://pex.jp/chirashi";
+  ChirashiCls;
   constructor(para) {
     super(para);
+    this.ChirashiCls = new PartsChirashi(para);
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   // ポイントゲットのチャンスは1日2回チラシが更新される朝6時と夜20時
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await driver.get(this.firstUrl); // 最初のページ表示
-    // URLをクリックか抽出してURLを開く　これ以降は共通？
-    await driver.get(this.targetUrl); // チラシの最初のページ表示
-    // pexは同一ページを更新（タブ変更不要）
-    // 多分共通なのでパーツを読み込んでそっちで処理をやる
-    let sele = ["ul>li>figure a"];
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      logger.debug('kita?');
-      let ele = await this.getEles(sele[0], 2000);
-      await ele[0].click(); // 多分別タブ
-      await this.closeOtherWindow(this.driver);
-    }
+    await this.ChirashiCls.do(this.targetUrl);
+    logger.debug("owari?chirashi");
   }
-  /**
-   * TODO 親クラスとかに移植予定
-   * @param driver
-   */
-  async closeOtherWindow(driver) {
-    let wid = await driver.getWindowHandle();
-    let widSet = await driver.getAllWindowHandles();
-    for (let id of widSet) {
-      if (id != wid) {
-        // 最後に格納したウインドウIDにスイッチして閉じる
-        await driver.switchTo().window(id);
-        await driver.close();
+}
+// みんなのNEWSウォッチ
+class PexNewsWatch extends PexMissonSupper {
+  firstUrl = "https://pex.jp/";
+  targetUrl = "https://pex.jp/point_news";
+  // ChirashiCls;
+  constructor(para) {
+    super(para);
+    // this.ChirashiCls = new PartsChirashi(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // ポイントゲットのチャンスは1日2回チラシが更新される朝6時と夜20時
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await driver.get(this.firstUrl); // 最初のページ表示
+    await driver.get(this.targetUrl); // 操作ページ表示
+    let sele = [
+      "ul#point-action-0>li.pt.ungained",
+      "div.panel_img",
+      "td>input[type='submit']",
+      "a>div.go_top",
+    ];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      // 基本は5回ループ
+      let repeatNum = eles.length === 3 ? 5 : eles.length === 2 ? 3 : 1;
+      for (let i = 0; i < repeatNum; i++) {
+        eles = await this.getEles(sele[1], 2000);
+        let selePart = ["div.panel_label>span.emo_action", "img"];
+        for (let j = eles.length - 1; j >= 0; j--) {
+          // なんか既読じゃなかったらみたいな条件あり
+          if (await this.isExistElesFromEle(eles[j], selePart[0], false, 2000)) {
+            let ele0 = await this.getElesFromEles(eles[j], selePart[1], 2000);
+            await this.clickEle(ele0[0], 2000); // 同一ページを切り替えてます
+            // リアクションを選ぶ
+            let eles1 = await this.getEles(sele[2], 2000);
+            // ランダムで。
+            let choiceNum = libUtil.getRandomInt(0, eles1.length);
+            // TODO クリック場所へスクロールが必要（画面に表示しないとだめぽい）
+            await this.clickEle(eles1[choiceNum], 2000); // 同一ページを切り替えてます
+            if (await this.isExistEle(sele[3], true, 2000)) {
+              let ele = await this.getEle(sele[3], 2000);
+              await this.clickEle(ele, 2000); // newsのトップページへ戻る
+              break;
+            }
+          }
+        }
       }
-    }
-    // 元のウインドウIDにスイッチ
-    await driver.switchTo().window(wid);
+    } else logger.info("今日はもう獲得済み");
+    logger.debug("owari?newswatch");
   }
 }
 // module.
-exports.pexCommon = pexCommon;
+exports.PexCommon = PexCommon;
 // module.
-exports.pex = pexBase;
+exports.Pex = PexBase;
 // module.
 // exports = { pex: pexBase, pexCommon: pexCommon };

@@ -1,5 +1,7 @@
 const { Executor } = require("selenium-webdriver/lib/command.js");
 const { initBrowserDriver, db } = require("./initter.js");
+const { Builder, By, until } = require("selenium-webdriver");
+
 // DBへの試しのデータ挿入更新
 async function dbPointUpsert() {
   let date = new Date();
@@ -19,12 +21,36 @@ async function dbPointUpsert() {
   await db("point", "update", { _id: idStr }, doc);
   console.log("2");
 }
-
+async function eleFromEleWait() {
+  let driver = await initBrowserDriver();
+  await driver.get("https://ecnavi.jp/");
+  let eles = await driver.findElements(By.css("nav>ul>li"));
+  for (let i = 0; i < eles.length; i++) {
+    console.log(i);
+    let ele = null;
+    try{
+      ele = await eles[i].findElements(By.css("a"));
+    }
+    catch(e) {
+      console.log('no such!');
+    }
+    if (ele && ele.length) {
+      // console.log(ele);
+      let tex = await ele[0].getText();
+      console.log("ari[" + tex);
+    }
+  }
+  driver.quit();
+  console.log("owari");
+}
 async function exe() {
   console.log(process.argv);
   switch (process.argv[2]) {
     case "dbPointInsert":
       await dbPointUpsert();
+      break;
+    case "eleFromEleWait":
+      await eleFromEleWait();
       break;
   }
   console.log("end--");

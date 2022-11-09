@@ -3,7 +3,7 @@ const { initBrowserDriver, db } = require("../initter");
 const { libUtil: util, libUtil } = require("../lib/util");
 const { Builder, By, until } = require("selenium-webdriver");
 const { resolveObjectURL } = require("buffer");
-const { BaseWebDriverWrapper } = require("../BaseWebDriverWrapper");
+const { BaseWebDriverWrapper } = require("../base-webdriver-wrapper");
 const { Login } = require("../com_cls/login");
 const D = require("../com_cls/define").Def;
 const conf = require("config");
@@ -157,7 +157,7 @@ class PointMailClass extends BaseWebDriverWrapper {
       this.logWarn(e);
     }
   }
-  async getElesFromEle(ele, sele, time) {
+  async getElesFromEles(ele, sele, time) {
     try {
       if (!sele) throw "is not param[1]";
       time = time ? time : 0;

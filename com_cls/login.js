@@ -1,5 +1,5 @@
 const { rakuCommon } = require("../com_cls/c_raku.js");
-const pBase = require("../mp_web/pexBase"); // 同じファイルで別クラス呼ぶときは、こうしなきゃ行けないかも
+const pBase = require("../mp_web/pex-base"); // 同じファイルで別クラス呼ぶときは、こうしなきゃ行けないかも
 const D = require("./define").Def;
 
 class Login {

@@ -1,7 +1,7 @@
 const { initBrowserDriver, db } = require("../initter.js");
 const { libUtil: util, libUtil } = require("../lib/util.js");
 const { Builder, By, until } = require("selenium-webdriver");
-const { BaseWebDriverWrapper } = require("../BaseWebDriverWrapper");
+const { BaseWebDriverWrapper } = require("../base-webdriver-wrapper");
 
 class BaseExecuter extends BaseWebDriverWrapper {
   logger;
@@ -76,7 +76,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
       this.logWarn(e);
     }
   }
-  async getElesFromEle(ele, sele, time) {
+  async getElesFromEles(ele, sele, time) {
     try {
       if (!sele) throw "is not param[1]";
       time = time ? time : 0;

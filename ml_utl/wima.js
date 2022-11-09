@@ -50,11 +50,11 @@ class wima extends BaseExecuter {
             // 日別の通信量へ
             if (this.isExistEle(seleList[3], true, 6000)) {
               var trEles = await this.getEles(seleList[3], 0);
-              trEles = await this.getElesFromEle(trEles[0], "tr", 5000);
+              trEles = await this.getElesFromEles(trEles[0], "tr", 5000);
               let max = trEles.length;
               let cnt = 0, sum3 = 0;
               for (let i = max - 1; i > max - 4; i--) {
-                let eles = await this.getElesFromEle(trEles[i], "td", 5000);
+                let eles = await this.getElesFromEles(trEles[i], "td", 5000);
                 let pureText = await eles[3].getText();
                 let tmpTxt = this.getNumSize(pureText);
                 if (!isNaN(tmpTxt)) {

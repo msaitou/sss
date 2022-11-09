@@ -49,14 +49,23 @@ class BaseWebDriverWrapper {
       this.logger.warn(e);
     }
   }
-  async getElesFromEle(ele, sele, time) {
+  async getElesFromEles(ele, sele, time) {
     try {
       if (!sele) throw "is not param[1]";
       time = time ? time : 0;
-      return await ele.findElements(By.css(sele), time);
+      return await ele.findElements(By.css(sele));
     } catch (e) {
       this.logger.warn(e);
     }
+  }
+  /**
+   * 要素をクリックして指定時間寝る
+   * @param {*} ele
+   * @param {*} time
+   */
+  async clickEle(ele, time) {
+    await ele.click();
+    await this.sleep(time);
   }
 
   async isExistEle(sele, showFlag, time) {
@@ -82,6 +91,45 @@ class BaseWebDriverWrapper {
     } catch (e) {
       this.logger.warn(e);
     }
+  }
+  async isExistElesFromEle(ele, sele, showFlag, time) {
+    try {
+      if (!sele) throw "is not param[0]";
+      showFlag = showFlag === void 0 ? true : showFlag;
+      time = time ? time : 0;
+      let eles, exception;
+      try {
+        eles = await ele.findElements(By.css(sele));
+      } catch (e) {
+        if (showFlag) exception = e;
+        eles = [];
+      }
+      this.logger.info(`showFlag[${showFlag}] elelen[${eles.length}]`);
+      if (showFlag && !!eles.length) {
+        return true; // 見つけようと思って見つかった
+      } else if (!showFlag && !eles.length) {
+        return true; // 見つからないと思って見つからない
+      } // else // 見つからないと思ったけど見つかった
+    } catch (e) {
+      this.logger.warn(e);
+    }
+  }
+  /**
+   * 直前に開いたタブを閉じる
+   * @param driver
+   */
+  async closeOtherWindow(driver) {
+    let wid = await driver.getWindowHandle();
+    let widSet = await driver.getAllWindowHandles();
+    for (let id of widSet) {
+      if (id != wid) {
+        // 最後に格納したウインドウIDにスイッチして閉じる
+        await driver.switchTo().window(id);
+        await driver.close();
+      }
+    }
+    // 元のウインドウIDにスイッチ
+    await driver.switchTo().window(wid);
   }
 }
 exports.BaseWebDriverWrapper = BaseWebDriverWrapper;

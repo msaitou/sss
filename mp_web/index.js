@@ -1,5 +1,5 @@
 const { initBrowserDriver, db } = require("../initter.js");
-const pBase = require("./pexBase");
+const pBase = require("./pex-base");
 const config = require("config");
 const { Entry } = require("selenium-webdriver/lib/logging");
 
@@ -59,7 +59,7 @@ class PointWebCls {
         // opeCls = new pex(0, missionList, aca);
         break;
       case "pex":
-        opeCls = new pBase.pex(0, siteInfo, aca, missionList);
+        opeCls = new pBase.Pex(0, siteInfo, aca, missionList);
         break;
     }
     if (opeCls) {
