@@ -14,7 +14,6 @@ class PexBase extends BaseExecuter {
   }
   async exec() {
     // ■基本機能
-    // ポイント取得処理追加(最後に実行)
     // 実行ミッションを実施
     let para = {
       retryCnt: 0,
@@ -38,25 +37,31 @@ class PexBase extends BaseExecuter {
             break;
         }
         if (execCls) {
-          await execCls.do();
+          this.logger.info(`${mission.main} 開始--`);
+          let res = await execCls.do();
+          this.logger.info(`${mission.main} 終了--`);
+          if (mission["_id"]) {
+            // ミッションの状況更新
+            // サブミッションの場合、次のサブミッション開始日を更新
+          }
         }
-        // ミッションの状況更新
-        // サブミッションの場合、次のサブミッション開始日を更新
       }
-      // this.missionList.forEach(async (mission) => {
-      //   let execCls = null;
-      //   switch (mission.main) {
-      //     case D.MISSION.chirashi:
-      //       execCls = new pexChirashi(para);
-      //       break;
-      //     case D.MISSION.news:
-      //       break;
-      //   }
-      //   await execCls.do();
-      //   // ミッションの状況更新
-      //   // サブミッションの場合、次のサブミッション開始日を更新
-      // });
-      // ポイント数抽出
+      // ポイント数取得し保持
+      await this.saveNowPoint();
+    }
+  }
+  async saveNowPoint() {
+    let startPage = "https://pex.jp/";
+    let pointPage = "https://pex.jp/user/point_passbook/all";
+    await this.driver.get(startPage);
+    await this.driver.get(pointPage);
+    await this.driver.sleep(3000);
+    let sele = ["dl.point_area>dd>span"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele = await this.driver.findElement(By.css(sele[0]));
+      let nakedNum = await ele.getText();
+      this.logger.info("now point total:" + nakedNum);
+      await this.pointSummary(this.code, nakedNum);
     }
   }
 }
@@ -177,51 +182,70 @@ class PexChirashi extends PexMissonSupper {
 class PexNewsWatch extends PexMissonSupper {
   firstUrl = "https://pex.jp/";
   targetUrl = "https://pex.jp/point_news";
-  // ChirashiCls;
   constructor(para) {
     super(para);
-    // this.ChirashiCls = new PartsChirashi(para);
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   // ポイントゲットのチャンスは1日2回チラシが更新される朝6時と夜20時
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await driver.get(this.firstUrl); // 最初のページ表示
-    await driver.get(this.targetUrl); // 操作ページ表示
-    let sele = [
-      "ul#point-action-0>li.pt.ungained",
-      "div.panel_img",
-      "td>input[type='submit']",
-      "a>div.go_top",
-    ];
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      let eles = await this.getEles(sele[0], 2000);
-      // 基本は5回ループ
-      let repeatNum = eles.length === 3 ? 5 : eles.length === 2 ? 3 : 1;
-      for (let i = 0; i < repeatNum; i++) {
-        eles = await this.getEles(sele[1], 2000);
-        let selePart = ["div.panel_label>span.emo_action", "img"];
-        for (let j = eles.length - 1; j >= 0; j--) {
-          // なんか既読じゃなかったらみたいな条件あり
-          if (await this.isExistElesFromEle(eles[j], selePart[0], false, 2000)) {
-            let ele0 = await this.getElesFromEles(eles[j], selePart[1], 2000);
-            await this.clickEle(ele0[0], 2000); // 同一ページを切り替えてます
-            // リアクションを選ぶ
-            let eles1 = await this.getEles(sele[2], 2000);
-            // ランダムで。
-            let choiceNum = libUtil.getRandomInt(0, eles1.length);
-            // TODO クリック場所へスクロールが必要（画面に表示しないとだめぽい）
-            await this.clickEle(eles1[choiceNum], 2000); // 同一ページを切り替えてます
-            if (await this.isExistEle(sele[3], true, 2000)) {
-              let ele = await this.getEle(sele[3], 2000);
-              await this.clickEle(ele, 2000); // newsのトップページへ戻る
-              break;
+    let res = D.STATUS.FAIL;
+    try {
+      await driver.get(this.firstUrl); // 最初のページ表示
+      await driver.get(this.targetUrl); // 操作ページ表示
+      let sele = [
+        "ul#point-action-0>li.pt.ungained",
+        "div.panel_img",
+        "td>input[type='submit']",
+        "a>div.go_top",
+        "ul#point-action-",
+      ];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        // let eles = await this.getEles(sele[0], 2000);
+        // let repeatNum = eles.length === 3 ? 5 : eles.length === 2 ? 3 : 1;
+        let eles;
+        // 基本は5回ループ
+        let repeatNum = 0;
+        for (let i = 0; i < 6; i++) {
+          let tmpSele = sele[4] + i;
+          let tmpEle = await this.getEle(tmpSele, 2000);
+          if (await tmpEle.isDisplayed()) {
+            repeatNum = 5 - i;
+            break;
+          }
+        }
+        let cnt = 0;
+        for (let i = 0; i < repeatNum; i++) {
+          eles = await this.getEles(sele[1], 2000);
+          let selePart = ["div.panel_label>span.emo_action", "img"];
+          for (let j = eles.length - 1; j >= 0; j--) {
+            // なんか既読じゃなかったらみたいな条件あり
+            if (await this.isExistElesFromEle(eles[j], selePart[0], false, 2000)) {
+              let ele0 = await this.getElesFromEles(eles[j], selePart[1], 2000);
+              await this.clickEle(ele0[0], 2000); // 同一ページを切り替えてます
+              // リアクションを選ぶ
+              let eles1 = await this.getEles(sele[2], 2000);
+              // ランダムで。
+              let choiceNum = libUtil.getRandomInt(0, eles1.length);
+              // クリック場所へスクロールが必要（画面に表示しないとだめぽい）
+              await this.clickEle(eles1[choiceNum], 2000); // 同一ページを切り替えてます
+              cnt++;
+              if (await this.isExistEle(sele[3], true, 2000)) {
+                let ele = await this.getEle(sele[3], 2000);
+                await this.clickEle(ele, 2000); // newsのトップページへ戻る
+                break;
+              }
             }
           }
         }
-      }
-    } else logger.info("今日はもう獲得済み");
-    logger.debug("owari?newswatch");
+        if (repeatNum === cnt) {
+          res = D.STATUS.DONE;
+        }
+      } else logger.info("今日はもう獲得済み");
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
   }
 }
 // module.

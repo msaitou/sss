@@ -64,6 +64,7 @@ class BaseWebDriverWrapper {
    * @param {*} time
    */
   async clickEle(ele, time) {
+    await this.driver.actions().scroll(0, 0, 0, 0, ele).perform();
     await ele.click();
     await this.sleep(time);
   }

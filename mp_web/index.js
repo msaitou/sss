@@ -9,42 +9,57 @@ class PointWebCls {
   constructor(kind) {
     this.logger = global.log;
     this.exeKind = kind ? kind.toLowerCase() : "";
+    this.logger.debug(`${this.constructor.name} constructor`);
   }
-  async main() {
+  async main(missionMap) {
     this.logger.info("PointWebCls main begin!");
-    let targetAll = config[this.exeKind];
-    // console.log(new Date().getHours());
-    let firstKey = this.exeKind == "p_web_h" ? new Date().getHours() : "";
-    let targetMap = targetAll[firstKey]; // 今の時間のサイト毎のミッションを抽出
-    if (targetMap && Object.keys(targetMap).length) {
-      let targetKeys = Object.keys(targetMap);
+    if (missionMap && Object.keys(missionMap).length) {
+      let targetKeys = Object.keys(missionMap);
+ 
       let aca = await db("config", "findOne", { type: "login" });
       let siteInfos = await db("www", "find", {
         kind: "web-pc",
         code: { $in: targetKeys },
       });
-      for (let [key, line] of Object.entries(targetMap)) {
-        console.log(key, line);
+      for (let [key, line] of Object.entries(missionMap)) {
         await this.execOperator(key, line, aca, siteInfos.filter(i => i.code === key)[0]);
       }
     } else this.logInfo("ミッションは登録されていません");
-
-    // if (recs.length) {
-    //   // let driver = await initBrowserDriver();
-    //   for (let rec of recs) {
-    //     this.logger.info("rec", rec);
-    //     // TODO ログインアカウントとパスワードを取得して、次の処理に渡す
-    //     let aca = await db("config", "findOne", { type: "login" });
-    //     // this.logger.info('aca', aca);
-    //     //   await driver.get("http://google.com/");
-    //     // ここで各サイトのスクレイピングクラスに処理を移す
-    //     await getOperatorCls(rec.code, rec, aca);
-
-    //     // await driver.get(rec.entry_url);
-    //     // break; // test中
-    //   }
-    //   // await driver.quit();
+  }
+  /**
+   * 単体実行の入口（デバック実行含む）
+   */
+  async once() {
+    let targetAll = config[this.exeKind];
+    let missionMap = targetAll['']; // 今の時間のサイト毎のミッションを抽出
+    // "": {
+    //   "pex": [
+    //     { "main": "news", "sub": "" },
+    //     { "main": "chirashi", "sub": "1" }
+    //   ]
     // }
+
+    await this.main(missionMap);
+  }
+  
+  /**
+   * 定期実行の入口
+   */
+   async endless() {
+    let count = 0;
+    const countUp = () => {
+      console.log(count++);
+      // TODO 
+      let missionMap = {};
+      this.main(missionMap);
+    }
+    await setInterval(countUp, 10000);
+    // DBのミッションキューが今日か
+    // 今日出ない場合、その時点のミッションキューテーブルデータをアーカイブして、
+    // クリアした今日のミッションテンプレートを更新
+    // いま時点で未実行のミッションを抽出
+    // main()に未実行ミッションリストを渡す　同期的に
+    // 5分ごとにエンドレス・・
   }
   logInfo(...a) {
     (this ? this.logger : global.log).info(a);

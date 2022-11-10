@@ -1,7 +1,14 @@
 // pointgetter(web),pointgetter(mobile),life-utility,pointgetter(mail)
 // の4種で同じプログラム（入り口）を利用する。
 // 起動時に、どのモードか分ける。
-const MODE = { P_WEB_S: "P_WEB_S", P_WEB_H: "P_WEB_H", P_MOB: "P_MOB", P_MIL: "P_MIL", L_UTL: "L_UTL" ,manual:"manual"};
+const MODE = {
+  P_WEB_S: "P_WEB_S",
+  P_WEB_H: "P_WEB_H",
+  P_MOB: "P_MOB",
+  P_MIL: "P_MIL",
+  L_UTL: "L_UTL",
+  manual: "manual",
+};
 const logger = require("./initter.js").log();
 global.log = logger;
 logger.info("start!");
@@ -18,15 +25,16 @@ async function start(mode) {
         const man = require("./exam.js");
         await man.alone(logger);
         break;
-      case MODE.P_WEB_S:  // 単発（開発用）
-      case MODE.P_WEB_H:  // 定期実行用
-        // console.log("pex");
-        // const exam = require("./exam.js");
-        // // const exam = new Exam();
-        // await exam.main(logger);
+      case MODE.P_WEB_S: // 単発（開発用）
+      case MODE.P_WEB_H: // 定期実行用
         const Web = require("./mp_web/index.js").PointWebCls;
         const PWeb = new Web(mode);
-        await PWeb.main();
+        if (mode === MODE.P_WEB_S) {
+          await PWeb.once();
+        }
+        else {
+          await PWeb.endless();
+        }
         break;
       case MODE.P_MOB:
         break;
@@ -58,8 +66,7 @@ async function start(mode) {
 }
 if (process.argv[2] && MODE[process.argv[2]]) {
   start(process.argv[2]);
-}
-else {
+} else {
   console.log(`引数は、${Object.keys(MODE)} のどれかです！`);
   process.exit();
 }

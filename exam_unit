@@ -28,11 +28,10 @@ async function eleFromEleWait() {
   for (let i = 0; i < eles.length; i++) {
     console.log(i);
     let ele = null;
-    try{
+    try {
       ele = await eles[i].findElements(By.css("a"));
-    }
-    catch(e) {
-      console.log('no such!');
+    } catch (e) {
+      console.log("no such!");
     }
     if (ele && ele.length) {
       // console.log(ele);
@@ -43,6 +42,40 @@ async function eleFromEleWait() {
   driver.quit();
   console.log("owari");
 }
+async function scrollClick() {
+  let driver = await initBrowserDriver();
+  await driver.get(
+    "https://www.google.com/search?q=%E3%83%90%E3%83%B3%E3%83%90%E3%83%B3%E3%83%90%E3%82%B6%E3%83%BC%E3%83%AB&newwindow=1&biw=758&bih=668&sxsrf=ALiCzsblDKfdFPRlQ1UgOWnCFtv8K_mZsg%3A1668049312985&ei=oGlsY5TmO7m52roPupiRoAo&ved=0ahUKEwiUtpL2z6L7AhW5nFYBHTpMBKQQ4dUDCA8&uact=5&oq=%E3%83%90%E3%83%B3%E3%83%90%E3%83%B3%E3%83%90%E3%82%B6%E3%83%BC%E3%83%AB&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDoHCCMQsAMQJzoHCCMQ6gIQJzoECCMQJzoECAAQQzoNCAAQBBCABBCxAxCDAToGCAAQBBADOgoIABAEEIAEELEDOhAIABAEEIAEELEDEIMBEMkDOgUIABCSAzoNCAAQBBCABBCxAxCxAzoJCAAQBBCABBAKSgQIQRgBSgQIRhgAUKghWNJmYPNoaAZwAHgAgAF3iAGkD5IBBDE0LjaYAQCgAQGwAQrIAQPAAQE&sclient=gws-wiz-serp"
+  );
+  let eles = await driver.findElements(By.css("h3"));
+  await driver.actions().scroll(0, 0, 0, 0, eles[8]).perform();
+  await driver.sleep(2000);
+  console.log(await eles[11].getText());
+  await eles[11].click();
+  await driver.sleep(5000);
+  driver.quit();
+  console.log("owari");
+}
+async function porling() {
+  let count = 0;
+  const countUp = () => {
+    console.log(count++);
+  };
+  await setInterval(countUp, 10000);
+}
+async function getPexPoint() {
+  let driver = await initBrowserDriver();
+  await driver.get("https://pex.jp/");
+  let tergetUrl = "https://pex.jp/user/point_passbook/all";
+  await driver.get(tergetUrl);
+  await driver.sleep(3000);
+  // ホントは存在確認してから
+  let ele = await driver.findElement(By.css("dl.point_area>dd>span"));
+  let nakedNum = await ele.getText();
+  console.log("now point total:" + nakedNum);
+  console.log("こっちは終わり");
+  driver.quit();
+}
 async function exe() {
   console.log(process.argv);
   switch (process.argv[2]) {
@@ -51,6 +84,15 @@ async function exe() {
       break;
     case "eleFromEleWait":
       await eleFromEleWait();
+      break;
+    case "scrollClick":
+      await scrollClick();
+      break;
+    case "porling":
+      await porling();
+      break;
+    case "getPexPoint":
+      await getPexPoint();
       break;
   }
   console.log("end--");

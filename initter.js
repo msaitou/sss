@@ -139,7 +139,7 @@ exports.initBrowserDriver = async function (isMob = false, headless = true) {
     defoSer.kill();
   }
   if (!defoSer || !defoSer.isRunning()) {
-    chrome.setDefaultService(service);
+    // chrome.setDefaultService(service);
     // chromeOptions.addArguments("--headless");
     if (isMob) {
       chromeOptions.setMobileEmulation({
@@ -147,5 +147,6 @@ exports.initBrowserDriver = async function (isMob = false, headless = true) {
       });
     }
   }
-  return new Builder().forBrowser("chrome").setChromeOptions(chromeOptions).build();
+  return chrome.Driver.createSession(chromeOptions, service);
+  // return new Builder().forBrowser("chrome").setChromeOptions(chromeOptions).build();
 };

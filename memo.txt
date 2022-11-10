@@ -48,8 +48,20 @@ confにその時間に実行するミッションをサイト毎にミッショ�
 ・ポイントの状況の取得
 ・ログインが必要なメールのサイトをリストアップ。
 ・必要な場合にメール取得時にログインできてるかチェック
+#####################################
+// コンソールに貼り付けるとjqueryが使える（リフレッシュでリセット）
+document.body.appendChild((function(){
+  var jq = document.createElement("script");
+  jq.src = '//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js';
+  return jq;
+})());
+#####################################
+// package.jsonで管理されるモジュールが古くて、新しくしたいとき
+https://qiita.com/sugurutakahashi12345/items/df736ddaf65c244e1b4f
+#####################################
 
-// 11/9やったこと
+// 11/10やったこと
+★・クリック時にそこまでスクロールしたい
 ・pexのニュースを対応
 ・CMのインターセプトのポップアップ対応
 ・キューDBのルート作成
