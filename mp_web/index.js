@@ -48,95 +48,103 @@ class PointWebCls {
    */
   async endless() {
     let count = 0;
+    let isRunning = false;
     const countUp = async () => {
       console.log(count++);
-      let now = new Date();
-      let missionDate = libUtil.getYYMMDDStr(now);
-      let missionList = await db(D.DB_COL.MISSION_QUE, "find", {
-        mission_date: missionDate, // 今日
-      });
-      // DBのミッションキューが今日か
-      if (!missionList.length) {
-        // 今日出ない場合、その時点のミッションキューテーブルデータをヒストリーに移動
-        let oldMissionList = await db(D.DB_COL.MISSION_QUE, "find", {});
-        if (oldMissionList.length) {
-          let lastDate = oldMissionList[0].mission_date;
-          await db(
-            D.DB_COL.MISSION_QUE_HIS,
-            "update",
-            { _id: lastDate },
-            {
-              _id: lastDate,
-              details: oldMissionList,
-            }
-          );
-          // 一度ミッションキューを全削除
-          await db(D.DB_COL.MISSION_QUE, "delete", {});
-        }
-        // クリアした今日のミッションテンプレートを更新
-        let defaultMission = config[this.exeKind]["1"]; // 1に意味はないよ
-        // DB用の形に整形
-        let insertList = [];
-        for (let [siteCode, list] of Object.entries(defaultMission)) {
-          list.forEach((line) => {
-            // 実行条件がある場合、開始時刻等を計算して設定
-            if (line.is_valid_cond && line.valid_term) {
-              line.valid_time = {};
-              if (line.valid_term.const_h_from) {
-                let d = new Date();
-                d.setHours(line.valid_term.const_h_from, 0, 0, 0);
-                line.valid_time.from = d;
+      if (!isRunning) {
+        isRunning = true;
+        let now = new Date();
+        let missionDate = libUtil.getYYMMDDStr(now);
+        let missionList = await db(D.DB_COL.MISSION_QUE, "find", {
+          mission_date: missionDate, // 今日
+        });
+        // DBのミッションキューが今日か
+        if (!missionList.length) {
+          // 今日出ない場合、その時点のミッションキューテーブルデータをヒストリーに移動
+          let oldMissionList = await db(D.DB_COL.MISSION_QUE, "find", {});
+          if (oldMissionList.length) {
+            let lastDate = oldMissionList[0].mission_date;
+            await db(
+              D.DB_COL.MISSION_QUE_HIS,
+              "update",
+              { _id: lastDate },
+              {
+                _id: lastDate,
+                details: oldMissionList,
               }
-              if (line.valid_term.const_h_to) {
-                let d = new Date();
-                d.setHours(line.valid_term.const_h_to, 0, 0, 0);
-                line.valid_time.to = d;
+            );
+            // 一度ミッションキューを全削除
+            await db(D.DB_COL.MISSION_QUE, "delete", {});
+          }
+          // クリアした今日のミッションテンプレートを更新
+          let defaultMission = config[this.exeKind]["1"]; // 1に意味はないよ
+          // DB用の形に整形
+          let insertList = [];
+          for (let [siteCode, list] of Object.entries(defaultMission)) {
+            list.forEach((line) => {
+              // 実行条件がある場合、開始時刻等を計算して設定
+              if (line.is_valid_cond && line.valid_term) {
+                line.valid_time = {};
+                if (line.valid_term.const_h_from) {
+                  let d = new Date();
+                  d.setHours(line.valid_term.const_h_from, 0, 0, 0);
+                  line.valid_time.from = d;
+                }
+                if (line.valid_term.const_h_to) {
+                  let d = new Date();
+                  d.setHours(line.valid_term.const_h_to, 0, 0, 0);
+                  line.valid_time.to = d;
+                }
               }
-            }
-            let mission = {
-              ...line,
-              status: D.STATUS.BEFO,
-              site_code: siteCode,
-              machine: config.machine,
-              mod_date: null,
-              mission_date: missionDate,
-            };
-            insertList.push(mission);
-          });
+              let mission = {
+                ...line,
+                status: D.STATUS.BEFO,
+                site_code: siteCode,
+                machine: config.machine,
+                mod_date: null,
+                mission_date: missionDate,
+              };
+              insertList.push(mission);
+            });
+          }
+          let list = await db(D.DB_COL.MISSION_QUE, "insertMany", {}, insertList);
+          this.logger.info(list);
+          missionList = insertList;
         }
-        let list = await db(D.DB_COL.MISSION_QUE, "insertMany", {}, insertList);
-        this.logger.info(list);
-        missionList = insertList;
-      }
-      // このマシンで実行すべきミッションだけを抽出
-      missionList = missionList.filter((m) => {
-        if ([D.STATUS.DONE, D.STATUS.RUN].indexOf(m.status) === -1 && m.machine == config.machine) {
-          if (!m.is_valid_cond) {
-            return true;
-          } else {
-            // 今の時間でやるべきものだけ、やるべきものだけ
-            if (m.valid_time.from && m.valid_time.from < now) {
-              if (m.valid_time.to) {
-                if (m.valid_time.to > now) {
+        // このマシンで実行すべきミッションだけを抽出
+        missionList = missionList.filter((m) => {
+          if (
+            [D.STATUS.DONE, D.STATUS.RUN].indexOf(m.status) === -1 &&
+            m.machine == config.machine
+          ) {
+            if (!m.is_valid_cond) {
+              return true;
+            } else {
+              // 今の時間でやるべきものだけ、やるべきものだけ
+              if (m.valid_time.from && m.valid_time.from < now) {
+                if (m.valid_time.to) {
+                  if (m.valid_time.to > now) {
+                    return true;
+                  }
+                  this.logger.debug("定時過ぎたためできません");
+                } else {
                   return true;
                 }
-                this.logger.debug("定時過ぎたためできません");
-              } else {
-                return true;
               }
             }
           }
-        }
-      });
+        });
 
-      let missionMap = {};
-      missionList.forEach((m) => {
-        if (!missionMap[m.site_code]) {
-          missionMap[m.site_code] = [];
-        }
-        missionMap[m.site_code].push(m);
-      });
-      this.main(missionMap);
+        let missionMap = {};
+        missionList.forEach((m) => {
+          if (!missionMap[m.site_code]) {
+            missionMap[m.site_code] = [];
+          }
+          missionMap[m.site_code].push(m);
+        });
+        await this.main(missionMap);
+        isRunning = false;
+      } else this.logger.debug("前回のタスクが実行中です");
     };
     await countUp();
     await setInterval(countUp, 5 * 60 * 1000);
@@ -147,6 +155,11 @@ class PointWebCls {
   async execOperator(code, missionList, aca, siteInfo) {
     let opeCls = null;
     switch (code) {
+      case "any": // メール用
+        const Mail = require("../mp_mil/index.js").PointMailClass;
+        const PMil = new Mail();
+        await PMil.main(missionList);
+        break;
       case "raku":
         // opeCls = new pex(0, missionList, aca);
         break;

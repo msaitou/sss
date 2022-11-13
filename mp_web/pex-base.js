@@ -190,8 +190,7 @@ class PexChirashi extends PexMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await driver.get(this.firstUrl); // 最初のページ表示
-    await this.ChirashiCls.do(this.targetUrl);
-    logger.debug("owari?chirashi");
+    return await this.ChirashiCls.do(this.targetUrl);
   }
 }
 // みんなのNEWSウォッチ

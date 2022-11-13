@@ -17,10 +17,10 @@ class PointMailClass extends BaseWebDriverWrapper {
   constructor() {
     super();
     this.logger = global.log;
-    this.logInfo("PointMailClass constractor", "target:", targetList);
+    this.logger.info("PointMailClass constractor", "target:", targetList);
   }
-  async main() {
-    this.logInfo("PointMailClass main");
+  async main(missionList) {
+    this.logger.info("PointMailClass main");
     // リアルタイムで受信をrecieve https://liginc.co.jp/web/service/facebook/153850/2
     // メールを受信したい。からDBからメールアカウントを取得したい。
     // googleapisを利用したプロジェクトは、リアルタイムで処理するときに対応。一番最後。
@@ -30,7 +30,7 @@ class PointMailClass extends BaseWebDriverWrapper {
     let urlMap = {};
     // メールを抽出
     await search(db, this.logger, urlMap);
-    this.logInfo("抽出したURLを開くを始めます");
+    this.logger.info("抽出したURLを開くを始めます");
 
     let loginSiteList = [D.CODE.RAKU, "rin"];
     let aca = await db("config", "findOne", { type: "login" });
@@ -43,21 +43,21 @@ class PointMailClass extends BaseWebDriverWrapper {
           uniqueUrls.push(url);
         }
       }
-      this.logInfo(`${site.toUpperCase()} は${uniqueUrls.length}件 今から開きます`);
+      this.logger.info(`${site.toUpperCase()} は${uniqueUrls.length}件 今から開きます`);
       let isLoginNow = false;
       for (let i in uniqueUrls) {
-        this.logDebug("1");
+        this.logger.debug("1");
         let url = uniqueUrls[i];
         try {
           if (!this.driver) {
             this.driver = await this.webDriver();
           }
-          this.logInfo(`${Number(i) + 1}/${uniqueUrls.length}`, url);
+          this.logger.info(`${Number(i) + 1}/${uniqueUrls.length}`, url);
           if (!isLoginNow && loginSiteList.indexOf(site) !== -1) {
             // ログインが必要そうなサイトだけログイン
             if (!loginCls) {
               loginCls = new Login(0, aca, this.logger, this.driver, null);
-              this.logInfo("ログいんしました");
+              this.logger.info("ログいんしました");
             }
             await loginCls.login(site);
             isLoginNow = true;
@@ -66,17 +66,17 @@ class PointMailClass extends BaseWebDriverWrapper {
           // url = "https://r.rakuten.co.jp/2Ec9C56IK1AVeYT81V51t5hI?mpe=552111"; // test
           // url = "https://pmrd.rakuten.co.jp/?r=MzI1MDQ3fDE%3D&p=C92DE7E&u=BAB68077";
           // let a = await this.driver.get(url); // エントリーページ表示
-          // this.logInfo("3", a);
+          // this.logger.info("3", a);
           // if (site === "cri") {
-          //   this.logInfo("２分待ってみる");
+          //   this.logger.info("２分待ってみる");
           //   this.sleep(120000); // 2分待ってみる
           // }
           // this.sleep(1000);
-          // this.logInfo("4");
+          // this.logger.info("4");
           let res = await this.openUrl(url);
           if (res) {
             if (site === D.CODE.CRI) {
-              this.logInfo("２分待ってみる");
+              this.logger.info("２分待ってみる");
               await this.driver.sleep(120000); // 2分待ってみる
             }
           } else {
@@ -86,7 +86,7 @@ class PointMailClass extends BaseWebDriverWrapper {
             isLoginNow = false;
           }
         } catch (e) {
-          this.logInfo(e);
+          this.logger.info(e);
           await this.driver.quit();
           this.driver = null;
           loginCls = null;
@@ -99,7 +99,14 @@ class PointMailClass extends BaseWebDriverWrapper {
       this.driver = null;
       // this.driver.kill();
     }
-    this.logInfo("やりきりました");
+    if (missionList && missionList[0]["mission_date"]) {
+      this.logger.info(`${missionList.main} 終了--`);
+      // ミッションの状況更新
+      missionList[0].mod_date = new Date();
+      missionList[0].status = D.STATUS.DONE;
+      await db(D.DB_COL.MISSION_QUE, "update", { _id: missionList[0]._id }, missionList[0]);
+    }
+    this.logger.info("やりきりました");
   }
   async openUrl(url) {
     return new Promise(async (resolve, reject) => {
@@ -107,22 +114,22 @@ class PointMailClass extends BaseWebDriverWrapper {
         let a = this.driver.get(url); // エントリーページ表示
         a.catch((e) => {
           isComp = true;
-          this.logWarn(e);
+          this.logger.warn(e);
           reject(false);
         });
         let isComp = false,
           cnt = 0;
         while (!isComp) {
-          this.logDebug("sleep", cnt++);
+          this.logger.debug("sleep", cnt++);
           await this.sleep(1000);
           if (a.state_ === "fulfilled") {
             // fullfiledになってれば
-            this.logInfo("大丈夫らしい", cnt + "秒");
+            this.logger.info("大丈夫らしい", cnt + "秒");
             isComp = true;
           } else {
             if (cnt == 30) {
               isComp = true;
-              this.logInfo("30超えたので強制終了です");
+              this.logger.info("30超えたので強制終了です");
               reject(false);
             }
           }
@@ -133,7 +140,7 @@ class PointMailClass extends BaseWebDriverWrapper {
         reject(false);
       }
     }).catch((ee) => {
-      this.logInfo(ee);
+      this.logger.info(ee);
       return false;
     });
   }
@@ -145,7 +152,7 @@ class PointMailClass extends BaseWebDriverWrapper {
       let eles = await this.getEles(sele, time);
       return eles[i];
     } catch (e) {
-      this.logWarn(e);
+      this.logger.warn(e);
     }
   }
   async getEles(sele, time) {
@@ -154,7 +161,7 @@ class PointMailClass extends BaseWebDriverWrapper {
       time = time ? time : 0;
       return await this.driver.wait(until.elementsLocated(By.css(sele)), time);
     } catch (e) {
-      this.logWarn(e);
+      this.logger.warn(e);
     }
   }
   async getElesFromEles(ele, sele, time) {
@@ -163,7 +170,7 @@ class PointMailClass extends BaseWebDriverWrapper {
       time = time ? time : 0;
       return await ele.findElements(By.css(sele), time);
     } catch (e) {
-      this.logWarn(e);
+      this.logger.warn(e);
     }
   }
   async isExistEle(sele, showFlag, time) {
@@ -174,21 +181,15 @@ class PointMailClass extends BaseWebDriverWrapper {
       // let register = By.css(selector);
       // let is = isExistEle(this.driver.findElements(register));
       var eles = await this.driver.wait(until.elementsLocated(By.css(sele)), time);
-      this.logInfo(`showFlag[${showFlag}] elelen[${eles.length}]`);
+      this.logger.info(`showFlag[${showFlag}] elelen[${eles.length}]`);
       if (showFlag && !!eles.length) {
         return true;
       } else if (!showFlag && !eles.length) {
         return true;
       }
     } catch (e) {
-      this.logWarn(e);
+      this.logger.warn(e);
     }
   }
-  // logInfo(...a) {
-  //   (this ? this.logger : global.log).info(a);
-  // }
-  // logWarn(...a) {
-  //   (this ? this.logger : global.log).warn(a);
-  // }
 }
 exports.PointMailClass = PointMailClass;
