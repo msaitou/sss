@@ -40,9 +40,24 @@ class PexBase extends BaseExecuter {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
           this.logger.info(`${mission.main} 終了--`);
-          if (mission["_id"]) {
+          if (mission["mission_date"]) {
             // ミッションの状況更新
+            mission.mod_date = new Date();
+            mission.status = res;
+            await db(D.DB_COL.MISSION_QUE, "update", { _id: mission._id }, mission);
             // サブミッションの場合、次のサブミッション開始日を更新
+            if (mission.sub && mission.valid_term && mission.valid_term.current_m_from) {
+              // 続けるミッションのドキュメントを予め確保しておくか、否か
+              let nextMission = await db(D.DB_COL.MISSION_QUE, "findOne", {
+                site_code: this.code,
+                main: mission.main,
+                sub: (++mission.sub).toString(),  // 次のやつ。数字で定義
+              });
+              let nextDate = new Date();
+              nextDate.setMinutes(nextDate.getMinutes() + mission.valid_term.current_m_from);
+              nextMission.valid_time.from = nextDate;
+              await db(D.DB_COL.MISSION_QUE, "update", { _id: nextMission._id }, nextMission);
+            }
           }
         }
       }
@@ -160,6 +175,7 @@ class PexCommon extends PexMissonSupper {
   }
 }
 const { PartsChirashi } = require("./parts/parts-chirashi.js");
+const { db } = require("../initter.js");
 // オリチラ
 class PexChirashi extends PexMissonSupper {
   firstUrl = "https://pex.jp/";

@@ -25,6 +25,15 @@
       "args": ["P_WEB_S"]
     },
     {
+      "name": "debug P_WEB_H",
+      "program": "${workspaceFolder}/index.js",
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node",
+      "outputCapture": "std",
+      "args": ["P_WEB_H"]
+    },
+    {
       "type": "pwa-node",
       "request": "launch",
       "name": "debug L_UTL",

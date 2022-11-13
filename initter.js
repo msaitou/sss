@@ -36,7 +36,11 @@ exports.db = async function (coll, method, cond = {}, doc) {
           res = await collection.insertOne(doc);
         }
         break;
-      case "remove":
+      case "insertMany":
+        res = await collection.insertMany(doc);
+        break;
+      case "delete":
+        res = await collection.deleteMany(doc);
       default:
     }
     log.info(5);

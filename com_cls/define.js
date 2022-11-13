@@ -1,5 +1,9 @@
 exports.Def = {
-  DB_COL: { POINT: "point_summary",  },
+  DB_COL: {
+    POINT: "point_summary",
+    MISSION_QUE: "mission_que",
+    MISSION_QUE_HIS: "mission_que_history",
+  },
   STATUS: { DONE: "done", FAIL: "fail", RUN: "run", BEFO: "befo" },
   CODE: {
     MOBA: "moba",

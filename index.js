@@ -31,8 +31,7 @@ async function start(mode) {
         const PWeb = new Web(mode);
         if (mode === MODE.P_WEB_S) {
           await PWeb.once();
-        }
-        else {
+        } else {
           await PWeb.endless();
         }
         break;
@@ -61,7 +60,9 @@ async function start(mode) {
     })
     .finally(() => {
       logger.info("tyokuzen");
-      process.exit();
+      if (mode !== MODE.P_WEB_H) {
+        process.exit();
+      }
     });
 }
 if (process.argv[2] && MODE[process.argv[2]]) {

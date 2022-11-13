@@ -1,8 +1,9 @@
 const { initBrowserDriver, db } = require("../initter.js");
-const { libUtil: util, libUtil } = require("../lib/util.js");
+const { libUtil } = require("../lib/util.js");
 const { Builder, By, until } = require("selenium-webdriver");
 const { BaseWebDriverWrapper } = require("../base-webdriver-wrapper");
 const D = require("../com_cls/define").Def;
+const mailOpe = require("../mp_mil/mail_operate");
 
 class BaseExecuter extends BaseWebDriverWrapper {
   logger;
@@ -36,22 +37,17 @@ class BaseExecuter extends BaseWebDriverWrapper {
     }
   }
   /**
-   * point_summaryコレクションの_idを作って返す
+   * point_summaryコレクション用の_idを作って返す（yymmdd）
    * @param {*} date
    * @returns
    */
   createPointSummaryId(date) {
-    let d = date ? date : new Date();
-    return (
-      d.getFullYear().toString().substring(2) +
-      (d.getMonth() + 1).toString().padStart(2, "0") +
-      d.getDate().toString().padStart(2, "0")
-    );
+    return libUtil.getYYMMDDStr(date);
   }
   /**
    * そのままのポイントを整数（文字列）に変換
    * @param points
-   * @return
+   * @return 数値型
    */
   convertNumber(points) {
     let execlude = [",", " pt", " pt", "Pt", "pt", "mile", "ポイント"];
@@ -61,7 +57,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
         points = points.trim();
       }
     }
-    return points;
+    return Number(points);
   }
 
   /**
@@ -72,15 +68,15 @@ class BaseExecuter extends BaseWebDriverWrapper {
   async pointSummary(siteCode, nakedPoint) {
     let d = new Date();
     d.setDate(d.getDate() - 1); // 前日のデータ用
-    let oldIdStr = createPointSummaryId(d);
+    let oldIdStr = this.createPointSummaryId(d);
     // このサイトの昨日のポイントを取得
     let oldDoc = await db(D.DB_COL.POINT, "findOne", { _id: oldIdStr });
 
-    let idStr = createPointSummaryId();
+    let idStr = this.createPointSummaryId();
     let nowDoc = await db(D.DB_COL.POINT, "findOne", { _id: idStr });
     // そのままのポイント表示を整数に変換
     let p = this.convertNumber(nakedPoint);
-    // そのサイトのポイント倍率を円に換算　TODO
+    p = p * this.siteInfo.rate; // そのサイトのポイント倍率を円に換算
     let exch = 0,
       diff = 0;
     if (!oldDoc) {
@@ -93,6 +89,10 @@ class BaseExecuter extends BaseWebDriverWrapper {
         if (diff < 0) {
           // TODO ちゃんと作るまではメール飛ばす
           exch;
+          mailOpe.send(this.logger, {
+            subject: `換金した疑い[${siteCode}]`,
+            contents: `直前のポイント：${oldDoc[siteCode].p}\n今回のポイント：${p}\n差額：${diff}`,
+          });
         }
       }
     }
@@ -101,21 +101,20 @@ class BaseExecuter extends BaseWebDriverWrapper {
       nowDoc = { _id: idStr, total: 0, mod_date: null, diff: 0 };
     }
     let now = new Date();
-    nowDoc[siteCode] = { p: nakedPoint, date: now, exch: exch, diff: diff };
+    nowDoc[siteCode] = { p: p, date: now, exch: exch, diff: diff };
     nowDoc.mod_date = now;
-    let         total = 0,
-    diffTotal = 0;
+    let total = 0,
+      diffTotal = 0;
 
-    // TODO total,diffを設定
     for (let key in D.CODE) {
       let code = D.CODE[key];
       if (nowDoc[code]) {
-        total += nowDoc[code].p;
-        diffTotal += nowDoc[code].diff;
+        total += Number(nowDoc[code].p);
+        diffTotal += Number(nowDoc[code].diff);
       }
     }
     nowDoc.total = total;
-    nowDoc.diff =diffTotal;
+    nowDoc.diff = diffTotal;
     console.log("1");
     await db(D.DB_COL.POINT, "update", { _id: idStr }, nowDoc);
     console.log("2");
