@@ -89,7 +89,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
         if (diff < 0) {
           // TODO ちゃんと作るまではメール飛ばす
           exch;
-          mailOpe.send(this.logger, {
+          await mailOpe.send(this.logger, {
             subject: `換金した疑い[${siteCode}]`,
             contents: `直前のポイント：${oldDoc[siteCode].p}\n今回のポイント：${p}\n差額：${diff}`,
           });

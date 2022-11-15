@@ -5,3 +5,5 @@ config/default.json
 config/___________token.json
 config/prof/
 backup/
+.vscode/launch.json
+

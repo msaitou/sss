@@ -24,5 +24,6 @@ exports.Def = {
   MISSION: {
     chirashi: "chirashi",
     news: "news",
+    cm: "cm",   // 暫定　TODO  
   },
 };

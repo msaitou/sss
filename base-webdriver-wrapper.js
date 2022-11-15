@@ -83,7 +83,8 @@ class BaseWebDriverWrapper {
       }
       this.logger.info(`showFlag[${showFlag}] elelen[${eles.length}]`);
       if (exception) {
-        throw exception;
+        // throw exception;
+        return false;
       } else if (showFlag && !!eles.length) {
         return true; // 見つけようと思って見つかった
       } else if (!showFlag && !eles.length) {

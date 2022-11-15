@@ -6,6 +6,7 @@
   // https://komari.co.jp/blog/develop/frontend/355/
   "version": "0.2.0",
   "configurations": [
+
     {
       "name": "debug P_MIL",
       "program": "${workspaceFolder}/index.js",
@@ -16,6 +17,7 @@
       "args": ["P_MIL"]
     },
     {
+      "runtimeExecutable": "C:\\Users\\user\\AppData\\Local\\fnm_multishells\\7332_1668477983243\\node.exe",
       "name": "debug P_WEB_S",
       "program": "${workspaceFolder}/index.js",
       "request": "launch",

@@ -1,8 +1,9 @@
 const { BaseExecuter } = require("./base-executer.js");
 const { BaseWebDriverWrapper } = require("../base-webdriver-wrapper");
 const { libUtil } = require("../lib/util.js");
-const { Builder, By, until } = require("selenium-webdriver");
+const { Builder, By, until, Select } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
+const mailOpe = require("../mp_mil/mail_operate");
 
 class PexBase extends BaseExecuter {
   code = D.CODE.PEX;
@@ -35,6 +36,9 @@ class PexBase extends BaseExecuter {
           case D.MISSION.news:
             execCls = new PexNewsWatch(para);
             break;
+          case D.MISSION.cm:
+            execCls = new PexCm(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -51,7 +55,7 @@ class PexBase extends BaseExecuter {
               let nextMission = await db(D.DB_COL.MISSION_QUE, "findOne", {
                 site_code: this.code,
                 main: mission.main,
-                sub: (++mission.sub).toString(),  // 次のやつ。数字で定義
+                sub: (++mission.sub).toString(), // 次のやつ。数字で定義
               });
               let nextDate = new Date();
               nextDate.setMinutes(nextDate.getMinutes() + mission.valid_term.current_m_from);
@@ -131,7 +135,8 @@ class PexCommon extends PexMissonSupper {
         inputEle.sendKeys(account[this.code].loginpass);
 
         let seleRecap = {
-          panel_iframe: "iframe[title*='reCAPTCHA ']", // 適当
+          // panel_iframe: "iframe[title*='reCAPTCHA ']", // Linuxだけかも
+          panel_iframe: "iframe[title*='recaptcha']", // winだけかも
           panel: "[name='recaptcha']", // 適当
           auth_iframe: "div.g-recaptcha div iframe",
           auth: "div.recaptcha-checkbox-border",
@@ -150,6 +155,10 @@ class PexCommon extends PexMissonSupper {
           if (res) {
             // 画層識別が表示されたらログインを諦めて、メールを飛ばす
             logger.info("RECAPTCHA発生　手動でログインして！");
+            await mailOpe.send(logger, {
+              subject: `ログインできません[${this.code}] RECAPTCHA発生`,
+              contents: `${this.code} にログインできません`,
+            });
             return;
           }
         }
@@ -164,6 +173,10 @@ class PexCommon extends PexMissonSupper {
         } else {
           // ログインできてないので、メール
           logger.info("ログインできませんでした");
+          await mailOpe.send(logger, {
+            subject: `ログインできません[${this.code}] `,
+            contents: `なぜか ${this.code} にログインできません`,
+          });
           return;
         }
       } else {
@@ -261,6 +274,63 @@ class PexNewsWatch extends PexMissonSupper {
       logger.warn(e);
     }
     return res;
+  }
+}
+class PexCm extends PexMissonSupper {
+  firstUrl = "https://pex.jp/";
+  targetUrl = "https://pex-pc.cmnw.jp/cm";
+  // ChirashiCls;
+  constructor(para) {
+    super(para);
+    // this.ChirashiCls = new PartsChirashi(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // ポイントゲットのチャンスは1日2回チラシが更新される朝6時と夜20時
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await driver.get(this.firstUrl); // 最初のページ表示
+    await driver.get(this.targetUrl); // 操作ページ表示
+    let selePre = [
+      "form[action='/cmd/profiledone']",
+      "label[for='radio01'],label[for='radio02']", // 性別  非表示inputをクリックできない　！！
+      "select[name='age']", // 年齢
+      "select[name='pref']", // 都道府県
+      "label[for='radio03'],label[for='radio04']", // 結婚
+      "label[for='radio05'],label[for='radio06']", // 子供
+      "button[type='submit']", // 回答を送る
+    ];
+    if (await this.isExistEle(selePre[0], true, 2000)) {
+      let ele0,
+        select,
+        formEle = await this.getEle(selePre[0], 2000);
+      if (await this.isExistElesFromEle(formEle, selePre[1], true, 2000)) {
+        ele0 = await this.getElesFromEles(formEle, selePre[1], 2000);
+        await this.clickEle(ele0[0], 2000); // 男性を選択
+      }
+      if (await this.isExistElesFromEle(formEle, selePre[2], true, 2000)) {
+        ele0 = await this.getElesFromEles(formEle, selePre[2], 2000);
+        select = new Select(ele0[0]);
+        await select.selectByValue("38"); // 38歳を選択
+      }
+      if (await this.isExistElesFromEle(formEle, selePre[3], true, 2000)) {
+        ele0 = await this.getElesFromEles(formEle, selePre[3], 2000);
+        select = new Select(ele0[0]);
+        await select.selectByValue("13"); // 東京を選択
+      }
+      if (await this.isExistElesFromEle(formEle, selePre[4], true, 2000)) {
+        ele0 = await this.getElesFromEles(formEle, selePre[4], 2000);
+        await this.clickEle(ele0[1], 2000); // 結婚　無を選択
+      }
+      if (await this.isExistElesFromEle(formEle, selePre[5], true, 2000)) {
+        ele0 = await this.getElesFromEles(formEle, selePre[5], 2000);
+        await this.clickEle(ele0[1], 2000); // 子供　無を選択
+      }
+      if (await this.isExistElesFromEle(formEle, selePre[6], true, 2000)) {
+        ele0 = await this.getElesFromEles(formEle, selePre[6], 2000);
+        await this.clickEle(ele0[0], 2000); // 回答を送る
+      }
+      logger.info("cm最初のアンケートに回答しました");
+    }
   }
 }
 // module.
