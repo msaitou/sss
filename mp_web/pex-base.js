@@ -30,13 +30,13 @@ class PexBase extends BaseExecuter {
         let mission = this.missionList[i];
         let execCls = null;
         switch (mission.main) {
-          case D.MISSION.chirashi:
+          case D.MISSION.CHIRASHI:
             execCls = new PexChirashi(para);
             break;
-          case D.MISSION.news:
+          case D.MISSION.NEWS:
             execCls = new PexNewsWatch(para);
             break;
-          case D.MISSION.cm:
+          case D.MISSION.CM:
             execCls = new PexCm(para);
             break;
         }
@@ -44,25 +44,7 @@ class PexBase extends BaseExecuter {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
           this.logger.info(`${mission.main} 終了--`);
-          if (mission["mission_date"]) {
-            // ミッションの状況更新
-            mission.mod_date = new Date();
-            mission.status = res;
-            await db(D.DB_COL.MISSION_QUE, "update", { _id: mission._id }, mission);
-            // サブミッションの場合、次のサブミッション開始日を更新
-            if (mission.sub && mission.valid_term && mission.valid_term.current_m_from) {
-              // 続けるミッションのドキュメントを予め確保しておくか、否か
-              let nextMission = await db(D.DB_COL.MISSION_QUE, "findOne", {
-                site_code: this.code,
-                main: mission.main,
-                sub: (++mission.sub).toString(), // 次のやつ。数字で定義
-              });
-              let nextDate = new Date();
-              nextDate.setMinutes(nextDate.getMinutes() + mission.valid_term.current_m_from);
-              nextMission.valid_time.from = nextDate;
-              await db(D.DB_COL.MISSION_QUE, "update", { _id: nextMission._id }, nextMission);
-            }
-          }
+          await this.updateMissionQue(mission, res, this.code);
         }
       }
       // ポイント数取得し保持
@@ -214,7 +196,7 @@ class PexNewsWatch extends PexMissonSupper {
     super(para);
     this.logger.debug(`${this.constructor.name} constructor`);
   }
-  // ポイントゲットのチャンスは1日2回チラシが更新される朝6時と夜20時
+  // ポイントゲットのチャンスは朝7時から
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
@@ -285,52 +267,13 @@ class PexCm extends PexMissonSupper {
     // this.ChirashiCls = new PartsChirashi(para);
     this.logger.debug(`${this.constructor.name} constructor`);
   }
-  // ポイントゲットのチャンスは1日2回チラシが更新される朝6時と夜20時
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await driver.get(this.firstUrl); // 最初のページ表示
     await driver.get(this.targetUrl); // 操作ページ表示
-    let selePre = [
-      "form[action='/cmd/profiledone']",
-      "label[for='radio01'],label[for='radio02']", // 性別  非表示inputをクリックできない　！！
-      "select[name='age']", // 年齢
-      "select[name='pref']", // 都道府県
-      "label[for='radio03'],label[for='radio04']", // 結婚
-      "label[for='radio05'],label[for='radio06']", // 子供
-      "button[type='submit']", // 回答を送る
-    ];
-    if (await this.isExistEle(selePre[0], true, 2000)) {
-      let ele0,
-        select,
-        formEle = await this.getEle(selePre[0], 2000);
-      if (await this.isExistElesFromEle(formEle, selePre[1], true, 2000)) {
-        ele0 = await this.getElesFromEles(formEle, selePre[1], 2000);
-        await this.clickEle(ele0[0], 2000); // 男性を選択
-      }
-      if (await this.isExistElesFromEle(formEle, selePre[2], true, 2000)) {
-        ele0 = await this.getElesFromEles(formEle, selePre[2], 2000);
-        select = new Select(ele0[0]);
-        await select.selectByValue("38"); // 38歳を選択
-      }
-      if (await this.isExistElesFromEle(formEle, selePre[3], true, 2000)) {
-        ele0 = await this.getElesFromEles(formEle, selePre[3], 2000);
-        select = new Select(ele0[0]);
-        await select.selectByValue("13"); // 東京を選択
-      }
-      if (await this.isExistElesFromEle(formEle, selePre[4], true, 2000)) {
-        ele0 = await this.getElesFromEles(formEle, selePre[4], 2000);
-        await this.clickEle(ele0[1], 2000); // 結婚　無を選択
-      }
-      if (await this.isExistElesFromEle(formEle, selePre[5], true, 2000)) {
-        ele0 = await this.getElesFromEles(formEle, selePre[5], 2000);
-        await this.clickEle(ele0[1], 2000); // 子供　無を選択
-      }
-      if (await this.isExistElesFromEle(formEle, selePre[6], true, 2000)) {
-        ele0 = await this.getElesFromEles(formEle, selePre[6], 2000);
-        await this.clickEle(ele0[0], 2000); // 回答を送る
-      }
-      logger.info("cm最初のアンケートに回答しました");
-    }
+
+    this.answerCMPreAnq(driver, logger);
+
   }
 }
 // module.

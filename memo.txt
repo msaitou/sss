@@ -1,6 +1,3 @@
-★saitoUbuntuでの、pointGetter改は
-　今時点最新のfirefox、selenium-webdriverで、javascriptで構築する。
-
 ブレスト：：
 今動いてるマシン（saitonote,saitonote2,saitonote4）と、共存ができない。
 　→firefoxとsereniumのバージョンが
@@ -14,9 +11,6 @@
 
 ・タスクの未実行・実行済み・完了を登録できる
 ・ポイントサイトのURLリストをいつでも見れるようにする。
-★・ローカルネットワーク内でファイルの共有ができるようにする
-★・robo3t導入
-★// また、vaiosaito側では、DBから必要な情報を取得して、デスクトップにファイルを作成するみたいなシェルを作りたい。
 
 // ubuntuに意図するバージョンのnodejsをインストール
 https://github.com/nodesource/distributions/blob/master/README.md
@@ -60,7 +54,12 @@ document.body.appendChild((function(){
 https://qiita.com/sugurutakahashi12345/items/df736ddaf65c244e1b4f
 #####################################
 
-// 11/13やったこと
-・CMのインターセプトのポップアップ対応
-・キューDBのルート作成
-・P_MILをP_WEB_Hのミッションにする
+mop
+★・クリック
+・デイリークイズ
+・何曜日
+・ANNZANN
+・英単語
+
+・CMくじ
+・アンケート

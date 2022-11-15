@@ -1,6 +1,6 @@
 const { initBrowserDriver, db } = require("./initter.js");
 const { libUtil: util, libUtil } = require("./lib/util.js");
-const { Builder, By, until } = require("selenium-webdriver");
+const { Builder, By, until, Select } = require("selenium-webdriver");
 
 class BaseWebDriverWrapper {
   logger;
@@ -65,6 +65,9 @@ class BaseWebDriverWrapper {
    */
   async clickEle(ele, time) {
     await this.driver.actions().scroll(0, 0, 0, 0, ele).perform();
+    const actions = this.driver.actions();
+    await actions.move({ origin: ele }).perform();
+    await this.sleep(1000);
     await ele.click();
     await this.sleep(time);
   }
@@ -132,6 +135,66 @@ class BaseWebDriverWrapper {
     }
     // 元のウインドウIDにスイッチ
     await driver.switchTo().window(wid);
+  }
+  async changeWindow(wid) {
+    // 別タブに移動する
+    wid = wid | (await this.driver.getWindowHandle());
+    let widSet = await this.driver.getAllWindowHandles();
+    for (let id of widSet) {
+      if (id != wid) {
+        // 最後に格納したウインドウIDにスイッチして閉じる
+        await this.driver.switchTo().window(id);
+      }
+    }
+  }
+
+  /**
+   * CMくじのページで最初に表示されることがあるアンケートに回答操作
+   * @param {*} driver
+   * @param {*} logger
+   */
+  async answerCMPreAnq() {
+    let selePre = [
+      "form[action='/cmd/profiledone']",
+      "label[for='radio01'],label[for='radio02']", // 性別  非表示inputをクリックできない　！！
+      "select[name='age']", // 年齢
+      "select[name='pref']", // 都道府県
+      "label[for='radio03'],label[for='radio04']", // 結婚
+      "label[for='radio05'],label[for='radio06']", // 子供
+      "button[type='submit']", // 回答を送る
+    ];
+    if (await this.isExistEle(selePre[0], true, 2000)) {
+      let ele0,
+        select,
+        formEle = await this.getEle(selePre[0], 2000);
+      if (await this.isExistElesFromEle(formEle, selePre[1], true, 2000)) {
+        ele0 = await this.getElesFromEles(formEle, selePre[1], 2000);
+        await this.clickEle(ele0[0], 2000); // 男性を選択
+      }
+      if (await this.isExistElesFromEle(formEle, selePre[2], true, 2000)) {
+        ele0 = await this.getElesFromEles(formEle, selePre[2], 2000);
+        select = new Select(ele0[0]);
+        await select.selectByValue("38"); // 38歳を選択
+      }
+      if (await this.isExistElesFromEle(formEle, selePre[3], true, 2000)) {
+        ele0 = await this.getElesFromEles(formEle, selePre[3], 2000);
+        select = new Select(ele0[0]);
+        await select.selectByValue("13"); // 東京を選択
+      }
+      if (await this.isExistElesFromEle(formEle, selePre[4], true, 2000)) {
+        ele0 = await this.getElesFromEles(formEle, selePre[4], 2000);
+        await this.clickEle(ele0[1], 2000); // 結婚　無を選択
+      }
+      if (await this.isExistElesFromEle(formEle, selePre[5], true, 2000)) {
+        ele0 = await this.getElesFromEles(formEle, selePre[5], 2000);
+        await this.clickEle(ele0[1], 2000); // 子供　無を選択
+      }
+      if (await this.isExistElesFromEle(formEle, selePre[6], true, 2000)) {
+        ele0 = await this.getElesFromEles(formEle, selePre[6], 2000);
+        await this.clickEle(ele0[0], 2000); // 回答を送る
+      }
+      this.logger.info("cm最初のアンケートに回答しました");
+    } else this.logger.debug("cm最初のアンケートはありませんでした");
   }
 }
 exports.BaseWebDriverWrapper = BaseWebDriverWrapper;

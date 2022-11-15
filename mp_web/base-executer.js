@@ -50,7 +50,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
    * @return 数値型
    */
   convertNumber(points) {
-    let execlude = [",", " pt", " pt", "Pt", "pt", "mile", "ポイント"];
+    let execlude = [",", " pt", " pt", "Pt", "pt", "mile", "ポイント", "P"];
     for (let s of execlude) {
       if (points.indexOf(s) > 0) {
         points = points.split(s).join("");
@@ -119,6 +119,35 @@ class BaseExecuter extends BaseWebDriverWrapper {
     await db(D.DB_COL.POINT, "update", { _id: idStr }, nowDoc);
     console.log("2");
   }
+
+  /**
+   * 1つのmission完了時のキューテーブルへの更新
+   * @param {*} mission 
+   * @param {*} res 
+   * @param {*} siteCode 
+   */
+  async updateMissionQue(mission, res, siteCode) {
+    if (mission["mission_date"]) {
+      // ミッションの状況更新
+      mission.mod_date = new Date();
+      mission.status = res;
+      await db(D.DB_COL.MISSION_QUE, "update", { _id: mission._id }, mission);
+      // サブミッションの場合、次のサブミッション開始日を更新
+      if (mission.sub && mission.valid_term && mission.valid_term.current_m_from) {
+        // 続けるミッションのドキュメントを予め確保しておくか、否か
+        let nextMission = await db(D.DB_COL.MISSION_QUE, "findOne", {
+          site_code: siteCode,
+          main: mission.main,
+          sub: (++mission.sub).toString(), // 次のやつ。数字で定義
+        });
+        let nextDate = new Date();
+        nextDate.setMinutes(nextDate.getMinutes() + mission.valid_term.current_m_from);
+        nextMission.valid_time.from = nextDate;
+        await db(D.DB_COL.MISSION_QUE, "update", { _id: nextMission._id }, nextMission);
+      }
+    }
+  }
+
   // UTLのソース↓
   // 取得結果をDBに書き込み
   async updateLutl(cond, doc) {

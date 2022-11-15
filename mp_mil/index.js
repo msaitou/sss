@@ -112,7 +112,7 @@ class PointMailClass extends BaseWebDriverWrapper {
     return new Promise(async (resolve, reject) => {
       try {
         let a = this.driver.get(url); // エントリーページ表示
-        a.catch((e) => {
+        await a.catch((e) => {
           isComp = true;
           this.logger.warn(e);
           reject(false);
@@ -127,10 +127,10 @@ class PointMailClass extends BaseWebDriverWrapper {
             this.logger.info("大丈夫らしい", cnt + "秒");
             isComp = true;
           } else {
-            if (cnt == 30) {
+            if (cnt == 10) {
               isComp = true;
               this.logger.info("30超えたので強制終了です");
-              reject(false);
+              reject(isComp); // なんか仕様変わったかも
             }
           }
         }

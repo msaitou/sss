@@ -22,8 +22,17 @@ exports.Def = {
     PEX: "pex",
   },
   MISSION: {
-    chirashi: "chirashi",
-    news: "news",
-    cm: "cm",   // 暫定　TODO  
+    CHIRASHI: "chirashi",
+    NEWS: "news",
+    CM: "cm", // 暫定　TODO
+
+    QUIZ_DAILY: "quiz_daily",
+    EITANGO: "eitango",
+    ANZAN: "anzan",
+    NANYOUBI: "nanyoubi",
+    CLICK: "click",
+
+    CM_URANAI: "cm_uranai",
+    MOP_RESEARCH: "mop_RESEARCH",
   },
 };

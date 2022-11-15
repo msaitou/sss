@@ -1,5 +1,6 @@
 const { initBrowserDriver, db } = require("../initter.js");
-const pBase = require("./pex-base");
+const pexBase = require("./pex-base");
+const mopBase = require("./mop-base");
 const config = require("config");
 const { Entry } = require("selenium-webdriver/lib/logging");
 const D = require("../com_cls/define").Def;
@@ -160,11 +161,14 @@ class PointWebCls {
         const PMil = new Mail();
         await PMil.main(missionList);
         break;
-      case "raku":
+      case D.CODE.RAKU:
         // opeCls = new pex(0, missionList, aca);
         break;
-      case "pex":
-        opeCls = new pBase.Pex(0, siteInfo, aca, missionList);
+      case D.CODE.PEX:
+        opeCls = new pexBase.Pex(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.MOP:
+        opeCls = new mopBase.Mop(0, siteInfo, aca, missionList);
         break;
     }
     if (opeCls) {
