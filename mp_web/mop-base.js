@@ -227,7 +227,9 @@ class MopQuizDaily extends MopMissonSupper {
         await this.changeWindow(wid); // 別タブに移動する
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 2000);
+          // await this.clickEle(ele, 2000);
+          await ele.click(); // なぜかここはこれじゃないとクリックが動作しない
+          await this.sleep(3000);
           // 8問あり
           for (let i = 0; i < 8; i++) {
             let eles;
@@ -473,30 +475,29 @@ class MopAnzan extends MopMissonSupper {
           ele = await this.getEle(sele[1], 3000);
           await this.sleep(2000);
           await this.clickEle(ele, 2000);
-          // 8問あり
+          // 10問あり
           for (let i = 0; i < 10; i++) {
             let eles;
             if (await this.isExistEle(sele[2], true, 2000)) {
               eles = await this.getEles(sele[2], 2000);
-              // 問題から曜日を換算して、選択
+              // 計算式から答えを評価して、選択
               if (await this.isExistEle(sele[7], true, 3000)) {
                 ele = await this.getEle(sele[7], 2000);
-                let text = await ele.getText();
-                logger.info(`${text}`);
-                // String regex = "(\\d) ([-×+÷]) (\\d) ([-×+÷]) (\\d)";
-                // Pattern p = Pattern.compile(regex);
-                // Matcher m = p.matcher(text);
-                // if (m.find()) {
-                //   String ans = Utille.calcAnzan(m);
-  
-
+                let calculation = await ele.getText();
                 let regex = "(\\d) ([-×+÷]) (\\d) ([-×+÷]) (\\d)";
-                let matches = text.match(regex);
+                let matches = calculation.match(regex);
                 logger.info(`${matches}`);
-                let selectYoubi = 0;
-                // let selectYoubi = libUtil.getNanyoubi(matches[1]);
-                // logger.info(`${selectYoubi}です`);
-                await this.clickEle(eles[selectYoubi], 2000);
+                let calcResult = libUtil.calcAnzan(matches, logger);
+                let selectIndex = 0;
+                // 答えと一致する選択肢を探す
+                for (let j = 0; j < eles.length; j++) {
+                  let radioText = await eles[j].getText();
+                  if (Number(radioText) == calcResult) {
+                    selectIndex = j;
+                    break;
+                  }
+                }
+                await this.clickEle(eles[selectIndex], 2000);
                 if (await this.isExistEle(sele[3], true, 3000)) {
                   ele = await this.getEle(sele[3], 3000);
                   await this.clickEle(ele, 2000); // 回答する
