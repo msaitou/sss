@@ -77,41 +77,56 @@ class PointWebCls {
             // 一度ミッションキューを全削除
             await db(D.DB_COL.MISSION_QUE, "delete", {});
           }
-          // クリアした今日のミッションテンプレートを更新
-          let defaultMission = config[this.exeKind]["1"]; // 1に意味はないよ
-          // DB用の形に整形
-          let insertList = [];
-          for (let [siteCode, list] of Object.entries(defaultMission)) {
-            list.forEach((line) => {
-              // 実行条件がある場合、開始時刻等を計算して設定
-              if (line.is_valid_cond && line.valid_term) {
-                line.valid_time = {};
-                if (line.valid_term.const_h_from) {
-                  let d = new Date();
-                  d.setHours(line.valid_term.const_h_from, 0, 0, 0);
-                  line.valid_time.from = d;
-                }
-                if (line.valid_term.const_h_to) {
-                  let d = new Date();
-                  d.setHours(line.valid_term.const_h_to, 0, 0, 0);
-                  line.valid_time.to = d;
-                }
-              }
-              let mission = {
-                ...line,
-                status: D.STATUS.BEFO,
-                site_code: siteCode,
-                machine: config.machine,
-                mod_date: null,
-                mission_date: missionDate,
-              };
-              insertList.push(mission);
-            });
-          }
-          let list = await db(D.DB_COL.MISSION_QUE, "insertMany", {}, insertList);
-          this.logger.info(list);
-          missionList = insertList;
         }
+        // クリアした今日のミッションテンプレートを更新
+        let defaultMission = config[this.exeKind]["1"]; // 1に意味はないよ
+        // DB用の形に整形
+        let insertList = [];
+        for (let [siteCode, list] of Object.entries(defaultMission)) {
+          list.forEach((line) => {
+            // 実行条件がある場合、開始時刻等を計算して設定
+            if (line.is_valid_cond && line.valid_term) {
+              line.valid_time = {};
+              if (line.valid_term.const_h_from) {
+                let d = new Date();
+                d.setHours(line.valid_term.const_h_from, 0, 0, 0);
+                line.valid_time.from = d;
+              }
+              if (line.valid_term.const_h_to) {
+                let d = new Date();
+                d.setHours(line.valid_term.const_h_to, 0, 0, 0);
+                line.valid_time.to = d;
+              }
+            }
+            let mission = {
+              ...line,
+              status: D.STATUS.BEFO,
+              site_code: siteCode,
+              machine: config.machine,
+              mod_date: null,
+              mission_date: missionDate,
+            };
+            insertList.push(mission);
+          });
+        }
+        if (missionList.length) {
+          let addMissionList = [];
+          // すでに今日のミッションはキューにある場合、差分を追加
+          for (let insertM of insertList) {
+            let dupMissionList = missionList.filter(
+              (m) =>
+                m.main == insertM.main && m.sub == insertM.sub && m.site_code && insertM.site_code
+            );
+            if (!dupMissionList.length) {
+              addMissionList.push(insertM);
+            }
+          }
+          insertList = addMissionList;
+        }
+        let list = await db(D.DB_COL.MISSION_QUE, "insertMany", {}, insertList);
+        this.logger.info(list);
+        missionList = insertList;
+
         // このマシンで実行すべきミッションだけを抽出
         missionList = missionList.filter((m) => {
           if (
