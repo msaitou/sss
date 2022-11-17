@@ -64,7 +64,8 @@ class BaseWebDriverWrapper {
    * @param {*} time
    */
   async clickEle(ele, time) {
-    await this.driver.actions().scroll(0, 0, 0, 0, ele).perform();
+    // await this.driver.actions().scroll(0, 0, 0, 0, ele).perform();
+    this.driver.executeScript("arguments[0].scrollIntoView(true);", ele);
     const actions = this.driver.actions();
     await actions.move({ origin: ele }).perform();
     await this.sleep(1000);

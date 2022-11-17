@@ -5,8 +5,8 @@ const { Builder, By, until, Select } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
 
-class MopBase extends BaseExecuter {
-  code = D.CODE.MOP;
+class CmsBase extends BaseExecuter {
+  code = D.CODE.CMS;
   missionList;
   constructor(retryCnt, siteInfo, aca, missionList) {
     super(retryCnt, siteInfo, aca);
@@ -14,30 +14,30 @@ class MopBase extends BaseExecuter {
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async exec(para) {
-    let mopCom = new MopCommon(para);
-    let islogin = await mopCom.login();
+    let cmsCom = new CmsCommon(para);
+    let islogin = await cmsCom.login();
     if (islogin) {
       for (let i in this.missionList) {
         let mission = this.missionList[i];
         let execCls = null;
         switch (mission.main) {
-          case D.MISSION.CLICK:
-            execCls = new MopClick(para);
-            break;
           case D.MISSION.QUIZ_DAILY:
-            execCls = new MopQuizDaily(para);
+            execCls = new CmsQuizDaily(para);
+            break;
+          case D.MISSION.CLICK:
+            execCls = new CmsClick(para);
             break;
           case D.MISSION.EITANGO:
-            execCls = new MopEitango(para);
+            execCls = new CmsEitango(para);
             break;
           case D.MISSION.ANZAN:
-            execCls = new MopAnzan(para);
+            execCls = new CmsAnzan(para);
             break;
           case D.MISSION.NANYOUBI:
-            execCls = new MopNanyoubi(para);
+            execCls = new CmsNanyoubi(para);
             break;
           case D.MISSION.CM:
-            execCls = new MopCm(para);
+            execCls = new CmsCm(para);
             break;
         }
         if (execCls) {
@@ -52,24 +52,20 @@ class MopBase extends BaseExecuter {
     }
   }
   async saveNowPoint() {
-    let startPage = "https://pc.moppy.jp/";
-    let pointPage = "https://pc.moppy.jp/mypage/";
+    let startPage = "https://www.cmsite.co.jp/top/home/";
     await this.driver.get(startPage);
-    await this.driver.get(pointPage);
-    await this.driver.sleep(3000);
-    let sele = ["p.a-point__point"];
+    await this.driver.sleep(1000);
+    let sele = ["p.menbertxt>span"];
     if (await this.isExistEle(sele[0], true, 2000)) {
-      let ele = await this.driver.findElement(By.css(sele[0]));
+      let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
-      nakedNum.split("\t").join("");
-      nakedNum.split("\n").join("");
       this.logger.info("now point total:" + nakedNum);
       await this.pointSummary(this.code, nakedNum);
     }
   }
 }
-class MopMissonSupper extends BaseWebDriverWrapper {
-  code = D.CODE.MOP;
+class CmsMissonSupper extends BaseWebDriverWrapper {
+  code = D.CODE.CMS;
   para;
   constructor(para) {
     super();
@@ -88,7 +84,7 @@ class MopMissonSupper extends BaseWebDriverWrapper {
   }
 }
 // このサイトの共通処理クラス
-class MopCommon extends MopMissonSupper {
+class CmsCommon extends CmsMissonSupper {
   constructor(para) {
     super(para);
     this.logger.debug(`${this.constructor.name} constructor`);
@@ -97,22 +93,22 @@ class MopCommon extends MopMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
 
     await driver.get(siteInfo.entry_url); // エントリーページ表示
-    let seleIsLoggedIn = "p.a-preface--personal__name"; // ポイント数のセレクタでもあります
+    let seleIsLoggedIn = "p.menbertxt>span"; // ポイント数のセレクタでもあります
 
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
       // リンクが存在することを確認
-      let seleLoginLink = "a.a-btn__login";
+      let seleLoginLink = "ul#GuestMenu>li>a[href*='login']";
       if (await this.isExistEle(seleLoginLink, true, 2000)) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
         await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
         let seleInput = {
-          id: "input[name='mail']",
-          pass: "input[name='pass']",
-          login: "button.a-btn__login",
+          id: "input#usermei",
+          pass: "input[name='password']",
+          login: "input#btn_send",
         };
         // アカウント（メール）入力
         let inputEle = await this.getEle(seleInput.id, 500);
@@ -149,8 +145,8 @@ class MopCommon extends MopMissonSupper {
   }
 }
 // クリック
-class MopClick extends MopMissonSupper {
-  firstUrl = "https://pc.moppy.jp/";
+class CmsClick extends CmsMissonSupper {
+  firstUrl = "https://www.cmsite.co.jp/top/home/";
   targetUrl = "https://pc.moppy.jp/gamecontents/";
   constructor(para) {
     super(para);
@@ -184,9 +180,9 @@ class MopClick extends MopMissonSupper {
 const { PartsQuizDaily } = require("./parts/parts-quiz-daily.js");
 
 // デイリークイズ
-class MopQuizDaily extends MopMissonSupper {
-  firstUrl = "https://pc.moppy.jp/";
-  targetUrl = "https://pc.moppy.jp/gamecontents/";
+class CmsQuizDaily extends CmsMissonSupper {
+  firstUrl = "https://www.cmsite.co.jp/top/home/";
+  targetUrl = "https://www.cmsite.co.jp/top/game/";
   QuizDaily;
   constructor(para) {
     super(para);
@@ -202,9 +198,10 @@ class MopQuizDaily extends MopMissonSupper {
     return res;
   }
 }
+
 // 英単語
-class MopEitango extends MopMissonSupper {
-  firstUrl = "https://pc.moppy.jp/";
+class CmsEitango extends CmsMissonSupper {
+  firstUrl = "https://www.cmsite.co.jp/top/home/";
   targetUrl = "https://pc.moppy.jp/gamecontents/";
   constructor(para) {
     super(para);
@@ -281,8 +278,8 @@ class MopEitango extends MopMissonSupper {
   }
 }
 // 何曜日
-class MopNanyoubi extends MopMissonSupper {
-  firstUrl = "https://pc.moppy.jp/";
+class CmsNanyoubi extends CmsMissonSupper {
+  firstUrl = "https://www.cmsite.co.jp/top/home/";
   targetUrl = "https://pc.moppy.jp/gamecontents/";
   constructor(para) {
     super(para);
@@ -368,8 +365,8 @@ class MopNanyoubi extends MopMissonSupper {
   }
 }
 // 暗算
-class MopAnzan extends MopMissonSupper {
-  firstUrl = "https://pc.moppy.jp/";
+class CmsAnzan extends CmsMissonSupper {
+  firstUrl = "https://www.cmsite.co.jp/top/home/";
   targetUrl = "https://pc.moppy.jp/gamecontents/";
   constructor(para) {
     super(para);
@@ -462,8 +459,8 @@ class MopAnzan extends MopMissonSupper {
     return res;
   }
 }
-class MopCm extends MopMissonSupper {
-  firstUrl = "https://pc.moppy.jp/";
+class CmsCm extends CmsMissonSupper {
+  firstUrl = "https://www.cmsite.co.jp/top/home/";
   targetUrl = "https://pc.moppy.jp/gamecontents/";
   // ChirashiCls;
   constructor(para) {
@@ -481,8 +478,8 @@ class MopCm extends MopMissonSupper {
   }
 }
 // module.
-exports.MopCommon = MopCommon;
+exports.CmsCommon = CmsCommon;
 // module.
-exports.Mop = MopBase;
+exports.Cms = CmsBase;
 // module.
 // exports = { pex: pexBase, pexCommon: pexCommon };

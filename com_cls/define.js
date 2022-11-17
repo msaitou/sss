@@ -20,6 +20,7 @@ exports.Def = {
     PTO: "pto",
     MOP: "mop",
     PEX: "pex",
+    CMS:"cms",
   },
   MISSION: {
     CHIRASHI: "chirashi",

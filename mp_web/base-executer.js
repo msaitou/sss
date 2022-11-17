@@ -20,13 +20,20 @@ class BaseExecuter extends BaseWebDriverWrapper {
   }
   async main() {
     this.logger.info("BaseExecuter", "start");
+    let para = {
+      retryCnt: this.retryMax,
+      account: this.account,
+      logger: this.logger,
+      siteInfo: this.siteInfo,
+    };
     for (let i = 0; i < this.retryMax; i++) {
       try {
         if (!this.getDriver()) {
           // let driver = await this.webDriver();
           this.setDriver(await this.webDriver());
         }
-        await this.exec();
+        para.driver = this.driver;
+        await this.exec(para);
       } catch (e) {
         this.logger.info(e);
         await this.quitDriver();
@@ -86,6 +93,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
       // diffを算出　マイナスの場合換金した扱いをする
       if (oldDoc[siteCode] && oldDoc[siteCode].p) {
         diff = p - oldDoc[siteCode].p;
+        diff = Math.round(diff * 100) / 100;  // 小数点の誤差をなくす
         if (diff < 0) {
           // TODO ちゃんと作るまではメール飛ばす
           exch;
@@ -113,8 +121,8 @@ class BaseExecuter extends BaseWebDriverWrapper {
         diffTotal += Number(nowDoc[code].diff);
       }
     }
-    nowDoc.total = total;
-    nowDoc.diff = diffTotal;
+    nowDoc.total = Math.round(total * 100) / 100;  // 小数点の誤差をなくす
+    nowDoc.diff = Math.round(diffTotal * 100) / 100;  // 小数点の誤差をなくす
     console.log("1");
     await db(D.DB_COL.POINT, "update", { _id: idStr }, nowDoc);
     console.log("2");
@@ -122,9 +130,9 @@ class BaseExecuter extends BaseWebDriverWrapper {
 
   /**
    * 1つのmission完了時のキューテーブルへの更新
-   * @param {*} mission 
-   * @param {*} res 
-   * @param {*} siteCode 
+   * @param {*} mission
+   * @param {*} res
+   * @param {*} siteCode
    */
   async updateMissionQue(mission, res, siteCode) {
     if (mission["mission_date"]) {

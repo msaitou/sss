@@ -1,6 +1,7 @@
 const { initBrowserDriver, db } = require("../initter.js");
 const pexBase = require("./pex-base");
 const mopBase = require("./mop-base");
+const cmsBase = require("./cms-base");
 const config = require("config");
 const { Entry } = require("selenium-webdriver/lib/logging");
 const D = require("../com_cls/define").Def;
@@ -34,13 +35,6 @@ class PointWebCls {
    */
   async once() {
     let missionMap = config[this.exeKind][""];
-    // "": {
-    //   "pex": [
-    //     { "main": "news", "sub": "" },
-    //     { "main": "chirashi", "sub": "1" }
-    //   ]
-    // }
-
     await this.main(missionMap);
   }
 
@@ -87,7 +81,7 @@ class PointWebCls {
             // 実行条件がある場合、開始時刻等を計算して設定
             if (line.is_valid_cond && line.valid_term) {
               line.valid_time = {};
-              if (line.valid_term.const_h_from) {
+              if (line.valid_term.const_h_from || line.valid_term.const_h_from === 0) {
                 let d = new Date();
                 d.setHours(line.valid_term.const_h_from, 0, 0, 0);
                 line.valid_time.from = d;
@@ -186,6 +180,9 @@ class PointWebCls {
         break;
       case D.CODE.MOP:
         opeCls = new mopBase.Mop(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.CMS:
+        opeCls = new cmsBase.Cms(0, siteInfo, aca, missionList);
         break;
     }
     if (opeCls) {

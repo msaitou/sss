@@ -13,16 +13,7 @@ class PexBase extends BaseExecuter {
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
-  async exec() {
-    // ■基本機能
-    // 実行ミッションを実施
-    let para = {
-      retryCnt: 0,
-      account: this.account,
-      logger: this.logger,
-      driver: this.driver,
-      siteInfo: this.siteInfo,
-    };
+  async exec(para) {
     let pexCom = new PexCommon(para);
     let islogin = await pexCom.login();
     if (islogin) {
