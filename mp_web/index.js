@@ -123,9 +123,11 @@ class PointWebCls {
           }
           insertList = addMissionList;
         }
-        let list = await db(D.DB_COL.MISSION_QUE, "insertMany", {}, insertList);
-        this.logger.info(list);
-        missionList = insertList;
+        if (insertList.length) {
+          let list = await db(D.DB_COL.MISSION_QUE, "insertMany", {}, insertList);
+          this.logger.info(list);
+          missionList.concat(insertList);
+        }
 
         // このマシンで実行すべきミッションだけを抽出
         missionList = missionList.filter((m) => {
