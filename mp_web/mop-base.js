@@ -177,7 +177,7 @@ class MopClick extends MopMissonSupper {
       }
     }
     logger.info(`${this.constructor.name} END`);
-    return true;
+    return D.STATUS.DONE;
     // return await this.ChirashiCls.do(this.targetUrl);
   }
 }

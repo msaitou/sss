@@ -64,7 +64,7 @@ class BaseWebDriverWrapper {
    * @param {*} time
    */
   async clickEle(ele, time) {
-    // await this.driver.actions().scroll(0, 0, 0, 0, ele).perform();
+    await this.driver.actions().scroll(0, 0, 20, 30, ele).perform();
     this.driver.executeScript("arguments[0].scrollIntoView(true);", ele);
     const actions = this.driver.actions();
     await actions.move({ origin: ele }).perform();
@@ -85,7 +85,7 @@ class BaseWebDriverWrapper {
         if (showFlag) exception = e;
         eles = [];
       }
-      this.logger.info(`showFlag[${showFlag}] elelen[${eles.length}]`);
+      this.logger.info(`sele[${sele}] showFlag[${showFlag}] elelen[${eles.length}]`);
       if (exception) {
         // throw exception;
         return false;
@@ -110,8 +110,11 @@ class BaseWebDriverWrapper {
         if (showFlag) exception = e;
         eles = [];
       }
-      this.logger.info(`showFlag[${showFlag}] elelen[${eles.length}]`);
-      if (showFlag && !!eles.length) {
+      this.logger.info(`sele[${sele}] showFlag[${showFlag}] elelen[${eles.length}]`);
+      if (exception) {
+        // throw exception;
+        return false;
+      } else if (showFlag && !!eles.length) {
         return true; // 見つけようと思って見つかった
       } else if (!showFlag && !eles.length) {
         return true; // 見つからないと思って見つからない

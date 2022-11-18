@@ -25,15 +25,18 @@ exports.Def = {
   MISSION: {
     CHIRASHI: "chirashi",
     NEWS: "news",
-    CM: "cm", // 暫定　TODO
-
+    
     QUIZ_DAILY: "quiz_daily",
     EITANGO: "eitango",
     ANZAN: "anzan",
     NANYOUBI: "nanyoubi",
     CLICK: "click",
-
+    
+    CM: "cm", // 内部処理のダミー用
     CM_URANAI: "cm_uranai",
+    CM_DOTTI: "cm_dotti",
+    CM_KENTEI: "cm_kentei",
+    CM_POCHI: "cm_pochi",
     MOP_RESEARCH: "mop_RESEARCH",
   },
 };
