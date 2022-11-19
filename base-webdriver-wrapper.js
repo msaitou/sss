@@ -64,8 +64,11 @@ class BaseWebDriverWrapper {
    * @param {*} time
    */
   async clickEle(ele, time) {
-    await this.driver.actions().scroll(0, 0, 20, 30, ele).perform();
-    this.driver.executeScript("arguments[0].scrollIntoView(true);", ele);
+    let rect = await ele.getRect();
+    this.logger.info("rect.y", rect.y);
+    await this.driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+    // await this.driver.executeScript("arguments[0].scrollIntoView(true);", ele);
+    await this.driver.actions().scroll(0, 0, 10, 15, ele).perform();
     const actions = this.driver.actions();
     await actions.move({ origin: ele }).perform();
     await this.sleep(1000);
@@ -142,14 +145,15 @@ class BaseWebDriverWrapper {
   }
   async changeWindow(wid) {
     // 別タブに移動する
-    wid = wid | (await this.driver.getWindowHandle());
     let widSet = await this.driver.getAllWindowHandles();
-    for (let id of widSet) {
-      if (id != wid) {
-        // 最後に格納したウインドウIDにスイッチして閉じる
-        await this.driver.switchTo().window(id);
-      }
-    }
+    await this.driver.switchTo().window(widSet[widSet.length-1]);
+    // wid = wid | (await this.driver.getWindowHandle());
+    // for (let id of widSet) {
+    //   if (id != wid) {
+    //     // 最後に格納したウインドウIDにスイッチして閉じる
+    //     await this.driver.switchTo().window(id);
+    //   }
+    // }
   }
 
   /**
