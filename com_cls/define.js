@@ -20,18 +20,19 @@ exports.Def = {
     PTO: "pto",
     MOP: "mop",
     PEX: "pex",
-    CMS:"cms",
+    CMS: "cms",
+    GPO: "gpo",
   },
   MISSION: {
     CHIRASHI: "chirashi",
     NEWS: "news",
-    
+
     QUIZ_DAILY: "quiz_daily",
     EITANGO: "eitango",
     ANZAN: "anzan",
     NANYOUBI: "nanyoubi",
     CLICK: "click",
-    
+
     CM: "cm", // 内部処理のダミー用
     CM_URANAI: "cm_uranai",
     CM_DOTTI: "cm_dotti",

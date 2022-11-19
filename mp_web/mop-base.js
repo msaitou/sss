@@ -4,6 +4,7 @@ const { libUtil } = require("../lib/util.js");
 const { Builder, By, until, Select } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
+const { PartsCmManage } = require("./parts/parts-cm-manage.js");
 
 class MopBase extends BaseExecuter {
   code = D.CODE.MOP;
@@ -17,6 +18,12 @@ class MopBase extends BaseExecuter {
     let mopCom = new MopCommon(para);
     let islogin = await mopCom.login();
     if (islogin) {
+      // cm系のミッションはまとめてやるため、ここでは1つ扱いのダミーミッションにする
+      let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
+      this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
+      if (cmMissionList.length) {
+        this.missionList.push({ main: D.MISSION.CM });
+      }
       for (let i in this.missionList) {
         let mission = this.missionList[i];
         let execCls = null;
@@ -37,14 +44,16 @@ class MopBase extends BaseExecuter {
             execCls = new MopNanyoubi(para);
             break;
           case D.MISSION.CM:
-            execCls = new MopCm(para);
+            execCls = new MopCm(para, cmMissionList);
             break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
           this.logger.info(`${mission.main} 終了--`);
-          await this.updateMissionQue(mission, res, this.code);
+          if (mission.main != D.MISSION.CM) {
+            await this.updateMissionQue(mission, res, this.code);
+          }
         }
       }
       // ポイント数取得し保持
@@ -465,21 +474,31 @@ class MopAnzan extends MopMissonSupper {
 class MopCm extends MopMissonSupper {
   firstUrl = "https://pc.moppy.jp/";
   targetUrl = "https://pc.moppy.jp/gamecontents/";
-  // ChirashiCls;
-  constructor(para) {
+  cmMissionList;
+  constructor(para, cmMissionList) {
     super(para);
-    // this.ChirashiCls = new PartsChirashi(para);
+    this.cmMissionList = cmMissionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   // ポイントゲットのチャンスは1日2回チラシが更新される朝6時と夜20時
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await driver.get(this.firstUrl); // 最初のページ表示
     await driver.get(this.targetUrl); // 操作ページ表示
-
-    this.answerCMPreAnq(driver, logger);
+    let sele = ["a[data-ga-label='CMくじ']"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEle(eles[0], 2000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://moppy.cmnw.jp/game/");
+      await cmManage.do();
+      await driver.close(); // このタブを閉じて
+      // 元のウインドウIDにスイッチ
+      await driver.switchTo().window(wid);
+    }
   }
 }
+
 // module.
 exports.MopCommon = MopCommon;
 // module.

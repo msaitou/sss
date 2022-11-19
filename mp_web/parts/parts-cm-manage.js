@@ -55,6 +55,7 @@ class PartsCmManage extends BaseExecuter {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 3000);
       await this.clickEle(ele, 2000);
+      this.ignoreKoukoku();
       if (await this.isExistEle(sele[1], true, 2000)) {
         ele = await this.getEle(sele[1], 3000);
         await this.clickEle(ele, 2000);
@@ -65,6 +66,19 @@ class PartsCmManage extends BaseExecuter {
       }
     }
   }
+  async ignoreKoukoku() {
+    let currentUrl = await this.driver.getCurrentUrl();
+    // 広告が画面いっぱいに入る時がある
+    if (currentUrl.indexOf("google_vignette") > -1) {
+      // await driver.actions().sendKeys(Key.ESCAPE).perform();
+      // await this.sleep(2000);
+      await this.driver.navigate().back(); // 戻って
+      await this.driver.navigate().forward(); // 行く
+      currentUrl = await this.driver.getCurrentUrl();
+    }
+    return currentUrl;
+  }
+
 }
 class CmSuper extends BaseWebDriverWrapper {
   para;
@@ -209,6 +223,10 @@ class CmDotti extends CmSuper {
       if (await this.isExistEle(sele[8], true, 3000)) {
         let ele = await this.getEle(sele[8], 3000);
         await this.clickEle(ele, 2000); // 獲得
+        if (await this.isExistEle(sele[2], true, 3000)) {
+          ele = await this.getEle(sele[2], 3000);
+          await this.clickEle(ele, 2000); // topへ（この質問種類の一覧へ）
+        }
         if (await this.isExistEle(sele[2], true, 3000)) {
           ele = await this.getEle(sele[2], 3000);
           await this.clickEle(ele, 2000); // topへ（この質問種類の一覧へ）
@@ -430,12 +448,12 @@ class CmUranai extends CmSuper {
                   if (await this.isExistEle(sele[7], true, 3000)) {
                     ele = await this.getEle(sele[7], 3000);
                     await this.clickEle(ele, 5000);
-                    // 時間かかりそう　TODO
                     if (await this.isExistEle(sele[8], true, 3000)) {
                       ele = await this.getEle(sele[8], 3000);
                       await this.clickEle(ele, 2000);
                       if (await this.isExistEle(sele[9], true, 3000)) {
                         ele = await this.getEle(sele[9], 3000);
+                        // 時間かかりそう　TODO
                         await this.clickEle(ele, 2000);
                         if (await this.isExistEle(sele[10], true, 3000)) {
                           ele = await this.getEle(sele[10], 3000);
@@ -477,21 +495,6 @@ class CmUranai extends CmSuper {
       currentUrl = await this.driver.getCurrentUrl();
     }
     return currentUrl;
-  }
-
-  async exchangeDotti(sele) {
-    let currentUrl = await this.driver.getCurrentUrl();
-    if (currentUrl.substr(-2) == "/p") {
-      // 獲得してないシールがある場合
-      if (await this.isExistEle(sele[8], true, 3000)) {
-        let ele = await this.getEle(sele[8], 3000);
-        await this.clickEle(ele, 2000); // 獲得
-        if (await this.isExistEle(sele[2], true, 3000)) {
-          ele = await this.getEle(sele[2], 3000);
-          await this.clickEle(ele, 2000); // topへ（この質問種類の一覧へ）
-        }
-      }
-    }
   }
 }
 // ぽちっと調査隊
