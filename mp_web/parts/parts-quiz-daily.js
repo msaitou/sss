@@ -17,7 +17,6 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
       await driver.get(targetUrl); // 操作ページ表示
       let sele = [
         "a[data-ga-label='デイリークイズ']",
-
         "input.ui-button-start",
         "label.ui-label-radio",
         "input.ui-button-answer",
@@ -26,12 +25,12 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
         "input.ui-button-end",
       ];
       sele[0] = siteInfo.code == D.CODE.CMS ? "img[alt='DAILYQUIZ']" : sele[0];
+      if (await this.isExistEle(sele[0], true, 2000)) await this.exchange();
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
-        // TODO スタンプ交換
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           // await this.clickEle(ele, 2000);
@@ -85,6 +84,25 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
   }
-
+  async exchange() {
+    let exSele = [
+      "a.stamp__btn[href*='exchange']",
+      "input.exchange__btn",
+      "a.stamp__btn.stamp__btn-return",
+    ];
+    await this.hideOverlay();
+    if (await this.isExistEle(exSele[0], true, 2000)) {
+      let ele = await this.getEle(exSele[0], 3000);
+      await this.clickEle(ele, 2000);
+      if (await this.isExistEle(exSele[1], true, 2000)) {
+        ele = await this.getEle(exSele[1], 3000);
+        await this.clickEle(ele, 2000);
+      }
+      if (await this.isExistEle(exSele[2], true, 2000)) {
+        ele = await this.getEle(exSele[2], 3000);
+        await this.clickEle(ele, 2000);
+      }
+    }
+  }
 }
 exports.PartsQuizDaily = PartsQuizDaily;
