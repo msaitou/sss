@@ -110,7 +110,7 @@ class PointWebCls {
           for (let insertM of insertList) {
             let dupMissionList = missionList.filter(
               (m) =>
-                m.main == insertM.main && m.sub == insertM.sub && m.site_code && insertM.site_code
+                m.main == insertM.main && m.sub == insertM.sub && m.site_code == insertM.site_code
             );
             if (!dupMissionList.length) {
               addMissionList.push(insertM);
