@@ -23,6 +23,7 @@ exports.Def = {
     CMS: "cms",
     GPO: "gpo",
     GEN: "gen",
+    SUG: "sug",
   },
   MISSION: {
     CHIRASHI: "chirashi",

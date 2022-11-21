@@ -7,6 +7,8 @@ const gmyBase = require("./gmy-base");
 const genBase = require("./gen-base");
 const ptoBase = require("./pto-base");
 const citBase = require("./cit-base");
+const criBase = require("./cri-base");
+const sugBase = require("./sug-base");
 const config = require("config");
 const { Entry } = require("selenium-webdriver/lib/logging");
 const D = require("../com_cls/define").Def;
@@ -203,6 +205,12 @@ class PointWebCls {
         break;
       case D.CODE.CIT:
         opeCls = new citBase.Cit(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.CRI:
+        opeCls = new criBase.Cri(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.SUG:
+        opeCls = new sugBase.Sug(0, siteInfo, aca, missionList);
         break;
     }
     if (opeCls) {
