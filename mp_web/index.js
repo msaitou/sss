@@ -4,6 +4,9 @@ const mopBase = require("./mop-base");
 const cmsBase = require("./cms-base");
 const gpoBase = require("./gpo-base");
 const gmyBase = require("./gmy-base");
+const genBase = require("./gen-base");
+const ptoBase = require("./pto-base");
+const citBase = require("./cit-base");
 const config = require("config");
 const { Entry } = require("selenium-webdriver/lib/logging");
 const D = require("../com_cls/define").Def;
@@ -191,6 +194,15 @@ class PointWebCls {
         break;
       case D.CODE.GMY:
         opeCls = new gmyBase.Gmy(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.GEN:
+        opeCls = new genBase.Gen(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.PTO:
+        opeCls = new ptoBase.Pto(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.CIT:
+        opeCls = new citBase.Cit(0, siteInfo, aca, missionList);
         break;
     }
     if (opeCls) {

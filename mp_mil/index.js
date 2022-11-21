@@ -130,7 +130,7 @@ class PointMailClass extends BaseWebDriverWrapper {
             if (cnt == 10) {
               isComp = true;
               this.logger.info("30超えたので強制終了です");
-              reject(isComp); // なんか仕様変わったかも
+              resolve(isComp); // なんか仕様変わったかも
             }
           }
         }
