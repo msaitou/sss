@@ -26,7 +26,7 @@ exports.Def = {
   MISSION: {
     CHIRASHI: "chirashi",
     NEWS: "news",
-
+    RESEARCH1: "research1",
     QUIZ_DAILY: "quiz_daily",
     EITANGO: "eitango",
     ANZAN: "anzan",
@@ -38,6 +38,6 @@ exports.Def = {
     CM_DOTTI: "cm_dotti",
     CM_KENTEI: "cm_kentei",
     CM_POCHI: "cm_pochi",
-    MOP_RESEARCH: "mop_RESEARCH",
+    MOP_RESEARCH: "mop_research",
   },
 };

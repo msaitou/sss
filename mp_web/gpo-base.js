@@ -93,15 +93,15 @@ class GpoCommon extends GpoMissonSupper {
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
       // リンクが存在することを確認
-      let seleLoginLink = "ul#GuestMenu>li>a[href*='login']";
+      let seleLoginLink = "li.btn-login>a";
       if (await this.isExistEle(seleLoginLink, true, 2000)) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
         await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
         let seleInput = {
-          id: "input#usermei",
-          pass: "input[name='password']",
-          login: "input#btn_send",
+          id: "input#userid",
+          pass: "input#passwd",
+          login: "input.btn-login-gp",
         };
         // アカウント（メール）入力
         let inputEle = await this.getEle(seleInput.id, 500);

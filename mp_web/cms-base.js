@@ -33,6 +33,9 @@ class CmsBase extends BaseExecuter {
           case D.MISSION.CM:
             execCls = new CmsCm(para, cmMissionList);
             break;
+          case D.MISSION.RESEARCH1:
+            execCls = new CmsResearch1(para, cmMissionList);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -143,6 +146,7 @@ class CmsCommon extends CmsMissonSupper {
 
 const { PartsQuizDaily } = require("./parts/parts-quiz-daily.js");
 const { PartsCmManage } = require("./parts/parts-cm-manage.js");
+const { PartsResearch1 } = require("./parts/parts-research1.js");
 // デイリークイズ
 class CmsQuizDaily extends CmsMissonSupper {
   firstUrl = "https://www.cmsite.co.jp/top/home/";
@@ -158,6 +162,32 @@ class CmsQuizDaily extends CmsMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START###`);
     let res = await this.QuizDaily.do(this.targetUrl);
+    logger.info(`${this.constructor.name} END#####`);
+    return res;
+  }
+}
+// リサーチ1
+class CmsResearch1 extends CmsMissonSupper {
+  firstUrl = "https://www.cmsite.co.jp/top/home/";
+  targetUrl = "https://www.cmsite.co.jp/top/enq/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START###`);
+    await driver.get(this.targetUrl); // 操作ページ表示
+    let sele = ["img[src='img/q_05.png']"];
+    let res = D.STATUS.FAIL;
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele, 2000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      let Research1 = new PartsResearch1(this.para);
+      res = await Research1.do(wid);
+    }
     logger.info(`${this.constructor.name} END#####`);
     return res;
   }
