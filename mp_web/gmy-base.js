@@ -5,8 +5,8 @@ const { Builder, By, until, Select } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
 
-class PexBase extends BaseExecuter {
-  code = D.CODE.PEX;
+class GmyBase extends BaseExecuter {
+  code = D.CODE.GMY;
   missionList;
   constructor(retryCnt, siteInfo, aca, missionList) {
     super(retryCnt, siteInfo, aca);
@@ -14,28 +14,30 @@ class PexBase extends BaseExecuter {
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async exec(para) {
-    let pexCom = new PexCommon(para);
-    let islogin = await pexCom.login();
+    let gmyCom = new GmyCommon(para);
+    let islogin = await gmyCom.login();
     if (islogin) {
+      // cm系のミッションはまとめてやるため、ここでは1つ扱いのダミーミッションにする
+      let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
+      this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
+      if (cmMissionList.length) {
+        this.missionList.push({main:D.MISSION.CM});
+      }
       for (let i in this.missionList) {
         let mission = this.missionList[i];
         let execCls = null;
         switch (mission.main) {
-          case D.MISSION.CHIRASHI:
-            execCls = new PexChirashi(para);
-            break;
-          case D.MISSION.NEWS:
-            execCls = new PexNewsWatch(para);
-            break;
           case D.MISSION.CM:
-            execCls = new PexCm(para);
+            execCls = new GmyCm(para, cmMissionList);
             break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
           this.logger.info(`${mission.main} 終了--`);
-          await this.updateMissionQue(mission, res, this.code);
+          if (mission.main != D.MISSION.CM) {
+            await this.updateMissionQue(mission, res, this.code);
+          }
         }
       }
       // ポイント数取得し保持
@@ -43,22 +45,20 @@ class PexBase extends BaseExecuter {
     }
   }
   async saveNowPoint() {
-    let startPage = "https://pex.jp/";
-    let pointPage = "https://pex.jp/user/point_passbook/all";
+    let startPage = "https://dietnavi.com/pc/";
     await this.driver.get(startPage);
-    await this.driver.get(pointPage);
-    await this.driver.sleep(3000);
-    let sele = ["dl.point_area>dd>span"];
+    await this.driver.sleep(1000);
+    let sele = ["li.user_point>a"];
     if (await this.isExistEle(sele[0], true, 2000)) {
-      let ele = await this.driver.findElement(By.css(sele[0]));
+      let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
       this.logger.info("now point total:" + nakedNum);
       await this.pointSummary(this.code, nakedNum);
     }
   }
 }
-class PexMissonSupper extends BaseWebDriverWrapper {
-  code = D.CODE.PEX;
+class GmyMissonSupper extends BaseWebDriverWrapper {
+  code = D.CODE.GMY;
   para;
   constructor(para) {
     super();
@@ -66,9 +66,18 @@ class PexMissonSupper extends BaseWebDriverWrapper {
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
+  async hideOverlay() {
+    let seleOver = ["div.overlay-item a.button-close"];
+    if (await this.isExistEle(seleOver[0], true, 3000)) {
+      let ele = await this.getEle(seleOver[0], 2000);
+      if (await ele.isDisplayed()) {
+        await this.clickEle(ele, 2000);
+      } else this.logger.debug("オーバーレイは表示されてないです");
+    }
+  }
 }
 // このサイトの共通処理クラス
-class PexCommon extends PexMissonSupper {
+class GmyCommon extends GmyMissonSupper {
   constructor(para) {
     super(para);
     this.logger.debug(`${this.constructor.name} constructor`);
@@ -77,25 +86,22 @@ class PexCommon extends PexMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
 
     await driver.get(siteInfo.entry_url); // エントリーページ表示
-    let seleIsLoggedIn = "span.g-icon_point"; // ポイント数のセレクタでもあります
+    let seleIsLoggedIn = "li.user_point>a";
 
-    // let ele = await driver.findElements(By.css(seleIsLoggedIn));
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
       // リンクが存在することを確認
-      let seleLoginLink = "li.header-mymenu_login>a";
-      // logger.info(ele.length);
+      let seleLoginLink = "li.btn_login>a";
       if (await this.isExistEle(seleLoginLink, true, 2000)) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
-        await ele.click();
-        await this.sleep(2000); // ログイン入力画面へ遷移
+        await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
         let seleInput = {
-          id: "#pex_user_login_email",
-          pass: "#pex_user_login_password",
-          login: "[type='submit'][name='commit']",
+          id: "input[name='mail']",
+          pass: "input[name='pass']",
+          login: "input.login_btn",
         };
         // アカウント（メール）入力
         let inputEle = await this.getEle(seleInput.id, 500);
@@ -135,9 +141,10 @@ class PexCommon extends PexMissonSupper {
             return;
           }
         }
+
+
         ele = await this.getEle(seleInput.login, 1000);
-        await ele.click();
-        this.sleep(4000);
+        await this.clickEle(ele, 4000);
         // ログインできてるか、チェック
         if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
           // ログインできてるのでOK
@@ -160,116 +167,38 @@ class PexCommon extends PexMissonSupper {
     return true;
   }
 }
-const { PartsChirashi } = require("./parts/parts-chirashi.js");
-const { db } = require("../initter.js");
-// オリチラ
-class PexChirashi extends PexMissonSupper {
-  firstUrl = "https://pex.jp/";
-  targetUrl = "https://pex.jp/chirashi";
-  ChirashiCls;
-  constructor(para) {
+
+const { PartsCmManage } = require("./parts/parts-cm-manage.js");
+// CM系のクッション
+class GmyCm extends GmyMissonSupper {
+  firstUrl = "https://dietnavi.com/pc/";
+  targetUrl = "https://dietnavi.com/pc/game/";
+  cmMissionList;
+  constructor(para, cmMissionList) {
     super(para);
-    this.ChirashiCls = new PartsChirashi(para);
-    this.logger.debug(`${this.constructor.name} constructor`);
-  }
-  // ポイントゲットのチャンスは1日2回チラシが更新される朝6時と夜20時
-  async do() {
-    let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await driver.get(this.firstUrl); // 最初のページ表示
-    return await this.ChirashiCls.do(this.targetUrl);
-  }
-}
-// みんなのNEWSウォッチ
-class PexNewsWatch extends PexMissonSupper {
-  firstUrl = "https://pex.jp/";
-  targetUrl = "https://pex.jp/point_news";
-  constructor(para) {
-    super(para);
-    this.logger.debug(`${this.constructor.name} constructor`);
-  }
-  // ポイントゲットのチャンスは朝7時から
-  async do() {
-    let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    let res = D.STATUS.FAIL;
-    try {
-      await driver.get(this.firstUrl); // 最初のページ表示
-      await driver.get(this.targetUrl); // 操作ページ表示
-      let sele = [
-        "ul#point-action-0>li.pt.ungained",
-        "div.panel_img",
-        "td>input[type='submit']",
-        "a>div.go_top",
-        "ul#point-action-",
-      ];
-      if (await this.isExistEle(sele[0], true, 2000)) {
-        // let eles = await this.getEles(sele[0], 2000);
-        // let repeatNum = eles.length === 3 ? 5 : eles.length === 2 ? 3 : 1;
-        let eles;
-        // 基本は5回ループ
-        let repeatNum = 0;
-        for (let i = 0; i < 6; i++) {
-          let tmpSele = sele[4] + i;
-          let tmpEle = await this.getEle(tmpSele, 2000);
-          if (await tmpEle.isDisplayed()) {
-            repeatNum = 5 - i;
-            break;
-          }
-        }
-        let cnt = 0;
-        for (let i = 0; i < repeatNum; i++) {
-          eles = await this.getEles(sele[1], 2000);
-          let selePart = ["div.panel_label>span.emo_action", "img"];
-          for (let j = eles.length - 1; j >= 0; j--) {
-            // なんか既読じゃなかったらみたいな条件あり
-            if (await this.isExistElesFromEle(eles[j], selePart[0], false, 2000)) {
-              let ele0 = await this.getElesFromEles(eles[j], selePart[1], 2000);
-              await this.clickEle(ele0[0], 2000); // 同一ページを切り替えてます
-              // リアクションを選ぶ
-              let eles1 = await this.getEles(sele[2], 2000);
-              // ランダムで。
-              let choiceNum = libUtil.getRandomInt(0, eles1.length);
-              // クリック場所へスクロールが必要（画面に表示しないとだめぽい）
-              await this.clickEle(eles1[choiceNum], 2000); // 同一ページを切り替えてます
-              cnt++;
-              if (await this.isExistEle(sele[3], true, 2000)) {
-                let ele = await this.getEle(sele[3], 2000);
-                await this.clickEle(ele, 2000); // newsのトップページへ戻る
-                break;
-              }
-            }
-          }
-        }
-        if (repeatNum === cnt) {
-          res = D.STATUS.DONE;
-        }
-      } else logger.info("今日はもう獲得済み");
-    } catch (e) {
-      logger.warn(e);
-    }
-    return res;
-  }
-}
-class PexCm extends PexMissonSupper {
-  firstUrl = "https://pex.jp/";
-  targetUrl = "https://pex-pc.cmnw.jp/cm";
-  // ChirashiCls;
-  constructor(para) {
-    super(para);
-    // this.ChirashiCls = new PartsChirashi(para);
+    this.cmMissionList = cmMissionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await driver.get(this.firstUrl); // 最初のページ表示
     await driver.get(this.targetUrl); // 操作ページ表示
-
-    this.answerCMPreAnq(driver, logger);
-
+    let sele = ["img[src*='pic_cmkuji.gif']"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEle(eles[0], 2000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://dietnavi.cmnw.jp/game/");
+      await cmManage.do();
+      await driver.close(); // このタブを閉じて
+      // 元のウインドウIDにスイッチ
+      await driver.switchTo().window(wid);
+    }
   }
 }
 // module.
-exports.PexCommon = PexCommon;
+exports.GmyCommon = GmyCommon;
 // module.
-exports.Pex = PexBase;
+exports.Gmy = GmyBase;
 // module.
 // exports = { pex: pexBase, pexCommon: pexCommon };

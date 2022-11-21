@@ -3,6 +3,7 @@ const pexBase = require("./pex-base");
 const mopBase = require("./mop-base");
 const cmsBase = require("./cms-base");
 const gpoBase = require("./gpo-base");
+const gmyBase = require("./gmy-base");
 const config = require("config");
 const { Entry } = require("selenium-webdriver/lib/logging");
 const D = require("../com_cls/define").Def;
@@ -187,6 +188,9 @@ class PointWebCls {
         break;
       case D.CODE.GPO:
         opeCls = new gpoBase.Gpo(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.GMY:
+        opeCls = new gmyBase.Gmy(0, siteInfo, aca, missionList);
         break;
     }
     if (opeCls) {

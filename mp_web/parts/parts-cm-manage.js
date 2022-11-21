@@ -271,13 +271,13 @@ class CmKentei extends CmSuper {
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           await this.clickEle(ele, 2000);
-          this.ignoreKoukoku();
+          await this.ignoreKoukoku();
           if (await this.isExistEle(sele[1], true, 3000)) {
             ele = await this.getEle(sele[1], 3000);
             await this.clickEle(ele, 2000);
             // 12問
             for (let i = 0; i < 12; i++) {
-              this.ignoreKoukoku();
+              await this.ignoreKoukoku();
               if (await this.isExistEle(sele[2], true, 3000)) {
                 let answerList = [];
                 if (await this.isExistEle(sele[3], true, 3000)) {
@@ -409,7 +409,7 @@ class CmUranai extends CmSuper {
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           await this.clickEle(ele, 2000);
-          this.ignoreKoukoku();
+          await this.ignoreKoukoku();
           // await driver.wait(until.elementIsVisible(choiceEle), 15000);
           for (let i = 0; i < 3; i++) {
             if (await this.isExistEle(sele[2], true, 3000)) {
