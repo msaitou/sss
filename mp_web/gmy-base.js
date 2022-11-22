@@ -219,16 +219,18 @@ class GmyReadDog extends GmyMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["img[src*='img_game_dog.png']"];
+    let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       let PartsReadDogCls = new PartsRead(this.para);
-      await PartsReadDogCls.do();
+      res = await PartsReadDogCls.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
     }
+    return res;
   }
 }
 // 一押し
@@ -245,16 +247,18 @@ class GmyReadIchi extends GmyMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["img[src*='img_ichioshi.png']"];
+    let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       let PartsReadDogCls = new PartsRead(this.para);
-      await PartsReadDogCls.do();
+      res = await PartsReadDogCls.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
     }
+    return res;
   }
 }
 
