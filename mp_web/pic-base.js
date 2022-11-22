@@ -101,7 +101,7 @@ class PicCommon extends PicMissonSupper {
         let seleInput = {
           id: "input[name='email_address']",
           pass: "input[name='password']",
-          login: "input[name='submit']",
+          login: "input[name='Submit']",
         };
         // アカウント（メール）入力
         let inputEle = await this.getEle(seleInput.id, 500);
