@@ -64,8 +64,7 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
             ele = await this.getEle(sele[6], 3000);
             await this.clickEle(ele, 2000); // 次のページ
             await driver.close(); // このタブを閉じて
-            // 元のウインドウIDにスイッチ
-            await driver.switchTo().window(wid);
+            await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
             res = D.STATUS.DONE;
           }
         }

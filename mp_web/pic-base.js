@@ -5,8 +5,8 @@ const { Builder, By, until, Select } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
 
-class GmyBase extends BaseExecuter {
-  code = D.CODE.GMY;
+class PicBase extends BaseExecuter {
+  code = D.CODE.PIC;
   missionList;
   constructor(retryCnt, siteInfo, aca, missionList) {
     super(retryCnt, siteInfo, aca);
@@ -14,8 +14,8 @@ class GmyBase extends BaseExecuter {
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async exec(para) {
-    let gmyCom = new GmyCommon(para);
-    let islogin = await gmyCom.login();
+    let sugCom = new PicCommon(para);
+    let islogin = await sugCom.login();
     if (islogin) {
       // cm系のミッションはまとめてやるため、ここでは1つ扱いのダミーミッションにする
       let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
@@ -28,7 +28,7 @@ class GmyBase extends BaseExecuter {
         let execCls = null;
         switch (mission.main) {
           case D.MISSION.CM:
-            execCls = new GmyCm(para, cmMissionList);
+            execCls = new PicCm(para, cmMissionList);
             break;
         }
         if (execCls) {
@@ -45,10 +45,10 @@ class GmyBase extends BaseExecuter {
     }
   }
   async saveNowPoint() {
-    let startPage = "https://dietnavi.com/pc/";
+    let startPage = "https://pointi.jp/";
     await this.driver.get(startPage);
     await this.driver.sleep(1000);
-    let sele = ["li.user_point>a"];
+    let sele = ["span.red.pt_count"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
@@ -57,8 +57,8 @@ class GmyBase extends BaseExecuter {
     }
   }
 }
-class GmyMissonSupper extends BaseWebDriverWrapper {
-  code = D.CODE.GMY;
+class PicMissonSupper extends BaseWebDriverWrapper {
+  code = D.CODE.PIC;
   para;
   constructor(para) {
     super();
@@ -77,7 +77,7 @@ class GmyMissonSupper extends BaseWebDriverWrapper {
   }
 }
 // このサイトの共通処理クラス
-class GmyCommon extends GmyMissonSupper {
+class PicCommon extends PicMissonSupper {
   constructor(para) {
     super(para);
     this.logger.debug(`${this.constructor.name} constructor`);
@@ -86,22 +86,22 @@ class GmyCommon extends GmyMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
 
     await driver.get(siteInfo.entry_url); // エントリーページ表示
-    let seleIsLoggedIn = "li.user_point>a";
+    let seleIsLoggedIn = "span.red.pt_count";
 
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
       // リンクが存在することを確認
-      let seleLoginLink = "li.btn_login>a";
+      let seleLoginLink = "a[href='/entrance.php']";
       if (await this.isExistEle(seleLoginLink, true, 2000)) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
         await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
         let seleInput = {
-          id: "input[name='mail']",
-          pass: "input[name='pass']",
-          login: "input.login_btn",
+          id: "input[name='email_address']",
+          pass: "input[name='password']",
+          login: "input[name='submit']",
         };
         // アカウント（メール）入力
         let inputEle = await this.getEle(seleInput.id, 500);
@@ -112,36 +112,6 @@ class GmyCommon extends GmyMissonSupper {
         inputEle = await this.getEle(seleInput.pass, 500);
         await inputEle.clear();
         inputEle.sendKeys(account[this.code].loginpass);
-
-        let seleRecap = {
-          // panel_iframe: "iframe[title*='reCAPTCHA ']", // Linuxだけかも
-          panel_iframe: "iframe[title*='recaptcha']", // winだけかも
-          panel: "[name='recaptcha']", // 適当
-          auth_iframe: "div.g-recaptcha div iframe",
-          auth: "div.recaptcha-checkbox-border",
-        };
-        // 私はロボットではありませんチェック　オン
-        // その前に、frameが違うので、recaptchaのフレームに切り替える
-        // <iframe title="reCAPTCHA" src="https://www.recaptcha.net/recaptcha/api2/anchor?ar=1&amp;k=6Le4XxITAAAAAPglAF9EweDm7t1UM-IA9lHKP3ye&amp;co=aHR0cHM6Ly9wZXguanA6NDQz&amp;hl=ja&amp;v=Ixi5IiChXmIG6rRkjUa1qXHT&amp;size=normal&amp;cb=agnd7j2qgvem" width="304" height="78" role="presentation" name="a-6edalsgmrj9e" frameborder="0" scrolling="no" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation allow-modals allow-popups-to-escape-sandbox"></iframe>
-        let iframe = await this.getEle(seleRecap.auth_iframe, 1000);
-        await driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
-        inputEle = await this.getEle(seleRecap.auth, 1000);
-        await inputEle.click();
-        // もとのフレームに戻す
-        await driver.switchTo().defaultContent();
-        if (await this.isExistEle(seleRecap.panel_iframe, true, 2000)) {
-          let res = await this.driver.findElement(By.css(seleRecap.panel_iframe)).isDisplayed();
-          if (res) {
-            // 画層識別が表示されたらログインを諦めて、メールを飛ばす
-            logger.info("RECAPTCHA発生　手動でログインして！");
-            await mailOpe.send(logger, {
-              subject: `ログインできません[${this.code}] RECAPTCHA発生`,
-              contents: `${this.code} にログインできません`,
-            });
-            return;
-          }
-        }
-
 
         ele = await this.getEle(seleInput.login, 1000);
         await this.clickEle(ele, 4000);
@@ -170,9 +140,9 @@ class GmyCommon extends GmyMissonSupper {
 
 const { PartsCmManage } = require("./parts/parts-cm-manage.js");
 // CM系のクッション
-class GmyCm extends GmyMissonSupper {
-  firstUrl = "https://dietnavi.com/pc/";
-  targetUrl = "https://dietnavi.com/pc/game/";
+class PicCm extends PicMissonSupper {
+  firstUrl = "https://pointi.jp/";
+  targetUrl = "https://pointi.jp/game/";
   cmMissionList;
   constructor(para, cmMissionList) {
     super(para);
@@ -182,13 +152,13 @@ class GmyCm extends GmyMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await driver.get(this.targetUrl); // 操作ページ表示
-    let sele = ["img[src*='pic_cmkuji.gif']"];
+    let sele = ["img[alt='CMくじ']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://dietnavi.cmnw.jp/game/");
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://pointi.cmnw.jp/game/");
       await cmManage.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
@@ -196,8 +166,8 @@ class GmyCm extends GmyMissonSupper {
   }
 }
 // module.
-exports.GmyCommon = GmyCommon;
+exports.PicCommon = PicCommon;
 // module.
-exports.Gmy = GmyBase;
+exports.Pic = PicBase;
 // module.
 // exports = { pex: pexBase, pexCommon: pexCommon };

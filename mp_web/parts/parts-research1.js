@@ -95,14 +95,12 @@ class PartsResearch1 extends BaseWebDriverWrapper {
             }
           }
           await driver.close(); // このタブを閉じて
-          // 元のウインドウIDにスイッチ
-          await driver.switchTo().window(wid2);
+          await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
           await driver.navigate().refresh(); // 画面更新
         }
         await this.exchange(); // 交換
         await driver.close(); // このタブを閉じて
-        // 元のウインドウIDにスイッチ
-        await driver.switchTo().window(wid);
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         res = D.STATUS.DONE;
       } else logger.info("今日はもう獲得済み");
     } catch (e) {

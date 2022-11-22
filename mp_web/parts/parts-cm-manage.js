@@ -123,12 +123,12 @@ class CmDotti extends CmSuper {
       let sele = [
         "img[src*='dotti2_pc']",
         "p.btn_pink>a",
-        "a[href='/top']",
+        "a[href='/top']",//2
         "div.listbox>a",
         "div.btn_send#bbb2>a>p",
-        "div.white-line>label",
+        "div.white-line>label",//5
         "#bbb>div.btn_send>a>p",
-        "#aaa>div.btn_send>a>p",
+        "#aaa>div.btn_send>a>p",//7
         "div.btn_send>a[href='/p/ex']",
         "a[href='/']",
       ];
@@ -208,7 +208,7 @@ class CmDotti extends CmSuper {
           logger.warn(e);
         } finally {
           await driver.close(); // このタブを閉じて
-          await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
       }
     } catch (e) {
@@ -228,8 +228,8 @@ class CmDotti extends CmSuper {
           ele = await this.getEle(sele[2], 3000);
           await this.clickEle(ele, 2000); // topへ（この質問種類の一覧へ）
         }
-        if (await this.isExistEle(sele[2], true, 3000)) {
-          ele = await this.getEle(sele[2], 3000);
+        if (await this.isExistEle(sele[9], true, 3000)) {
+          ele = await this.getEle(sele[9], 3000);
           await this.clickEle(ele, 2000); // topへ（この質問種類の一覧へ）
         }
       }
@@ -300,8 +300,7 @@ class CmKentei extends CmSuper {
                         let nakedText = await ele.getText();
                         answerList = nakedText.split("\n").filter((l) => l.indexOf("A.") === 0);
                         await driver.close(); // このタブを閉じて
-                        // 元のウインドウIDにスイッチ
-                        await driver.switchTo().window(wid2);
+                        await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
                       }
                     }
                   }

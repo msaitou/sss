@@ -293,8 +293,7 @@ class MopEitango extends MopMissonSupper {
             ele = await this.getEle(sele[6], 3000);
             await this.clickEle(ele, 2000); // 次のページ
             await driver.close(); // このタブを閉じて
-            // 元のウインドウIDにスイッチ
-            await driver.switchTo().window(wid);
+            await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
             res = D.STATUS.DONE;
             logger.info(`${this.constructor.name} END`);
           }
@@ -379,8 +378,7 @@ class MopNanyoubi extends MopMissonSupper {
             ele = await this.getEle(sele[6], 3000);
             await this.clickEle(ele, 2000); // 次のページ
             await driver.close(); // このタブを閉じて
-            // 元のウインドウIDにスイッチ
-            await driver.switchTo().window(wid);
+            await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
             res = D.STATUS.DONE;
             logger.info(`${this.constructor.name} END`);
           }
@@ -473,8 +471,7 @@ class MopAnzan extends MopMissonSupper {
             ele = await this.getEle(sele[6], 3000);
             await this.clickEle(ele, 2000); // 次のページ
             await driver.close(); // このタブを閉じて
-            // 元のウインドウIDにスイッチ
-            await driver.switchTo().window(wid);
+            await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
             res = D.STATUS.DONE;
             logger.info(`${this.constructor.name} END`);
           }
@@ -512,8 +509,7 @@ class MopCm extends MopMissonSupper {
       );
       await cmManage.do();
       await driver.close(); // このタブを閉じて
-      // 元のウインドウIDにスイッチ
-      await driver.switchTo().window(wid);
+      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
     }
   }
 }

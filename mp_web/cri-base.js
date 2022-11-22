@@ -202,8 +202,7 @@ class CriCm extends CriMissonSupper {
       );
       await cmManage.do();
       await driver.close(); // このタブを閉じて
-      // 元のウインドウIDにスイッチ
-      await driver.switchTo().window(wid);
+      await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
     }
   }
 }

@@ -9,6 +9,8 @@ const ptoBase = require("./pto-base");
 const citBase = require("./cit-base");
 const criBase = require("./cri-base");
 const sugBase = require("./sug-base");
+const picBase = require("./pic-base");
+const lfmBase = require("./lfm-base");
 const config = require("config");
 const { Entry } = require("selenium-webdriver/lib/logging");
 const D = require("../com_cls/define").Def;
@@ -211,6 +213,12 @@ class PointWebCls {
         break;
       case D.CODE.SUG:
         opeCls = new sugBase.Sug(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.PIC:
+        opeCls = new picBase.Pic(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.LFM:
+        opeCls = new lfmBase.Lfm(0, siteInfo, aca, missionList);
         break;
     }
     if (opeCls) {

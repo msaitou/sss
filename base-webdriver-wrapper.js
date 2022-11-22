@@ -68,7 +68,8 @@ class BaseWebDriverWrapper {
     this.logger.info("rect.y", rect.y);
     await this.driver.executeScript(`window.scrollTo(0, ${rect.y});`);
     // await this.driver.executeScript("arguments[0].scrollIntoView(true);", ele);
-    await this.driver.actions().scroll(0, 0, 10, 15, ele).perform();
+    await this.sleep(1000);
+    await this.driver.actions().scroll(0, 0, 5, 10, ele).perform();
     const actions = this.driver.actions();
     await actions.move({ origin: ele }).perform();
     await this.sleep(1000);
