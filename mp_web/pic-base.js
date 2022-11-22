@@ -30,7 +30,19 @@ class PicBase extends BaseExecuter {
           case D.MISSION.CM:
             execCls = new PicCm(para, cmMissionList);
             break;
-        }
+            // case D.MISSION.READ_DOG:
+            //   execCls = new PicReadDog(para, cmMissionList);
+            //   break;
+            // case D.MISSION.READ_CAT:
+            //   execCls = new PicReadCat(para, cmMissionList);
+            //   break;
+            // case D.MISSION.READ_THANK:
+            //   execCls = new PicReadThank(para, cmMissionList);
+            //   break;
+            // case D.MISSION.READ_ICHI:
+            //   execCls = new PicReadIchi(para, cmMissionList);
+            //   break;
+          }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
@@ -165,6 +177,112 @@ class PicCm extends PicMissonSupper {
     }
   }
 }
+const { PartsRead } = require("./parts/parts-read.js");
+// 犬の気持ち
+class PicReadDog extends PicMissonSupper {
+  firstUrl = "https://www.chance.com/";
+  targetUrl = "https://www.chance.com/game/";
+  // cmMissionList;
+  constructor(para) {
+    super(para);
+    // this.cmMissionList = cmMissionList;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let sele = ["img[src*='ban_dog.gif']"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEle(eles[0], 2000);
+      // let wid = await driver.getWindowHandle();
+      // await this.changeWindow(wid); // 別タブに移動する
+      let PartsReadDogCls = new PartsRead(this.para);
+      await PartsReadDogCls.do();
+      // await driver.close(); // このタブを閉じて
+      // await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+    }
+  }
+}
+// 猫の気持ち
+class PicReadCat extends PicMissonSupper {
+  firstUrl = "https://www.chance.com/";
+  targetUrl = "https://www.chance.com/game/";
+  // cmMissionList;
+  constructor(para) {
+    super(para);
+    // this.cmMissionList = cmMissionList;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let sele = ["img[src*='ban_cat.gif']"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEle(eles[0], 2000);
+      // let wid = await driver.getWindowHandle();
+      // await this.changeWindow(wid); // 別タブに移動する
+      let PartsReadDogCls = new PartsRead(this.para);
+      await PartsReadDogCls.do();
+      // await driver.close(); // このタブを閉じて
+      // await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+    }
+  }
+}
+// サンキュ
+class PicReadThank extends PicMissonSupper {
+  firstUrl = "https://www.chance.com/";
+  targetUrl = "https://www.chance.com/game/";
+  // cmMissionList;
+  constructor(para) {
+    super(para);
+    // this.cmMissionList = cmMissionList;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let sele = ["img[src*='ban_39mag.gif']"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEle(eles[0], 2000);
+      // let wid = await driver.getWindowHandle();
+      // await this.changeWindow(wid); // 別タブに移動する
+      let PartsReadDogCls = new PartsRead(this.para);
+      await PartsReadDogCls.do();
+      // await driver.close(); // このタブを閉じて
+      // await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+    }
+  }
+}
+// 一押し
+class PicReadIchi extends PicMissonSupper {
+  firstUrl = "https://www.chance.com/";
+  targetUrl = "https://www.chance.com/game/";
+  // cmMissionList;
+  constructor(para) {
+    super(para);
+    // this.cmMissionList = cmMissionList;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let sele = ["img[src*='ban_ichioshi.gif']"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEle(eles[0], 2000);
+      // let wid = await driver.getWindowHandle();
+      // await this.changeWindow(wid); // 別タブに移動する
+      let PartsReadDogCls = new PartsRead(this.para);
+      await PartsReadDogCls.do();
+      // await driver.close(); // このタブを閉じて
+      // await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+    }
+  }
+}
+
 // module.
 exports.PicCommon = PicCommon;
 // module.

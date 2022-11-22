@@ -53,6 +53,10 @@ document.body.appendChild((function(){
 // package.jsonで管理されるモジュールが古くて、新しくしたいとき
 https://qiita.com/sugurutakahashi12345/items/df736ddaf65c244e1b4f
 #####################################
+$('iframe').contents().find("div>input[type='submit']")
+or
+var iframeDocument = iframeElem[0].contentDocument || $('iframe').contentWindow.document;
+#####################################
 
 mop
 ・アンケート

@@ -21,7 +21,7 @@ class GmyBase extends BaseExecuter {
       let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
       this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
       if (cmMissionList.length) {
-        this.missionList.push({main:D.MISSION.CM});
+        this.missionList.push({ main: D.MISSION.CM });
       }
       for (let i in this.missionList) {
         let mission = this.missionList[i];
@@ -29,6 +29,12 @@ class GmyBase extends BaseExecuter {
         switch (mission.main) {
           case D.MISSION.CM:
             execCls = new GmyCm(para, cmMissionList);
+            break;
+          case D.MISSION.READ_DOG:
+            execCls = new GmyReadDog(para, cmMissionList);
+            break;
+          case D.MISSION.READ_ICHI:
+            execCls = new GmyReadIchi(para, cmMissionList);
             break;
         }
         if (execCls) {
@@ -142,7 +148,6 @@ class GmyCommon extends GmyMissonSupper {
           }
         }
 
-
         ele = await this.getEle(seleInput.login, 1000);
         await this.clickEle(ele, 4000);
         // ログインできてるか、チェック
@@ -188,13 +193,71 @@ class GmyCm extends GmyMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://dietnavi.cmnw.jp/game/");
+      let cmManage = new PartsCmManage(
+        this.para,
+        this.cmMissionList,
+        "https://dietnavi.cmnw.jp/game/"
+      );
       await cmManage.do();
+      await driver.close(); // このタブを閉じて
+      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+    }
+  }
+}
+const { PartsRead } = require("./parts/parts-read.js");
+// 犬の気持ち
+class GmyReadDog extends GmyMissonSupper {
+  firstUrl = "https://www.chance.com/";
+  targetUrl = "https://dietnavi.com/pc/survey/";
+  // cmMissionList;
+  constructor(para) {
+    super(para);
+    // this.cmMissionList = cmMissionList;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let sele = ["img[src*='img_game_dog.png']"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEle(eles[0], 2000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      let PartsReadDogCls = new PartsRead(this.para);
+      await PartsReadDogCls.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
     }
   }
 }
+// 一押し
+class GmyReadIchi extends GmyMissonSupper {
+  firstUrl = "https://www.chance.com/";
+  targetUrl = "https://dietnavi.com/pc/survey/";
+  // cmMissionList;
+  constructor(para) {
+    super(para);
+    // this.cmMissionList = cmMissionList;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let sele = ["img[src*='img_ichioshi.png']"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEle(eles[0], 2000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      let PartsReadDogCls = new PartsRead(this.para);
+      await PartsReadDogCls.do();
+      await driver.close(); // このタブを閉じて
+      await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+    }
+  }
+}
+
 // module.
 exports.GmyCommon = GmyCommon;
 // module.

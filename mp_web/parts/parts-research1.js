@@ -140,7 +140,7 @@ class PartsResearch1 extends BaseWebDriverWrapper {
             if (await this.isExistEle(ansSele, true, 2000)) {
               let eles = await this.getEles(ansSele, 3000);
               if (choiceNum === -1) {
-                choiceNum = libUtil.getRandomInt(0, eles.length);
+                choiceNum = libUtil.getRandomInt(0, eles.length-1);
               }
               if (ansSele === sele[5]) {
                 let select = new Select(eles[0]);
