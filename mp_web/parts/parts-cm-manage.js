@@ -55,7 +55,7 @@ class PartsCmManage extends BaseExecuter {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 3000);
       await this.clickEle(ele, 2000);
-      this.ignoreKoukoku();
+      await this.ignoreKoukoku();
       if (await this.isExistEle(sele[1], true, 2000)) {
         ele = await this.getEle(sele[1], 3000);
         await this.clickEle(ele, 2000);
@@ -78,7 +78,6 @@ class PartsCmManage extends BaseExecuter {
     }
     return currentUrl;
   }
-
 }
 class CmSuper extends BaseWebDriverWrapper {
   para;
@@ -89,6 +88,18 @@ class CmSuper extends BaseWebDriverWrapper {
     this.startUrl = startUrl;
     this.setDriver(this.para.driver);
     this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async ignoreKoukoku() {
+    let currentUrl = await this.driver.getCurrentUrl();
+    // 広告が画面いっぱいに入る時がある
+    if (currentUrl.indexOf("google_vignette") > -1) {
+      // await driver.actions().sendKeys(Key.ESCAPE).perform();
+      // await this.sleep(2000);
+      await this.driver.navigate().back(); // 戻って
+      await this.driver.navigate().forward(); // 行く
+      currentUrl = await this.driver.getCurrentUrl();
+    }
+    return currentUrl;
   }
 }
 // クマクマどっち
@@ -127,93 +138,83 @@ class CmDotti extends CmSuper {
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
-
-        if (await this.isExistEle(sele[1], true, 3000)) {
-          // 3種各10問の計30問
-          let eles = await this.getEles(sele[1], 3000);
-          let limit = eles.length;
-          for (let j = 0; j < limit; j++) {
-            if (j !== 0 && (await this.isExistEle(sele[1], true, 3000))) {
-              eles = await this.getEles(sele[1], 3000);
-            }
-            await this.clickEle(eles[j], 2000); // ゆるめ、かため、究極のいずれかから進む
-            currentUrl = await this.ignoreKoukoku(); // 広告が画面いっぱいに入る時がある
-            if (currentUrl.substr(-2) == "/n") {
-              // 獲得してないシールがある場合
-              if (await this.isExistEle(sele[1], true, 3000)) {
-                ele = await this.getEle(sele[1], 3000);
-                await this.clickEle(ele, 2000); // 獲得
-                if (await this.isExistEle(sele[2], true, 3000)) {
-                  ele = await this.getEle(sele[2], 3000);
-                  await this.clickEle(ele, 2000); // topへ（この質問種類の一覧へ）
+        try {
+          if (await this.isExistEle(sele[1], true, 3000)) {
+            // 3種各10問の計30問
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let j = 0; j < limit; j++) {
+              if (j !== 0 && (await this.isExistEle(sele[1], true, 3000))) {
+                eles = await this.getEles(sele[1], 3000);
+              }
+              await this.clickEle(eles[j], 2000); // ゆるめ、かため、究極のいずれかから進む
+              currentUrl = await this.ignoreKoukoku(); // 広告が画面いっぱいに入る時がある
+              if (currentUrl.substr(-2) == "/n") {
+                // 獲得してないシールがある場合
+                if (await this.isExistEle(sele[1], true, 3000)) {
+                  ele = await this.getEle(sele[1], 3000);
+                  await this.clickEle(ele, 2000); // 獲得
+                  if (await this.isExistEle(sele[2], true, 3000)) {
+                    ele = await this.getEle(sele[2], 3000);
+                    await this.clickEle(ele, 2000); // topへ（この質問種類の一覧へ）
+                  }
                 }
               }
-            }
-            for (let i = 0; i < 10; i++) {
-              if (await this.isExistEle(sele[3], true, 3000)) {
-                eles = await this.getEles(sele[3], 3000);
-                // clickして質問を選び、次へ　10問ある
-                await driver.wait(until.elementIsVisible(eles[0]), 15000);
-                await this.clickEle(eles[0], 2000); // 一番上を選択
-                if (await this.isExistEle(sele[4], true, 3000)) {
-                  ele = await this.getEle(sele[4], 3000);
-                  await driver.wait(until.elementIsVisible(ele), 15000);
-                  await this.clickEle(ele, 2000); // 次へ
-                  if (await this.isExistEle(sele[5], true, 3000)) {
-                    eles = await this.getEles(sele[5], 3000);
-                    let choiceNum = libUtil.getRandomInt(0, eles.length);
-                    await driver.wait(until.elementIsVisible(eles[choiceNum]), 15000);
-                    await this.clickEle(eles[choiceNum], 2000);
-                    if (await this.isExistEle(sele[6], true, 3000)) {
-                      ele = await this.getEle(sele[6], 3000);
-                      await this.clickEle(ele, 2000); // 次へ（回答する）
-                      if (await this.isExistEle(sele[7], true, 3000)) {
-                        ele = await this.getEle(sele[7], 4000);
-                        await driver.wait(until.elementIsVisible(ele), 15000);
-                        await this.clickEle(ele, 2000); // シールを獲得
-                        if (await this.isExistEle(sele[2], true, 3000)) {
-                          ele = await this.getEle(sele[2], 3000);
-                          await this.clickEle(ele, 2000); // topへ（この質問種類の一覧へ）
-                          await this.exchangeDotti(sele);
+              for (let i = 0; i < 10; i++) {
+                if (await this.isExistEle(sele[3], true, 3000)) {
+                  eles = await this.getEles(sele[3], 3000);
+                  // clickして質問を選び、次へ　10問ある
+                  await driver.wait(until.elementIsVisible(eles[0]), 15000);
+                  await this.clickEle(eles[0], 2000); // 一番上を選択
+                  if (await this.isExistEle(sele[4], true, 3000)) {
+                    ele = await this.getEle(sele[4], 3000);
+                    await driver.wait(until.elementIsVisible(ele), 15000);
+                    await this.clickEle(ele, 2000); // 次へ
+                    if (await this.isExistEle(sele[5], true, 3000)) {
+                      eles = await this.getEles(sele[5], 3000);
+                      let choiceNum = libUtil.getRandomInt(0, eles.length);
+                      await driver.wait(until.elementIsVisible(eles[choiceNum]), 15000);
+                      await this.clickEle(eles[choiceNum], 2000);
+                      if (await this.isExistEle(sele[6], true, 3000)) {
+                        ele = await this.getEle(sele[6], 3000);
+                        await this.clickEle(ele, 2000); // 次へ（回答する）
+                        if (await this.isExistEle(sele[7], true, 3000)) {
+                          ele = await this.getEle(sele[7], 4000);
+                          await driver.wait(until.elementIsVisible(ele), 15000);
+                          await this.clickEle(ele, 2000); // シールを獲得
+                          if (await this.isExistEle(sele[2], true, 3000)) {
+                            ele = await this.getEle(sele[2], 3000);
+                            await this.clickEle(ele, 2000); // topへ（この質問種類の一覧へ）
+                            await this.exchangeDotti(sele);
+                          }
                         }
                       }
                     }
                   }
+                } else {
+                  if (await this.isExistEle(sele[9], true, 3000)) {
+                    ele = await this.getEle(sele[9], 1000);
+                    await this.clickEle(ele, 2000); // 大元に戻る
+                  }
+                  break;
                 }
-              } else {
-                if (await this.isExistEle(sele[9], true, 3000)) {
-                  ele = await this.getEle(sele[9], 1000);
-                  await this.clickEle(ele, 2000); // 大元に戻る
-                }
-                break;
               }
+              await this.exchangeDotti(sele);
             }
-            await this.exchangeDotti(sele);
           }
-          await driver.close(); // このタブを閉じて
-          // 元のウインドウIDにスイッチ
-          await driver.switchTo().window(wid);
-
           res = D.STATUS.DONE;
           logger.info(`${this.constructor.name} END`);
+        } catch (e) {
+          logger.warn(e);
+        } finally {
+          await driver.close(); // このタブを閉じて
+          await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
         }
       }
     } catch (e) {
       logger.warn(e);
     }
     return res;
-  }
-  async ignoreKoukoku() {
-    let currentUrl = await this.driver.getCurrentUrl();
-    // 広告が画面いっぱいに入る時がある
-    if (currentUrl.indexOf("google_vignette") > -1) {
-      // await driver.actions().sendKeys(Key.ESCAPE).perform();
-      // await this.sleep(2000);
-      await this.driver.navigate().back(); // 戻って
-      await this.driver.navigate().forward(); // 行く
-      currentUrl = await this.driver.getCurrentUrl();
-    }
-    return currentUrl;
   }
 
   async exchangeDotti(sele) {
@@ -267,105 +268,95 @@ class CmKentei extends CmSuper {
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
-
-        if (await this.isExistEle(sele[1], true, 3000)) {
-          ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 2000);
-          await this.ignoreKoukoku();
+        try {
           if (await this.isExistEle(sele[1], true, 3000)) {
             ele = await this.getEle(sele[1], 3000);
             await this.clickEle(ele, 2000);
-            // 12問
-            for (let i = 0; i < 12; i++) {
-              await this.ignoreKoukoku();
-              if (await this.isExistEle(sele[2], true, 3000)) {
-                let answerList = [];
-                if (await this.isExistEle(sele[3], true, 3000)) {
-                  ele = await this.getEle(sele[3], 3000);
-                  await driver.wait(until.elementIsVisible(ele), 20000);
-                  await this.clickEle(ele, 2000);
-                  let wid2 = await driver.getWindowHandle();
-                  await this.changeWindow(wid2); // 別タブに移動する
-                  let sele2 = ["#news-more", "#PlagClose1"];
-                  if (await this.isExistEle(sele2[0], true, 3000)) {
-                    ele = await this.getEle(sele2[0], 3000);
-                    // let rect = await ele.getRect();
-                    // logger.info("rect.y", rect.y);
-                    await driver.executeScript("window.scrollTo(0, 1200);");
-                    await this.sleep(1000);
+            await this.ignoreKoukoku();
+            if (await this.isExistEle(sele[1], true, 3000)) {
+              ele = await this.getEle(sele[1], 3000);
+              await this.clickEle(ele, 2000);
+              // 12問
+              for (let i = 0; i < 12; i++) {
+                await this.ignoreKoukoku();
+                if (await this.isExistEle(sele[2], true, 3000)) {
+                  let answerList = [];
+                  if (await this.isExistEle(sele[3], true, 3000)) {
+                    ele = await this.getEle(sele[3], 3000);
+                    await driver.wait(until.elementIsVisible(ele), 20000);
                     await this.clickEle(ele, 2000);
-                    if (await this.isExistEle(sele2[1], true, 3000)) {
-                      ele = await this.getEle(sele2[1], 3000);
-                      let nakedText = await ele.getText();
-                      answerList = nakedText.split("\n").filter((l) => l.indexOf("A.") === 0);
-                      await driver.close(); // このタブを閉じて
-                      // 元のウインドウIDにスイッチ
-                      await driver.switchTo().window(wid2);
+                    let wid2 = await driver.getWindowHandle();
+                    await this.changeWindow(wid2); // 別タブに移動する
+                    let sele2 = ["#news-more", "#PlagClose1"];
+                    if (await this.isExistEle(sele2[0], true, 3000)) {
+                      ele = await this.getEle(sele2[0], 3000);
+                      // let rect = await ele.getRect();
+                      // logger.info("rect.y", rect.y);
+                      await driver.executeScript("window.scrollTo(0, 1200);");
+                      await this.sleep(1000);
+                      await this.clickEle(ele, 2000);
+                      if (await this.isExistEle(sele2[1], true, 3000)) {
+                        ele = await this.getEle(sele2[1], 3000);
+                        let nakedText = await ele.getText();
+                        answerList = nakedText.split("\n").filter((l) => l.indexOf("A.") === 0);
+                        await driver.close(); // このタブを閉じて
+                        // 元のウインドウIDにスイッチ
+                        await driver.switchTo().window(wid2);
+                      }
                     }
                   }
-                }
-                let eles = await this.getEles(sele[2], 3000);
-                let choiceNum = libUtil.getRandomInt(0, eles.length); // TODO ここヒント見れば答えがわかりそう
-                let choiceEle = eles[choiceNum];
-                if (answerList.length) {
-                  let tmp = [];
-                  answerList.forEach((a) => {
-                    a = a.replace("A.", "");
-                    tmp.push(a.trim());
-                  });
-                  for (let el of eles) {
-                    let opt = await el.getText();
-                    if (tmp.indexOf(opt.trim()) > -1) {
-                      choiceEle = el;
-                      break;
+                  let eles = await this.getEles(sele[2], 3000);
+                  let choiceNum = libUtil.getRandomInt(0, eles.length); // TODO ここヒント見れば答えがわかりそう
+                  let choiceEle = eles[choiceNum];
+                  if (answerList.length) {
+                    let tmp = [];
+                    answerList.forEach((a) => {
+                      a = a.replace("A.", "");
+                      tmp.push(a.trim());
+                    });
+                    for (let el of eles) {
+                      let opt = await el.getText();
+                      if (tmp.indexOf(opt.trim()) > -1) {
+                        choiceEle = el;
+                        break;
+                      }
                     }
                   }
-                }
-                await driver.wait(until.elementIsVisible(choiceEle), 15000);
-                await this.clickEle(choiceEle, 2000); // 選択
-                if (await this.isExistEle(sele[4], true, 3000)) {
-                  ele = await this.getEle(sele[4], 3000);
-                  await this.clickEle(ele, 2000);
-                  if (await this.isExistEle(sele[5], true, 3000)) {
-                    ele = await this.getEle(sele[5], 3000);
+                  await driver.wait(until.elementIsVisible(choiceEle), 15000);
+                  await this.clickEle(choiceEle, 2000); // 選択
+                  if (await this.isExistEle(sele[4], true, 3000)) {
+                    ele = await this.getEle(sele[4], 3000);
                     await this.clickEle(ele, 2000);
+                    if (await this.isExistEle(sele[5], true, 3000)) {
+                      ele = await this.getEle(sele[5], 3000);
+                      await this.clickEle(ele, 2000);
+                    }
                   }
                 }
               }
-            }
-            if (await this.isExistEle(sele[5], true, 3000)) {
-              ele = await this.getEle(sele[5], 3000);
-              await this.clickEle(ele, 2000);
               if (await this.isExistEle(sele[5], true, 3000)) {
                 ele = await this.getEle(sele[5], 3000);
                 await this.clickEle(ele, 2000);
+                if (await this.isExistEle(sele[5], true, 3000)) {
+                  ele = await this.getEle(sele[5], 3000);
+                  await this.clickEle(ele, 2000);
+                }
               }
             }
           }
+          res = D.STATUS.DONE;
+          logger.info(`${this.constructor.name} END`);
+        } catch (e) {
+          logger.warn(e);
+        } finally {
+          await driver.close(); // このタブを閉じて
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
-        await driver.close(); // このタブを閉じて
-        // 元のウインドウIDにスイッチ
-        await driver.switchTo().window(wid);
-
-        res = D.STATUS.DONE;
-        logger.info(`${this.constructor.name} END`);
       }
     } catch (e) {
       logger.warn(e);
     }
     return res;
-  }
-  async ignoreKoukoku() {
-    let currentUrl = await this.driver.getCurrentUrl();
-    // 広告が画面いっぱいに入る時がある
-    if (currentUrl.indexOf("google_vignette") > -1) {
-      // await driver.actions().sendKeys(Key.ESCAPE).perform();
-      // await this.sleep(2000);
-      await this.driver.navigate().back(); // 戻って
-      await this.driver.navigate().forward(); // 行く
-      currentUrl = await this.driver.getCurrentUrl();
-    }
-    return currentUrl;
   }
 }
 // 占い
@@ -406,61 +397,63 @@ class CmUranai extends CmSuper {
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
-        if (await this.isExistEle(sele[1], true, 3000)) {
-          ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 2000);
-          await this.ignoreKoukoku();
-          // await driver.wait(until.elementIsVisible(choiceEle), 15000);
-          for (let i = 0; i < 3; i++) {
-            if (await this.isExistEle(sele[2], true, 3000)) {
-              ele = await this.getEle(sele[2], 3000);
-              await this.clickEle(ele, 2000);
-            }
-          }
-          if (await this.isExistEle(sele[3], true, 3000)) {
-            ele = await this.getEle(sele[3], 3000);
+        try {
+          if (await this.isExistEle(sele[1], true, 3000)) {
+            ele = await this.getEle(sele[1], 3000);
             await this.clickEle(ele, 2000);
-            for (let j = 0; j < 2; j++) {
-              if (await this.isExistEle(sele[4], true, 3000)) {
-                ele = await this.getEle(sele[4], 3000);
+            await this.ignoreKoukoku();
+            // await driver.wait(until.elementIsVisible(choiceEle), 15000);
+            for (let i = 0; i < 3; i++) {
+              if (await this.isExistEle(sele[2], true, 3000)) {
+                ele = await this.getEle(sele[2], 3000);
                 await this.clickEle(ele, 2000);
-                if (await this.isExistEle(sele[5], true, 3000)) {
-                  ele = await this.getEle(sele[5], 3000);
-                  await this.clickEle(ele, 2000);
-                }
               }
             }
-            if (await this.isExistEle(sele[4], true, 3000)) {
-              ele = await this.getEle(sele[4], 3000);
+            if (await this.isExistEle(sele[3], true, 3000)) {
+              ele = await this.getEle(sele[3], 3000);
               await this.clickEle(ele, 2000);
-              if (await this.isExistEle(sele[6], true, 3000)) {
-                ele = await this.getEle(sele[6], 3000);
-                await this.clickEle(ele, 2000);
+              for (let j = 0; j < 2; j++) {
                 if (await this.isExistEle(sele[4], true, 3000)) {
                   ele = await this.getEle(sele[4], 3000);
                   await this.clickEle(ele, 2000);
-                  for (let k = 0; k < 2; k++) {
-                    if (await this.isExistEle(sele[2], true, 3000)) {
-                      ele = await this.getEle(sele[2], 3000);
-                      await this.clickEle(ele, 2000);
-                    }
+                  if (await this.isExistEle(sele[5], true, 3000)) {
+                    ele = await this.getEle(sele[5], 3000);
+                    await this.clickEle(ele, 2000);
                   }
-                  if (await this.isExistEle(sele[7], true, 3000)) {
-                    ele = await this.getEle(sele[7], 3000);
-                    await this.clickEle(ele, 5000);
-                    if (await this.isExistEle(sele[8], true, 3000)) {
-                      ele = await this.getEle(sele[8], 3000);
-                      await this.clickEle(ele, 2000);
-                      if (await this.isExistEle(sele[9], true, 3000)) {
-                        ele = await this.getEle(sele[9], 3000);
-                        // 時間かかりそう　TODO
+                }
+              }
+              if (await this.isExistEle(sele[4], true, 3000)) {
+                ele = await this.getEle(sele[4], 3000);
+                await this.clickEle(ele, 2000);
+                if (await this.isExistEle(sele[6], true, 3000)) {
+                  ele = await this.getEle(sele[6], 3000);
+                  await this.clickEle(ele, 2000);
+                  if (await this.isExistEle(sele[4], true, 3000)) {
+                    ele = await this.getEle(sele[4], 3000);
+                    await this.clickEle(ele, 2000);
+                    for (let k = 0; k < 2; k++) {
+                      if (await this.isExistEle(sele[2], true, 3000)) {
+                        ele = await this.getEle(sele[2], 3000);
                         await this.clickEle(ele, 2000);
-                        if (await this.isExistEle(sele[10], true, 3000)) {
-                          ele = await this.getEle(sele[10], 3000);
+                      }
+                    }
+                    if (await this.isExistEle(sele[7], true, 3000)) {
+                      ele = await this.getEle(sele[7], 3000);
+                      await this.clickEle(ele, 5000);
+                      if (await this.isExistEle(sele[8], true, 3000)) {
+                        ele = await this.getEle(sele[8], 3000);
+                        await this.clickEle(ele, 2000);
+                        if (await this.isExistEle(sele[9], true, 3000)) {
+                          ele = await this.getEle(sele[9], 3000);
+                          // 時間かかりそう　TODO
                           await this.clickEle(ele, 2000);
-                          if (await this.isExistEle(sele[11], true, 3000)) {
-                            ele = await this.getEle(sele[11], 3000);
+                          if (await this.isExistEle(sele[10], true, 3000)) {
+                            ele = await this.getEle(sele[10], 3000);
                             await this.clickEle(ele, 2000);
+                            if (await this.isExistEle(sele[11], true, 3000)) {
+                              ele = await this.getEle(sele[11], 3000);
+                              await this.clickEle(ele, 2000);
+                            }
                           }
                         }
                       }
@@ -470,31 +463,19 @@ class CmUranai extends CmSuper {
               }
             }
           }
+          res = D.STATUS.DONE;
+          logger.info(`${this.constructor.name} END`);
+        } catch (e) {
+          logger.warn(e);
+        } finally {
+          await driver.close(); // このタブを閉じて
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
-
-        await driver.close(); // このタブを閉じて
-        // 元のウインドウIDにスイッチ
-        await driver.switchTo().window(wid);
-
-        res = D.STATUS.DONE;
-        logger.info(`${this.constructor.name} END`);
       }
     } catch (e) {
       logger.warn(e);
     }
     return res;
-  }
-  async ignoreKoukoku() {
-    let currentUrl = await this.driver.getCurrentUrl();
-    // 広告が画面いっぱいに入る時がある
-    if (currentUrl.indexOf("google_vignette") > -1) {
-      // await driver.actions().sendKeys(Key.ESCAPE).perform();
-      // await this.sleep(2000);
-      await this.driver.navigate().back(); // 戻って
-      await this.driver.navigate().forward(); // 行く
-      currentUrl = await this.driver.getCurrentUrl();
-    }
-    return currentUrl;
   }
 }
 // ぽちっと調査隊
@@ -532,105 +513,95 @@ class CmPochi extends CmSuper {
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
-
-        if (await this.isExistEle(sele[1], true, 3000)) {
-          let eles = await this.getEles(sele[1], 3000);
-          let limit = eles.length;
-          for (let j = 0; j < limit; j++) {
-            if (j !== 0 && (await this.isExistEle(sele[1], true, 3000))) {
-              eles = await this.getEles(sele[1], 3000);
-            }
-            await driver.wait(until.elementIsVisible(eles[0]), 20000);  
-            await this.clickEle(eles[0], 2000); // 常に0番目で
-            await this.ignoreKoukoku();
-            if (await this.isExistEle(sele[2], true, 2000)) {
-              ele = await this.getEle(sele[2], 3000);
-              await this.clickEle(ele, 2000);
-              // 7問
-              for (let i = 0; i < 7; i++) {
-                if (await this.isExistEle(sele[3], true, 2000)) {
-                  ele = await this.getEle(sele[3], 3000);
-                  let q = await ele.getText();
-                  logger.info(q);
-                  let choiceNum = 0,
-                    qNo = q.substr(0, 2);
-                  switch (qNo) {
-                    case "Q1": // Q1 あなたの性別をお答えください
-                      choiceNum = 0;
-                      break;
-                    case "Q2": // Q2 あなたの年齢をお答えください
-                      choiceNum = 2;
-                      break;
-                    case "Q3": // ランダムで。
-                    case "Q4": // ランダムで。
-                    case "Q5": // ランダムで。
-                    case "Q6": // ランダムで。
-                      choiceNum = -1; // 仮値
-                      break;
-                    case "Q7": // テキストエリアは空欄で
-                      break;
-                  }
-                  if (qNo != "Q7") {
-                    if (await this.isExistEle(sele[4], true, 2000)) {
-                      eles = await this.getEles(sele[4], 3000);
-                      if (choiceNum === -1) {
-                        choiceNum = libUtil.getRandomInt(0, eles.length);
-                      }
-                      await this.clickEle(eles[choiceNum], 2000);
-                      if (await this.isExistEle(sele[5], true, 2000)) {
-                        ele = await this.getEle(sele[5], 3000);
-                        await this.clickEle(ele, 2000);
-                      }
+        try {
+          if (await this.isExistEle(sele[1], true, 3000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let j = 0; j < limit; j++) {
+              if (j !== 0 && (await this.isExistEle(sele[1], true, 3000))) {
+                eles = await this.getEles(sele[1], 3000);
+              }
+              await driver.wait(until.elementIsVisible(eles[0]), 20000);
+              await this.clickEle(eles[0], 2000); // 常に0番目で
+              await this.ignoreKoukoku();
+              if (await this.isExistEle(sele[2], true, 2000)) {
+                ele = await this.getEle(sele[2], 3000);
+                await this.clickEle(ele, 2000);
+                // 7問
+                for (let i = 0; i < 7; i++) {
+                  if (await this.isExistEle(sele[3], true, 2000)) {
+                    ele = await this.getEle(sele[3], 3000);
+                    let q = await ele.getText();
+                    logger.info(q);
+                    let choiceNum = 0,
+                      qNo = q.substr(0, 2);
+                    switch (qNo) {
+                      case "Q1": // Q1 あなたの性別をお答えください
+                        choiceNum = 0;
+                        break;
+                      case "Q2": // Q2 あなたの年齢をお答えください
+                        choiceNum = 2;
+                        break;
+                      case "Q3": // ランダムで。
+                      case "Q4": // ランダムで。
+                      case "Q5": // ランダムで。
+                      case "Q6": // ランダムで。
+                        choiceNum = -1; // 仮値
+                        break;
+                      case "Q7": // テキストエリアは空欄で
+                        break;
                     }
-                  } else {
-                    for (let j = 0; j < 2; j++) {
-                      if (await this.isExistEle(sele[2], true, 2000)) {
-                        ele = await this.getEle(sele[2], 3000);
-                        await this.clickEle(ele, 2000);
+                    if (qNo != "Q7") {
+                      if (await this.isExistEle(sele[4], true, 2000)) {
+                        eles = await this.getEles(sele[4], 3000);
+                        if (choiceNum === -1) {
+                          choiceNum = libUtil.getRandomInt(0, eles.length);
+                        }
+                        await this.clickEle(eles[choiceNum], 2000);
+                        if (await this.isExistEle(sele[5], true, 2000)) {
+                          ele = await this.getEle(sele[5], 3000);
+                          await this.clickEle(ele, 2000);
+                        }
+                      }
+                    } else {
+                      for (let j = 0; j < 2; j++) {
+                        if (await this.isExistEle(sele[2], true, 2000)) {
+                          ele = await this.getEle(sele[2], 3000);
+                          await this.clickEle(ele, 2000);
+                        }
                       }
                     }
                   }
                 }
               }
-            }
-            // CMコインに変換
-            let currentUrl = await driver.getCurrentUrl();
-            if (currentUrl.indexOf("/stamp") > -1) {
-              if (await this.isExistEle(sele[6], true, 2000)) {
-                ele = await this.getEle(sele[6], 3000);
-                await this.clickEle(ele, 2000);
-              }
-              // 一覧へ
-              if (await this.isExistEle(sele[7], true, 2000)) {
-                ele = await this.getEle(sele[7], 3000);
-                await this.clickEle(ele, 2000);
+              // CMコインに変換
+              let currentUrl = await driver.getCurrentUrl();
+              if (currentUrl.indexOf("/stamp") > -1) {
+                if (await this.isExistEle(sele[6], true, 2000)) {
+                  ele = await this.getEle(sele[6], 3000);
+                  await this.clickEle(ele, 2000);
+                }
+                // 一覧へ
+                if (await this.isExistEle(sele[7], true, 2000)) {
+                  ele = await this.getEle(sele[7], 3000);
+                  await this.clickEle(ele, 2000);
+                }
               }
             }
           }
+          res = D.STATUS.DONE;
+          logger.info(`${this.constructor.name} END`);
+        } catch (e) {
+          logger.warn(e);
+        } finally {
+          await driver.close(); // このタブを閉じて
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
-        await driver.close(); // このタブを閉じて
-        // 元のウインドウIDにスイッチ
-        await driver.switchTo().window(wid);
-
-        res = D.STATUS.DONE;
-        logger.info(`${this.constructor.name} END`);
       }
     } catch (e) {
       logger.warn(e);
     }
     return res;
-  }
-  async ignoreKoukoku() {
-    let currentUrl = await this.driver.getCurrentUrl();
-    // 広告が画面いっぱいに入る時がある
-    if (currentUrl.indexOf("google_vignette") > -1) {
-      // await driver.actions().sendKeys(Key.ESCAPE).perform();
-      // await this.sleep(2000);
-      await this.driver.navigate().back(); // 戻って
-      await this.driver.navigate().forward(); // 行く
-      currentUrl = await this.driver.getCurrentUrl();
-    }
-    return currentUrl;
   }
 }
 
