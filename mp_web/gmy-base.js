@@ -46,7 +46,7 @@ class GmyBase extends BaseExecuter {
   }
   async saveNowPoint() {
     let startPage = "https://dietnavi.com/pc/";
-    await this.driver.get(startPage);
+    await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     let sele = ["li.user_point>a"];
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -181,7 +181,7 @@ class GmyCm extends GmyMissonSupper {
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await driver.get(this.targetUrl); // 操作ページ表示
+    await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["img[src*='pic_cmkuji.gif']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);

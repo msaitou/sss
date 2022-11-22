@@ -46,7 +46,7 @@ class CitBase extends BaseExecuter {
   }
   async saveNowPoint() {
     let startPage = "https://www.chance.com/";
-    await this.driver.get(startPage);
+    await this.openUrl(startPage); // 最初のページ表示
     await this.driver.sleep(1000);
     let sele = ["li.user_pt>a"];
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -181,7 +181,7 @@ class CitCm extends CitMissonSupper {
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await driver.get(this.targetUrl); // 操作ページ表示
+    await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["a[href*='jump.srv?id=25724']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);

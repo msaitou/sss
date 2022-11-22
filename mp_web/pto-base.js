@@ -46,7 +46,7 @@ class PtoBase extends BaseExecuter {
   }
   async saveNowPoint() {
     let startPage = "https://www.pointtown.com/";
-    await this.driver.get(startPage);
+    await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     let sele = ["div.c-header-user-point>p.c-point-large-label"];
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -151,7 +151,7 @@ class PtoCm extends PtoMissonSupper {
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await driver.get(this.targetUrl); // 操作ページ表示
+    await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["img[src*='cm-jk.png']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);

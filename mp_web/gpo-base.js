@@ -46,7 +46,7 @@ class GpoBase extends BaseExecuter {
   }
   async saveNowPoint() {
     let startPage = "https://www.gpoint.co.jp/scripts/direct/userinfo/MMMyPage.do";
-    await this.driver.get(startPage);
+    await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     let sele = ["span#point"];
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -173,7 +173,7 @@ class GpoCm extends GpoMissonSupper {
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await driver.get(this.targetUrl); // 操作ページ表示
+    await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["a[href*='www.gpoint.co.jp/LoginGate/gw/entry.do']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);

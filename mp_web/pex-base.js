@@ -45,7 +45,7 @@ class PexBase extends BaseExecuter {
   async saveNowPoint() {
     let startPage = "https://pex.jp/";
     let pointPage = "https://pex.jp/user/point_passbook/all";
-    await this.driver.get(startPage);
+    await this.openUrl(startPage); // 操作ページ表示
     await this.driver.get(pointPage);
     await this.driver.sleep(3000);
     let sele = ["dl.point_area>dd>span"];
@@ -192,8 +192,7 @@ class PexNewsWatch extends PexMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
     try {
-      await driver.get(this.firstUrl); // 最初のページ表示
-      await driver.get(this.targetUrl); // 操作ページ表示
+      await this.openUrl(this.targetUrl); // 操作ページ表示
       let sele = [
         "ul#point-action-0>li.pt.ungained",
         "div.panel_img",
@@ -260,8 +259,7 @@ class PexCm extends PexMissonSupper {
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await driver.get(this.firstUrl); // 最初のページ表示
-    await driver.get(this.targetUrl); // 操作ページ表示
+    await this.openUrl(this.targetUrl); // 操作ページ表示
 
     this.answerCMPreAnq(driver, logger);
 

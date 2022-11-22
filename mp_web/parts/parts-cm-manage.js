@@ -47,10 +47,7 @@ class PartsCmManage extends BaseExecuter {
       }
     }
     // CMコインを換金
-    let currentUrl = await driver.getCurrentUrl();
-    if (currentUrl != this.startUrl) {
-      await driver.get(this.startUrl);
-    }
+    await this.openUrl(this.startUrl); // 操作ページ表示
     let sele = ["a[href='/bankbook/']", "a.button-link.btn>p", "a[href='/bankbook/exchange']>p"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 3000);
@@ -250,10 +247,7 @@ class CmKentei extends CmSuper {
     let res = D.STATUS.FAIL;
     try {
       // 今のページが　cm/game/ページならこのページから始める
-      let currentUrl = await driver.getCurrentUrl();
-      if (currentUrl != this.startUrl) {
-        await driver.get(this.startUrl); // 最初のページ表示
-      }
+      await this.openUrl(this.startUrl); // 操作ページ表示
       let sele = [
         "img[src*='gotochi_pc']",
         "div>a[name='start button']",
@@ -372,10 +366,7 @@ class CmUranai extends CmSuper {
     let res = D.STATUS.FAIL;
     try {
       // 今のページが　cm/game/ページならこのページから始める
-      let currentUrl = await driver.getCurrentUrl();
-      if (currentUrl != this.startUrl) {
-        await driver.get(this.startUrl); // 最初のページ表示
-      }
+      await this.openUrl(this.startUrl); // 操作ページ表示
       let sele = [
         "img[src*='kumakumaseiza_pc']",
         "img[src*='button_check.png']",
@@ -491,10 +482,7 @@ class CmPochi extends CmSuper {
     let res = D.STATUS.FAIL;
     try {
       // 今のページが　cm/game/ページならこのページから始める
-      let currentUrl = await driver.getCurrentUrl();
-      if (currentUrl != this.startUrl) {
-        await driver.get(this.startUrl); // 最初のページ表示
-      }
+      await this.openUrl(this.startUrl); // 操作ページ表示
       let sele = [
         "img[src*='pochitto_pc']",
         "#question>dd>a>p",

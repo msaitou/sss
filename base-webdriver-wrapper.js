@@ -205,5 +205,11 @@ class BaseWebDriverWrapper {
       this.logger.info("cm最初のアンケートに回答しました");
     } else this.logger.debug("cm最初のアンケートはありませんでした");
   }
+  async openUrl(targetUrl) {
+    let currentUrl = await this.driver.getCurrentUrl();
+    if (currentUrl != targetUrl) {
+      await this.driver.get(targetUrl); // 最初のページ表示
+    }
+  }
 }
 exports.BaseWebDriverWrapper = BaseWebDriverWrapper;

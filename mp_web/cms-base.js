@@ -52,7 +52,7 @@ class CmsBase extends BaseExecuter {
   }
   async saveNowPoint() {
     let startPage = "https://www.cmsite.co.jp/top/home/";
-    await this.driver.get(startPage);
+    await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     let sele = ["p.menbertxt>span"];
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -177,7 +177,7 @@ class CmsResearch1 extends CmsMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START###`);
-    await driver.get(this.targetUrl); // 操作ページ表示
+    await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["img[src='img/q_05.png']"];
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -206,7 +206,7 @@ class CmsCm extends CmsMissonSupper {
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await driver.get(this.targetUrl); // 操作ページ表示
+    await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["a[target='cmnw']>img"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);

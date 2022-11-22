@@ -46,7 +46,7 @@ class SugBase extends BaseExecuter {
   }
   async saveNowPoint() {
     let startPage = "https://www.netmile.co.jp/sugutama/";
-    await this.driver.get(startPage);
+    await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     let sele = ["div.mile.add_mile.js-user_point"];
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -151,7 +151,7 @@ class SugCm extends SugMissonSupper {
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await driver.get(this.targetUrl); // 操作ページ表示
+    await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["img[src*='d854486f003a29cac6a7dae61f8c40ed.png']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);

@@ -46,7 +46,7 @@ class LfmBase extends BaseExecuter {
   }
   async saveNowPoint() {
     let startPage = "https://lifemedia.jp/";
-    await this.driver.get(startPage);
+    await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     let sele = ["div.f-number>span.head__mymenu__icon"];
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -151,10 +151,7 @@ class LfmCm extends LfmMissonSupper {
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    let currentUrl = await driver.getCurrentUrl();
-    if (currentUrl != this.targetUrl) {
-      await driver.get(this.targetUrl); // 最初のページ表示
-    }
+    await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["img[alt='CMくじ']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);

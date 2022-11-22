@@ -62,7 +62,7 @@ class MopBase extends BaseExecuter {
   }
   async saveNowPoint() {
     let pointPage = "https://pc.moppy.jp/mypage/";
-    await this.driver.get(pointPage);
+    await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(3000);
     let sele = ["p.a-point__point"];
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -186,8 +186,7 @@ class MopClick extends MopMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START`);
-    // await driver.get(this.firstUrl); // 最初のページ表示
-    await driver.get(this.targetUrl); // 毎日貯めるのページ
+    await this.openUrl(this.targetUrl); // 操作ページ表示
 
     let sele = ["div.gamecontents__wrapper li.gamecontents__box>a>div", "#modal_detail"];
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -244,8 +243,7 @@ class MopEitango extends MopMissonSupper {
 
     let res = D.STATUS.FAIL;
     try {
-      // await driver.get(this.firstUrl); // 最初のページ表示
-      await driver.get(this.targetUrl); // 操作ページ表示
+      await this.openUrl(this.targetUrl); // 操作ページ表示
       let sele = [
         "a[data-ga-label='英単語TEST']",
 
@@ -320,8 +318,7 @@ class MopNanyoubi extends MopMissonSupper {
 
     let res = D.STATUS.FAIL;
     try {
-      // await driver.get(this.firstUrl); // 最初のページ表示
-      await driver.get(this.targetUrl); // 操作ページ表示
+      await this.openUrl(this.targetUrl); // 操作ページ表示
       let sele = [
         "a[data-ga-label='この日何曜日？']",
 
@@ -405,8 +402,7 @@ class MopAnzan extends MopMissonSupper {
 
     let res = D.STATUS.FAIL;
     try {
-      // await driver.get(this.firstUrl); // 最初のページ表示
-      await driver.get(this.targetUrl); // 操作ページ表示
+      await this.openUrl(this.targetUrl); // 操作ページ表示
       let sele = [
         "a[data-ga-label='ANZAN']",
         "input.ui-button-start",
@@ -495,7 +491,7 @@ class MopCm extends MopMissonSupper {
   // ポイントゲットのチャンスは1日2回チラシが更新される朝6時と夜20時
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await driver.get(this.targetUrl); // 操作ページ表示
+    await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["a[data-ga-label='CMくじ']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
