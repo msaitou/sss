@@ -35,7 +35,7 @@ class PartsOtano extends BaseWebDriverWrapper {
       // }
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000),
-          isKensyoFlag = true;
+          isKensyoFlag = false;
         await this.clickEle(ele, 2000); // 次のページ
         for (let i = 0; i < 10; i++) {
           if (await this.isExistEle(sele[1], true, 2000)) {
