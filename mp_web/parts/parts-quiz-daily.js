@@ -25,12 +25,12 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
         "input.ui-button-end",
       ];
       sele[0] = siteInfo.code == D.CODE.CMS ? "img[alt='DAILYQUIZ']" : sele[0];
-      if (await this.isExistEle(sele[0], true, 2000)) await this.exchange();
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
+        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange();
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           // await this.clickEle(ele, 2000);

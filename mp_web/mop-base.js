@@ -62,7 +62,7 @@ class MopBase extends BaseExecuter {
   }
   async saveNowPoint() {
     let pointPage = "https://pc.moppy.jp/mypage/";
-    await this.openUrl(startPage); // 操作ページ表示
+    await this.openUrl(pointPage); // 操作ページ表示
     await this.driver.sleep(3000);
     let sele = ["p.a-point__point"];
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -254,12 +254,12 @@ class MopEitango extends MopMissonSupper {
         "a.ui-button-close",
         "input.ui-button-end",
       ];
-      if (await this.isExistEle(sele[0], true, 2000)) await this.exchange();
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
+        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange();
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           await this.clickEle(ele, 2000);
@@ -330,12 +330,12 @@ class MopNanyoubi extends MopMissonSupper {
         "input.ui-button-end",
         "div.ui-item-header>h2.ui-item-title",
       ];
-      if (await this.isExistEle(sele[0], true, 2000)) await this.exchange();
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
+        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange();
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           await this.clickEle(ele, 2000);
@@ -413,13 +413,13 @@ class MopAnzan extends MopMissonSupper {
         "input.ui-button-end",
         "div.ui-item-header>h2.ui-item-title",
       ];
-      if (await this.isExistEle(sele[0], true, 2000)) await this.exchange();
       if (await this.isExistEle(sele[0], true, 2000)) {
         await this.exchange();
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
+        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange();
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           await this.sleep(2000);
