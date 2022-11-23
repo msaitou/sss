@@ -342,7 +342,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           case "Q2": // Q2. あなたの年齢をお知らせください。（ひとつだけ）
           case "Q3": // Q3. あなたの居住地をお知らせください。（ひとつだけ）
             choiceNum = 2;
-            if (["doPhoto"].indexOf(ref) > -1) choiceNum = -1;
+            if (["doPhoto","doManga"].indexOf(ref) > -1) choiceNum = -1;
             break;
           case "Q4": // Q4. あなたの職業をお知らせください。（ひとつだけ）
             choiceNum = "5";

@@ -34,7 +34,8 @@ class PartsOtano extends BaseWebDriverWrapper {
       //   sele[5] = "p.allStamp";
       // }
       if (await this.isExistEle(sele[0], true, 2000)) {
-        let ele = await this.getEle(sele[0], 3000);
+        let ele = await this.getEle(sele[0], 3000),
+          isKensyoFlag = true;
         await this.clickEle(ele, 2000); // 次のページ
         for (let i = 0; i < 10; i++) {
           if (await this.isExistEle(sele[1], true, 2000)) {
@@ -55,6 +56,7 @@ class PartsOtano extends BaseWebDriverWrapper {
               case "Q4": // Q4. あなたの居住地をお知らせください。（ひとつだけ）
                 choiceNum = "13";
                 ansSele = sele[3];
+                if (isKensyoFlag) ansSele = sele[2];
                 break;
               default: // ランダムで。 Q5~Q10
                 choiceNum = -1; // 仮値
@@ -73,6 +75,8 @@ class PartsOtano extends BaseWebDriverWrapper {
                 if (!choiceNum) choiceNum++;
                 await select.selectByValue(choiceNum.toString());
               } else {
+                if (qNo === "Q1" && eles.length === 3) isKensyoFlag = true;
+                if (isKensyoFlag) choiceNum = libUtil.getRandomInt(1, eles.length);
                 await this.clickEle(eles[choiceNum], 2000);
               }
               if (await this.isExistEle(sele[0], true, 2000)) {
