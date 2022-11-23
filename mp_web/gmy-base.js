@@ -36,6 +36,9 @@ class GmyBase extends BaseExecuter {
           case D.MISSION.READ_ICHI:
             execCls = new GmyReadIchi(para, cmMissionList);
             break;
+          case D.MISSION.OTANO:
+            execCls = new GmyOtano(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -228,7 +231,7 @@ class GmyReadDog extends GmyMissonSupper {
       let PartsReadDogCls = new PartsRead(this.para);
       res = await PartsReadDogCls.do();
       await driver.close(); // このタブを閉じて
-      await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
     }
     return res;
   }
@@ -256,8 +259,59 @@ class GmyReadIchi extends GmyMissonSupper {
       let PartsReadDogCls = new PartsRead(this.para);
       res = await PartsReadDogCls.do();
       await driver.close(); // このタブを閉じて
-      await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
     }
+    return res;
+  }
+}
+const { PartsOtano } = require("./parts/parts-otano.js");
+// お楽しみアンケート
+class GmyOtano extends GmyMissonSupper {
+  firstUrl = "https://pointi.jp/";
+  targetUrl = "https://dietnavi.com/pc/survey/";
+  // cmMissionList;
+  constructor(para) {
+    super(para);
+    // this.cmMissionList = cmMissionList;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let Otano = new PartsOtano(this.para);
+    let sele = [
+      "button.btn-danger",
+      "",
+      "img[src*='img_kantan_survey.gif']", // 2
+    ];
+    if (await this.isExistEle(sele[2], true, 2000)) {
+      let ele = await this.getEle(sele[2], 3000);
+      await this.clickEle(ele, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[0], true, 2000)) {
+          let eles0 = await this.getEles(sele[0], 3000),
+            limit = eles0.length;
+          for (let i = 0; i < limit; i++) {
+            if (i !== 0 && (await this.isExistEle(sele[0], true, 2000)))
+              eles0 = await this.getEles(sele[0], 3000);
+            await this.clickEle(eles0[0], 3000);
+            res = await Otano.do();
+          }
+        }
+        else {
+          res = D.STATUS.DONE;
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+
     return res;
   }
 }

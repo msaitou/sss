@@ -21,7 +21,7 @@ class PicBase extends BaseExecuter {
       let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
       this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
       if (cmMissionList.length) {
-        this.missionList.push({main:D.MISSION.CM});
+        this.missionList.push({ main: D.MISSION.CM });
       }
       for (let i in this.missionList) {
         let mission = this.missionList[i];
@@ -30,19 +30,22 @@ class PicBase extends BaseExecuter {
           case D.MISSION.CM:
             execCls = new PicCm(para, cmMissionList);
             break;
-            // case D.MISSION.READ_DOG:
-            //   execCls = new PicReadDog(para, cmMissionList);
-            //   break;
-            // case D.MISSION.READ_CAT:
-            //   execCls = new PicReadCat(para, cmMissionList);
-            //   break;
-            // case D.MISSION.READ_THANK:
-            //   execCls = new PicReadThank(para, cmMissionList);
-            //   break;
-            // case D.MISSION.READ_ICHI:
-            //   execCls = new PicReadIchi(para, cmMissionList);
-            //   break;
-          }
+          case D.MISSION.OTANO:
+            execCls = new PicOtano(para);
+            break;
+          // case D.MISSION.READ_DOG:
+          //   execCls = new PicReadDog(para, cmMissionList);
+          //   break;
+          // case D.MISSION.READ_CAT:
+          //   execCls = new PicReadCat(para, cmMissionList);
+          //   break;
+          // case D.MISSION.READ_THANK:
+          //   execCls = new PicReadThank(para, cmMissionList);
+          //   break;
+          // case D.MISSION.READ_ICHI:
+          //   execCls = new PicReadIchi(para, cmMissionList);
+          //   break;
+        }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
@@ -170,11 +173,72 @@ class PicCm extends PicMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://pointi.cmnw.jp/game/");
+      let cmManage = new PartsCmManage(
+        this.para,
+        this.cmMissionList,
+        "https://pointi.cmnw.jp/game/"
+      );
       await cmManage.do();
       await driver.close(); // このタブを閉じて
-      await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
     }
+  }
+}
+const { PartsOtano } = require("./parts/parts-otano.js");
+// お楽しみアンケート
+class PicOtano extends PicMissonSupper {
+  firstUrl = "https://pointi.jp/";
+  targetUrl = "https://pointi.jp/contents/research/research_enquete/";
+  // cmMissionList;
+  constructor(para) {
+    super(para);
+    // this.cmMissionList = cmMissionList;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let Otano = new PartsOtano(this.para);
+    let sele = [
+      "tr.ank_column>td.red.bold",
+      "tr.ank_column a.answer_btn",
+    ];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles0 = await this.getEles(sele[0], 3000),
+        limit = eles0.length;
+      for (let i = 0; i < limit; i++) {
+        if (i !== 0 && (await this.isExistEle(sele[0], true, 2000)))
+          eles0 = await this.getEles(sele[0], 3000);
+        let limit2 = eles0.length;
+        for (let j = 0; j < limit2; j++) {
+          let index = limit2 - 1 - j;
+          let text = await eles0[index].getText();
+          if (text.trim() == "2pt") {
+            // picのお楽しみは2ptのみ
+            if (await this.isExistEle(sele[1], true, 2000)) {
+              let eles = await this.getEles(sele[1], 3000);
+              await this.clickEle(eles[index], 3000);
+              let wid = await driver.getWindowHandle();
+              await this.changeWindow(wid); // 別タブに移動する
+              try {
+                res = await Otano.do();
+                logger.info(`${this.constructor.name} END`);
+              } catch (e) {
+                logger.warn(e);
+                await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+              } finally {
+                await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+              }
+            }
+          }
+          else {
+            res = D.STATUS.DONE;
+          }
+        }
+      }
+    }
+    return res;
   }
 }
 const { PartsRead } = require("./parts/parts-read.js");
@@ -197,8 +261,8 @@ class PicReadDog extends PicMissonSupper {
       await this.clickEle(eles[0], 2000);
       // let wid = await driver.getWindowHandle();
       // await this.changeWindow(wid); // 別タブに移動する
-      let PartsReadDogCls = new PartsRead(this.para);
-      await PartsReadDogCls.do();
+      let Otano = new PartsOtano(this.para);
+      await Otano.do();
       // await driver.close(); // このタブを閉じて
       // await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
     }
@@ -223,7 +287,7 @@ class PicReadCat extends PicMissonSupper {
       await this.clickEle(eles[0], 2000);
       // let wid = await driver.getWindowHandle();
       // await this.changeWindow(wid); // 別タブに移動する
-      let PartsReadDogCls = new PartsRead(this.para);
+      let PartsReadDogCls = new PartsOtano(this.para);
       await PartsReadDogCls.do();
       // await driver.close(); // このタブを閉じて
       // await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
@@ -249,7 +313,7 @@ class PicReadThank extends PicMissonSupper {
       await this.clickEle(eles[0], 2000);
       // let wid = await driver.getWindowHandle();
       // await this.changeWindow(wid); // 別タブに移動する
-      let PartsReadDogCls = new PartsRead(this.para);
+      let PartsReadDogCls = new PartsOtano(this.para);
       await PartsReadDogCls.do();
       // await driver.close(); // このタブを閉じて
       // await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
@@ -275,7 +339,7 @@ class PicReadIchi extends PicMissonSupper {
       await this.clickEle(eles[0], 2000);
       // let wid = await driver.getWindowHandle();
       // await this.changeWindow(wid); // 別タブに移動する
-      let PartsReadDogCls = new PartsRead(this.para);
+      let PartsReadDogCls = new PartsOtano(this.para);
       await PartsReadDogCls.do();
       // await driver.close(); // このタブを閉じて
       // await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ

@@ -21,7 +21,7 @@ class CitBase extends BaseExecuter {
       let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
       this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
       if (cmMissionList.length) {
-        this.missionList.push({main:D.MISSION.CM});
+        this.missionList.push({ main: D.MISSION.CM });
       }
       for (let i in this.missionList) {
         let mission = this.missionList[i];
@@ -41,6 +41,9 @@ class CitBase extends BaseExecuter {
             break;
           case D.MISSION.READ_ICHI:
             execCls = new CitReadIchi(para, cmMissionList);
+            break;
+          case D.MISSION.OTANO:
+            execCls = new CitOtano(para);
             break;
         }
         if (execCls) {
@@ -154,7 +157,6 @@ class CitCommon extends CitMissonSupper {
           }
         }
 
-
         ele = await this.getEle(seleInput.login, 1000);
         await this.clickEle(ele, 4000);
         // ログインできてるか、チェック
@@ -206,10 +208,14 @@ class CitCm extends CitMissonSupper {
 
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://chance.cmnw.jp/game/");
+      let cmManage = new PartsCmManage(
+        this.para,
+        this.cmMissionList,
+        "https://chance.cmnw.jp/game/"
+      );
       await cmManage.do();
       await driver.close(); // このタブを閉じて
-      await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
     }
   }
 }
@@ -326,6 +332,57 @@ class CitReadIchi extends CitMissonSupper {
     return res;
   }
 }
+const { PartsOtano } = require("./parts/parts-otano.js");
+// お楽しみアンケート
+class CitOtano extends CitMissonSupper {
+  firstUrl = "https://pointi.jp/";
+  targetUrl = "https://www.chance.com/research/";
+  // cmMissionList;
+  constructor(para) {
+    super(para);
+    // this.cmMissionList = cmMissionList;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let Otano = new PartsOtano(this.para);
+    let sele = [
+      "button.btn-danger",
+      "",
+      "img[src*='ban-research.gif']", // 2
+    ];
+    if (await this.isExistEle(sele[2], true, 2000)) {
+      let ele = await this.getEle(sele[2], 3000);
+      await this.clickEle(ele, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[0], true, 2000)) {
+          let eles0 = await this.getEles(sele[0], 3000),
+            limit = eles0.length;
+          for (let i = 0; i < limit; i++) {
+            if (i !== 0 && (await this.isExistEle(sele[0], true, 2000)))
+              eles0 = await this.getEles(sele[0], 3000);
+            await this.clickEle(eles0[0], 3000);
+            res = await Otano.do();
+          }
+        } else {
+          res = D.STATUS.DONE;
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+
+    return res;
+  }
+}
+
 // module.
 exports.CitCommon = CitCommon;
 // module.
