@@ -40,6 +40,7 @@ exports.Def = {
     READ_THANK: "read_thank",
     READ_ICHI: "read_ichi",
     OTANO: "otano",
+    ANQ_PARK: "anq_park",
 
     CM: "cm", // 内部処理のダミー用
     CM_URANAI: "cm_uranai",

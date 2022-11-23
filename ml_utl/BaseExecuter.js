@@ -76,7 +76,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
       this.logWarn(e);
     }
   }
-  async getElesFromEles(ele, sele, time) {
+  async getElesFromEle(ele, sele, time) {
     try {
       if (!sele) throw "is not param[1]";
       time = time ? time : 0;

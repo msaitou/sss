@@ -49,7 +49,7 @@ class BaseWebDriverWrapper {
       this.logger.warn(e);
     }
   }
-  async getElesFromEles(ele, sele, time) {
+  async getElesFromEle(ele, sele, time) {
     try {
       if (!sele) throw "is not param[1]";
       time = time ? time : 0;
@@ -177,29 +177,29 @@ class BaseWebDriverWrapper {
         select,
         formEle = await this.getEle(selePre[0], 2000);
       if (await this.isExistElesFromEle(formEle, selePre[1], true, 2000)) {
-        ele0 = await this.getElesFromEles(formEle, selePre[1], 2000);
+        ele0 = await this.getElesFromEle(formEle, selePre[1], 2000);
         await this.clickEle(ele0[0], 2000); // 男性を選択
       }
       if (await this.isExistElesFromEle(formEle, selePre[2], true, 2000)) {
-        ele0 = await this.getElesFromEles(formEle, selePre[2], 2000);
+        ele0 = await this.getElesFromEle(formEle, selePre[2], 2000);
         select = new Select(ele0[0]);
         await select.selectByValue("38"); // 38歳を選択
       }
       if (await this.isExistElesFromEle(formEle, selePre[3], true, 2000)) {
-        ele0 = await this.getElesFromEles(formEle, selePre[3], 2000);
+        ele0 = await this.getElesFromEle(formEle, selePre[3], 2000);
         select = new Select(ele0[0]);
         await select.selectByValue("13"); // 東京を選択
       }
       if (await this.isExistElesFromEle(formEle, selePre[4], true, 2000)) {
-        ele0 = await this.getElesFromEles(formEle, selePre[4], 2000);
+        ele0 = await this.getElesFromEle(formEle, selePre[4], 2000);
         await this.clickEle(ele0[1], 2000); // 結婚　無を選択
       }
       if (await this.isExistElesFromEle(formEle, selePre[5], true, 2000)) {
-        ele0 = await this.getElesFromEles(formEle, selePre[5], 2000);
+        ele0 = await this.getElesFromEle(formEle, selePre[5], 2000);
         await this.clickEle(ele0[1], 2000); // 子供　無を選択
       }
       if (await this.isExistElesFromEle(formEle, selePre[6], true, 2000)) {
-        ele0 = await this.getElesFromEles(formEle, selePre[6], 2000);
+        ele0 = await this.getElesFromEle(formEle, selePre[6], 2000);
         await this.clickEle(ele0[0], 2000); // 回答を送る
       }
       this.logger.info("cm最初のアンケートに回答しました");
