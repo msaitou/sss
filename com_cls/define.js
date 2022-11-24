@@ -27,6 +27,7 @@ exports.Def = {
     LFM: "lfm",
     PST: "pst",
     PIL: "pil",
+    AME: "ame",
   },
   MISSION: {
     CHIRASHI: "chirashi",
@@ -43,6 +44,9 @@ exports.Def = {
     READ_ICHI: "read_ichi",
     OTANO: "otano",
     ANQ_PARK: "anq_park",
+    ANQ_COLUM: "anq_colum",
+    ANQ_MANGA: "anq_manga",
+    ANQ_PHOTO: "anq_photo",
 
     CM: "cm", // 内部処理のダミー用
     CM_URANAI: "cm_uranai",

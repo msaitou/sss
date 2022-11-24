@@ -68,8 +68,9 @@ class MopBase extends BaseExecuter {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.driver.findElement(By.css(sele[0]));
       let nakedNum = await ele.getText();
-      nakedNum = akedNum.split("\t").join("");
+      nakedNum = nakedNum.split("\t").join("");
       nakedNum = nakedNum.split("\n").join("");
+      nakedNum = nakedNum.split("ポイントGET!!").join("");
       this.logger.info("now point total:" + nakedNum);
       await this.pointSummary(this.code, nakedNum);
     }

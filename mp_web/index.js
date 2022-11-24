@@ -12,6 +12,8 @@ const sugBase = require("./sug-base");
 const picBase = require("./pic-base");
 const lfmBase = require("./lfm-base");
 const pstBase = require("./pst-base");
+const pilBase = require("./pil-base");
+const ameBase = require("./ame-base");
 const config = require("config");
 const { Entry } = require("selenium-webdriver/lib/logging");
 const D = require("../com_cls/define").Def;
@@ -223,6 +225,12 @@ class PointWebCls {
         break;
       case D.CODE.PST:
         opeCls = new pstBase.Pst(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.AME:
+        opeCls = new ameBase.Ame(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.PIL:
+        opeCls = new pilBase.Pil(0, siteInfo, aca, missionList);
         break;
     }
     if (opeCls) {

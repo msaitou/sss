@@ -112,32 +112,33 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "",
         "",
       ];
-      if (siteInfo.code == "naniika") {
-        sele[1] = "input.getStamp.btn";
-        sele[2] = "div.stampCard li.stampGet";
-        sele[3] = "a.readMore.btn";
-        sele[4] = "p.lessStamp>span";
-        sele[5] = "p.allStamp";
+      if (siteInfo.code == D.CODE.AME) {
+        // sele[0] = "input.getStamp.btn";
+        // sele[1] = "input.getStamp.btn";
+        // sele[2] = "div.stampCard li.stampGet";
+        // sele[3] = "a.readMore.btn";
+        // sele[4] = "p.lessStamp>span";
+        // sele[5] = "p.allStamp";
       }
-      if (await this.isExistEle(sele[0], true, 2000)) {
+      if (await this.isExistEle(sele[0], true, 10000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 4000);
         if (await this.isExistEle(sele[5], true, 2000)) {
           ele = await this.getEle(sele[5], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 4000);
           if (await this.isExistEle(sele[6], true, 2000)) {
             ele = await this.getEle(sele[6], 3000);
-            await this.clickEle(ele, 2000);
+            await this.clickEle(ele, 4000);
             for (let i = 0; i < 6; i++) {
               if (await this.isExistEle(sele[7], true, 2000)) {
                 ele = await this.getEle(sele[7], 3000);
-                await this.clickEle(ele, 2000);
+                await this.clickEle(ele, 3000);
               }
             }
 
             if (await this.isExistEle(sele[1], true, 2000)) {
               ele = await this.getEle(sele[1], 3000);
-              await this.clickEle(ele, 2000);
+              await this.clickEle(ele, 3000);
               try {
                 await this.commonAnk(sele, "doColum");
                 res = D.STATUS.DONE;
@@ -164,6 +165,12 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "#enqueteUl label",
         "input.enquete_nextbt", // 4
         "",
+        "", // 6
+        "",
+        "", // 8
+        "img[alt='進む']",
+        "",
+        "",
       ];
       if (siteInfo.code == "naniika") {
         sele[1] = "input.getStamp.btn";
@@ -173,8 +180,12 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         sele[5] = "p.allStamp";
       }
       for (let i = 0; i < 2; i++) {
-        if (await this.isExistEle(sele[0], true, 2000)) {
-          let ele = await this.getEle(sele[0], 3000);
+        if (await this.isExistEle(sele[9], true, 10000)) {
+          let ele = await this.getEle(sele[9], 10000);
+          await this.clickEle(ele, 2000);
+        }
+        else if (await this.isExistEle(sele[0], true, 10000)) {
+          let ele = await this.getEle(sele[0], 10000);
           await this.clickEle(ele, 2000);
         }
       }
@@ -224,7 +235,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         sele[4] = "p.lessStamp>span";
         sele[5] = "p.allStamp";
       }
-      if (await this.isExistEle(sele[0], true, 2000)) {
+      if (await this.isExistEle(sele[0], true, 10000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000);
         if (await this.isExistEle(sele[5], true, 2000)) {
@@ -463,7 +474,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     // if (["doIjin"].indexOf(ref) > -1) sele[2] = "#enqueteWrap h3>span";
     if (["doManga", "doColum"].indexOf(ref) > -1)
       sele = [
-        "",
+        "#endlink", // ?
         "",
         "span.text03",
         "div.enquete label",
@@ -534,10 +545,10 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       }
     } else {
       for (let i = 0; i < 2; i++) {
-        if (await this.isExistEle(sele[0], true, 2000)) {
+        if (await this.isExistEle(sele[0], true, 4000)) {
           let ele = await this.getEle(sele[0], 3000);
           await this.clickEle(ele, 2000); // 2回目　sugでは一覧に戻る
-        } else if (await this.isExistEle("#endlink", true, 2000)) {
+        } else if (await this.isExistEle("#endlink", true, 4000)) {
           let ele = await this.getEle("#endlink", 3000);
           await this.clickEle(ele, 2000); // 2回目　sugでは一覧に戻る
         }
