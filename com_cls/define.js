@@ -25,6 +25,8 @@ exports.Def = {
     GEN: "gen",
     SUG: "sug",
     LFM: "lfm",
+    PST: "pst",
+    PIL: "pil",
   },
   MISSION: {
     CHIRASHI: "chirashi",

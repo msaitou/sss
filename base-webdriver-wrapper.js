@@ -49,11 +49,47 @@ class BaseWebDriverWrapper {
       this.logger.warn(e);
     }
   }
+  /**
+   * 要素からcssセレクターで要素を検索して返す
+   * @param {*} ele
+   * @param {*} sele
+   * @param {*} time
+   * @returns
+   */
   async getElesFromEle(ele, sele, time) {
+    // try {
+    //   if (!sele) throw "is not param[1]";
+    //   time = time ? time : 0;
+    //   return await ele.findElements(By.css(sele));
+    // } catch (e) {
+    //   this.logger.warn(e);
+    // }
+    if (!sele) throw "is not param[1]";
+    return await this.getElesFromEleCommon(ele, By.css(sele), time);
+  }
+  /**
+   * 要素からxpathで要素を検索して返す
+   * @param {*} ele
+   * @param {*} xP
+   * @param {*} time
+   * @returns
+   */
+  async getElesXFromEle(ele, xP, time) {
+    if (!xP) throw "is not param[1]";
+    return await this.getElesFromEleCommon(ele, By.xpath(xP), time);
+  }
+  /**
+   *
+   * @param {*} ele
+   * @param {*} locator
+   * @param {*} time
+   * @returns
+   */
+  async getElesFromEleCommon(ele, locator, time) {
     try {
-      if (!sele) throw "is not param[1]";
+      if (!locator) throw "is not param[1]";
       time = time ? time : 0;
-      return await ele.findElements(By.css(sele));
+      return await ele.findElements(locator);
     } catch (e) {
       this.logger.warn(e);
     }
@@ -147,7 +183,7 @@ class BaseWebDriverWrapper {
   async changeWindow(wid) {
     // 別タブに移動する
     let widSet = await this.driver.getAllWindowHandles();
-    await this.driver.switchTo().window(widSet[widSet.length-1]);
+    await this.driver.switchTo().window(widSet[widSet.length - 1]);
     // wid = wid | (await this.driver.getWindowHandle());
     // for (let id of widSet) {
     //   if (id != wid) {

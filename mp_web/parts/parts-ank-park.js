@@ -12,6 +12,147 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     this.setDriver(this.para.driver);
     this.logger.debug(`${this.constructor.name} constructor`);
   }
+  async doZukan() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "input.next_bt",
+        "input:not(.next_bt)[alt='進む']",
+        "#enqueteTitle>span",
+        "#enqueteUl label",
+        "input.enquete_nextbt", // 4
+        "",
+      ];
+      if (siteInfo.code == "naniika") {
+        sele[1] = "input.getStamp.btn";
+        sele[2] = "div.stampCard li.stampGet";
+        sele[3] = "a.readMore.btn";
+        sele[4] = "p.lessStamp>span";
+        sele[5] = "p.allStamp";
+      }
+      for (let i = 0; i < 3; i++) {
+        if (await this.isExistEle(sele[0], true, 2000)) {
+          let ele = await this.getEle(sele[0], 3000);
+          await this.clickEle(ele, 2000);
+        }
+      }
+      for (let i = 0; i < 4; i++) {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let ele = await this.getEle(sele[1], 3000);
+          await this.clickEle(ele, 2000);
+        }
+      }
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 3000);
+        await this.clickEle(ele, 2000);
+      }
+      try {
+        await this.commonAnk(sele);
+        res = D.STATUS.DONE;
+      } catch (e) {
+        logger.warn(e);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+  async doIjin() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "input.next_bt",
+        "input:not(.next_bt)[alt='進む']",
+        "#enqueteWrap h3>span",
+        "#enqueteUl label",
+        "input.enquete_nextbt", // 4
+        "",
+      ];
+      if (siteInfo.code == "naniika") {
+        sele[1] = "input.getStamp.btn";
+        sele[2] = "div.stampCard li.stampGet";
+        sele[3] = "a.readMore.btn";
+        sele[4] = "p.lessStamp>span";
+        sele[5] = "p.allStamp";
+      }
+      for (let i = 0; i < 8; i++) {
+        if (await this.isExistEle(sele[0], true, 2000)) {
+          let ele = await this.getEle(sele[0], 3000);
+          await this.clickEle(ele, 2000);
+        }
+      }
+      try {
+        await this.commonAnk(sele, "doIjin");
+        res = D.STATUS.DONE;
+      } catch (e) {
+        logger.warn(e);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+  async doColum() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "input.next_bt",
+        "input:not(.next_bt)[alt='進む']",
+        "#enqueteTitle>span",
+        "#enqueteUl label",
+        "input.enquete_nextbt", // 4
+        "input[alt='次へ進む']",
+        "input[alt='コラムを読む']", // 6
+        "input[alt='next']",
+        "input[src*='questionnaire_bt.png']", // 8
+        "",
+        "",
+        "",
+      ];
+      if (siteInfo.code == "naniika") {
+        sele[1] = "input.getStamp.btn";
+        sele[2] = "div.stampCard li.stampGet";
+        sele[3] = "a.readMore.btn";
+        sele[4] = "p.lessStamp>span";
+        sele[5] = "p.allStamp";
+      }
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 3000);
+        await this.clickEle(ele, 2000);
+        if (await this.isExistEle(sele[5], true, 2000)) {
+          ele = await this.getEle(sele[5], 3000);
+          await this.clickEle(ele, 2000);
+          if (await this.isExistEle(sele[6], true, 2000)) {
+            ele = await this.getEle(sele[6], 3000);
+            await this.clickEle(ele, 2000);
+            for (let i = 0; i < 6; i++) {
+              if (await this.isExistEle(sele[7], true, 2000)) {
+                ele = await this.getEle(sele[7], 3000);
+                await this.clickEle(ele, 2000);
+              }
+            }
+
+            if (await this.isExistEle(sele[1], true, 2000)) {
+              ele = await this.getEle(sele[1], 3000);
+              await this.clickEle(ele, 2000);
+              try {
+                await this.commonAnk(sele, "doColum");
+                res = D.STATUS.DONE;
+              } catch (e) {
+                logger.warn(e);
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
   async doPhoto() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
@@ -316,9 +457,11 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     return res;
   }
   async commonAnk(sele, ref) {
-    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let { retryCnt, account, logger, driver, siteInfo } = this.para,
+      roopLimit = 8;
     if (ref == "doPhoto") sele[0] = "#endlink";
-    if (ref == "doManga")
+    // if (["doIjin"].indexOf(ref) > -1) sele[2] = "#enqueteWrap h3>span";
+    if (["doManga", "doColum"].indexOf(ref) > -1)
       sele = [
         "",
         "",
@@ -328,8 +471,10 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "#endlink",
         "img[src*='again_bt.png']",
       ];
-    // ここから共通のアンケートポイ　全8問
-    for (let i = 0; i < 8; i++) {
+    if (["doColum"].indexOf(ref) > -1) (sele[2] = "p.text03"), (roopLimit = 6);
+
+    // ここから共通のアンケートポイ　全8問(columは6)
+    for (let i = 0; i < roopLimit; i++) {
       if (await this.isExistEle(sele[2], true, 2000)) {
         let ele = await this.getEle(sele[2], 3000);
         let q = await ele.getText(),
@@ -342,7 +487,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           case "Q2": // Q2. あなたの年齢をお知らせください。（ひとつだけ）
           case "Q3": // Q3. あなたの居住地をお知らせください。（ひとつだけ）
             choiceNum = 2;
-            if (["doPhoto","doManga"].indexOf(ref) > -1) choiceNum = -1;
+            if (["doPhoto", "doManga", "doColum"].indexOf(ref) > -1) choiceNum = -1;
             break;
           case "Q4": // Q4. あなたの職業をお知らせください。（ひとつだけ）
             choiceNum = "5";
@@ -392,12 +537,10 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         if (await this.isExistEle(sele[0], true, 2000)) {
           let ele = await this.getEle(sele[0], 3000);
           await this.clickEle(ele, 2000); // 2回目　sugでは一覧に戻る
-        }
-        else if (await this.isExistEle("#endlink", true, 2000)) {
+        } else if (await this.isExistEle("#endlink", true, 2000)) {
           let ele = await this.getEle("#endlink", 3000);
           await this.clickEle(ele, 2000); // 2回目　sugでは一覧に戻る
         }
-
       }
     }
   }
@@ -408,26 +551,6 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       if (await ele.isDisplayed()) {
         await this.clickEle(ele, 2000);
       } else this.logger.debug("オーバーレイは表示されてないです");
-    }
-  }
-  async exchange() {
-    let exSele = [
-      "a.stamp__btn[href*='exchange']",
-      "input.exchange__btn",
-      "a.stamp__btn.stamp__btn-return",
-    ];
-    await this.hideOverlay();
-    if (await this.isExistEle(exSele[0], true, 2000)) {
-      let ele = await this.getEle(exSele[0], 3000);
-      await this.clickEle(ele, 2000);
-      if (await this.isExistEle(exSele[1], true, 2000)) {
-        ele = await this.getEle(exSele[1], 3000);
-        await this.clickEle(ele, 2000);
-      }
-      if (await this.isExistEle(exSele[2], true, 2000)) {
-        ele = await this.getEle(exSele[2], 3000);
-        await this.clickEle(ele, 2000);
-      }
     }
   }
 }
