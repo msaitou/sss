@@ -327,21 +327,23 @@ class GpoClickNews extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
+      // 勘違い。12件読む必要なさそうなので、2件くらいで終了に
       // for (let i = 0; i < eles.length; i++) {
-      //   await this.clickEle(eles[i], 4000);
-      //   await this.closeOtherWindow(driver);
-      // }
-      if (await this.isExistEle(sele[1], true, 2000)) {
-        let eles2 = await this.getEles(sele[1], 2000);
-        await this.clickEle(eles2[1], 4000);
-        if (await this.isExistEle(sele[0], true, 2000)) {
-          eles = await this.getEles(sele[0], 2000);
-          for (let i = 0; i < 3; i++) {
-            await this.clickEle(eles[i], 4000);
-            await this.closeOtherWindow(driver);
-          }
-        }
+      for (let i = 0; i < 2; i++) {
+        await this.clickEle(eles[i], 4000);
+        await this.closeOtherWindow(driver);
       }
+      // if (await this.isExistEle(sele[1], true, 2000)) {
+      //   let eles2 = await this.getEles(sele[1], 2000);
+      //   await this.clickEle(eles2[1], 4000);
+      //   if (await this.isExistEle(sele[0], true, 2000)) {
+      //     eles = await this.getEles(sele[0], 2000);
+      //     for (let i = 0; i < 3; i++) {
+      //       await this.clickEle(eles[i], 4000);
+      //       await this.closeOtherWindow(driver);
+      //     }
+      //   }
+      // }
     }
 
     logger.info(`${this.constructor.name} END`);
