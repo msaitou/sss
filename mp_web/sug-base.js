@@ -36,6 +36,9 @@ class SugBase extends BaseExecuter {
           case D.MISSION.QUIZ_KENTEI:
             execCls = new SugQuizKentei(para);
             break;
+          case D.MISSION.CLICK:
+            execCls = new SugClick(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -195,7 +198,7 @@ class SugAnqPark extends SugMissonSupper {
       "img[alt='アンケートパーク']",
       ".enquete-list td.cate",
       ".enquete-list td.status>a", // 2
-      "+form>input[name='submit']"
+      "+form>input[name='submit']",
     ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
@@ -218,8 +221,7 @@ class SugAnqPark extends SugMissonSupper {
               try {
                 ele2 = await ele.findElements(By.xpath("ancestor::tr"));
                 ele2 = await this.getElesFromEle(ele2[0], "td>form>input[name='submit']");
-              }
-              catch(e){
+              } catch (e) {
                 logger.debug(e);
               }
               if (ele2 && ele2.length) {
@@ -267,10 +269,8 @@ const { PartsQuizKentei } = require("./parts/parts-quiz-kentei.js");
 class SugQuizKentei extends SugMissonSupper {
   firstUrl = "https://www.netmile.co.jp/sugutama/";
   targetUrl = "https://www.netmile.co.jp/sugutama/survey?lo=124";
-  // cmMissionList;
   constructor(para) {
     super(para);
-    // this.cmMissionList = cmMissionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async do() {
@@ -282,7 +282,7 @@ class SugQuizKentei extends SugMissonSupper {
       "img[alt='クイズ検定Q']",
       ".enquete-list td.cate",
       ".enquete-list td.status>a", // 2
-      "+form>input[name='submit']"
+      "+form>input[name='submit']",
     ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
@@ -305,31 +305,14 @@ class SugQuizKentei extends SugMissonSupper {
               try {
                 ele2 = await ele.findElements(By.xpath("ancestor::tr"));
                 ele2 = await this.getElesFromEle(ele2[0], "td>form>input[name='submit']");
-              }
-              catch(e){
+              } catch (e) {
                 logger.debug(e);
               }
               if (ele2 && ele2.length) {
                 ele = ele2[0];
               }
               await this.clickEle(ele, 3000);
-              // switch (text.trim()) {
-              //   // case "動物":
-              //   // res = await QuizKentei.doAnimal();
-              //   //   break;
-              //   // case "書籍":
-              //   // res = await QuizKentei.doBooks();
-              //   //   break;
-              //   // case "海外":
-              //   // res = await QuizKentei.doForign();
-              //   //   break;
-              //   // case "漢字":
-              //   // res = await QuizKentei.doKanji();
-              //   //   break;
-              //   case "食べ物":
-                res = await QuizKentei.doKentei();
-              //     break;
-              // }
+              res = await QuizKentei.doKentei();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
           }
@@ -344,6 +327,34 @@ class SugQuizKentei extends SugMissonSupper {
       }
     }
     return res;
+  }
+}
+// クリック
+class SugClick extends SugMissonSupper {
+  firstUrl = "https://www.netmile.co.jp/sugutama/";
+  targetUrl = "https://www.netmile.co.jp/sugutama/shop?lo=124";
+  targetUrl2 = "https://www.netmile.co.jp/sugutama/service?lo=124";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    let sele = [".daily_box .daily"];
+    for (let url of [this.firstUrl, this.targetUrl, this.targetUrl2]) {
+      logger.info(`${url}でクリック`);
+      await this.openUrl(url); // 操作ページ表示
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let eles = await this.getEles(sele[0], 2000);
+        for (let i = 0; i < eles.length; i++) {
+          await this.clickEle(eles[i], 3000);
+          await this.closeOtherWindow(driver);
+        }
+      }
+    }
+    logger.info(`${this.constructor.name} END`);
+    return D.STATUS.DONE;
   }
 }
 

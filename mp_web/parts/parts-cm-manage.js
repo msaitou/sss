@@ -198,8 +198,8 @@ class CmDotti extends CmSuper {
               }
               await this.exchangeDotti(sele);
             }
+            res = D.STATUS.DONE;
           }
-          res = D.STATUS.DONE;
           logger.info(`${this.constructor.name} END`);
         } catch (e) {
           logger.warn(e);

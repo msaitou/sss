@@ -39,6 +39,9 @@ class GmyBase extends BaseExecuter {
           case D.MISSION.OTANO:
             execCls = new GmyOtano(para);
             break;
+          case D.MISSION.CLICK:
+            execCls = new GmyClick(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -300,8 +303,7 @@ class GmyOtano extends GmyMissonSupper {
             await this.clickEle(eles0[0], 3000);
             res = await Otano.do();
           }
-        }
-        else {
+        } else {
           res = D.STATUS.DONE;
         }
       } catch (e) {
@@ -313,6 +315,31 @@ class GmyOtano extends GmyMissonSupper {
     }
 
     return res;
+  }
+}
+// クリック
+class GmyClick extends GmyMissonSupper {
+  firstUrl = "https://dietnavi.com/pc/";
+  targetUrl = "https://dietnavi.com/pc/daily_click.php";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+
+    let sele = ["div.daily_click a img"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      for (let i = 0; i < eles.length; i++) {
+        await this.clickEle(eles[i], 4000);
+        await this.closeOtherWindow(driver);
+      }
+    }
+    logger.info(`${this.constructor.name} END`);
+    return D.STATUS.DONE;
   }
 }
 

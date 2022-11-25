@@ -38,6 +38,7 @@ exports.Def = {
     ANZAN: "anzan",
     NANYOUBI: "nanyoubi",
     CLICK: "click",
+    CLICK_NEWS: "click_news",
     READ_DOG: "read_dog",
     READ_CAT: "read_cat",
     READ_THANK: "read_thank",
@@ -47,8 +48,8 @@ exports.Def = {
     ANQ_COLUM: "anq_colum",
     ANQ_MANGA: "anq_manga",
     ANQ_PHOTO: "anq_photo",
-    QUIZ_KENTEI:"quiz_kentei",
-    
+    QUIZ_KENTEI: "quiz_kentei",
+
     CM: "cm", // 内部処理のダミー用
     CM_URANAI: "cm_uranai",
     CM_DOTTI: "cm_dotti",

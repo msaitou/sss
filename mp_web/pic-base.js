@@ -33,6 +33,9 @@ class PicBase extends BaseExecuter {
           case D.MISSION.OTANO:
             execCls = new PicOtano(para);
             break;
+          case D.MISSION.CLICK:
+            execCls = new PicClick(para);
+            break;
           // case D.MISSION.READ_DOG:
           //   execCls = new PicReadDog(para, cmMissionList);
           //   break;
@@ -200,10 +203,7 @@ class PicOtano extends PicMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let Otano = new PartsOtano(this.para);
-    let sele = [
-      "tr.ank_column>td.red.bold",
-      "tr.ank_column a.answer_btn",
-    ];
+    let sele = ["tr.ank_column>td.red.bold", "tr.ank_column a.answer_btn"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles0 = await this.getEles(sele[0], 3000),
         limit = eles0.length;
@@ -231,8 +231,7 @@ class PicOtano extends PicMissonSupper {
                 await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
               }
             }
-          }
-          else {
+          } else {
             res = D.STATUS.DONE;
           }
         }
@@ -241,6 +240,32 @@ class PicOtano extends PicMissonSupper {
     return res;
   }
 }
+// クリック
+class PicClick extends PicMissonSupper {
+  firstUrl = "https://pointi.jp/";
+  targetUrl = "https://pointi.jp/daily.php";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+
+    let sele = ["div.click_btn"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      for (let i = 0; i < eles.length; i++) {
+        await this.clickEle(eles[i], 4000);
+        await this.closeOtherWindow(driver);
+      }
+    }
+    logger.info(`${this.constructor.name} END`);
+    return D.STATUS.DONE;
+  }
+}
+
 const { PartsRead } = require("./parts/parts-read.js");
 // 犬の気持ち
 class PicReadDog extends PicMissonSupper {

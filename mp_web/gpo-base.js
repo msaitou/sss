@@ -33,6 +33,12 @@ class GpoBase extends BaseExecuter {
           case D.MISSION.QUIZ_KENTEI:
             execCls = new GpoQuizKentei(para);
             break;
+          case D.MISSION.CLICK:
+            execCls = new GpoClick(para);
+            break;
+          case D.MISSION.CLICK_NEWS:
+            execCls = new GpoClickNews(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -266,9 +272,81 @@ class GpoQuizKentei extends GpoMissonSupper {
     return res;
   }
 }
-// module.
+// クリック
+class GpoClick extends GpoMissonSupper {
+  firstUrl = "https://pointi.jp/";
+  targetUrl = "https://pointi.jp/daily.php";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    let urls = [
+      "https://pmall.gpoint.co.jp/free/",
+      "https://pmall.gpoint.co.jp/monitor/",
+      "https://pmall.gpoint.co.jp/kokangen/",
+      "https://www.gpoint.co.jp/special/all/",
+    ];
+    let sele = [
+      "#dailyChallenge a>img",
+      "#marutokuchallenge a>img",
+      ".mainichi1g a>img",
+      "#atarima10 a>img",
+    ];
+    for (let j in urls) {
+      await this.openUrl(urls[j]); // 操作ページ表示
+      if (await this.isExistEle(sele[j], true, 2000)) {
+        let eles = await this.getEles(sele[j], 2000);
+        for (let i = 0; i < eles.length; i++) {
+          await this.clickEle(eles[i], 4000);
+          await this.closeOtherWindow(driver);
+        }
+      }
+    }
+    logger.info(`${this.constructor.name} END`);
+    return D.STATUS.DONE;
+  }
+}
+// クリックニュース
+class GpoClickNews extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://www.gpoint.co.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    let sele = [
+      "#gnewsh div.content:not([style='display: none;']) li>a",
+      "#gnewsh div.menu",
+    ];
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      // for (let i = 0; i < eles.length; i++) {
+      //   await this.clickEle(eles[i], 4000);
+      //   await this.closeOtherWindow(driver);
+      // }
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let eles2 = await this.getEles(sele[1], 2000);
+        await this.clickEle(eles2[1], 4000);
+        if (await this.isExistEle(sele[0], true, 2000)) {
+          eles = await this.getEles(sele[0], 2000);
+          for (let i = 0; i < 3; i++) {
+            await this.clickEle(eles[i], 4000);
+            await this.closeOtherWindow(driver);
+          }
+        }
+      }
+    }
+
+    logger.info(`${this.constructor.name} END`);
+    return D.STATUS.DONE;
+  }
+}
 exports.GpoCommon = GpoCommon;
-// module.
 exports.Gpo = GpoBase;
-// module.
-// exports = { pex: pexBase, pexCommon: pexCommon };

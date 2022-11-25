@@ -45,6 +45,9 @@ class CitBase extends BaseExecuter {
           case D.MISSION.OTANO:
             execCls = new CitOtano(para);
             break;
+          case D.MISSION.CLICK:
+            execCls = new CitClick(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -382,7 +385,39 @@ class CitOtano extends CitMissonSupper {
     return res;
   }
 }
+// クリック
+class CitClick extends CitMissonSupper {
+  firstUrl = "https://www.chance.com/";
+  targetUrl = "https://www.chance.com/click.jsp";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    await this.openUrl(this.targetUrl); // 操作ページ表示
 
+    let sele = [".click_list a>img", ".pochitto a img"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      for (let i = 0; i < eles.length; i++) {
+        await this.clickEle(eles[i], 3000);
+        await this.closeOtherWindow(driver);
+      }
+    }
+    await this.openUrl(this.firstUrl); // 操作ページ表示
+    if (await this.isExistEle(sele[1], true, 2000)) {
+      let eles = await this.getEles(sele[1], 2000);
+      for (let i = 0; i < eles.length; i++) {
+        await this.clickEle(eles[i], 3000);
+        await this.closeOtherWindow(driver);
+      }
+    }
+    logger.info(`${this.constructor.name} END`);
+    return D.STATUS.DONE;
+  }
+}
 // module.
 exports.CitCommon = CitCommon;
 // module.

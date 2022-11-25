@@ -30,6 +30,9 @@ class PilBase extends BaseExecuter {
           case D.MISSION.ANQ_PARK:
             execCls = new PilAnqPark(para);
             break;
+          case D.MISSION.CLICK:
+            execCls = new PilClick(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -97,37 +100,37 @@ class PilCommon extends PilMissonSupper {
       //   logger.debug(11102);
       //   let ele = await this.getEle(seleLoginLink, 2000);
       //   await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
-        let seleInput = {
-          id: "input[name='mailadr']",
-          pass: "input[name='passwd']",
-          login: "input[name='btnlogin']",
-        };
-        // アカウント（メール）入力
-        let inputEle = await this.getEle(seleInput.id, 500);
-        await inputEle.clear();
-        inputEle.sendKeys(account[this.code].loginid);
+      let seleInput = {
+        id: "input[name='mailadr']",
+        pass: "input[name='passwd']",
+        login: "input[name='btnlogin']",
+      };
+      // アカウント（メール）入力
+      let inputEle = await this.getEle(seleInput.id, 500);
+      await inputEle.clear();
+      inputEle.sendKeys(account[this.code].loginid);
 
-        // パスワード入力
-        inputEle = await this.getEle(seleInput.pass, 500);
-        await inputEle.clear();
-        inputEle.sendKeys(account[this.code].loginpass);
+      // パスワード入力
+      inputEle = await this.getEle(seleInput.pass, 500);
+      await inputEle.clear();
+      inputEle.sendKeys(account[this.code].loginpass);
 
-        let ele = await this.getEle(seleInput.login, 1000);
-        await this.clickEle(ele, 4000);
-        // ログインできてるか、チェック
-        if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
-          // ログインできてるのでOK
-          logger.info("ログインできました！");
-          return true;
-        } else {
-          // ログインできてないので、メール
-          logger.info("ログインできませんでした");
-          await mailOpe.send(logger, {
-            subject: `ログインできません[${this.code}] `,
-            contents: `なぜか ${this.code} にログインできません`,
-          });
-          return;
-        }
+      let ele = await this.getEle(seleInput.login, 1000);
+      await this.clickEle(ele, 4000);
+      // ログインできてるか、チェック
+      if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
+        // ログインできてるのでOK
+        logger.info("ログインできました！");
+        return true;
+      } else {
+        // ログインできてないので、メール
+        logger.info("ログインできませんでした");
+        await mailOpe.send(logger, {
+          subject: `ログインできません[${this.code}] `,
+          contents: `なぜか ${this.code} にログインできません`,
+        });
+        return;
+      }
       // } else {
       //   // 未ログインで、ログインボタンが見つかりません。
       //   return;
@@ -259,6 +262,50 @@ class PilAnqPark extends PilMissonSupper {
       }
     }
     return res;
+  }
+}
+// クリック
+class PilClick extends PilMissonSupper {
+  firstUrl = "https://www.chobirich.com/";
+  targetUrl = "https://www.point-island.com/mincp.asp";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+
+    let sele = ["#frmMain a>img", "#mlist>li>a", "input[name='btnentry']"];
+    let urlList = [
+      this.targetUrl,
+      "https://www.point-island.com/otokuc2.asp",
+    ];
+    await this.openUrl(urlList[0]); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      for (let i = 0; i < eles.length; i++) {
+        await this.clickEle(eles[i], 4000);
+        await this.closeOtherWindow(driver);
+      }
+    }
+    for (let j = 1; j < 2; j++) {
+      await this.openUrl(urlList[j]); // 操作ページ表示
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let eles = await this.getEles(sele[1], 2000);
+        for (let i = 0; i < eles.length && i < 6; i++) {
+          await this.clickEle(eles[i], 4000);
+          await this.closeOtherWindow(driver);
+        }
+        if (await this.isExistEle(sele[2], true, 2000)) {
+          let ele = await this.getEle(sele[2], 2000);
+          await this.clickEle(ele, 4000);
+        }
+      }
+    }
+
+    logger.info(`${this.constructor.name} END`);
+    return D.STATUS.DONE;
   }
 }
 

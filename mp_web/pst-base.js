@@ -30,6 +30,9 @@ class PstBase extends BaseExecuter {
           case D.MISSION.ANQ_PARK:
             execCls = new PstAnqPark(para);
             break;
+          case D.MISSION.CLICK:
+            execCls = new PstClick(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -261,6 +264,50 @@ class PstAnqPark extends PstMissonSupper {
     return res;
   }
 }
+// クリック
+class PstClick extends PstMissonSupper {
+  firstUrl = "https://www.chobirich.com/";
+  targetUrl = "https://www.point-stadium.com/mincp.asp";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
 
+    let sele = [".normal_desc a>img", "#keywd>li>a", "input[name='btnentry']"];
+    let urlList = [
+      this.targetUrl,
+      "https://www.point-stadium.com/otokuc2.asp",
+      "https://www.point-stadium.com/otokuc3.asp",
+    ];
+    await this.openUrl(urlList[0]); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      for (let i = 0; i < eles.length; i++) {
+        await this.clickEle(eles[i], 4000);
+        await this.closeOtherWindow(driver);
+      }
+    }
+    for (let j = 1; j < 3; j++) {
+      await this.openUrl(urlList[j]); // 操作ページ表示
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let eles = await this.getEles(sele[1], 2000);
+        for (let i = 0; i < eles.length && i < 6; i++) {
+          await this.clickEle(eles[i], 4000);
+          await this.closeOtherWindow(driver);
+        }
+        if (await this.isExistEle(sele[2], true, 2000)) {
+          let ele = await this.getEle(sele[2], 2000);
+          await this.clickEle(ele, 4000);
+        }
+      }
+    }
+
+    logger.info(`${this.constructor.name} END`);
+    return D.STATUS.DONE;
+  }
+}
 exports.PstCommon = PstCommon;
 exports.Pst = PstBase;

@@ -94,15 +94,28 @@ class BaseWebDriverWrapper {
       this.logger.warn(e);
     }
   }
+  async clickEleScrollWeak(ele, time, top) {
+    await this.clickEleCommon(ele, time, top);
+  }
   /**
    * 要素をクリックして指定時間寝る
    * @param {*} ele
    * @param {*} time
    */
   async clickEle(ele, time) {
+    await this.clickEleCommon(ele, time, 0);
+  }
+  /**
+   * 要素をクリックして指定時間寝る
+   * @param {*} ele
+   * @param {*} time
+   */
+  async clickEleCommon(ele, time, top) {
     let rect = await ele.getRect();
-    this.logger.info("rect.y", rect.y);
-    await this.driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+    if (!top) top = 0;
+    let y = rect.y - top;
+    this.logger.info("rect.y", y);
+    await this.driver.executeScript(`window.scrollTo(0, ${y});`);
     // await this.driver.executeScript("arguments[0].scrollIntoView(true);", ele);
     await this.sleep(1000);
     await this.driver.actions().scroll(0, 0, 5, 10, ele).perform();

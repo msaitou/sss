@@ -30,6 +30,9 @@ class CriBase extends BaseExecuter {
           case D.MISSION.CM:
             execCls = new CriCm(para, cmMissionList);
             break;
+          case D.MISSION.CLICK:
+            execCls = new CriClick(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -202,13 +205,41 @@ class CriCm extends CriMissonSupper {
       );
       await cmManage.do();
       await driver.close(); // このタブを閉じて
-      await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
     }
   }
 }
-// module.
+// クリック
+class CriClick extends CriMissonSupper {
+  firstUrl = "https://www.chobirich.com/";
+  targetUrl = "https://dietnavi.com/pc/daily_click.php";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+
+    let sele = ["div.tokusen_bnr a img", ".clickstamp_list a img", ".clickstamp_list a img"];
+    let urlList = [
+      this.firstUrl,
+      "https://www.chobirich.com/shopping/",
+      "https://www.chobirich.com/earn/",
+    ];
+    for (let j = 0; j < sele.length; j++) {
+      await this.openUrl(urlList[j]); // 操作ページ表示
+      if (await this.isExistEle(sele[j], true, 2000)) {
+        let eles = await this.getEles(sele[j], 2000);
+        for (let i = 0; i < eles.length; i++) {
+          await this.clickEleScrollWeak(eles[i], 4000, 70);
+          await this.closeOtherWindow(driver);
+        }
+      }
+    }
+    logger.info(`${this.constructor.name} END`);
+    return D.STATUS.DONE;
+  }
+}
 exports.CriCommon = CriCommon;
-// module.
 exports.Cri = CriBase;
-// module.
-// exports = { pex: pexBase, pexCommon: pexCommon };
