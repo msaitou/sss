@@ -33,6 +33,9 @@ class SugBase extends BaseExecuter {
           case D.MISSION.ANQ_PARK:
             execCls = new SugAnqPark(para);
             break;
+          case D.MISSION.QUIZ_KENTEI:
+            execCls = new SugQuizKentei(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -173,7 +176,6 @@ class SugCm extends SugMissonSupper {
   }
 }
 const { PartsAnkPark } = require("./parts/parts-ank-park.js");
-const { titleIs } = require("selenium-webdriver/lib/until.js");
 // アンケートパーク
 class SugAnqPark extends SugMissonSupper {
   firstUrl = "https://www.netmile.co.jp/sugutama/";
@@ -244,6 +246,90 @@ class SugAnqPark extends SugMissonSupper {
                   res = await AnkPark.doPhoto();
                   break;
               }
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            }
+          }
+        } else {
+          res = D.STATUS.DONE;
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+const { PartsQuizKentei } = require("./parts/parts-quiz-kentei.js");
+// クイズ検定
+class SugQuizKentei extends SugMissonSupper {
+  firstUrl = "https://www.netmile.co.jp/sugutama/";
+  targetUrl = "https://www.netmile.co.jp/sugutama/survey?lo=124";
+  // cmMissionList;
+  constructor(para) {
+    super(para);
+    // this.cmMissionList = cmMissionList;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let QuizKentei = new PartsQuizKentei(this.para);
+    let sele = [
+      "img[alt='クイズ検定Q']",
+      ".enquete-list td.cate",
+      ".enquete-list td.status>a", // 2
+      "+form>input[name='submit']"
+    ];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let eles = await this.getEles(sele[1], 3000);
+          let limit = eles.length;
+          for (let i = 0; i < limit; i++) {
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+              eles = await this.getEles(sele[1], 3000);
+            let text = await eles[eles.length - 1].getText();
+            if (await this.isExistEle(sele[2], true, 2000)) {
+              let eles2 = await this.getEles(sele[2], 3000);
+              await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+              let ele = eles2[eles.length - 1];
+              let ele2;
+              try {
+                ele2 = await ele.findElements(By.xpath("ancestor::tr"));
+                ele2 = await this.getElesFromEle(ele2[0], "td>form>input[name='submit']");
+              }
+              catch(e){
+                logger.debug(e);
+              }
+              if (ele2 && ele2.length) {
+                ele = ele2[0];
+              }
+              await this.clickEle(ele, 3000);
+              // switch (text.trim()) {
+              //   // case "動物":
+              //   // res = await QuizKentei.doAnimal();
+              //   //   break;
+              //   // case "書籍":
+              //   // res = await QuizKentei.doBooks();
+              //   //   break;
+              //   // case "海外":
+              //   // res = await QuizKentei.doForign();
+              //   //   break;
+              //   // case "漢字":
+              //   // res = await QuizKentei.doKanji();
+              //   //   break;
+              //   case "食べ物":
+                res = await QuizKentei.doFoods();
+              //     break;
+              // }
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
           }

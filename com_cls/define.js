@@ -47,7 +47,8 @@ exports.Def = {
     ANQ_COLUM: "anq_colum",
     ANQ_MANGA: "anq_manga",
     ANQ_PHOTO: "anq_photo",
-
+    QUIZ_KENTEI:"quiz_kentei",
+    
     CM: "cm", // 内部処理のダミー用
     CM_URANAI: "cm_uranai",
     CM_DOTTI: "cm_dotti",
