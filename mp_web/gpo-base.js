@@ -21,7 +21,7 @@ class GpoBase extends BaseExecuter {
       let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
       this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
       if (cmMissionList.length) {
-        this.missionList.push({main:D.MISSION.CM});
+        this.missionList.push({ main: D.MISSION.CM });
       }
       for (let i in this.missionList) {
         let mission = this.missionList[i];
@@ -29,6 +29,9 @@ class GpoBase extends BaseExecuter {
         switch (mission.main) {
           case D.MISSION.CM:
             execCls = new GpoCm(para, cmMissionList);
+            break;
+          case D.MISSION.QUIZ_KENTEI:
+            execCls = new GpoQuizKentei(para);
             break;
         }
         if (execCls) {
@@ -67,12 +70,12 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
-      let ele = await this.getEle(seleOver[0], 2000);
+    let sele0 = ["#modal20th .btn_close>img"];
+    if (await this.isExistEle(sele0[0], true, 2000)) {
+      let ele = await this.getEle(sele0[0], 3000);
       if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 2000);
-      } else this.logger.debug("オーバーレイは表示されてないです");
+        await this.clickEle(ele, 3000);
+      }
     }
   }
 }
@@ -180,11 +183,87 @@ class GpoCm extends GpoMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://gpoint.cmnw.jp/game/");
+      let cmManage = new PartsCmManage(
+        this.para,
+        this.cmMissionList,
+        "https://gpoint.cmnw.jp/game/"
+      );
       await cmManage.do();
       await driver.close(); // このタブを閉じて
-      await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
     }
+  }
+}
+const { PartsQuizKentei } = require("./parts/parts-quiz-kentei.js");
+// クイズ検定
+class GpoQuizKentei extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://www.gpoint.co.jp/gpark/";
+  // cmMissionList;
+  constructor(para) {
+    super(para);
+    // this.cmMissionList = cmMissionList;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
+    let res = D.STATUS.FAIL;
+    let QuizKentei = new PartsQuizKentei(this.para);
+    let sele = [
+      "img[alt='クイズ検定Q']",
+      ".enquete-list td.cate",
+      ".enquete-list td.status>a", // 2
+      "input[alt='OK']",
+    ];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[3], true, 2000)) {
+          let ele0 = await this.getEle(sele[3], 3000);
+          await this.clickEle(ele0, 3000);
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+                eles = await this.getEles(sele[1], 3000);
+              let text = await eles[eles.length - 1].getText();
+              if (await this.isExistEle(sele[2], true, 2000)) {
+                let eles2 = await this.getEles(sele[2], 3000);
+                await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+                let ele = eles2[eles.length - 1];
+                let ele2;
+                try {
+                  ele2 = await ele.findElements(By.xpath("ancestor::tr"));
+                  ele2 = await this.getElesFromEle(ele2[0], "td>form>input[name='submit']");
+                } catch (e) {
+                  logger.debug(e);
+                }
+                if (ele2 && ele2.length) {
+                  ele = ele2[0];
+                }
+                await this.clickEle(ele, 3000);
+                res = await QuizKentei.doKentei();
+                await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+              }
+            }
+          } else {
+            res = D.STATUS.DONE;
+          }
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
   }
 }
 // module.

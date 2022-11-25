@@ -418,7 +418,7 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
     }
     return res;
   }
-  async doFoods() {
+  async doKentei() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
     try {

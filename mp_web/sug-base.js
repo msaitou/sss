@@ -327,7 +327,7 @@ class SugQuizKentei extends SugMissonSupper {
               //   // res = await QuizKentei.doKanji();
               //   //   break;
               //   case "食べ物":
-                res = await QuizKentei.doFoods();
+                res = await QuizKentei.doKentei();
               //     break;
               // }
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
