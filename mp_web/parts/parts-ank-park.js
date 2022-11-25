@@ -108,7 +108,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "input[alt='コラムを読む']", // 6
         "input[alt='next']",
         "input[src*='questionnaire_bt.png']", // 8
-        "",
+        "img[alt='進む']",
         "",
         "",
       ];
@@ -120,31 +120,34 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         // sele[4] = "p.lessStamp>span";
         // sele[5] = "p.allStamp";
       }
-      if (await this.isExistEle(sele[0], true, 10000)) {
-        let ele = await this.getEle(sele[0], 3000);
+      if (await this.isExistEle(sele[9], true, 10000)) {
+        let ele = await this.getEle(sele[9], 10000);
+        await this.clickEle(ele, 2000);
+      } else if (await this.isExistEle(sele[0], true, 10000)) {
+        let ele = await this.getEle(sele[0], 10000);
+        await this.clickEle(ele, 2000);
+      }
+      if (await this.isExistEle(sele[5], true, 2000)) {
+        let ele = await this.getEle(sele[5], 3000);
         await this.clickEle(ele, 4000);
-        if (await this.isExistEle(sele[5], true, 2000)) {
-          ele = await this.getEle(sele[5], 3000);
+        if (await this.isExistEle(sele[6], true, 2000)) {
+          ele = await this.getEle(sele[6], 3000);
           await this.clickEle(ele, 4000);
-          if (await this.isExistEle(sele[6], true, 2000)) {
-            ele = await this.getEle(sele[6], 3000);
-            await this.clickEle(ele, 4000);
-            for (let i = 0; i < 6; i++) {
-              if (await this.isExistEle(sele[7], true, 2000)) {
-                ele = await this.getEle(sele[7], 3000);
-                await this.clickEle(ele, 3000);
-              }
-            }
-
-            if (await this.isExistEle(sele[1], true, 2000)) {
-              ele = await this.getEle(sele[1], 3000);
+          for (let i = 0; i < 6; i++) {
+            if (await this.isExistEle(sele[7], true, 2000)) {
+              ele = await this.getEle(sele[7], 3000);
               await this.clickEle(ele, 3000);
-              try {
-                await this.commonAnk(sele, "doColum");
-                res = D.STATUS.DONE;
-              } catch (e) {
-                logger.warn(e);
-              }
+            }
+          }
+
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            ele = await this.getEle(sele[1], 3000);
+            await this.clickEle(ele, 3000);
+            try {
+              await this.commonAnk(sele, "doColum");
+              res = D.STATUS.DONE;
+            } catch (e) {
+              logger.warn(e);
             }
           }
         }
@@ -183,8 +186,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         if (await this.isExistEle(sele[9], true, 10000)) {
           let ele = await this.getEle(sele[9], 10000);
           await this.clickEle(ele, 2000);
-        }
-        else if (await this.isExistEle(sele[0], true, 10000)) {
+        } else if (await this.isExistEle(sele[0], true, 10000)) {
           let ele = await this.getEle(sele[0], 10000);
           await this.clickEle(ele, 2000);
         }
@@ -224,7 +226,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "input[src*='manga_bt.png']", // 6
         "input[src*='manga_next_bt.png']",
         "input[src*='questionnaire_bt.png']", // 8
-        "",
+        "img[alt='進む']",
         "",
         "",
       ];
@@ -235,30 +237,33 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         sele[4] = "p.lessStamp>span";
         sele[5] = "p.allStamp";
       }
-      if (await this.isExistEle(sele[0], true, 10000)) {
-        let ele = await this.getEle(sele[0], 3000);
+      if (await this.isExistEle(sele[9], true, 10000)) {
+        let ele = await this.getEle(sele[9], 10000);
         await this.clickEle(ele, 2000);
-        if (await this.isExistEle(sele[5], true, 2000)) {
-          let ele = await this.getEle(sele[5], 3000);
+      } else if (await this.isExistEle(sele[0], true, 10000)) {
+        let ele = await this.getEle(sele[0], 10000);
+        await this.clickEle(ele, 2000);
+      }
+      if (await this.isExistEle(sele[5], true, 2000)) {
+        let ele = await this.getEle(sele[5], 3000);
+        await this.clickEle(ele, 2000);
+        if (await this.isExistEle(sele[6], true, 2000)) {
+          ele = await this.getEle(sele[6], 3000);
           await this.clickEle(ele, 2000);
-          if (await this.isExistEle(sele[6], true, 2000)) {
-            let ele = await this.getEle(sele[6], 3000);
-            await this.clickEle(ele, 2000);
-            for (let i = 0; i < 4; i++) {
-              if (await this.isExistEle(sele[7], true, 2000)) {
-                let ele = await this.getEle(sele[7], 3000);
-                await this.clickEle(ele, 2000);
-              }
-            }
-            if (await this.isExistEle(sele[8], true, 2000)) {
-              let ele = await this.getEle(sele[8], 3000);
+          for (let i = 0; i < 4; i++) {
+            if (await this.isExistEle(sele[7], true, 2000)) {
+              ele = await this.getEle(sele[7], 3000);
               await this.clickEle(ele, 2000);
-              try {
-                await this.commonAnk(sele, "doManga");
-                res = D.STATUS.DONE;
-              } catch (e) {
-                logger.warn(e);
-              }
+            }
+          }
+          if (await this.isExistEle(sele[8], true, 2000)) {
+            ele = await this.getEle(sele[8], 3000);
+            await this.clickEle(ele, 2000);
+            try {
+              await this.commonAnk(sele, "doManga");
+              res = D.STATUS.DONE;
+            } catch (e) {
+              logger.warn(e);
             }
           }
         }

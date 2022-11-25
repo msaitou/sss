@@ -208,6 +208,7 @@ class AmeAnqColum extends AmeMissonSupper {
             await this.clickEle(eles[eles.length - 1], 5000);
             res = await AnkPark.doColum();
             await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            await this.sleep(2000);
           }
         } else {
           res = D.STATUS.DONE;
