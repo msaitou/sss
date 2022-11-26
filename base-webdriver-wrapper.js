@@ -121,8 +121,21 @@ class BaseWebDriverWrapper {
     await this.driver.actions().scroll(0, 0, 5, 10, ele).perform();
     const actions = this.driver.actions();
     await actions.move({ origin: ele }).perform();
-    await this.sleep(1000);
-    await ele.click();
+    // await this.sleep(1000);
+    try {
+      await this.driver.manage().setTimeouts({ pageLoad: 10000 });
+      await ele.click();
+    } catch (e) {
+      if (e.name != "TimeoutError") {
+        throw e;
+      } else {
+        await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
+      }
+    }
+    finally {
+      await this.driver.manage().setTimeouts({ pageLoad: 300000 });
+    }
+    this.logger.debug("clicked");
     await this.sleep(time);
   }
 

@@ -36,18 +36,18 @@ class PicBase extends BaseExecuter {
           case D.MISSION.CLICK:
             execCls = new PicClick(para);
             break;
-          // case D.MISSION.READ_DOG:
-          //   execCls = new PicReadDog(para, cmMissionList);
-          //   break;
-          // case D.MISSION.READ_CAT:
-          //   execCls = new PicReadCat(para, cmMissionList);
-          //   break;
-          // case D.MISSION.READ_THANK:
-          //   execCls = new PicReadThank(para, cmMissionList);
-          //   break;
-          // case D.MISSION.READ_ICHI:
-          //   execCls = new PicReadIchi(para, cmMissionList);
-          //   break;
+          case D.MISSION.READ_DOG:
+            execCls = new PicReadDog(para);
+            break;
+          case D.MISSION.READ_CAT:
+            execCls = new PicReadCat(para);
+            break;
+          case D.MISSION.READ_THANK:
+            execCls = new PicReadThank(para);
+            break;
+          case D.MISSION.READ_ICHI:
+            execCls = new PicReadIchi(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -192,10 +192,8 @@ const { PartsOtano } = require("./parts/parts-otano.js");
 class PicOtano extends PicMissonSupper {
   firstUrl = "https://pointi.jp/";
   targetUrl = "https://pointi.jp/contents/research/research_enquete/";
-  // cmMissionList;
   constructor(para) {
     super(para);
-    // this.cmMissionList = cmMissionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async do() {
@@ -266,109 +264,93 @@ class PicClick extends PicMissonSupper {
   }
 }
 
-const { PartsRead } = require("./parts/parts-read.js");
+const { PartsReadPic } = require("./parts/parts-read.js");
 // 犬の気持ち
 class PicReadDog extends PicMissonSupper {
   firstUrl = "https://www.chance.com/";
-  targetUrl = "https://www.chance.com/game/";
-  // cmMissionList;
+  targetUrl = "https://pointi.jp/contents/magazine/";
   constructor(para) {
     super(para);
-    // this.cmMissionList = cmMissionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
     await this.openUrl(this.targetUrl); // 操作ページ表示
-    let sele = ["img[src*='ban_dog.gif']"];
+    let sele = ["img[alt='いぬのきもち']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
-      // let wid = await driver.getWindowHandle();
-      // await this.changeWindow(wid); // 別タブに移動する
-      let Otano = new PartsOtano(this.para);
-      await Otano.do();
-      // await driver.close(); // このタブを閉じて
-      // await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+      let PartsReadCls = new PartsReadPic(this.para);
+      res = await PartsReadCls.do();
     }
+    return res;
   }
 }
 // 猫の気持ち
 class PicReadCat extends PicMissonSupper {
   firstUrl = "https://www.chance.com/";
-  targetUrl = "https://www.chance.com/game/";
-  // cmMissionList;
+  targetUrl = "https://pointi.jp/contents/magazine/";
   constructor(para) {
     super(para);
-    // this.cmMissionList = cmMissionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
     await this.openUrl(this.targetUrl); // 操作ページ表示
-    let sele = ["img[src*='ban_cat.gif']"];
+    let sele = ["img[alt='ねこのきもち']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
-      // let wid = await driver.getWindowHandle();
-      // await this.changeWindow(wid); // 別タブに移動する
-      let PartsReadDogCls = new PartsOtano(this.para);
-      await PartsReadDogCls.do();
-      // await driver.close(); // このタブを閉じて
-      // await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+      let PartsReadCls = new PartsReadPic(this.para);
+      res = await PartsReadCls.do();
     }
+    return res;
   }
 }
 // サンキュ
 class PicReadThank extends PicMissonSupper {
   firstUrl = "https://www.chance.com/";
-  targetUrl = "https://www.chance.com/game/";
-  // cmMissionList;
+  targetUrl = "https://pointi.jp/contents/magazine/";
   constructor(para) {
     super(para);
-    // this.cmMissionList = cmMissionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
     await this.openUrl(this.targetUrl); // 操作ページ表示
-    let sele = ["img[src*='ban_39mag.gif']"];
+    let sele = ["img[alt='サンキュ！']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
-      // let wid = await driver.getWindowHandle();
-      // await this.changeWindow(wid); // 別タブに移動する
-      let PartsReadDogCls = new PartsOtano(this.para);
-      await PartsReadDogCls.do();
-      // await driver.close(); // このタブを閉じて
-      // await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+      let PartsReadCls = new PartsReadPic(this.para);
+      res = await PartsReadCls.do();
     }
+    return res;
   }
 }
 // 一押し
 class PicReadIchi extends PicMissonSupper {
   firstUrl = "https://www.chance.com/";
-  targetUrl = "https://www.chance.com/game/";
-  // cmMissionList;
+  targetUrl = "https://pointi.jp/contents/magazine/";
   constructor(para) {
     super(para);
-    // this.cmMissionList = cmMissionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
     await this.openUrl(this.targetUrl); // 操作ページ表示
-    let sele = ["img[src*='ban_ichioshi.gif']"];
+    let sele = ["img[alt='イチオシ']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
-      // let wid = await driver.getWindowHandle();
-      // await this.changeWindow(wid); // 別タブに移動する
-      let PartsReadDogCls = new PartsOtano(this.para);
-      await PartsReadDogCls.do();
-      // await driver.close(); // このタブを閉じて
-      // await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+      let PartsReadCls = new PartsReadPic(this.para);
+      res = await PartsReadCls.do();
     }
+    return res;
   }
 }
 

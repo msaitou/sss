@@ -39,6 +39,9 @@ class GpoBase extends BaseExecuter {
           case D.MISSION.CLICK_NEWS:
             execCls = new GpoClickNews(para);
             break;
+          case D.MISSION.GPO_ANQ:
+            execCls = new GpoAnq(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -83,6 +86,18 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
         await this.clickEle(ele, 3000);
       }
     }
+  }
+  async ignoreKoukoku() {
+    let currentUrl = await this.driver.getCurrentUrl();
+    // 広告が画面いっぱいに入る時がある
+    if (currentUrl.indexOf("google_vignette") > -1) {
+      // await driver.actions().sendKeys(Key.ESCAPE).perform();
+      // await this.sleep(2000);
+      await this.driver.navigate().back(); // 戻って
+      await this.driver.navigate().forward(); // 行く
+      currentUrl = await this.driver.getCurrentUrl();
+    }
+    return currentUrl;
   }
 }
 // このサイトの共通処理クラス
@@ -146,7 +161,6 @@ class GpoCommon extends GpoMissonSupper {
     return true;
   }
 }
-
 const { PartsQuizDaily } = require("./parts/parts-quiz-daily.js");
 const { PartsCmManage } = require("./parts/parts-cm-manage.js");
 // デイリークイズ
@@ -320,10 +334,7 @@ class GpoClickNews extends GpoMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START`);
-    let sele = [
-      "#gnewsh div.content:not([style='display: none;']) li>a",
-      "#gnewsh div.menu",
-    ];
+    let sele = ["#gnewsh div.content:not([style='display: none;']) li>a", "#gnewsh div.menu"];
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
@@ -348,6 +359,137 @@ class GpoClickNews extends GpoMissonSupper {
 
     logger.info(`${this.constructor.name} END`);
     return D.STATUS.DONE;
+  }
+}
+// GPOアンケート
+class GpoAnq extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://kotaete.gpoint.co.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    let res = D.STATUS.FAIL;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let sele = [
+      ".surveyList div.button>a",
+      "button[name='movenext']",
+      ".question-text", // 2
+      "label:not(.hide)",
+      "select", // 4
+      "button[name='movesubmit']",
+      "button.nextBtn", // 6
+      "button[type='type']:not(.nextBtn)",
+      "",
+    ];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      let limit = eles.length;
+      for (let j = 0; j < limit; j++) {
+        if (j !== 0 && (await this.isExistEle(sele[0], true, 2000)))
+          eles = await this.getEles(sele[0], 3000);
+        if (!eles.length) break;
+        await this.clickEle(eles[0], 4000); //
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
+        try {
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let ele = await this.getEle(sele[1], 3000);
+            await this.clickEle(ele, 3000);
+            let noFoundCnt = 0;
+            if (await this.isExistEle(sele[1], true, 2000)) {
+              // 多分15問あり
+              for (let i = 0; i < 15; i++) {
+                if (await this.isExistEle(sele[2], true, 3000)) {
+                  ele = await this.getEle(sele[2], 3000);
+                  let q = await ele.getText(),
+                    qTmp = "";
+                  q = q.split("\n").forEach((t) => {
+                    qTmp += t.trim();
+                  });
+                  let regex = "\\* (\\d+)*";
+                  let matches = qTmp.match(regex);
+                  logger.info(qTmp);
+                  let choiceNum = 0,
+                    qNo = matches[1],
+                    ansSele = sele[3];
+                  switch (qNo) {
+                    case "1": // *1 このアンケートに最後まで答えていただけますか？
+                    case "2": // * 2 本アンケートへの回答に利用しているデバイスはどれですか？
+                    case "3": // *3 性別は？
+                    case "4": // 結婚？
+                      break;
+                    case "5": // *5 年齢は？
+                      choiceNum = 2;
+                      break;
+                    case "6": // *6 職業は？
+                      choiceNum = 8;
+                      break;
+                    case "7": // *7 居住は？
+                      choiceNum = 5;
+                      break;
+                    case "8": // *8 都道府県は？
+                      choiceNum = "13";
+                      ansSele = sele[4];
+                      break;
+                    default: // ランダムで。 *9~*15
+                      choiceNum = -1; // 仮値
+                  }
+                  if (ansSele === sele[3] && !(await this.isExistEle(ansSele, true, 2000))) {
+                    ansSele = sele[4];
+                  }
+                  if (await this.isExistEle(ansSele, true, 2000)) {
+                    let eles = await this.getEles(ansSele, 3000);
+                    if (choiceNum === -1) {
+                      choiceNum = libUtil.getRandomInt(0, eles.length - 1);
+                    }
+                    if (ansSele === sele[4]) {
+                      let select = new Select(eles[0]);
+                      if (!choiceNum) choiceNum++;
+                      await select.selectByValue(choiceNum.toString());
+                    } else {
+                      await this.clickEle(eles[choiceNum], 2000);
+                    }
+                    if (await this.isExistEle(sele[1], true, 2000)) {
+                      ele = await this.getEle(sele[1], 3000);
+                      await this.clickEle(ele, 5000); // 次のページ
+                    } else if (await this.isExistEle(sele[5], true, 2000)) {
+                      ele = await this.getEle(sele[5], 3000);
+                      await this.clickEle(ele, 2000); // 次のページ
+                    }
+                  }
+                }
+                else {
+                  if (noFoundCnt++ > 1) break;
+                }
+              }
+              if (await this.isExistEle(sele[6], true, 2000)) {
+                ele = await this.getEle(sele[6], 3000);
+                await this.clickEle(ele, 2000); // 次のページ
+                if (await this.isExistEle(sele[7], true, 2000)) {
+                  ele = await this.getEle(sele[7], 3000);
+                  await this.clickEle(ele, 2000); // 次のページ
+                  await this.ignoreKoukoku();
+                  res = D.STATUS.DONE;
+                }
+              }
+            }
+          }
+          await driver.close(); // このタブを閉じて
+        } catch (e) {
+          logger.warn(e);
+          await driver.close(); // このタブを閉じて
+        } finally {
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+          await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+        }
+      }
+    } else res = D.STATUS.DONE;
+    logger.info(`${this.constructor.name} END`);
+    return res;
   }
 }
 exports.GpoCommon = GpoCommon;

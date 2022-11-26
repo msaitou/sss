@@ -56,5 +56,6 @@ exports.Def = {
     CM_KENTEI: "cm_kentei",
     CM_POCHI: "cm_pochi",
     MOP_RESEARCH: "mop_research",
+    GPO_ANQ: "gpo_anq",
   },
 };

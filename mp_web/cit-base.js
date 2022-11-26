@@ -398,7 +398,7 @@ class CitClick extends CitMissonSupper {
     logger.info(`${this.constructor.name} START`);
     await this.openUrl(this.targetUrl); // 操作ページ表示
 
-    let sele = [".click_list a>img", ".pochitto a img"];
+    let sele = [".click_list a>img", ".pochitto a[target='_blank']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
       for (let i = 0; i < eles.length; i++) {
