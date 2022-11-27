@@ -63,11 +63,12 @@ var iframeDocument = iframeElem[0].contentDocument || $('iframe').contentWindow.
 6分ログに更新がない場合、プロセスを切るする
 →nodeに名前をつけて、それを見つけて殺す。立ち上げもする。からこいつで起動が必要
 
+★criのアンケート
+★genのアンケート
 pto,gen,ecn,abe,rakuのクリック
 gpoの占い
 picのポイントモール
-picの読む×4
-criのアンケート
-★gpoのアンケート
 sugのアンケート？
-genのアンケート
+
+	let zooml = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth * 100;
+	zooml = zooml*100;

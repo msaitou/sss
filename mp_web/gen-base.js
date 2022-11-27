@@ -33,6 +33,9 @@ class GenBase extends BaseExecuter {
           case D.MISSION.RESEARCH1:
             execCls = new GenResearch1(para, cmMissionList);
             break;
+          case D.MISSION.ANQ_GEN:
+            execCls = new GenAnq(para, cmMissionList);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -223,6 +226,107 @@ class GenResearch1 extends GenMissonSupper {
       // await this.changeWindow(wid); // 別タブに移動する
       let Research1 = new PartsResearch1(this.para);
       res = await Research1.doGen();
+    }
+    logger.info(`${this.constructor.name} END#####`);
+    return res;
+  }
+}
+// ハッピーアンケート
+class GenAnq extends GenMissonSupper {
+  firstUrl = "https://www.gendama.jp/";
+  targetUrl = "https://www.gendama.jp/survey";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START###`);
+    await this.openUrl(this.targetUrl); // 最初のページ表示
+    let sele = [
+      "#koffice_surveys td>a",
+      "div.question-box a",
+      "a.next-button", // 2
+      "input.submit-button",
+      ".answer-list>p", // 4
+      "#next-button:not([style*='display: none'])",
+      "ul>li>a[data-type='crossmarketing_surveys']", // 6
+      ".answer-list label",
+      "",
+    ];
+    let res = D.STATUS.FAIL;
+    if (await this.isExistEle(sele[6], true, 2000)) {
+      let ele = await this.getEle(sele[6], 3000);
+      await this.clickEle(ele, 3000);
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let eles = await this.getEles(sele[0], 3000);
+        await this.clickEle(eles[0], 2000);
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
+        try {
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let j = 0; j < limit; j++) {
+              for (let i = 0; i < 9; i++) {
+                // 隠れてるので全部オープン
+                if (await this.isExistEle(sele[5], true, 2000)) {
+                  let ele = await this.getEle(sele[5], 3000);
+                  await this.clickEle(ele, 3000);
+                } else break;
+              }
+              eles = await this.getEles(sele[1], 10000);
+              await this.clickEle(eles[eles.length -1], 3000);
+              // eles = await this.getEles(sele[1], 3000);
+              // await this.clickEle(eles[0], 3000);
+              if (await this.isExistEle(sele[2], true, 2000)) {
+                let ele = await this.getEle(sele[2], 3000);
+                await this.clickEle(ele, 3000);
+                for (let i = 0; i < 30; i++) {
+                  if (await this.isExistEle(sele[4], true, 2000)) {
+                    let ele = await this.getEle(sele[4], 3000);
+                    let q = await ele.getText();
+                    logger.info(`${i}つ目 ${q}`);
+                    let choiceNum = 0;
+                    switch (q.trim()) {
+                      case "性別は":
+                        break;
+                      case "年齢は":
+                        choiceNum = 3;
+                        break;
+                      case "住んでいる地方は":
+                        choiceNum = 2;
+                        break;
+                      default:
+                        choiceNum = -1;
+                    }
+                    if (await this.isExistEle(sele[7], true, 2000)) {
+                      let eles = await this.getEles(sele[7], 3000);
+                      if (choiceNum === -1) choiceNum = libUtil.getRandomInt(0, eles.length);
+                      await this.clickEle(eles[choiceNum], 3000);
+                      if (await this.isExistEle(sele[3], true, 2000)) {
+                        let ele = await this.getEle(sele[3], 3000);
+                        await this.clickEle(ele, 3000);
+                      }
+                    }
+                  } else break;
+                }
+                if (await this.isExistEle(sele[2], true, 2000)) {
+                  let ele = await this.getEle(sele[2], 3000);
+                  await this.clickEle(ele, 3000);
+                }
+              }
+            }
+          }
+          res = D.STATUS.DONE;
+        } catch (e) {
+          logger.warn(e);
+        } finally {
+          await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+          // await driver.navigate().refresh(); // 画面更新  しないとスタンプが反映されん
+        }
+      }
     }
     logger.info(`${this.constructor.name} END#####`);
     return res;

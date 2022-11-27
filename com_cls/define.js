@@ -49,7 +49,9 @@ exports.Def = {
     ANQ_MANGA: "anq_manga",
     ANQ_PHOTO: "anq_photo",
     QUIZ_KENTEI: "quiz_kentei",
-
+    ANQ_CRI: "anq_cri",
+    ANQ_GEN: "anq_gen",
+    
     CM: "cm", // 内部処理のダミー用
     CM_URANAI: "cm_uranai",
     CM_DOTTI: "cm_dotti",
