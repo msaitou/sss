@@ -21,7 +21,7 @@ class PtoBase extends BaseExecuter {
       let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
       this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
       if (cmMissionList.length) {
-        this.missionList.push({main:D.MISSION.CM});
+        this.missionList.push({ main: D.MISSION.CM });
       }
       for (let i in this.missionList) {
         let mission = this.missionList[i];
@@ -29,6 +29,9 @@ class PtoBase extends BaseExecuter {
         switch (mission.main) {
           case D.MISSION.CM:
             execCls = new PtoCm(para, cmMissionList);
+            break;
+          case D.MISSION.CLICK:
+            execCls = new PtoClick(para);
             break;
         }
         if (execCls) {
@@ -158,16 +161,165 @@ class PtoCm extends PtoMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://pointtown.cmnw.jp/game/");
+      let cmManage = new PartsCmManage(
+        this.para,
+        this.cmMissionList,
+        "https://pointtown.cmnw.jp/game/"
+      );
       await cmManage.do();
       await driver.close(); // このタブを閉じて
-      await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
     }
   }
 }
-// module.
+// クリック
+class PtoClick extends PtoMissonSupper {
+  firstUrl = "https://www.pointtown.com/";
+  targetUrl = "https://www.pointtown.com/game";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+
+    let sele = [
+      "[data-area*='top-click-corner'] button",
+      "#link-coin-chance button",
+      "form[action='/soudatsu/complete'] button", // 2
+      "ul[aria-hidden='false'] li[data-read-status='false'] a:not([style*='display:none;'])",
+      "ul[aria-hidden='false'] li[data-read-status='false'] button:not([style*='display:none;'])",
+    ];
+    let urls = [
+      "https://www.pointtown.com/monitor/fancrew/real-shop",
+      "https://www.pointtown.com/soudatsu",
+      "https://www.pointtown.com/news/infoseek",
+    ];
+    // await this.openUrl(this.firstUrl); // バナー
+    // if (await this.isExistEle(sele[0], true, 2000)) {
+    //   let eles = await this.getEles(sele[0], 2000);
+    //   for (let i = 0; i < eles.length; i++) {
+    //     await this.clickEle(eles[i], 4000);
+    //     await this.closeOtherWindow(driver);
+    //   }
+    // }
+    // await this.openUrl(this.targetUrl); // バナー
+    // if (await this.isExistEle(sele[0], true, 2000)) {
+    //   let eles = await this.getEles(sele[0], 2000);
+    //   for (let i = 0; i < eles.length; i++) {
+    //     await this.clickEle(eles[i], 4000);
+    //     await this.closeOtherWindow(driver);
+    //   }
+    // }
+    // await this.openUrl(urls[0]); // 10コインを探せ
+    // if (await this.isExistEle(sele[1], true, 2000)) {
+    //   let eles = await this.getEles(sele[1], 2000);
+    //   for (let i = 0; i < eles.length; i++) {
+    //     await this.clickEle(eles[i], 4000);
+    //     await this.closeOtherWindow(driver);
+    //   }
+    // }
+    // await this.openUrl(urls[1]); // コイン争奪戦
+    // if (await this.isExistEle(sele[2], true, 2000)) {
+    //   let ele = await this.getEle(sele[2], 2000);
+    //   await this.clickEle(ele, 4000);
+    // }
+    await this.openUrl(urls[2]); // ニュース
+    if (await this.isExistEle(sele[3], true, 2000)) {
+      let eles = await this.getEles(sele[3], 2000);
+      // 最初のページを全部クリック。そのあと、報酬を受けとる。
+      for (let i = 0; i < eles.length; i++) {
+        await this.clickEle(eles[i], 4000);
+        await this.closeOtherWindow(driver);
+      }
+      let rewordCnt = 0; // 報酬を受けとる
+      if (await this.isExistEle(sele[4], true, 2000)) {
+        eles = await this.getEles(sele[4], 2000);
+        rewordCnt = eles.length;
+        for (let i = 0; i < eles.length; i++) {
+          if (await this.isExistEle(sele[4], true, 2000)) {
+            if (i != 0) eles = await this.getEles(sele[4], 2000);
+            await this.clickEle(eles[0], 4000);
+            await this.closeOtherWindow(driver);
+          }
+        }
+      }
+      if (rewordCnt < 20) {
+        // その数が20だったら終わり。足りなかったら次のページで足りない分だけクリック。報酬を受け取る
+        let sele2 = ["li[aria-controls='poli-soci']"];
+        if (await this.isExistEle(sele2[0], true, 2000)) {
+          let ele = await this.getEle(sele2[0], 2000);
+          await this.clickEle(ele, 4000);
+          if (await this.isExistEle(sele[3], true, 2000)) {
+            let eles = await this.getEles(sele[3], 2000);
+            // 最初のページを全部クリック。そのあと、報酬を受けとる。その数が20だったら終わり。足りなかったら次のページで足りない分だけクリック。報酬を受け取る
+            for (let i = 0; i < 20 - rewordCnt || i < eles.length; i++) {
+              await this.clickEle(eles[i], 4000);
+              await this.closeOtherWindow(driver);
+            }
+            // let rewordCnt = 0;
+            if (await this.isExistEle(sele[4], true, 2000)) {
+              eles = await this.getEles(sele[4], 2000);
+              for (let i = 0; i < eles.length; i++) {
+                if (await this.isExistEle(sele[4], true, 2000)) {
+                  if (i != 0) eles = await this.getEles(sele[4], 2000);
+                  await this.clickEle(eles[0], 4000);
+                  await this.closeOtherWindow(driver);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // 三角くじを探せ
+    let seleKujis = [
+      "img[src*='kuji-red']",
+      "img[src*='kuji-yellow']",
+      "img[src*='kuji-purple']", // 2
+      "img[src*='kuji-pink']",
+      "img[src*='kuji-blue']", // 4
+      "img[src*='kuji-green']",
+      "img[src*='kuji-red']",
+    ];
+    for (let i in seleKujis) {
+      let seleKuji = seleKujis[i];
+      await this.openUrl(this.targetUrl);
+      if (await this.isExistEle(seleKuji, true, 2000)) {
+        let ele = await this.getEle(seleKuji, 2000);
+        await this.clickEle(ele, 4000);
+        let sele3 = [
+          "#js-click-banner",
+          "form[action='/click/banner'] button",
+          "img[src*='kuji-w']",
+        ];
+        if (await this.isExistEle(seleKuji, true, 2000)) {
+          ele = await this.getEle(seleKuji, 2000);
+          await this.clickEle(ele, 4000);
+          if (await this.isExistEle(sele3[0], true, 2000)) {
+            ele = await this.getEle(sele3[0], 2000);
+            await this.clickEle(ele, 4000);
+            let wid = await driver.getWindowHandle();
+            await this.changeWindow(wid); // 別タブに移動する
+            if (await this.isExistEle(sele3[1], true, 2000)) {
+              ele = await this.getEle(sele3[1], 2000);
+              await this.clickEle(ele, 4000);
+            }
+            await driver.close(); // このタブを閉じて
+            await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+            if (await this.isExistEle(sele3[2], true, 2000)) {
+              ele = await this.getEle(sele3[2], 2000); // wくじ
+              await this.clickEle(ele, 4000);
+            }
+          }
+        }
+      }
+    }
+
+    logger.info(`${this.constructor.name} END`);
+    return D.STATUS.DONE;
+  }
+}
 exports.PtoCommon = PtoCommon;
-// module.
 exports.Pto = PtoBase;
-// module.
-// exports = { pex: pexBase, pexCommon: pexCommon };

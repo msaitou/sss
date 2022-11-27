@@ -56,8 +56,10 @@ https://qiita.com/sugurutakahashi12345/items/df736ddaf65c244e1b4f
 $('iframe').contents().find("div>input[type='submit']")
 or
 var iframeDocument = iframeElem[0].contentDocument || $('iframe').contentWindow.document;
+#####################################↓拡大率の取得
+let zooml = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth * 100;
+zooml = zooml*100;
 #####################################
-
 
 なんかのエラーになったら、driverを生成しなおす
 6分ログに更新がない場合、プロセスを切るする
@@ -69,6 +71,3 @@ pto,gen,ecn,abe,rakuのクリック
 gpoの占い
 picのポイントモール
 sugのアンケート？
-
-	let zooml = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth * 100;
-	zooml = zooml*100;
