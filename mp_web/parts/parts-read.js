@@ -254,14 +254,24 @@ class PartsReadPic extends BaseWebDriverWrapper {
     }
     return res;
   }
-  async moveLastPage(readedNum) {
+  async moveLastPage() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let sele = [
       "div.pager>a:not(.hide)",
       "div.pager>a.next:not(.hide)",
       "div.pager>a.prev:not(.hide)",
     ];
-    // 最初のページで呼ばれること前提
+    // 最初のページで呼ばれること前提　これはほんとに最後のページだけど、それだと読んだものしかないので、もう少し手前を最後と家仮定
+    // if (await this.isExistEle(sele[0], true, 2000)) {
+    //   let eles = await this.getEles(sele[0], 2000);
+    //   let nextNum = 0;
+    //   if (await this.isExistEle(sele[1], true, 2000)) {
+    //     let nexts = await this.getEles(sele[1], 2000);
+    //     nextNum = nexts.length;
+    //   }
+    //   await this.clickEle(eles[eles.length - 1 - nextNum], 2000);
+    //   return true;
+    // }
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
       let nextNum = 0;
@@ -269,8 +279,9 @@ class PartsReadPic extends BaseWebDriverWrapper {
         let nexts = await this.getEles(sele[1], 2000);
         nextNum = nexts.length;
       }
-      if (readedNum) nextNum++;
-      await this.clickEle(eles[eles.length - 1 - nextNum], 2000);
+      let lastIndex = eles.length - 1 - nextNum;
+      lastIndex = lastIndex > 3 ? 3 : lastIndex > 2 ? 2 : lastIndex > 1 ? 1 : 0;
+      await this.clickEle(eles[lastIndex], 2000);
       return true;
     }
   }

@@ -36,6 +36,9 @@ class GenBase extends BaseExecuter {
           case D.MISSION.ANQ_GEN:
             execCls = new GenAnq(para, cmMissionList);
             break;
+          case D.MISSION.CLICK:
+            execCls = new GenClick(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -226,6 +229,39 @@ class GenResearch1 extends GenMissonSupper {
       // await this.changeWindow(wid); // 別タブに移動する
       let Research1 = new PartsResearch1(this.para);
       res = await Research1.doGen();
+    }
+    logger.info(`${this.constructor.name} END#####`);
+    return res;
+  }
+}
+// クリック
+class GenClick extends GenMissonSupper {
+  firstUrl = "https://www.gendama.jp/";
+  targetUrl = "https://www.gendama.jp/forest/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START###`);
+    await this.openUrl(this.targetUrl); // 最初のページ表示
+    let sele = ["img[src*='forest_bt1']", "img[src*='star.gif']"];
+    let res = D.STATUS.FAIL;
+
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      for (let i = 0; i < eles.length; i++) {
+        await this.clickEle(eles[i], 2000);
+        await this.closeOtherWindow(driver);
+      }
+    }
+    if (await this.isExistEle(sele[1], true, 2000)) {
+      let eles = await this.getEles(sele[1], 3000);
+      for (let i = 0; i < eles.length; i++) {
+        await this.clickEle(eles[i], 2000);
+        await this.closeOtherWindow(driver);
+      }
     }
     logger.info(`${this.constructor.name} END#####`);
     return res;

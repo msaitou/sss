@@ -48,6 +48,9 @@ class PicBase extends BaseExecuter {
           case D.MISSION.READ_ICHI:
             execCls = new PicReadIchi(para);
             break;
+          case D.MISSION.POINT_MOLL:
+            execCls = new PicPointMoll(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -261,6 +264,87 @@ class PicClick extends PicMissonSupper {
     }
     logger.info(`${this.constructor.name} END`);
     return D.STATUS.DONE;
+  }
+}
+const { PartsQuizKentei } = require("./parts/parts-quiz-kentei.js");
+// ポイントモール
+class PicPointMoll extends PicMissonSupper {
+  firstUrl = "https://pointi.jp/";
+  targetUrl = "https://pointi.jp/game/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    let res = D.STATUS.FAIL;
+    let QuizKentei = new PartsQuizKentei(this.para);
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+
+    let sele = [
+      "img[alt='メダルモール']",
+      "",
+      "", // 2
+      "",
+      "",
+      "",
+      "",
+    ];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        let cSeleList = [
+          "img[src*='img_quiz01']",
+          "img[src*='img_quiz02']",
+          "img[src*='img_quiz03']",
+          "img[src*='img_quiz04']",
+          "img[src*='img_quiz05']",
+          "img[src*='img_seiza']",
+          "",
+          "",
+          "",
+          "",
+          "",
+        ];
+        for (let cSele of cSeleList) {
+          if (await this.isExistEle(cSele, true, 2000)) {
+            ele = await this.getEle(cSele, 3000);
+            await this.clickEle(ele, 3000);
+            let wid2 = await driver.getWindowHandle();
+            await this.changeWindow(wid2); // 別タブに移動する
+            if (cSele.indexOf("img_quiz0") > -1) {
+              // クイズ検定系
+              res = await QuizKentei.startKentei();
+            }
+            else if (cSele.indexOf("img_seiza") > -1) {
+              // 占い
+            }
+            else if (cSele.indexOf("aaaaa") > -1) {
+            }
+            await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+            await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+          }
+        }
+        res = D.STATUS.DONE;
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+
+      // let eles = await this.getEles(sele[0], 2000);
+      // for (let i = 0; i < eles.length; i++) {
+      //   await this.clickEle(eles[i], 4000);
+      //   await this.closeOtherWindow(driver);
+      // }
+    }
+    logger.info(`${this.constructor.name} END`);
+    return res;
   }
 }
 
