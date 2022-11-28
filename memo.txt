@@ -67,7 +67,9 @@ zooml = zooml*100;
 
 ★criのアンケート
 ★genのアンケート
-pto,gen,ecn,abe,rakuのクリック
+▲pto,
+gen,ecn,abe,rakuのクリック
 gpoの占い
+
 picのポイントモール
 sugのアンケート？

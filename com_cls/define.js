@@ -51,6 +51,8 @@ exports.Def = {
     QUIZ_KENTEI: "quiz_kentei",
     ANQ_CRI: "anq_cri",
     ANQ_GEN: "anq_gen",
+    POINTQ: "pointq",
+   
     
     CM: "cm", // 内部処理のダミー用
     CM_URANAI: "cm_uranai",

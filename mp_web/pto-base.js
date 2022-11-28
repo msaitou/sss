@@ -33,6 +33,9 @@ class PtoBase extends BaseExecuter {
           case D.MISSION.CLICK:
             execCls = new PtoClick(para);
             break;
+          case D.MISSION.POINTQ:
+            execCls = new PtoPointQ(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -196,35 +199,35 @@ class PtoClick extends PtoMissonSupper {
       "https://www.pointtown.com/soudatsu",
       "https://www.pointtown.com/news/infoseek",
     ];
-    // await this.openUrl(this.firstUrl); // バナー
-    // if (await this.isExistEle(sele[0], true, 2000)) {
-    //   let eles = await this.getEles(sele[0], 2000);
-    //   for (let i = 0; i < eles.length; i++) {
-    //     await this.clickEle(eles[i], 4000);
-    //     await this.closeOtherWindow(driver);
-    //   }
-    // }
-    // await this.openUrl(this.targetUrl); // バナー
-    // if (await this.isExistEle(sele[0], true, 2000)) {
-    //   let eles = await this.getEles(sele[0], 2000);
-    //   for (let i = 0; i < eles.length; i++) {
-    //     await this.clickEle(eles[i], 4000);
-    //     await this.closeOtherWindow(driver);
-    //   }
-    // }
-    // await this.openUrl(urls[0]); // 10コインを探せ
-    // if (await this.isExistEle(sele[1], true, 2000)) {
-    //   let eles = await this.getEles(sele[1], 2000);
-    //   for (let i = 0; i < eles.length; i++) {
-    //     await this.clickEle(eles[i], 4000);
-    //     await this.closeOtherWindow(driver);
-    //   }
-    // }
-    // await this.openUrl(urls[1]); // コイン争奪戦
-    // if (await this.isExistEle(sele[2], true, 2000)) {
-    //   let ele = await this.getEle(sele[2], 2000);
-    //   await this.clickEle(ele, 4000);
-    // }
+    await this.openUrl(this.firstUrl); // バナー
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      for (let i = 0; i < eles.length; i++) {
+        await this.clickEle(eles[i], 4000);
+        await this.closeOtherWindow(driver);
+      }
+    }
+    await this.openUrl(this.targetUrl); // バナー
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      for (let i = 0; i < eles.length; i++) {
+        await this.clickEle(eles[i], 4000);
+        await this.closeOtherWindow(driver);
+      }
+    }
+    await this.openUrl(urls[0]); // 10コインを探せ
+    if (await this.isExistEle(sele[1], true, 2000)) {
+      let eles = await this.getEles(sele[1], 2000);
+      for (let i = 0; i < eles.length; i++) {
+        await this.clickEle(eles[i], 4000);
+        await this.closeOtherWindow(driver);
+      }
+    }
+    await this.openUrl(urls[1]); // コイン争奪戦
+    if (await this.isExistEle(sele[2], true, 2000)) {
+      let ele = await this.getEle(sele[2], 2000);
+      await this.clickEle(ele, 4000);
+    }
     await this.openUrl(urls[2]); // ニュース
     if (await this.isExistEle(sele[3], true, 2000)) {
       let eles = await this.getEles(sele[3], 2000);
@@ -237,11 +240,10 @@ class PtoClick extends PtoMissonSupper {
       if (await this.isExistEle(sele[4], true, 2000)) {
         eles = await this.getEles(sele[4], 2000);
         rewordCnt = eles.length;
-        for (let i = 0; i < eles.length; i++) {
+        for (let i = 0; i < rewordCnt; i++) {
           if (await this.isExistEle(sele[4], true, 2000)) {
             if (i != 0) eles = await this.getEles(sele[4], 2000);
             await this.clickEle(eles[0], 4000);
-            await this.closeOtherWindow(driver);
           }
         }
       }
@@ -265,7 +267,7 @@ class PtoClick extends PtoMissonSupper {
                 if (await this.isExistEle(sele[4], true, 2000)) {
                   if (i != 0) eles = await this.getEles(sele[4], 2000);
                   await this.clickEle(eles[0], 4000);
-                  await this.closeOtherWindow(driver);
+                  // TODO 総合タブに戻されるので、社会タブに移動しないと報酬がないことになる
                 }
               }
             }
@@ -281,7 +283,6 @@ class PtoClick extends PtoMissonSupper {
       "img[src*='kuji-pink']",
       "img[src*='kuji-blue']", // 4
       "img[src*='kuji-green']",
-      "img[src*='kuji-red']",
     ];
     for (let i in seleKujis) {
       let seleKuji = seleKujis[i];
@@ -317,6 +318,61 @@ class PtoClick extends PtoMissonSupper {
       }
     }
 
+    logger.info(`${this.constructor.name} END`);
+    return D.STATUS.DONE;
+  }
+}
+// ポイントｑ
+class PtoPointQ extends PtoMissonSupper {
+  firstUrl = "https://www.pointtown.com/";
+  targetUrl = "https://www.pointtown.com/game";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+
+    let sele = [
+      "img[alt='ポイントQ']",
+      ".pointq-sec a",
+      "#js-quiz-form label",
+      "#js-pointq-submit",
+    ];
+    let urls = [
+      "https://www.pointtown.com/monitor/fancrew/real-shop",
+      "https://www.pointtown.com/soudatsu",
+      "https://www.pointtown.com/news/infoseek",
+    ];
+    await this.openUrl(this.targetUrl);
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele = await this.getEle(sele[0], 2000);
+      await this.clickEle(ele, 3000);
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        ele = await this.getEle(sele[1], 2000);
+        await this.clickEle(ele, 3000);
+
+        for (let i = 0; i < 3; i++) {
+          if (await this.isExistEle(sele[2], true, 2000)) {
+            let eles = await this.getEles(sele[2], 2000);
+            let choiceNum = libUtil.getRandomInt(0, eles.length); // 最後は否定的な選択肢なので選ばないのがいいと思ったが、問題なさそう
+            await this.clickEle(ele[choiceNum], 3000);
+            if (await this.isExistEle(sele[3], true, 2000)) {
+              ele = await this.getEle(sele[3], 2000);
+              await this.clickEle(ele, 3000);
+              if (await this.isExistEle(sele[4], true, 2000)) {
+                ele = await this.getEle(sele[4], 2000);
+                await this.clickEle(ele, 3000); // 次の質問へ　TODO
+              }
+              else {
+                // 動画を見ればもう3問
+              }
+            }
+          }
+        }
+      }
+    }
     logger.info(`${this.constructor.name} END`);
     return D.STATUS.DONE;
   }

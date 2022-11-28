@@ -268,21 +268,21 @@ class GenAnq extends GenMissonSupper {
             eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let j = 0; j < limit; j++) {
-              for (let i = 0; i < 9; i++) {
-                // 隠れてるので全部オープン
-                if (await this.isExistEle(sele[5], true, 2000)) {
-                  let ele = await this.getEle(sele[5], 3000);
-                  await this.clickEle(ele, 3000);
-                } else break;
-              }
-              eles = await this.getEles(sele[1], 10000);
-              await this.clickEle(eles[eles.length -1], 3000);
-              // eles = await this.getEles(sele[1], 3000);
-              // await this.clickEle(eles[0], 3000);
+              // for (let i = 0; i < 9; i++) {
+              //   // 隠れてるので全部オープン
+              //   if (await this.isExistEle(sele[5], true, 2000)) {
+              //     let ele = await this.getEle(sele[5], 3000);
+              //     await this.clickEle(ele, 3000);
+              //   } else break;
+              // }
+              // eles = await this.getEles(sele[1], 10000);
+              // await this.clickEle(eles[eles.length -1], 3000);
+              eles = await this.getEles(sele[1], 3000);
+              await this.clickEle(eles[0], 3000);
               if (await this.isExistEle(sele[2], true, 2000)) {
                 let ele = await this.getEle(sele[2], 3000);
                 await this.clickEle(ele, 3000);
-                for (let i = 0; i < 30; i++) {
+                for (let i = 0; i < 50; i++) {
                   if (await this.isExistEle(sele[4], true, 2000)) {
                     let ele = await this.getEle(sele[4], 3000);
                     let q = await ele.getText();
