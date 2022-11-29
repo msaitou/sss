@@ -248,20 +248,24 @@ class GenClick extends GenMissonSupper {
     await this.openUrl(this.targetUrl); // 最初のページ表示
     let sele = ["img[src*='forest_bt1']", "img[src*='star.gif']"];
     let res = D.STATUS.FAIL;
-
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      let eles = await this.getEles(sele[0], 3000);
-      for (let i = 0; i < eles.length; i++) {
-        await this.clickEle(eles[i], 2000);
-        await this.closeOtherWindow(driver);
+    try {
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let eles = await this.getEles(sele[0], 3000);
+        for (let i = 0; i < eles.length; i++) {
+          await this.clickEle(eles[i], 2000);
+          await this.closeOtherWindow(driver);
+        }
       }
-    }
-    if (await this.isExistEle(sele[1], true, 2000)) {
-      let eles = await this.getEles(sele[1], 3000);
-      for (let i = 0; i < eles.length; i++) {
-        await this.clickEle(eles[i], 2000);
-        await this.closeOtherWindow(driver);
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let eles = await this.getEles(sele[1], 3000);
+        for (let i = 0; i < eles.length; i++) {
+          await this.clickEle(eles[i], 2000);
+          await this.closeOtherWindow(driver);
+        }
       }
+      res = D.STATUS.DONE;
+    } catch (e) {
+      logger.warn(e);
     }
     logger.info(`${this.constructor.name} END#####`);
     return res;
@@ -351,8 +355,7 @@ class GenAnq extends GenMissonSupper {
                 if (await this.isExistEle(sele[2], true, 2000)) {
                   let ele = await this.getEle(sele[2], 3000);
                   await this.clickEle(ele, 3000);
-                }
-                else skip++;
+                } else skip++;
               }
             }
           }

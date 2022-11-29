@@ -333,48 +333,68 @@ class PtoPointQ extends PtoMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START`);
-
+    let res = D.STATUS.FAIL;
     let sele = [
       "img[alt='ポイントQ']",
       ".pointq-sec a",
       "#js-quiz-form label",
       "#js-pointq-submit",
+      "a[href='/pointq/input']",
+      "button.js-watch-reward-ad-btn",
+      "",
+      "",
     ];
-    let urls = [
-      "https://www.pointtown.com/monitor/fancrew/real-shop",
-      "https://www.pointtown.com/soudatsu",
-      "https://www.pointtown.com/news/infoseek",
-    ];
-    await this.openUrl(this.targetUrl);
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      let ele = await this.getEle(sele[0], 2000);
-      await this.clickEle(ele, 3000);
-      if (await this.isExistEle(sele[1], true, 2000)) {
-        ele = await this.getEle(sele[1], 2000);
+    try {
+      await this.openUrl(this.targetUrl);
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 2000);
         await this.clickEle(ele, 3000);
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          ele = await this.getEle(sele[1], 2000);
+          await this.clickEle(ele, 3000);
 
-        for (let i = 0; i < 3; i++) {
-          if (await this.isExistEle(sele[2], true, 2000)) {
-            let eles = await this.getEles(sele[2], 2000);
-            let choiceNum = libUtil.getRandomInt(0, eles.length); // 最後は否定的な選択肢なので選ばないのがいいと思ったが、問題なさそう
-            await this.clickEle(ele[choiceNum], 3000);
-            if (await this.isExistEle(sele[3], true, 2000)) {
-              ele = await this.getEle(sele[3], 2000);
-              await this.clickEle(ele, 3000);
-              if (await this.isExistEle(sele[4], true, 2000)) {
-                ele = await this.getEle(sele[4], 2000);
-                await this.clickEle(ele, 3000); // 次の質問へ　TODO
-              }
-              else {
-                // 動画を見ればもう3問
+          for (let i = 0; i < 3; i++) {
+            if (await this.isExistEle(sele[2], true, 2000)) {
+              let eles = await this.getEles(sele[2], 2000);
+              let choiceNum = libUtil.getRandomInt(0, eles.length); // 最後は否定的な選択肢なので選ばないのがいいと思ったが、問題なさそう
+              await this.clickEle(eles[choiceNum], 3000);
+              if (await this.isExistEle(sele[3], true, 2000)) {
+                ele = await this.getEle(sele[3], 2000);
+                await this.clickEle(ele, 3000);
+                if (await this.isExistEle(sele[4], true, 2000)) {
+                  ele = await this.getEle(sele[4], 2000);
+                  await this.clickEle(ele, 3000); // 次の質問へ
+                } else if (await this.isExistEle(sele[5], true, 2000)) {
+                  ele = await this.getEle(sele[5], 2000);
+                  await this.clickEle(ele, 3000); // 動画再生
+                  let seleIframe = [
+                    "div[id*='google_ads_iframe']>iframe",
+                    "div.rewardResumebutton",
+                  ];
+                  // 動画を見ればもう3問
+                  if (await this.isExistEle(seleIframe[0], true, 3000)) {
+                    let iframe = await this.getEle(seleIframe[0], 1000);
+                    await driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
+                    if (await this.isExistEle(seleIframe[1], true, 3000)) {
+                      ele = await this.getEle(seleIframe[1], 2000);
+                      await this.clickEle(ele, 2000);
+                    }
+                    await driver.switchTo().defaultContent(); // もとのフレームに戻す
+                    await this.sleep(10000);
+                    i = -1; // リセット
+                  }
+                }
               }
             }
           }
+          res = D.STATUS.DONE;
         }
       }
+    } catch (e) {
+      logger.warn(e);
     }
     logger.info(`${this.constructor.name} END`);
-    return D.STATUS.DONE;
+    return res;
   }
 }
 exports.PtoCommon = PtoCommon;

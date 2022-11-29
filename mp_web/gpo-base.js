@@ -42,6 +42,9 @@ class GpoBase extends BaseExecuter {
           case D.MISSION.GPO_ANQ:
             execCls = new GpoAnq(para);
             break;
+          case D.MISSION.URANAI:
+            execCls = new GpoUranai(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -161,27 +164,7 @@ class GpoCommon extends GpoMissonSupper {
     return true;
   }
 }
-const { PartsQuizDaily } = require("./parts/parts-quiz-daily.js");
-const { PartsCmManage } = require("./parts/parts-cm-manage.js");
-// デイリークイズ
-class GpoQuizDaily extends GpoMissonSupper {
-  firstUrl = "https://www.cmsite.co.jp/top/home/";
-  targetUrl = "https://www.cmsite.co.jp/top/game/";
-  QuizDaily;
-  constructor(para) {
-    super(para);
-    this.QuizDaily = new PartsQuizDaily(para);
-    this.logger.debug(`${this.constructor.name} constructor`);
-  }
-  // 1日3回（0時～8時～16時）
-  async do() {
-    let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    logger.info(`${this.constructor.name} START###`);
-    let res = await this.QuizDaily.do(this.targetUrl);
-    logger.info(`${this.constructor.name} END#####`);
-    return res;
-  }
-}
+const { PartsCmManage, Uranai } = require("./parts/parts-cm-manage.js");
 // CM系のクッション
 class GpoCm extends GpoMissonSupper {
   firstUrl = "https://www.gpoint.co.jp/";
@@ -374,6 +357,7 @@ class GpoAnq extends GpoMissonSupper {
     logger.info(`${this.constructor.name} START`);
     let res = D.STATUS.FAIL;
     await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
     let sele = [
       ".surveyList div.button>a",
       "button[name='movenext']",
@@ -461,8 +445,7 @@ class GpoAnq extends GpoMissonSupper {
                       await this.clickEle(ele, 2000); // 次のページ
                     }
                   }
-                }
-                else {
+                } else {
                   if (noFoundCnt++ > 1) break;
                 }
               }
@@ -488,6 +471,44 @@ class GpoAnq extends GpoMissonSupper {
         }
       }
     } else res = D.STATUS.DONE;
+    logger.info(`${this.constructor.name} END`);
+    return res;
+  }
+}
+// 占い
+class GpoUranai extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://www.gpoint.co.jp/gpark/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    let res = D.STATUS.FAIL;
+    let sele = ["img[alt='ガチャ付き12星座占い']", "input[alt='OK']"];
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let ele0 = await this.getEle(sele[1], 3000);
+          await this.clickEle(ele0, 3000);
+          let execCls = new Uranai(this.para);
+          res = await execCls.do();
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
     logger.info(`${this.constructor.name} END`);
     return res;
   }
