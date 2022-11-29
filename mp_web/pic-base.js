@@ -159,7 +159,7 @@ class PicCommon extends PicMissonSupper {
   }
 }
 
-const { PartsCmManage } = require("./parts/parts-cm-manage.js");
+const { PartsCmManage, Uranai } = require("./parts/parts-cm-manage.js");
 // CM系のクッション
 class PicCm extends PicMissonSupper {
   firstUrl = "https://pointi.jp/";
@@ -298,11 +298,11 @@ class PicPointMoll extends PicMissonSupper {
       await this.changeWindow(wid); // 別タブに移動する
       try {
         let cSeleList = [
-          "img[src*='img_quiz01']",
-          "img[src*='img_quiz02']",
-          "img[src*='img_quiz03']",
-          "img[src*='img_quiz04']",
-          "img[src*='img_quiz05']",
+          // "img[src*='img_quiz01']",
+          // "img[src*='img_quiz02']",
+          // "img[src*='img_quiz03']",
+          // "img[src*='img_quiz04']",
+          // "img[src*='img_quiz05']",
           "img[src*='img_seiza']",
           "",
           "",
@@ -322,6 +322,8 @@ class PicPointMoll extends PicMissonSupper {
             }
             else if (cSele.indexOf("img_seiza") > -1) {
               // 占い
+              let execCls = new Uranai(this.para);
+              res = await execCls.do();
             }
             else if (cSele.indexOf("aaaaa") > -1) {
             }

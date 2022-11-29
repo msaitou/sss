@@ -295,6 +295,7 @@ class GenAnq extends GenMissonSupper {
       "",
     ];
     let res = D.STATUS.FAIL;
+    let skip = 0; // バグって完了できないやつがあるのでスキップ
     if (await this.isExistEle(sele[6], true, 2000)) {
       let ele = await this.getEle(sele[6], 3000);
       await this.clickEle(ele, 3000);
@@ -307,55 +308,73 @@ class GenAnq extends GenMissonSupper {
           if (await this.isExistEle(sele[1], true, 2000)) {
             eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
-            let skip = 1; // バグって完了できないやつがあるのでスキップ
             for (let j = 0; j < limit; j++) {
-              // for (let i = 0; i < 9; i++) {
-              //   // 隠れてるので全部オープン
-              //   if (await this.isExistEle(sele[5], true, 2000)) {
-              //     let ele = await this.getEle(sele[5], 3000);
-              //     await this.clickEle(ele, 3000);
-              //   } else break;
-              // }
-              // eles = await this.getEles(sele[1], 10000);
-              // await this.clickEle(eles[eles.length -1], 3000);
-              eles = await this.getEles(sele[1], 3000);
-              await this.clickEle(eles[skip], 3000);
-              if (await this.isExistEle(sele[2], true, 2000)) {
-                let ele = await this.getEle(sele[2], 3000);
-                await this.clickEle(ele, 3000);
-                for (let i = 0; i < 30; i++) {
-                  if (await this.isExistEle(sele[4], true, 2000)) {
-                    let ele = await this.getEle(sele[4], 3000);
-                    let q = await ele.getText();
-                    logger.info(`${i}つ目 ${q}`);
-                    let choiceNum = 0;
-                    switch (q.trim()) {
-                      case "性別は":
-                        break;
-                      case "年齢は":
-                        choiceNum = 3;
-                        break;
-                      case "住んでいる地方は":
-                        choiceNum = 2;
-                        break;
-                      default:
-                        choiceNum = -1;
-                    }
-                    if (await this.isExistEle(sele[7], true, 2000)) {
-                      let eles = await this.getEles(sele[7], 3000);
-                      if (choiceNum === -1) choiceNum = libUtil.getRandomInt(0, eles.length);
-                      await this.clickEle(eles[choiceNum], 3000);
-                      if (await this.isExistEle(sele[3], true, 2000)) {
-                        let ele = await this.getEle(sele[3], 3000);
-                        await this.clickEle(ele, 3000);
-                      }
-                    }
-                  } else break;
-                }
+              if (j == 1) {
+                skip++;
+                continue;
+              }
+              if (await this.isExistEle(sele[1], true, 2000)) {
+                // for (let i = 0; i < 9; i++) {
+                //   // 隠れてるので全部オープン
+                //   if (await this.isExistEle(sele[5], true, 2000)) {
+                //     let ele = await this.getEle(sele[5], 3000);
+                //     await this.clickEle(ele, 3000);
+                //   } else break;
+                // }
+                // eles = await this.getEles(sele[1], 10000);
+                // await this.clickEle(eles[eles.length -1], 3000);
+                eles = await this.getEles(sele[1], 3000);
+                await this.clickEle(eles[skip], 3000);
                 if (await this.isExistEle(sele[2], true, 2000)) {
                   let ele = await this.getEle(sele[2], 3000);
                   await this.clickEle(ele, 3000);
-                } else skip++;
+                  for (let i = 0; i < 30; i++) {
+                    if (await this.isExistEle(sele[4], true, 2000)) {
+                      let ele = await this.getEle(sele[4], 3000);
+                      let q = await ele.getText();
+                      logger.info(`${i}つ目 ${q}`);
+                      let choiceNum = 0;
+                      switch (q.trim()) {
+                        case "性別は":
+                          break;
+                        case "年齢は":
+                          choiceNum = 3;
+                          break;
+                        case "住んでいる地方は":
+                          choiceNum = 2;
+                          break;
+                        default:
+                          choiceNum = -1;
+                      }
+                      if (await this.isExistEle(sele[7], true, 2000)) {
+                        let eles = await this.getEles(sele[7], 3000);
+                        if (choiceNum === -1) choiceNum = libUtil.getRandomInt(0, eles.length);
+                        await this.clickEle(eles[choiceNum], 3000);
+                        if (await this.isExistEle(sele[3], true, 2000)) {
+                          let ele = await this.getEle(sele[3], 3000);
+                          await this.clickEle(ele, 3000);
+                        }
+                      }
+                    } else break;
+                  }
+                  if (await this.isExistEle(sele[2], true, 2000)) {
+                    let ele = await this.getEle(sele[2], 3000);
+                    await this.clickEle(ele, 3000);
+                  } else {
+                    skip++;
+                    await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+                    await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+                    if (await this.isExistEle(sele[6], true, 2000)) {
+                      ele = await this.getEle(sele[6], 3000);
+                      await this.clickEle(ele, 3000);
+                      if (await this.isExistEle(sele[0], true, 2000)) {
+                        eles = await this.getEles(sele[0], 3000);
+                        await this.clickEle(eles[0], 2000);
+                        await this.changeWindow(wid); // 別タブに移動する
+                      }
+                    }
+                  }
+                }
               }
             }
           }
