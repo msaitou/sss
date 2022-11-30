@@ -33,7 +33,12 @@ class PointWebCls {
   async main(missionMap) {
     this.logger.info("PointWebCls main begin!");
     if (missionMap && Object.keys(missionMap).length) {
-      let targetKeys = Object.keys(missionMap);
+      let tmpKeys = Object.keys(missionMap);
+      let targetKeys = [];
+      tmpKeys.forEach(key => {  // m_系をPCと同じキーとしてログイン情報を取得
+        if (key.indexOf("m_") === 0) (key = key.replace("m_", ""));
+        targetKeys.push(key);
+      });
 
       let aca = await db("config", "findOne", { type: "login" });
       let siteInfos = await db("www", "find", {
@@ -41,7 +46,9 @@ class PointWebCls {
         code: { $in: targetKeys },
       });
       for (let [key, line] of Object.entries(missionMap)) {
-        await this.execOperator(key, line, aca, siteInfos.filter((i) => i.code === key)[0]);
+        let isMob = false;
+        if (key.indexOf("m_") === 0) (key = key.replace("m_", "")), (isMob = true);
+        await this.execOperator(key, line, aca, siteInfos.filter((i) => i.code === key)[0], isMob);
       }
     } else this.logger.info("ミッションは登録されていません");
   }
@@ -179,7 +186,7 @@ class PointWebCls {
     // main()に未実行ミッションリストを渡す　同期的に
     // 5分ごとにエンドレス・・
   }
-  async execOperator(code, missionList, aca, siteInfo) {
+  async execOperator(code, missionList, aca, siteInfo, isMob) {
     let opeCls = null;
     switch (code) {
       case "any": // メール用
@@ -191,10 +198,10 @@ class PointWebCls {
         opeCls = new rakuBase.Raku(0, siteInfo, aca, missionList);
         break;
       case D.CODE.PEX:
-        opeCls = new pexBase.Pex(0, siteInfo, aca, missionList);
+        opeCls = new pexBase.Pex(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.MOP:
-        opeCls = new mopBase.Mop(0, siteInfo, aca, missionList);
+        opeCls = new mopBase.Mop(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.CMS:
         opeCls = new cmsBase.Cms(0, siteInfo, aca, missionList);

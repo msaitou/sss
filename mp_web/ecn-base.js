@@ -354,9 +354,17 @@ class EcnClick extends EcnMissonSupper {
                   }
                 }
                 break;
-              case "2": // 宝くじ　ガラポン TODO
+              case "2": // 宝くじ　ガラポン
                 // 月初は、参加するみたいなボタンをクリックしないといけない
-                eachSele = [".unit a>img"];
+                eachSele = [".unit a>img", "p.btn_entry>a", ".garapon a"];
+                if (await this.isExistEle(eachSele[1], true, 2000)) {
+                  let ele = await this.getEle(eachSele[1], 2000);
+                  await this.clickEle(ele, 2000);
+                  if (await this.isExistEle(eachSele[2], true, 2000)) {
+                    let ele = await this.getEle(eachSele[2], 2000);
+                    await this.clickEle(ele, 2000);
+                  }
+                }
                 if (await this.isExistEle(eachSele[0], true, 2000)) {
                   let eles = await this.getEles(eachSele[0], 2000);
                   for (let ele0 of eles) {

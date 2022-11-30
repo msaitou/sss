@@ -5,7 +5,7 @@ const { libUtil } = require("../../lib/util.js");
 class PartsQuizDaily extends BaseWebDriverWrapper {
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     this.logger.debug(`${this.constructor.name} constructor`);
@@ -60,6 +60,7 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
               ele = await this.getEle(sele[5], 3000);
             }
           }
+          await this.hideOverlay();
           if (await this.isExistEle(sele[6], true, 2000)) {
             ele = await this.getEle(sele[6], 3000);
             await this.clickEle(ele, 2000); // 次のページ

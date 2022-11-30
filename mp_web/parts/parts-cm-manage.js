@@ -11,7 +11,7 @@ class PartsCmManage extends BaseExecuter {
   cmMissionList;
   startUrl;
   constructor(para, cmMissionList, startUrl) {
-    super(para.retryCnt, para.siteInfo, para.account);
+    super(para.retryCnt, para.siteInfo, para.account, para.isMob);
     this.para = para;
     this.code = para.siteInfo.code;
     this.cmMissionList = cmMissionList;
@@ -129,10 +129,10 @@ class CmDotti extends CmSuper {
         "div.btn_send>a[href='/p/ex']",
         "a[href='/']",
       ];
-
+      if (this.isMob) sele[0] = "img[src*='dotti2_sp']";
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         try {
@@ -256,10 +256,10 @@ class CmKentei extends CmSuper {
         "img#answer-button",
         "img.change-image",
       ];
-
+      if (this.isMob) sele[0] = "img[src*='gotochi_sp']";
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         try {
@@ -367,9 +367,11 @@ class CmUranai extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       let sele = ["img[src*='kumakumaseiza_pc']"];
+      if (this.isMob) sele[0] = "img[src*='kumakumaseiza_sp']";
+
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         try {
@@ -408,17 +410,16 @@ class CmPochi extends CmSuper {
         "img[src*='pochitto_pc']",
         "#question>dd>a>p",
         "div.btn_send>a>p",
-
         "#questionbox>p",
         "#questionbox label",
         "#aaa2>div.btn_send>a>p",
         "a[href='/point/ex']>p",
         "a[href='/top']>p",
       ];
-
+      if (this.isMob) sele[0] = "img[src*='pochitto_sp']";
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         try {

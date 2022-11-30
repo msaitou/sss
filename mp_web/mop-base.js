@@ -1,7 +1,7 @@
 const { BaseExecuter } = require("./base-executer.js");
 const { BaseWebDriverWrapper } = require("../base-webdriver-wrapper");
 const { libUtil } = require("../lib/util.js");
-const { Builder, By, until, Select } = require("selenium-webdriver");
+const { Builder, By, until, Select,Key } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
 const { PartsCmManage } = require("./parts/parts-cm-manage.js");
@@ -9,8 +9,8 @@ const { PartsCmManage } = require("./parts/parts-cm-manage.js");
 class MopBase extends BaseExecuter {
   code = D.CODE.MOP;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList) {
-    super(retryCnt, siteInfo, aca);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
+    super(retryCnt, siteInfo, aca, isMob);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
@@ -52,7 +52,7 @@ class MopBase extends BaseExecuter {
           let res = await execCls.do();
           this.logger.info(`${mission.main} 終了--`);
           if (mission.main != D.MISSION.CM) {
-            await this.updateMissionQue(mission, res, this.code);
+            await this.updateMissionQue(mission, res, this.isMob ? "m_" + this.code : this.code);
           }
         }
       }
@@ -80,7 +80,7 @@ class MopMissonSupper extends BaseWebDriverWrapper {
   code = D.CODE.MOP;
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);
@@ -90,7 +90,11 @@ class MopMissonSupper extends BaseWebDriverWrapper {
     if (await this.isExistEle(seleOver[0], true, 3000)) {
       let ele = await this.getEle(seleOver[0], 2000);
       if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 2000);
+        if (!this.isMob) {
+          await this.clickEle(ele, 2000);
+        } else {
+          await ele.sendKeys(Key.ENTER);
+        }
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
   }
@@ -123,10 +127,9 @@ class MopCommon extends MopMissonSupper {
   }
   async login() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-
     await driver.get(siteInfo.entry_url); // エントリーページ表示
     let seleIsLoggedIn = "p.a-preface--personal__name"; // ポイント数のセレクタでもあります
-
+    if (this.isMob) seleIsLoggedIn = "#header_user_point";
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
@@ -136,7 +139,7 @@ class MopCommon extends MopMissonSupper {
       if (await this.isExistEle(seleLoginLink, true, 2000)) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
-        await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
+        await this.clickEle(ele, 2000, 10); // ログイン入力画面へ遷移
         let seleInput = {
           id: "input[name='mail']",
           pass: "input[name='pass']",
@@ -247,7 +250,6 @@ class MopEitango extends MopMissonSupper {
       await this.openUrl(this.targetUrl); // 操作ページ表示
       let sele = [
         "a[data-ga-label='英単語TEST']",
-
         "input.ui-button-start",
         "label.ui-label-radio",
         "input.ui-button-answer",
@@ -288,6 +290,7 @@ class MopEitango extends MopMissonSupper {
               ele = await this.getEle(sele[5], 3000);
             }
           }
+          await this.hideOverlay(); // オーバレイあり。消す
           if (await this.isExistEle(sele[6], true, 2000)) {
             ele = await this.getEle(sele[6], 3000);
             await this.clickEle(ele, 2000); // 次のページ
@@ -372,6 +375,7 @@ class MopNanyoubi extends MopMissonSupper {
               ele = await this.getEle(sele[5], 3000);
             }
           }
+          await this.hideOverlay(); // オーバレイあり。消す
           if (await this.isExistEle(sele[6], true, 2000)) {
             ele = await this.getEle(sele[6], 3000);
             await this.clickEle(ele, 2000); // 次のページ
@@ -464,6 +468,7 @@ class MopAnzan extends MopMissonSupper {
               ele = await this.getEle(sele[5], 3000);
             }
           }
+          await this.hideOverlay(); // オーバレイあり。消す
           if (await this.isExistEle(sele[6], true, 2000)) {
             ele = await this.getEle(sele[6], 3000);
             await this.clickEle(ele, 2000); // 次のページ

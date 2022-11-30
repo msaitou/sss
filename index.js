@@ -8,6 +8,7 @@ const MODE = {
   P_MIL: "P_MIL",
   L_UTL: "L_UTL",
   manual: "manual",
+  mobile: "mobile"
 };
 const logger = require("./initter.js").log();
 global.log = logger;
@@ -24,6 +25,11 @@ async function start(mode) {
         global.manual = true;
         const man = require("./exam.js");
         await man.alone(logger);
+        break;
+      case "mobile":
+        global.mobile = true;
+        const mob = require("./exam.js");
+        await mob.alone(logger);
         break;
       case MODE.P_WEB_S: // 単発（開発用）
       case MODE.P_WEB_H: // 定期実行用

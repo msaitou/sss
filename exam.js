@@ -22,6 +22,16 @@ exports.alone = async (logger) => {
     }
   });
 };
+exports.alone = async (logger) => {
+  return new Promise((resolve, reject) => {
+    try {
+      let driver = initBrowserDriver(true);
+    } catch (e) {
+      logger.info("owata");
+      resolve();
+    }
+  });
+};
 
 // https://developers.google.com/gmail/api
 const { google } = require("googleapis");
@@ -34,7 +44,7 @@ const { client_secret, client_id, redirect_uris } = credentials.installed;
 const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 // const GET_CODE_FLAG = true;
 const GET_CODE_FLAG = false;
-if (!global.manual) {
+if (!(global.manual || global.mobile)) {
   if (GET_CODE_FLAG) {
     const GMAIL_SCOPES = ["https://mail.google.com/"];
     const url = oAuth2Client.generateAuthUrl({

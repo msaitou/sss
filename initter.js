@@ -147,7 +147,7 @@ exports.initBrowserDriver = async function (isMob = false, headless = true) {
     // chromeOptions.addArguments("--headless");
     if (isMob) {
       chromeOptions.setMobileEmulation({
-        deviceName: "Nexus 6",
+        deviceName: "Pixel 5",
       });
     }
   }

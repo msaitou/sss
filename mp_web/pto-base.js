@@ -386,7 +386,7 @@ class PtoPointQ extends PtoMissonSupper {
   async lookDouga(sele) {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let ele = await this.getEle(sele[5], 2000);
-    await this.clickEle(ele, 3000); // 動画再生
+    await this.clickEle(ele, 3000, 0, true); // 動画再生
     let seleIframe = ["div[id*='google_ads_iframe']>iframe", "div.rewardResumebutton"];
     // 動画を見ればもう3問
     if (await this.isExistEle(seleIframe[0], true, 3000)) {

@@ -1,16 +1,18 @@
 const { initBrowserDriver, db } = require("./initter.js");
 const { libUtil: util, libUtil } = require("./lib/util.js");
-const { Builder, By, until, Select } = require("selenium-webdriver");
+const { Builder, By, until, Select, Key } = require("selenium-webdriver");
 
 class BaseWebDriverWrapper {
   logger;
   driver;
-  constructor() {
+  isMob;
+  constructor(isMob) {
     this.logger = global.log;
+    this.isMob = isMob;
     this.logger.info("base constructor");
   }
-  async webDriver() {
-    return await initBrowserDriver();
+  async webDriver(isMob) {
+    return await initBrowserDriver(isMob);
   }
   getDriver() {
     return this.driver;
@@ -102,37 +104,36 @@ class BaseWebDriverWrapper {
    * @param {*} ele
    * @param {*} time
    */
-  async clickEle(ele, time) {
-    await this.clickEleCommon(ele, time, 0);
+  async clickEle(ele, time, top = 0) {
+    await this.clickEleCommon(ele, time, top);
   }
   /**
    * 要素をクリックして指定時間寝る
    * @param {*} ele
    * @param {*} time
    */
-  async clickEleCommon(ele, time, top) {
+  async clickEleCommon(ele, time, top, isEnter) {
     let rect = await ele.getRect();
     if (!top) top = 0;
     let y = rect.y - top;
     this.logger.info("rect.y", y);
     await this.driver.executeScript(`window.scrollTo(0, ${y});`);
-    // await this.driver.executeScript("arguments[0].scrollIntoView(true);", ele);
     await this.sleep(1000);
-    await this.driver.actions().scroll(0, 0, 5, 10, ele).perform();
+    if (!this.isMob) await this.driver.actions().scroll(0, 0, 5, 10, ele).perform();
     const actions = this.driver.actions();
     await actions.move({ origin: ele }).perform();
-    // await this.sleep(1000);
+    await this.sleep(1000);
     try {
       await this.driver.manage().setTimeouts({ pageLoad: 10000 });
-      await ele.click();
+      if (isEnter) await ele.senKeys(Key.ENTER);
+      else await ele.click();
     } catch (e) {
       if (e.name != "TimeoutError") {
         throw e;
       } else {
         await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
       }
-    }
-    finally {
+    } finally {
       await this.driver.manage().setTimeouts({ pageLoad: 300000 });
     }
     this.logger.debug("clicked");
