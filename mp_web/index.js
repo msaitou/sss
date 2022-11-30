@@ -146,7 +146,7 @@ class PointWebCls {
               return true;
             } else {
               // 今の時間でやるべきものだけ、やるべきものだけ
-              if (m.valid_time.from && m.valid_time.from < now) {
+              if (m.valid_time && m.valid_time.from && m.valid_time.from < now) {
                 if (m.valid_time.to) {
                   if (m.valid_time.to > now) {
                     return true;

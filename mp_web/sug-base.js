@@ -39,6 +39,9 @@ class SugBase extends BaseExecuter {
           case D.MISSION.CLICK:
             execCls = new SugClick(para);
             break;
+          case D.MISSION.ANQ_SUG:
+            execCls = new SugAnq(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -355,6 +358,64 @@ class SugClick extends SugMissonSupper {
     }
     logger.info(`${this.constructor.name} END`);
     return D.STATUS.DONE;
+  }
+}
+// すぐたまのアンケート
+class SugAnq extends SugMissonSupper {
+  firstUrl = "https://www.netmile.co.jp/sugutama/";
+  targetUrl = "https://www.netmile.co.jp/sugutama/survey?lo=124";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = [
+      "nnn",
+      "#enquete_area dt.name a",
+      "#enquete_area dd.stat a", // 2
+      "nnn",
+    ];
+    if (await this.isExistEle(sele[1], true, 2000)) {
+      let eles = await this.getEles(sele[1], 3000);
+      let limit = eles.length;
+      for (let i = 0; i < limit; i++) {
+        if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+          eles = await this.getEles(sele[1], 3000);
+        let text = await eles[i].getText();
+        // 【コラム付き】ヘアスタイルに関するアンケート
+        let kind = text.split("】")[0]; // 【コラム付き
+        if (await this.isExistEle(sele[2], true, 2000)) {
+          let eles2 = await this.getEles(sele[2], 3000);
+          let ele = eles2[i];
+          await this.clickEle(ele, 3000);
+          let wid = await driver.getWindowHandle();
+          await this.changeWindow(wid); // 別タブに移動する
+          try {
+            switch (kind) {
+              case "【コラム付き":
+                res = await AnkPark.doColum();
+                break;
+              case "【動物図鑑付き":
+                res = await AnkPark.doZukan();
+                break;
+            }
+          } catch (e) {
+            logger.warn(e);
+          } finally {
+            await driver.close(); // このタブを閉じて
+            await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+            // await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+          }
+        }
+      }
+    } else {
+      res = D.STATUS.DONE;
+    }
+    return res;
   }
 }
 

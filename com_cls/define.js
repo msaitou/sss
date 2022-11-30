@@ -30,6 +30,7 @@ exports.Def = {
     AME: "ame",
   },
   MISSION: {
+    ANQ_SUG: "anq_sug",
     CHINJU: "chinju",
     URANAI: "uranai",
     POINT_MOLL: "point_moll",
