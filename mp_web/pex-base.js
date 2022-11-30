@@ -222,7 +222,7 @@ class PexNewsWatch extends PexMissonSupper {
             // なんか既読じゃなかったらみたいな条件あり
             if (await this.isExistElesFromEle(eles[j], selePart[0], false, 2000)) {
               let ele0 = await this.getElesFromEle(eles[j], selePart[1], 2000);
-              await this.clickEle(ele0[0], 2000); // 同一ページを切り替えてます
+              await this.clickEle(eles[j], 2000); // 同一ページを切り替えてます
               // リアクションを選ぶ
               let eles1 = await this.getEles(sele[2], 2000);
               // ランダムで。

@@ -14,6 +14,7 @@ const lfmBase = require("./lfm-base");
 const pstBase = require("./pst-base");
 const pilBase = require("./pil-base");
 const ameBase = require("./ame-base");
+const ecnBase = require("./ecn-base");
 const config = require("config");
 const { Entry } = require("selenium-webdriver/lib/logging");
 const D = require("../com_cls/define").Def;
@@ -231,6 +232,9 @@ class PointWebCls {
         break;
       case D.CODE.PIL:
         opeCls = new pilBase.Pil(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.ECN:
+        opeCls = new ecnBase.Ecn(0, siteInfo, aca, missionList);
         break;
     }
     if (opeCls) {

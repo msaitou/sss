@@ -30,7 +30,8 @@ exports.Def = {
     AME: "ame",
   },
   MISSION: {
-    URANAI:"uranai",
+    CHINJU: "chinju",
+    URANAI: "uranai",
     POINT_MOLL: "point_moll",
     CHIRASHI: "chirashi",
     NEWS: "news",
@@ -54,8 +55,7 @@ exports.Def = {
     ANQ_CRI: "anq_cri",
     ANQ_GEN: "anq_gen",
     POINTQ: "pointq",
-   
-    
+
     CM: "cm", // 内部処理のダミー用
     CM_URANAI: "cm_uranai",
     CM_DOTTI: "cm_dotti",

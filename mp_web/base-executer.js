@@ -148,10 +148,12 @@ class BaseExecuter extends BaseWebDriverWrapper {
           main: mission.main,
           sub: (++mission.sub).toString(), // 次のやつ。数字で定義
         });
-        let nextDate = new Date();
-        nextDate.setMinutes(nextDate.getMinutes() + mission.valid_term.current_m_from);
-        nextMission.valid_time.from = nextDate;
-        await db(D.DB_COL.MISSION_QUE, "update", { _id: nextMission._id }, nextMission);
+        if (nextMission) {
+          let nextDate = new Date();
+          nextDate.setMinutes(nextDate.getMinutes() + mission.valid_term.current_m_from);
+          nextMission.valid_time.from = nextDate;
+          await db(D.DB_COL.MISSION_QUE, "update", { _id: nextMission._id }, nextMission);
+        }
       }
     }
   }
