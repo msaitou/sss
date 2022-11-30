@@ -15,6 +15,8 @@ const pstBase = require("./pst-base");
 const pilBase = require("./pil-base");
 const ameBase = require("./ame-base");
 const ecnBase = require("./ecn-base");
+const dmyBase = require("./dmy-base");
+const rakuBase = require("./raku-base");
 const config = require("config");
 const { Entry } = require("selenium-webdriver/lib/logging");
 const D = require("../com_cls/define").Def;
@@ -186,7 +188,7 @@ class PointWebCls {
         await PMil.main(missionList);
         break;
       case D.CODE.RAKU:
-        // opeCls = new pex(0, missionList, aca);
+        opeCls = new rakuBase.Raku(0, siteInfo, aca, missionList);
         break;
       case D.CODE.PEX:
         opeCls = new pexBase.Pex(0, siteInfo, aca, missionList);
@@ -235,6 +237,9 @@ class PointWebCls {
         break;
       case D.CODE.ECN:
         opeCls = new ecnBase.Ecn(0, siteInfo, aca, missionList);
+        break;
+      case D.CODE.DMY:
+        opeCls = new dmyBase.Dmy(0, siteInfo, aca, missionList);
         break;
     }
     if (opeCls) {

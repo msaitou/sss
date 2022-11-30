@@ -93,7 +93,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
       // diffを算出　マイナスの場合換金した扱いをする
       if (oldDoc[siteCode] && oldDoc[siteCode].p) {
         diff = p - oldDoc[siteCode].p;
-        diff = Math.round(diff * 100) / 100;  // 小数点の誤差をなくす
+        diff = Math.round(diff * 100) / 100; // 小数点の誤差をなくす
         if (diff < 0) {
           // TODO ちゃんと作るまではメール飛ばす
           exch;
@@ -121,8 +121,8 @@ class BaseExecuter extends BaseWebDriverWrapper {
         diffTotal += Number(nowDoc[code].diff);
       }
     }
-    nowDoc.total = Math.round(total * 100) / 100;  // 小数点の誤差をなくす
-    nowDoc.diff = Math.round(diffTotal * 100) / 100;  // 小数点の誤差をなくす
+    nowDoc.total = Math.round(total * 100) / 100; // 小数点の誤差をなくす
+    nowDoc.diff = Math.round(diffTotal * 100) / 100; // 小数点の誤差をなくす
     console.log("1");
     await db(D.DB_COL.POINT, "update", { _id: idStr }, nowDoc);
     console.log("2");
@@ -151,7 +151,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
         if (nextMission) {
           let nextDate = new Date();
           nextDate.setMinutes(nextDate.getMinutes() + mission.valid_term.current_m_from);
-          nextMission.valid_time.from = nextDate;
+          nextMission.valid_time = { from: nextDate };
           await db(D.DB_COL.MISSION_QUE, "update", { _id: nextMission._id }, nextMission);
         }
       }

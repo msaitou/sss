@@ -350,9 +350,13 @@ class PtoPointQ extends PtoMissonSupper {
         let ele = await this.getEle(sele[0], 2000);
         await this.clickEle(ele, 3000);
         if (await this.isExistEle(sele[1], true, 2000)) {
-          ele = await this.getEle(sele[1], 2000);
-          await this.clickEle(ele, 3000);
-
+          if (await this.isExistEle(sele[5], true, 2000)) {
+            // 前回動画見なかったら
+            await this.lookDouga(sele);
+          } else {
+            ele = await this.getEle(sele[1], 2000);
+            if (await ele.isEnabled()) await this.clickEle(ele, 3000);
+          }
           for (let i = 0; i < 3; i++) {
             if (await this.isExistEle(sele[2], true, 2000)) {
               let eles = await this.getEles(sele[2], 2000);
@@ -365,27 +369,10 @@ class PtoPointQ extends PtoMissonSupper {
                   ele = await this.getEle(sele[4], 2000);
                   await this.clickEle(ele, 3000); // 次の質問へ
                 } else if (await this.isExistEle(sele[5], true, 2000)) {
-                  ele = await this.getEle(sele[5], 2000);
-                  await this.clickEle(ele, 3000); // 動画再生
-                  let seleIframe = [
-                    "div[id*='google_ads_iframe']>iframe",
-                    "div.rewardResumebutton",
-                  ];
-                  // 動画を見ればもう3問
-                  if (await this.isExistEle(seleIframe[0], true, 3000)) {
-                    let iframe = await this.getEle(seleIframe[0], 1000);
-                    await driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
-                    if (await this.isExistEle(seleIframe[1], true, 3000)) {
-                      ele = await this.getEle(seleIframe[1], 2000);
-                      await this.clickEle(ele, 2000);
-                    }
-                    await driver.switchTo().defaultContent(); // もとのフレームに戻す
-                    await this.sleep(10000);
-                    i = -1; // リセット
-                  }
+                  i = await this.lookDouga(sele);
                 }
               }
-            }
+            } else break;
           }
           res = D.STATUS.DONE;
         }
@@ -396,6 +383,26 @@ class PtoPointQ extends PtoMissonSupper {
     logger.info(`${this.constructor.name} END`);
     return res;
   }
+  async lookDouga(sele) {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let ele = await this.getEle(sele[5], 2000);
+    await this.clickEle(ele, 3000); // 動画再生
+    let seleIframe = ["div[id*='google_ads_iframe']>iframe", "div.rewardResumebutton"];
+    // 動画を見ればもう3問
+    if (await this.isExistEle(seleIframe[0], true, 3000)) {
+      let iframe = await this.getEle(seleIframe[0], 1000);
+      await driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
+      if (await this.isExistEle(seleIframe[1], true, 3000)) {
+        ele = await this.getEle(seleIframe[1], 2000);
+        await this.clickEle(ele, 2000);
+      }
+      await driver.switchTo().defaultContent(); // もとのフレームに戻す
+      await this.sleep(10000);
+      return -1; // リセット
+    }
+    return 3;
+  }
+
 }
 exports.PtoCommon = PtoCommon;
 exports.Pto = PtoBase;

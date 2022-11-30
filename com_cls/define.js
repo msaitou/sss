@@ -11,6 +11,7 @@ exports.Def = {
     UQMO: "uqmo",
 
     RAKU: "raku",
+    DMY: "dmy",
     CIT: "cit",
     GMY: "gmy",
     PIC: "pic",
