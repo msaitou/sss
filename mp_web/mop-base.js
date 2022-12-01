@@ -108,7 +108,7 @@ class MopMissonSupper extends BaseWebDriverWrapper {
     if (await this.isExistEle(exSele[3], true, 2000)) {
       let ele = await this.getEle(exSele[3], 3000);
       let stampStr = await ele.getText();
-      let stampNum = stampStr.subStr(1);
+      let stampNum = stampStr.substr(1);
       if (Number(stampNum) < minExcNum) return;
     }
     await this.hideOverlay();
