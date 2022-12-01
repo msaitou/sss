@@ -63,6 +63,14 @@ exports.Def = {
     CM_DOTTI: "cm_dotti",
     CM_KENTEI: "cm_kentei",
     CM_POCHI: "cm_pochi",
+
+    CM_COLUM: "cm_colum",
+    CM_PHOTO: "cm_photo",
+    CM_SITE: "cm_site",
+    CM_ZUKAN: "cm_zukan",
+    CM_JAPAN: "cm_japan",
+    CM_COOK: "cm_cook",
+
     MOP_RESEARCH: "mop_research",
     GPO_ANQ: "gpo_anq",
   },

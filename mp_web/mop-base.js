@@ -98,12 +98,18 @@ class MopMissonSupper extends BaseWebDriverWrapper {
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
   }
-  async exchange() {
+  async exchange(minExcNum) {
     let exSele = [
       "a.stamp__btn[href*='exchange']",
       "input.exchange__btn",
       "a.stamp__btn.stamp__btn-return",
     ];
+    if (await this.isExistEle(exSele[3], true, 2000)) {
+      let ele = await this.getEle(exSele[3], 3000);
+      let stampStr = await ele.getText();
+      let stampNum = stampStr.subStr(1);
+      if (Number(stampNum) < minExcNum) return;
+    }
     await this.hideOverlay();
     if (await this.isExistEle(exSele[0], true, 2000)) {
       let ele = await this.getEle(exSele[0], 3000);
@@ -212,7 +218,6 @@ class MopClick extends MopMissonSupper {
   }
 }
 const { PartsQuizDaily } = require("./parts/parts-quiz-daily.js");
-
 // デイリークイズ
 class MopQuizDaily extends MopMissonSupper {
   firstUrl = "https://pc.moppy.jp/";
@@ -262,7 +267,7 @@ class MopEitango extends MopMissonSupper {
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
-        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange();
+        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(6);
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           await this.clickEle(ele, 2000);
@@ -325,7 +330,6 @@ class MopNanyoubi extends MopMissonSupper {
       await this.openUrl(this.targetUrl); // 操作ページ表示
       let sele = [
         "a[data-ga-label='この日何曜日？']",
-
         "input.ui-button-start",
         "label.ui-label-radio",
         "input.ui-button-answer",
@@ -339,7 +343,7 @@ class MopNanyoubi extends MopMissonSupper {
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
-        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange();
+        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           await this.clickEle(ele, 2000);
@@ -419,12 +423,11 @@ class MopAnzan extends MopMissonSupper {
         "div.ui-item-header>h2.ui-item-title",
       ];
       if (await this.isExistEle(sele[0], true, 2000)) {
-        await this.exchange();
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
-        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange();
+        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           await this.sleep(2000);

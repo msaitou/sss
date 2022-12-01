@@ -38,6 +38,33 @@ class PartsCmManage extends BaseExecuter {
         case D.MISSION.CM_POCHI:
           execCls = new CmPochi(this.para, this.startUrl);
           break;
+        case D.MISSION.CM_COLUM:
+          execCls = new CmColum(this.para, this.startUrl);
+          break;
+        case D.MISSION.CM_PHOTO:
+          execCls = new CmPhoto(this.para, this.startUrl);
+          break;
+        case D.MISSION.CM_SITE:
+          execCls = new CmSite(this.para, this.startUrl);
+          break;
+        case D.MISSION.CM_ZUKAN:
+          execCls = new CmZukan(this.para, this.startUrl);
+          break;
+        case D.MISSION.CM_JAPAN:
+          execCls = new CmJapan(this.para, this.startUrl);
+          break;
+        case D.MISSION.CM_COOK:
+          execCls = new CmCook(this.para, this.startUrl);
+          break;
+        // case "偉人":
+        //   res = await AnkPark.doIjin();
+        //   break;
+        // case "漫画":
+        //   res = await AnkPark.doManga();
+        //   break;
+        // case "ひらめき":
+        //   res = await AnkPark.doHirameki();
+        //   break;
       }
       if (execCls) {
         this.logger.info(`${mission.main} 開始--`);
@@ -82,7 +109,7 @@ class CmSuper extends BaseWebDriverWrapper {
   para;
   startUrl;
   constructor(para, startUrl) {
-    super(para);
+    super(para.isMob);
     this.para = para;
     this.startUrl = startUrl;
     this.setDriver(this.para.driver);
@@ -243,7 +270,6 @@ class CmKentei extends CmSuper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START`);
-
     let res = D.STATUS.FAIL;
     try {
       // 今のページが　cm/game/ページならこのページから始める
@@ -266,11 +292,11 @@ class CmKentei extends CmSuper {
         try {
           if (await this.isExistEle(sele[1], true, 3000)) {
             ele = await this.getEle(sele[1], 3000);
-            await this.clickEle(ele, 2000);
+            await this.clickEle(ele, 2000, 0, this.isMob);
             await this.ignoreKoukoku();
             if (await this.isExistEle(sele[1], true, 3000)) {
               ele = await this.getEle(sele[1], 3000);
-              await this.clickEle(ele, 2000);
+              await this.clickEle(ele, 2000, 0, this.isMob);
               // 12問
               for (let i = 0; i < 12; i++) {
                 await this.ignoreKoukoku();
@@ -299,7 +325,7 @@ class CmKentei extends CmSuper {
                       let eles3 = await this.getEles(sele2[2], 3000);
                       let nakedText = "";
                       for (let ele of eles3) {
-                        nakedText += await ele.getText()+ "\n";
+                        nakedText += (await ele.getText()) + "\n";
                       }
                       // let nakedText = await ele.getText();
                       answerList = nakedText.split("\n").filter((l) => l.indexOf("A.") === 0);
@@ -617,5 +643,296 @@ class Uranai extends CmSuper {
     return res;
   }
 }
+const { PartsAnkPark } = require("./parts-ank-park.js");
+// ↓モバイルでしか利用できない系
+// コラム
+class CmColum extends CmSuper {
+  constructor(para, startUrl) {
+    super(para, startUrl);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // 1日1回（0時～）
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    logger.info(`${this.constructor.name} START`);
+    try {
+      // 今のページが　cm/game/ページならこのページから始める
+      await this.openUrl(this.startUrl); // 操作ページ表示
+      await this.ignoreKoukoku();
+      let sele = [".o-content__boxlist img[src*='colum']", "div>a"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 3000);
+        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
+        let AnkPark = new PartsAnkPark(this.para);
+        try {
+          if (await this.isExistEle(sele[1], true, 3000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
+                eles = await this.getEles(sele[1], 3000);
+              await this.clickEle(eles[eles.length - 1], 2000);
+              res = await AnkPark.doMobColum();
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            }
+          }
+        } catch (e) {
+          logger.warn(e);
+        } finally {
+          await driver.close(); // このタブを閉じて
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+        }
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    logger.info(`${this.constructor.name} END`);
+    return res;
+  }
+}
+// 写真
+class CmPhoto extends CmSuper {
+  constructor(para, startUrl) {
+    super(para, startUrl);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // 1日1回（0時～）
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    logger.info(`${this.constructor.name} START`);
+    try {
+      // 今のページが　cm/game/ページならこのページから始める
+      await this.openUrl(this.startUrl); // 操作ページ表示
+      await this.ignoreKoukoku();
+      let sele = [".o-content__boxlist img[src*='colum']", "div>a"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 3000);
+        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
+        let AnkPark = new PartsAnkPark(this.para);
+        try {
+          if (await this.isExistEle(sele[1], true, 3000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
+                eles = await this.getEles(sele[1], 3000);
+              await this.clickEle(eles[eles.length - 1], 2000);
+              res = await AnkPark.doMobColum();
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            }
+          }
+        } catch (e) {
+          logger.warn(e);
+        } finally {
+          await driver.close(); // このタブを閉じて
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+        }
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    logger.info(`${this.constructor.name} END`);
+    return res;
+  }
+}
+// 観察
+class CmSite extends CmSuper {
+  constructor(para, startUrl) {
+    super(para, startUrl);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // 1日1回（0時～）
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    logger.info(`${this.constructor.name} START`);
+    try {
+      // 今のページが　cm/game/ページならこのページから始める
+      await this.openUrl(this.startUrl); // 操作ページ表示
+      await this.ignoreKoukoku();
+      let sele = [".o-content__boxlist img[src*='colum']", "div>a"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 3000);
+        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
+        let AnkPark = new PartsAnkPark(this.para);
+        try {
+          if (await this.isExistEle(sele[1], true, 3000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
+                eles = await this.getEles(sele[1], 3000);
+              await this.clickEle(eles[eles.length - 1], 2000);
+              res = await AnkPark.doMobColum();
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            }
+          }
+        } catch (e) {
+          logger.warn(e);
+        } finally {
+          await driver.close(); // このタブを閉じて
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+        }
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    logger.info(`${this.constructor.name} END`);
+    return res;
+  }
+}
+// 図鑑
+class CmZukan extends CmSuper {
+  constructor(para, startUrl) {
+    super(para, startUrl);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // 1日1回（0時～）
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    logger.info(`${this.constructor.name} START`);
+    try {
+      // 今のページが　cm/game/ページならこのページから始める
+      await this.openUrl(this.startUrl); // 操作ページ表示
+      await this.ignoreKoukoku();
+      let sele = [".o-content__boxlist img[src*='colum']", "div>a"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 3000);
+        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
+        let AnkPark = new PartsAnkPark(this.para);
+        try {
+          if (await this.isExistEle(sele[1], true, 3000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
+                eles = await this.getEles(sele[1], 3000);
+              await this.clickEle(eles[eles.length - 1], 2000);
+              res = await AnkPark.doMobColum();
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            }
+          }
+        } catch (e) {
+          logger.warn(e);
+        } finally {
+          await driver.close(); // このタブを閉じて
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+        }
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    logger.info(`${this.constructor.name} END`);
+    return res;
+  }
+}
+// 日本百景
+class CmJapan extends CmSuper {
+  constructor(para, startUrl) {
+    super(para, startUrl);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // 1日1回（0時～）
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    logger.info(`${this.constructor.name} START`);
+    try {
+      // 今のページが　cm/game/ページならこのページから始める
+      await this.openUrl(this.startUrl); // 操作ページ表示
+      await this.ignoreKoukoku();
+      let sele = [".o-content__boxlist img[src*='colum']", "div>a"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 3000);
+        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
+        let AnkPark = new PartsAnkPark(this.para);
+        try {
+          if (await this.isExistEle(sele[1], true, 3000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
+                eles = await this.getEles(sele[1], 3000);
+              await this.clickEle(eles[eles.length - 1], 2000);
+              res = await AnkPark.doMobColum();
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            }
+          }
+        } catch (e) {
+          logger.warn(e);
+        } finally {
+          await driver.close(); // このタブを閉じて
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+        }
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    logger.info(`${this.constructor.name} END`);
+    return res;
+  }
+}
+// 料理
+class CmCook extends CmSuper {
+  constructor(para, startUrl) {
+    super(para, startUrl);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // 1日1回（0時～）
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    logger.info(`${this.constructor.name} START`);
+    try {
+      // 今のページが　cm/game/ページならこのページから始める
+      await this.openUrl(this.startUrl); // 操作ページ表示
+      await this.ignoreKoukoku();
+      let sele = [".o-content__boxlist img[src*='colum']", "div>a"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 3000);
+        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
+        let AnkPark = new PartsAnkPark(this.para);
+        try {
+          if (await this.isExistEle(sele[1], true, 3000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
+                eles = await this.getEles(sele[1], 3000);
+              await this.clickEle(eles[eles.length - 1], 2000);
+              res = await AnkPark.doMobColum();
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            }
+          }
+        } catch (e) {
+          logger.warn(e);
+        } finally {
+          await driver.close(); // このタブを閉じて
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+        }
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    logger.info(`${this.constructor.name} END`);
+    return res;
+  }
+}
+
 exports.PartsCmManage = PartsCmManage;
 exports.Uranai = Uranai;

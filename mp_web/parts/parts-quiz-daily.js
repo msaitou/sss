@@ -31,7 +31,7 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
-        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange();
+        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           // await this.clickEle(ele, 2000);
@@ -89,13 +89,20 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
   }
-  async exchange() {
+  async exchange(minExcNum) {
     let exSele = [
       "a.stamp__btn[href*='exchange']",
       "input.exchange__btn",
       "a.stamp__btn.stamp__btn-return",
+      "p.stamp__num",
     ];
     await this.hideOverlay();
+    if (await this.isExistEle(exSele[3], true, 2000)) {
+      let ele = await this.getEle(exSele[3], 3000);
+      let stampStr = await ele.getText();
+      let stampNum = stampStr.subStr(1);
+      if (Number(stampNum) < minExcNum) return;
+    }
     if (await this.isExistEle(exSele[0], true, 2000)) {
       let ele = await this.getEle(exSele[0], 3000);
       await this.clickEle(ele, 2000);
