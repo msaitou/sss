@@ -605,6 +605,202 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     }
     return res;
   }
+  async doMobPhoto() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "img[alt='進む']", //　9 -> 0
+        "input[alt='進む']", //　10 -> 1
+        "#que", // 2
+        "#enqueteUl label", // 3
+        "input[alt='回答する']", // 4
+        "input[alt='終了する']",
+        "#endlink", // 6
+        "input[src*='next']",
+
+      ];
+      if (await this.isExistEle(sele[0], true, 10000)) {
+        let ele = await this.getEle(sele[0], 10000);
+        await this.clickEle(ele, 2000);
+      } else if (await this.isExistEle(sele[1], true, 5000)) {
+        let ele = await this.getEle(sele[1], 5000);
+        await this.clickEle(ele, 2000);
+      }
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let ele = await this.getEle(sele[1], 3000);
+        await this.clickEle(ele, 3000);
+        for (let i = 0; i < 6; i++) {
+          if (await this.isExistEle(sele[7], true, 2000)) {
+            let ele = await this.getEle(sele[7], 3000);
+            await this.clickEle(ele, 3000);
+          }
+        }
+        try {
+          await this.commonMobAnk(sele, "doPhoto");
+          res = D.STATUS.DONE;
+        } catch (e) {
+          logger.warn(e);
+        }
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+  async doMobSite() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "img[alt='進む']", //　9 -> 0
+        "input[alt='進む']", //　10 -> 1
+        "#enqueteTitle>span", // 2
+        "#enqueteUl label", // 3
+        "input.enquete_nextbt", // 4
+        "input[alt='終了']",
+        "#endlink", // 6
+        "input[src*='next']",
+
+      ];
+      if (await this.isExistEle(sele[0], true, 10000)) {
+        let ele = await this.getEle(sele[0], 10000);
+        await this.clickEle(ele, 2000);
+      } else if (await this.isExistEle(sele[1], true, 5000)) {
+        let ele = await this.getEle(sele[1], 5000);
+        await this.clickEle(ele, 2000);
+      }
+      for (let i = 0; i < 6; i++) {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let ele = await this.getEle(sele[1], 3000);
+          await this.clickEle(ele, 3000);
+        }
+      }
+      try {
+        await this.commonMobAnk(sele, "doSite");
+        res = D.STATUS.DONE;
+      } catch (e) {
+        logger.warn(e);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+  async doMobZukan() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "img[alt='進む']", //　9 -> 0
+        "input[alt='進む']", //　10 -> 1
+        "#enqueteTitle>span", // 2
+        "#enqueteUl label", // 3
+        "input.enquete_nextbt", // 4
+        "input[alt='終了']",
+        "input[alt='進む']", // 6
+        "input[src*='next']",
+      ];
+      if (await this.isExistEle(sele[0], true, 10000)) {
+        let ele = await this.getEle(sele[0], 10000);
+        await this.clickEle(ele, 2000);
+      } else if (await this.isExistEle(sele[1], true, 5000)) {
+        let ele = await this.getEle(sele[1], 5000);
+        await this.clickEle(ele, 2000);
+      }
+      for (let i = 0; i < 6; i++) {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let ele = await this.getEle(sele[1], 3000);
+          await this.clickEle(ele, 3000);
+        }
+      }
+      try {
+        await this.commonMobAnk(sele, "doZukan");
+        res = D.STATUS.DONE;
+      } catch (e) {
+        logger.warn(e);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+  async doMobJapan() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "img[alt='進む']", //　9 -> 0
+        "input[alt='進む']", //　10 -> 1
+        "#enqueteTitle>span", // 2
+        "#enqueteUl label", // 3
+        "input.enquete_nextbt", // 4
+        "input[alt='進む']",
+        "input[alt='進む']", // 6
+        "input[src*='next']",
+      ];
+      if (await this.isExistEle(sele[0], true, 10000)) {
+        let ele = await this.getEle(sele[0], 10000);
+        await this.clickEle(ele, 2000);
+      } else if (await this.isExistEle(sele[1], true, 5000)) {
+        let ele = await this.getEle(sele[1], 5000);
+        await this.clickEle(ele, 2000);
+      }
+      for (let i = 0; i < 6; i++) {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let ele = await this.getEle(sele[1], 3000);
+          await this.clickEle(ele, 3000);
+        }
+      }
+      try {
+        await this.commonMobAnk(sele, "doJapan");
+        res = D.STATUS.DONE;
+      } catch (e) {
+        logger.warn(e);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+  async doMobCook() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "img[alt='進む']", //　9 -> 0
+        "input[alt='進む']", //　10 -> 1
+        "#enqueteTitle>span", // 2
+        "#enqueteUl label", // 3
+        "input.enquete_nextbt", // 4
+        "input[alt='進む']",
+        "input[alt='進む']", // 6
+        "input[src*='next']",
+      ];
+      if (await this.isExistEle(sele[0], true, 10000)) {
+        let ele = await this.getEle(sele[0], 10000);
+        await this.clickEle(ele, 2000);
+      } else if (await this.isExistEle(sele[1], true, 5000)) {
+        let ele = await this.getEle(sele[1], 5000);
+        await this.clickEle(ele, 2000);
+      }
+      for (let i = 0; i < 6; i++) {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let ele = await this.getEle(sele[1], 3000);
+          await this.clickEle(ele, 3000);
+        }
+      }
+      try {
+        await this.commonMobAnk(sele, "doCook");
+        res = D.STATUS.DONE;
+      } catch (e) {
+        logger.warn(e);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
   async commonMobAnk(sele, ref) {
     let { retryCnt, account, logger, driver, siteInfo } = this.para,
       roopLimit = 8;
@@ -620,7 +816,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     //     "#endlink",
     //     "img[src*='again_bt.png']",
     //   ];
-    if (["doColum"].indexOf(ref) > -1) roopLimit = 6;
+    if (["doColum", "doPhoto"].indexOf(ref) > -1) roopLimit = 6;
 
     // ここから共通のアンケートポイ　全8問(columは6)
     for (let i = 0; i < roopLimit; i++) {
@@ -642,7 +838,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
             break;
           case "Q4": // Q4. あなたの職業をお知らせください。（ひとつだけ）
             choiceNum = "5";
-            if (["doCook", "doManga", "doPhoto"].indexOf(ref) > -1) choiceNum = -1;
+            if (["doPhoto", "doColum"].indexOf(ref) > -1) choiceNum = -1;
             break;
           // case "Q": // Q4. あなたの職業をお知らせください。（ひとつだけ）
           //   choiceNum = "5";
@@ -684,12 +880,12 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     //     }
     //   }
     // } else {
-    for (let i = 0; i < 2; i++) {
-      if (await this.isExistEle(sele[0], true, 4000)) {
-        let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000); // 2回目　sugでは一覧に戻る
-      }
-    }
+    // for (let i = 0; i < 2; i++) {
+    //   if (await this.isExistEle(sele[0], true, 4000)) {
+    //     let ele = await this.getEle(sele[0], 3000);
+    //     await this.clickEle(ele, 2000); // 2回目　sugでは一覧に戻る
+    //   }
+    // }
     if (await this.isExistEle(sele[6], true, 4000)) {
       let ele = await this.getEle(sele[6], 3000);
       await this.clickEle(ele, 2000);

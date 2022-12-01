@@ -660,7 +660,7 @@ class CmColum extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
-      let sele = [".o-content__boxlist img[src*='colum']", "div>a"];
+      let sele = [".o-content__boxlist img[src*='colum']", "div>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
@@ -708,7 +708,7 @@ class CmPhoto extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
-      let sele = [".o-content__boxlist img[src*='colum']", "div>a"];
+      let sele = [".o-content__boxlist img[src*='photo']", "div>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
@@ -723,7 +723,7 @@ class CmPhoto extends CmSuper {
               if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
                 eles = await this.getEles(sele[1], 3000);
               await this.clickEle(eles[eles.length - 1], 2000);
-              res = await AnkPark.doMobColum();
+              res = await AnkPark.doMobPhoto();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
           }
@@ -756,7 +756,7 @@ class CmSite extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
-      let sele = [".o-content__boxlist img[src*='colum']", "div>a"];
+      let sele = [".o-content__boxlist img[src*='observation']", "div>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
@@ -771,7 +771,7 @@ class CmSite extends CmSuper {
               if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
                 eles = await this.getEles(sele[1], 3000);
               await this.clickEle(eles[eles.length - 1], 2000);
-              res = await AnkPark.doMobColum();
+              res = await AnkPark.doMobSite();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
           }
@@ -804,7 +804,7 @@ class CmZukan extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
-      let sele = [".o-content__boxlist img[src*='colum']", "div>a"];
+      let sele = [".o-content__boxlist img[src*='zoo']", "div>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
@@ -819,7 +819,7 @@ class CmZukan extends CmSuper {
               if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
                 eles = await this.getEles(sele[1], 3000);
               await this.clickEle(eles[eles.length - 1], 2000);
-              res = await AnkPark.doMobColum();
+              res = await AnkPark.doMobZukan();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
           }
@@ -852,7 +852,7 @@ class CmJapan extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
-      let sele = [".o-content__boxlist img[src*='colum']", "div>a"];
+      let sele = [".o-content__boxlist img[src*='japan']", "div>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
@@ -867,7 +867,7 @@ class CmJapan extends CmSuper {
               if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
                 eles = await this.getEles(sele[1], 3000);
               await this.clickEle(eles[eles.length - 1], 2000);
-              res = await AnkPark.doMobColum();
+              res = await AnkPark.doMobJapan();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
           }
@@ -900,7 +900,7 @@ class CmCook extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
-      let sele = [".o-content__boxlist img[src*='colum']", "div>a"];
+      let sele = [".o-content__boxlist img[src*='food']", "div>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
@@ -915,7 +915,7 @@ class CmCook extends CmSuper {
               if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
                 eles = await this.getEles(sele[1], 3000);
               await this.clickEle(eles[eles.length - 1], 2000);
-              res = await AnkPark.doMobColum();
+              res = await AnkPark.doMobCook();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
           }
