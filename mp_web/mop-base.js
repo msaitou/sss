@@ -258,9 +258,9 @@ class MopEitango extends MopMissonSupper {
         "a[data-ga-label='英単語TEST']",
         "input.ui-button-start",
         "label.ui-label-radio",
-        "input.ui-button-answer",
+        "input.ui-button-answer", // 3
         "input.ui-button-result",
-        "a.ui-button-close",
+        "a.ui-button-close",  // 5
         "input.ui-button-end",
       ];
       if (await this.isExistEle(sele[0], true, 2000)) {
@@ -270,8 +270,8 @@ class MopEitango extends MopMissonSupper {
         await this.changeWindow(wid); // 別タブに移動する
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(6);
         if (await this.isExistEle(sele[1], true, 3000)) {
-          ele = await this.getEle(sele[1], 3000, 0, this.isMob);
-          await this.clickEle(ele, 2000);
+          ele = await this.getEle(sele[1], 3000);
+          await this.clickEle(ele, 2000, 0, this.isMob);
           // 8問あり
           for (let i = 0; i < 8; i++) {
             let eles;
@@ -283,12 +283,12 @@ class MopEitango extends MopMissonSupper {
               await this.clickEle(eles[choiceNum], 2000);
               if (await this.isExistEle(sele[3], true, 3000)) {
                 ele = await this.getEle(sele[3], 3000);
-                await this.clickEle(ele, 2000); // 回答する
+                await this.clickEle(ele, 2000, 0, this.isMob); // 回答する
                 await this.hideOverlay(); // オーバレイあり。消す
                 // 回答結果
                 if (await this.isExistEle(sele[4], true, 3000)) {
                   ele = await this.getEle(sele[4], 3000);
-                  await this.clickEle(ele, 2000); // 次のページ
+                  await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
                   await this.hideOverlay(); // オーバレイあり。消す
                 }
               }
@@ -299,7 +299,7 @@ class MopEitango extends MopMissonSupper {
           await this.hideOverlay(); // オーバレイあり。消す
           if (await this.isExistEle(sele[6], true, 2000)) {
             ele = await this.getEle(sele[6], 3000);
-            await this.clickEle(ele, 2000); // 次のページ
+            await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
             await driver.close(); // このタブを閉じて
             await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
             res = D.STATUS.DONE;
@@ -346,8 +346,8 @@ class MopNanyoubi extends MopMissonSupper {
         await this.changeWindow(wid); // 別タブに移動する
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
         if (await this.isExistEle(sele[1], true, 3000)) {
-          ele = await this.getEle(sele[1], 3000, 0, this.isMob);
-          await this.clickEle(ele, 2000);
+          ele = await this.getEle(sele[1], 3000);
+          await this.clickEle(ele, 2000, 0, this.isMob);
           // 8問あり
           for (let i = 0; i < 8; i++) {
             let eles;
@@ -366,12 +366,12 @@ class MopNanyoubi extends MopMissonSupper {
                 await this.clickEle(eles[selectYoubi], 2000);
                 if (await this.isExistEle(sele[3], true, 3000)) {
                   ele = await this.getEle(sele[3], 3000);
-                  await this.clickEle(ele, 2000); // 回答する
+                  await this.clickEle(ele, 2000, 0, this.isMob); // 回答する
                   await this.hideOverlay(); // オーバレイあり。消す
                   // 回答結果
                   if (await this.isExistEle(sele[4], true, 3000)) {
                     ele = await this.getEle(sele[4], 3000);
-                    await this.clickEle(ele, 2000); // 次のページ
+                    await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
                     await this.hideOverlay(); // オーバレイあり。消す
                   }
                 }
@@ -383,7 +383,7 @@ class MopNanyoubi extends MopMissonSupper {
           await this.hideOverlay(); // オーバレイあり。消す
           if (await this.isExistEle(sele[6], true, 2000)) {
             ele = await this.getEle(sele[6], 3000);
-            await this.clickEle(ele, 2000); // 次のページ
+            await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
             await driver.close(); // このタブを閉じて
             await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
             res = D.STATUS.DONE;
@@ -430,9 +430,9 @@ class MopAnzan extends MopMissonSupper {
         await this.changeWindow(wid); // 別タブに移動する
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
         if (await this.isExistEle(sele[1], true, 3000)) {
-          ele = await this.getEle(sele[1], 3000, 0, this.isMob);
+          ele = await this.getEle(sele[1], 3000);
           await this.sleep(2000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 2000, 0, this.isMob);
           // 10問あり
           for (let i = 0; i < 10; i++) {
             let eles;
@@ -458,12 +458,12 @@ class MopAnzan extends MopMissonSupper {
                 await this.clickEle(eles[selectIndex], 2000);
                 if (await this.isExistEle(sele[3], true, 3000)) {
                   ele = await this.getEle(sele[3], 3000);
-                  await this.clickEle(ele, 2000); // 回答する
+                  await this.clickEle(ele, 2000, 0, this.isMob); // 回答する
                   await this.hideOverlay(); // オーバレイあり。消す
                   // 回答結果
                   if (await this.isExistEle(sele[4], true, 3000)) {
                     ele = await this.getEle(sele[4], 3000);
-                    await this.clickEle(ele, 2000); // 次のページ
+                    await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
                     await this.hideOverlay(); // オーバレイあり。消す
                   }
                 }
@@ -475,7 +475,7 @@ class MopAnzan extends MopMissonSupper {
           await this.hideOverlay(); // オーバレイあり。消す
           if (await this.isExistEle(sele[6], true, 2000)) {
             ele = await this.getEle(sele[6], 3000);
-            await this.clickEle(ele, 2000); // 次のページ
+            await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
             await driver.close(); // このタブを閉じて
             await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
             res = D.STATUS.DONE;
