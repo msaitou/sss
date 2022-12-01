@@ -100,7 +100,7 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
     if (await this.isExistEle(exSele[3], true, 2000)) {
       let ele = await this.getEle(exSele[3], 3000);
       let stampStr = await ele.getText();
-      let stampNum = stampstr.subStr(1);
+      let stampNum = stampStr.substr(1);
       if (Number(stampNum) < minExcNum) return;
     }
     if (await this.isExistEle(exSele[0], true, 2000)) {

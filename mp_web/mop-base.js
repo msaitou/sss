@@ -1,7 +1,7 @@
 const { BaseExecuter } = require("./base-executer.js");
 const { BaseWebDriverWrapper } = require("../base-webdriver-wrapper");
 const { libUtil } = require("../lib/util.js");
-const { Builder, By, until, Select,Key } = require("selenium-webdriver");
+const { Builder, By, until, Select, Key } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
 const { PartsCmManage } = require("./parts/parts-cm-manage.js");
@@ -270,7 +270,7 @@ class MopEitango extends MopMissonSupper {
         await this.changeWindow(wid); // 別タブに移動する
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(6);
         if (await this.isExistEle(sele[1], true, 3000)) {
-          ele = await this.getEle(sele[1], 3000);
+          ele = await this.getEle(sele[1], 3000, 0, this.isMob);
           await this.clickEle(ele, 2000);
           // 8問あり
           for (let i = 0; i < 8; i++) {
@@ -346,7 +346,7 @@ class MopNanyoubi extends MopMissonSupper {
         await this.changeWindow(wid); // 別タブに移動する
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
         if (await this.isExistEle(sele[1], true, 3000)) {
-          ele = await this.getEle(sele[1], 3000);
+          ele = await this.getEle(sele[1], 3000, 0, this.isMob);
           await this.clickEle(ele, 2000);
           // 8問あり
           for (let i = 0; i < 8; i++) {
@@ -430,7 +430,7 @@ class MopAnzan extends MopMissonSupper {
         await this.changeWindow(wid); // 別タブに移動する
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
         if (await this.isExistEle(sele[1], true, 3000)) {
-          ele = await this.getEle(sele[1], 3000);
+          ele = await this.getEle(sele[1], 3000, 0, this.isMob);
           await this.sleep(2000);
           await this.clickEle(ele, 2000);
           // 10問あり
