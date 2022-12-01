@@ -103,6 +103,7 @@ class MopMissonSupper extends BaseWebDriverWrapper {
       "a.stamp__btn[href*='exchange']",
       "input.exchange__btn",
       "a.stamp__btn.stamp__btn-return",
+      "p.stamp__num",
     ];
     if (await this.isExistEle(exSele[3], true, 2000)) {
       let ele = await this.getEle(exSele[3], 3000);
