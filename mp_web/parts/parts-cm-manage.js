@@ -172,7 +172,7 @@ class CmDotti extends CmSuper {
                 eles = await this.getEles(sele[1], 3000);
               }
               await this.clickEle(eles[j], 2000); // ゆるめ、かため、究極のいずれかから進む
-              currentUrl = await this.ignoreKoukoku(); // 広告が画面いっぱいに入る時がある
+              let currentUrl = await this.ignoreKoukoku(); // 広告が画面いっぱいに入る時がある
               if (currentUrl.substr(-2) == "/n") {
                 // 獲得してないシールがある場合
                 if (await this.isExistEle(sele[1], true, 3000)) {
