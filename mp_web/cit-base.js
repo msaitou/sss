@@ -206,9 +206,11 @@ class CitCm extends CitMissonSupper {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       // await this.clickEle(eles[0], 2000);
-      // let rect = await eles[0].getRect();
-      // await this.driver.executeScript(`window.scrollTo(0, ${rect.y});`);
       await this.sleep(1000);
+      if (this.isMob) {
+        let rect = await eles[0].getRect();
+        await this.driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+      }
       await eles[0].click();
       await this.sleep(1000);
 
