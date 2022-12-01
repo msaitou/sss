@@ -8,8 +8,8 @@ const mailOpe = require("../mp_mil/mail_operate");
 class EcnBase extends BaseExecuter {
   code = D.CODE.ECN;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList) {
-    super(retryCnt, siteInfo, aca);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
+    super(retryCnt, siteInfo, aca, isMob);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
@@ -62,7 +62,7 @@ class EcnMissonSupper extends BaseWebDriverWrapper {
   code = D.CODE.ECN;
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);

@@ -8,8 +8,8 @@ const mailOpe = require("../mp_mil/mail_operate");
 class SugBase extends BaseExecuter {
   code = D.CODE.SUG;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList) {
-    super(retryCnt, siteInfo, aca);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
+    super(retryCnt, siteInfo, aca, isMob);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
@@ -60,7 +60,11 @@ class SugBase extends BaseExecuter {
     let startPage = "https://www.netmile.co.jp/sugutama/";
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
-    let sele = ["div.mile.add_mile.js-user_point"];
+    let sele = ["div.mile.add_mile.js-user_point" ,".js-search-switch button"];
+    if (this.isMob && await this.isExistEle(sele[1], true, 2000)) {
+      let ele = await this.getEle(sele[1], 2000);
+      await this.clickEle(ele, 2000);
+    }
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
@@ -73,7 +77,7 @@ class SugMissonSupper extends BaseWebDriverWrapper {
   code = D.CODE.SUG;
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);
@@ -149,7 +153,6 @@ class SugCommon extends SugMissonSupper {
     return true;
   }
 }
-
 const { PartsCmManage } = require("./parts/parts-cm-manage.js");
 // CM系のクッション
 class SugCm extends SugMissonSupper {
@@ -165,19 +168,24 @@ class SugCm extends SugMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["img[src*='d854486f003a29cac6a7dae61f8c40ed.png']"];
+    if (this.isMob) sele[0] = "img[src*='5e1e89c03734085b7630a59db1c51e01.png']";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
-      let wid = await driver.getWindowHandle();
-      await this.changeWindow(wid); // 別タブに移動する
+      if (!this.isMob) {
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
+      }
       let cmManage = new PartsCmManage(
         this.para,
         this.cmMissionList,
         "https://sugutama.cmnw.jp/game/"
       );
       await cmManage.do();
-      await driver.close(); // このタブを閉じて
-      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      if (!this.isMob) {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
     }
   }
 }

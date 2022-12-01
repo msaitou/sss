@@ -8,8 +8,8 @@ const mailOpe = require("../mp_mil/mail_operate");
 class LfmBase extends BaseExecuter {
   code = D.CODE.LFM;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList) {
-    super(retryCnt, siteInfo, aca);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
+    super(retryCnt, siteInfo, aca, isMob);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
@@ -49,6 +49,7 @@ class LfmBase extends BaseExecuter {
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     let sele = ["div.f-number>span.head__mymenu__icon"];
+    if (this.isMob) sele[0] = "#js-mypointPoint";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
@@ -61,7 +62,7 @@ class LfmMissonSupper extends BaseWebDriverWrapper {
   code = D.CODE.LFM;
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);
@@ -87,7 +88,7 @@ class LfmCommon extends LfmMissonSupper {
 
     await driver.get(siteInfo.entry_url); // エントリーページ表示
     let seleIsLoggedIn = "div.f-number>span.head__mymenu__icon";
-
+    if (this.isMob) seleIsLoggedIn = "#js-mypointPoint";
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
@@ -137,7 +138,6 @@ class LfmCommon extends LfmMissonSupper {
     return true;
   }
 }
-
 const { PartsCmManage } = require("./parts/parts-cm-manage.js");
 // CM系のクッション
 class LfmCm extends LfmMissonSupper {

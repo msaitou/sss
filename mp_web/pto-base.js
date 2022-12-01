@@ -8,8 +8,8 @@ const mailOpe = require("../mp_mil/mail_operate");
 class PtoBase extends BaseExecuter {
   code = D.CODE.PTO;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList) {
-    super(retryCnt, siteInfo, aca);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
+    super(retryCnt, siteInfo, aca, isMob);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
@@ -20,9 +20,7 @@ class PtoBase extends BaseExecuter {
       // cm系のミッションはまとめてやるため、ここでは1つ扱いのダミーミッションにする
       let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
       this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
-      if (cmMissionList.length) {
-        this.missionList.push({ main: D.MISSION.CM });
-      }
+      if (cmMissionList.length) this.missionList.push({ main: D.MISSION.CM });
       for (let i in this.missionList) {
         let mission = this.missionList[i];
         let execCls = null;
@@ -55,6 +53,7 @@ class PtoBase extends BaseExecuter {
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     let sele = ["div.c-header-user-point>p.c-point-large-label"];
+    if (this.isMob) sele[0] = "div.c-header-status__l-num>a.c-point-large-label";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
@@ -67,7 +66,7 @@ class PtoMissonSupper extends BaseWebDriverWrapper {
   code = D.CODE.PTO;
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);
@@ -93,7 +92,7 @@ class PtoCommon extends PtoMissonSupper {
 
     await driver.get(siteInfo.entry_url); // エントリーページ表示
     let seleIsLoggedIn = "div.c-header-user-point>p.c-point-large-label";
-
+    if (this.isMob) seleIsLoggedIn = "div.c-header-status__l-num>a.c-point-large-label";
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
@@ -103,7 +102,8 @@ class PtoCommon extends PtoMissonSupper {
       if (await this.isExistEle(seleLoginLink, true, 2000)) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
-        await this.clickEle(ele, 2000); // ログイン入力画面へ遷移 なぜかログインボタン押しただけでおｋ
+        let mobH = this.isMob ? 100 : 0;
+        await this.clickEle(ele, 2000, mobH); // ログイン入力画面へ遷移 なぜかログインボタン押しただけでおｋ
         // let seleInput = {
         //   id: "input[name='rwsid']",
         //   pass: "input[name='pass']",
@@ -143,7 +143,6 @@ class PtoCommon extends PtoMissonSupper {
     return true;
   }
 }
-
 const { PartsCmManage } = require("./parts/parts-cm-manage.js");
 // CM系のクッション
 class PtoCm extends PtoMissonSupper {
@@ -159,9 +158,15 @@ class PtoCm extends PtoMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["img[src*='cm-jk.png']"];
+    let mobH = this.isMob ? 50 : 0;
+    if (this.isMob) {
+      sele[0] = "img[src*='cm-jk.png']";
+      this.sleep(3000);
+      await driver.executeScript("window.scrollTo(0, 3500);");
+    }
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
-      await this.clickEle(eles[0], 2000);
+      await this.clickEle(eles[0], 2000, mobH);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       let cmManage = new PartsCmManage(
@@ -186,7 +191,6 @@ class PtoClick extends PtoMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START`);
-
     let sele = [
       "[data-area*='top-click-corner'] button",
       "#link-coin-chance button",
@@ -341,8 +345,6 @@ class PtoPointQ extends PtoMissonSupper {
       "#js-pointq-submit",
       "a[href='/pointq/input']",
       "button.js-watch-reward-ad-btn",
-      "",
-      "",
     ];
     try {
       await this.openUrl(this.targetUrl);
@@ -371,10 +373,10 @@ class PtoPointQ extends PtoMissonSupper {
                 } else if (await this.isExistEle(sele[5], true, 2000)) {
                   i = await this.lookDouga(sele);
                 }
+                res = D.STATUS.DONE;
               }
             } else break;
           }
-          res = D.STATUS.DONE;
         }
       }
     } catch (e) {
@@ -402,7 +404,6 @@ class PtoPointQ extends PtoMissonSupper {
     }
     return 3;
   }
-
 }
 exports.PtoCommon = PtoCommon;
 exports.Pto = PtoBase;

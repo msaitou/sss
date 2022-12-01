@@ -8,8 +8,8 @@ const mailOpe = require("../mp_mil/mail_operate");
 class GenBase extends BaseExecuter {
   code = D.CODE.GEN;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList) {
-    super(retryCnt, siteInfo, aca);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
+    super(retryCnt, siteInfo, aca, isMob);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
@@ -54,10 +54,14 @@ class GenBase extends BaseExecuter {
     }
   }
   async saveNowPoint() {
+    let sele = ["#account_pt>span"];
     let startPage = "https://www.gendama.jp/";
+    if (this.isMob) {
+      sele[0] = "#hdr_pt";
+      startPage = "https://www.gendama.jp/sp";
+    }
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
-    let sele = ["#account_pt>span"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
@@ -70,7 +74,7 @@ class GenMissonSupper extends BaseWebDriverWrapper {
   code = D.CODE.GEN;
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);
@@ -93,10 +97,13 @@ class GenCommon extends GenMissonSupper {
   }
   async login() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-
-    await driver.get(siteInfo.entry_url); // エントリーページ表示
     let seleIsLoggedIn = "#account_pt>span";
-
+    let startPage = siteInfo.entry_url;
+    if (this.isMob) {
+      seleIsLoggedIn = "#hdr_pt";
+      startPage = "https://www.gendama.jp/sp";
+    }
+    await driver.get(startPage); // エントリーページ表示
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
@@ -189,8 +196,13 @@ class GenCm extends GenMissonSupper {
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["ul.top_contents.stripeY a[href='/cmkuji/']"];
+    if (this.isMob) {
+      await this.openUrl("https://www.gendama.jp/sp/everyday_point"); // 操作ページ表示
+      sele = ["a[href*='/cmkuji/']>p>img"];
+      // await driver.executeScript("window.scrollTo(0, 200);");
+      // await this.sleep(1000);
+    } else await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
@@ -392,9 +404,5 @@ class GenAnq extends GenMissonSupper {
     return res;
   }
 }
-// module.
 exports.GenCommon = GenCommon;
-// module.
 exports.Gen = GenBase;
-// module.
-// exports = { pex: pexBase, pexCommon: pexCommon };

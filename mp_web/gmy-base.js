@@ -8,8 +8,8 @@ const mailOpe = require("../mp_mil/mail_operate");
 class GmyBase extends BaseExecuter {
   code = D.CODE.GMY;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList) {
-    super(retryCnt, siteInfo, aca);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
+    super(retryCnt, siteInfo, aca, isMob);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
@@ -61,6 +61,7 @@ class GmyBase extends BaseExecuter {
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     let sele = ["li.user_point>a"];
+    if (this.isMob) sele[0] = "div>p.user_point"; 
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
@@ -73,7 +74,7 @@ class GmyMissonSupper extends BaseWebDriverWrapper {
   code = D.CODE.GMY;
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);
@@ -99,7 +100,7 @@ class GmyCommon extends GmyMissonSupper {
 
     await driver.get(siteInfo.entry_url); // エントリーページ表示
     let seleIsLoggedIn = "li.user_point>a";
-
+    if (this.isMob) seleIsLoggedIn = "div>p.user_point"; 
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
@@ -178,7 +179,6 @@ class GmyCommon extends GmyMissonSupper {
     return true;
   }
 }
-
 const { PartsCmManage } = require("./parts/parts-cm-manage.js");
 // CM系のクッション
 class GmyCm extends GmyMissonSupper {
@@ -194,15 +194,18 @@ class GmyCm extends GmyMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["img[src*='pic_cmkuji.gif']"];
+    if (this.isMob) sele[0] = "img[src*='ico_cm.gif']"; 
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
+      let targetUrl = "https://dietnavi.cmnw.jp/game/";
+      if (this.isMob) targetUrl = "https://dietnavi-sp.cmnw.jp/game/";
       let cmManage = new PartsCmManage(
         this.para,
         this.cmMissionList,
-        "https://dietnavi.cmnw.jp/game/"
+        targetUrl
       );
       await cmManage.do();
       await driver.close(); // このタブを閉じて

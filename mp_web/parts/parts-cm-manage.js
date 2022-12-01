@@ -46,22 +46,24 @@ class PartsCmManage extends BaseExecuter {
         await this.updateMissionQue(mission, res, this.code);
       }
     }
-    // CMコインを換金
-    await this.openUrl(this.startUrl); // 操作ページ表示
-    let sele = ["a[href='/bankbook/']", "a.button-link.btn>p", "a[href='/bankbook/exchange']>p"];
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      let ele = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele, 2000);
-      await this.ignoreKoukoku();
-      if (await this.isExistEle(sele[1], true, 2000)) {
-        ele = await this.getEle(sele[1], 3000);
+    if (!this.isMob) {
+      // CMコインを換金
+      await this.openUrl(this.startUrl); // 操作ページ表示
+      let sele = ["a[href='/bankbook/']", "a.button-link.btn>p", "a[href='/bankbook/exchange']>p"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000);
-        if (await this.isExistEle(sele[2], true, 2000)) {
-          ele = await this.getEle(sele[2], 3000);
+        await this.ignoreKoukoku();
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          ele = await this.getEle(sele[1], 3000);
           await this.clickEle(ele, 2000);
+          if (await this.isExistEle(sele[2], true, 2000)) {
+            ele = await this.getEle(sele[2], 3000);
+            await this.clickEle(ele, 2000);
+          }
         }
       }
-    }
+    } // モバイルではスキップしてみる。最初にポップアップを表示する操作が必要なため
   }
   async ignoreKoukoku() {
     let currentUrl = await this.driver.getCurrentUrl();
@@ -113,10 +115,8 @@ class CmDotti extends CmSuper {
     let res = D.STATUS.FAIL;
     try {
       // 今のページが　cm/game/ページならこのページから始める
-      let currentUrl = await driver.getCurrentUrl();
-      if (currentUrl != this.startUrl) {
-        await driver.get(this.startUrl); // 最初のページ表示
-      }
+      await this.openUrl(this.startUrl); // 操作ページ表示
+      await this.ignoreKoukoku();
       let sele = [
         "img[src*='dotti2_pc']",
         "p.btn_pink>a",
@@ -248,6 +248,7 @@ class CmKentei extends CmSuper {
     try {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
+      await this.ignoreKoukoku();
       let sele = [
         "img[src*='gotochi_pc']",
         "div>a[name='start button']",
@@ -281,7 +282,7 @@ class CmKentei extends CmSuper {
                     await this.clickEle(ele, 2000);
                     let wid2 = await driver.getWindowHandle();
                     await this.changeWindow(wid2); // 別タブに移動する
-                    let sele2 = ["#news-more", "#PlagClose1"];
+                    let sele2 = ["#news-more", "#PlagClose1", ".entry-content.cf p"];
                     if (await this.isExistEle(sele2[0], true, 3000)) {
                       ele = await this.getEle(sele2[0], 3000);
                       // let rect = await ele.getRect();
@@ -293,13 +294,21 @@ class CmKentei extends CmSuper {
                         ele = await this.getEle(sele2[1], 3000);
                         let nakedText = await ele.getText();
                         answerList = nakedText.split("\n").filter((l) => l.indexOf("A.") === 0);
-                        await driver.close(); // このタブを閉じて
-                        await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
                       }
+                    } else if (await this.isExistEle(sele2[2], true, 3000)) {
+                      let eles3 = await this.getEles(sele2[2], 3000);
+                      let nakedText = "";
+                      for (let ele of eles3) {
+                        nakedText += await ele.getText()+ "\n";
+                      }
+                      // let nakedText = await ele.getText();
+                      answerList = nakedText.split("\n").filter((l) => l.indexOf("A.") === 0);
                     }
+                    await driver.close(); // このタブを閉じて
+                    await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
                   }
                   let eles = await this.getEles(sele[2], 3000);
-                  let choiceNum = libUtil.getRandomInt(0, eles.length); // TODO ここヒント見れば答えがわかりそう
+                  let choiceNum = libUtil.getRandomInt(0, eles.length); // ここヒント見れば答えがわかる
                   let choiceEle = eles[choiceNum];
                   if (answerList.length) {
                     let tmp = [];
@@ -366,6 +375,7 @@ class CmUranai extends CmSuper {
     try {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
+      await this.ignoreKoukoku();
       let sele = ["img[src*='kumakumaseiza_pc']"];
       if (this.isMob) sele[0] = "img[src*='kumakumaseiza_sp']";
 
@@ -406,6 +416,7 @@ class CmPochi extends CmSuper {
     try {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
+      await this.ignoreKoukoku();
       let sele = [
         "img[src*='pochitto_pc']",
         "#question>dd>a>p",

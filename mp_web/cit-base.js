@@ -8,14 +8,14 @@ const mailOpe = require("../mp_mil/mail_operate");
 class CitBase extends BaseExecuter {
   code = D.CODE.CIT;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList) {
-    super(retryCnt, siteInfo, aca);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
+    super(retryCnt, siteInfo, aca, isMob);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async exec(para) {
-    let gmyCom = new CitCommon(para);
-    let islogin = await gmyCom.login();
+    let citCom = new CitCommon(para);
+    let islogin = await citCom.login();
     if (islogin) {
       // cm系のミッションはまとめてやるため、ここでは1つ扱いのダミーミッションにする
       let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
@@ -67,6 +67,7 @@ class CitBase extends BaseExecuter {
     await this.openUrl(startPage); // 最初のページ表示
     await this.driver.sleep(1000);
     let sele = ["li.user_pt>a"];
+    if (this.isMob) sele[0] = "div.user-pt>span";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
@@ -79,7 +80,7 @@ class CitMissonSupper extends BaseWebDriverWrapper {
   code = D.CODE.CIT;
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);
@@ -105,7 +106,7 @@ class CitCommon extends CitMissonSupper {
 
     await driver.get(siteInfo.entry_url); // エントリーページ表示
     let seleIsLoggedIn = "li.user_pt>a";
-
+    if (this.isMob) seleIsLoggedIn = "div.user-pt>span";
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
@@ -198,8 +199,10 @@ class CitCm extends CitMissonSupper {
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["a[href*='jump.srv?id=25724']"];
+    if (this.isMob) {
+      await this.openUrl("https://www.chance.com/sp/mypage/tasklist.jsp");
+    } else await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       // await this.clickEle(eles[0], 2000);

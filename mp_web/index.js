@@ -207,43 +207,43 @@ class PointWebCls {
         opeCls = new cmsBase.Cms(0, siteInfo, aca, missionList);
         break;
       case D.CODE.GPO:
-        opeCls = new gpoBase.Gpo(0, siteInfo, aca, missionList);
+        opeCls = new gpoBase.Gpo(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.GMY:
-        opeCls = new gmyBase.Gmy(0, siteInfo, aca, missionList);
+        opeCls = new gmyBase.Gmy(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.GEN:
-        opeCls = new genBase.Gen(0, siteInfo, aca, missionList);
+        opeCls = new genBase.Gen(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.PTO:
-        opeCls = new ptoBase.Pto(0, siteInfo, aca, missionList);
+        opeCls = new ptoBase.Pto(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.CIT:
-        opeCls = new citBase.Cit(0, siteInfo, aca, missionList);
+        opeCls = new citBase.Cit(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.CRI:
-        opeCls = new criBase.Cri(0, siteInfo, aca, missionList);
+        opeCls = new criBase.Cri(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.SUG:
-        opeCls = new sugBase.Sug(0, siteInfo, aca, missionList);
+        opeCls = new sugBase.Sug(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.PIC:
         opeCls = new picBase.Pic(0, siteInfo, aca, missionList);
         break;
       case D.CODE.LFM:
-        opeCls = new lfmBase.Lfm(0, siteInfo, aca, missionList);
+        opeCls = new lfmBase.Lfm(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.PST:
         opeCls = new pstBase.Pst(0, siteInfo, aca, missionList);
         break;
       case D.CODE.AME:
-        opeCls = new ameBase.Ame(0, siteInfo, aca, missionList);
+        opeCls = new ameBase.Ame(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.PIL:
         opeCls = new pilBase.Pil(0, siteInfo, aca, missionList);
         break;
       case D.CODE.ECN:
-        opeCls = new ecnBase.Ecn(0, siteInfo, aca, missionList);
+        opeCls = new ecnBase.Ecn(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.DMY:
         opeCls = new dmyBase.Dmy(0, siteInfo, aca, missionList);

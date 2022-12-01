@@ -1,6 +1,7 @@
 const { BaseWebDriverWrapper } = require("../../base-webdriver-wrapper");
 const D = require("../../com_cls/define").Def;
 const { libUtil } = require("../../lib/util.js");
+const { Builder, By, until, Select,Key } = require("selenium-webdriver");
 
 class PartsQuizDaily extends BaseWebDriverWrapper {
   para;
@@ -80,7 +81,11 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
     if (await this.isExistEle(seleOver[0], true, 3000)) {
       let ele = await this.getEle(seleOver[0], 2000);
       if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 2000);
+        if (!this.isMob) {
+          await this.clickEle(ele, 2000);
+        } else {
+          await ele.sendKeys(Key.ENTER);
+        }
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
   }

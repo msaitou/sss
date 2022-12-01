@@ -96,16 +96,16 @@ class BaseWebDriverWrapper {
       this.logger.warn(e);
     }
   }
-  async clickEleScrollWeak(ele, time, top) {
-    await this.clickEleCommon(ele, time, top);
+  async clickEleScrollWeak(ele, time, top, isEnter = false) {
+    await this.clickEleCommon(ele, time, top, isEnter);
   }
   /**
    * 要素をクリックして指定時間寝る
    * @param {*} ele
    * @param {*} time
    */
-  async clickEle(ele, time, top = 0) {
-    await this.clickEleCommon(ele, time, top);
+  async clickEle(ele, time, top = 0, isEnter = false) {
+    await this.clickEleCommon(ele, time, top, isEnter);
   }
   /**
    * 要素をクリックして指定時間寝る
@@ -121,11 +121,11 @@ class BaseWebDriverWrapper {
     await this.sleep(1000);
     if (!this.isMob) await this.driver.actions().scroll(0, 0, 5, 10, ele).perform();
     const actions = this.driver.actions();
-    await actions.move({ origin: ele }).perform();
+    if (!this.isMob) await actions.move({ origin: ele }).perform();
     await this.sleep(1000);
     try {
       await this.driver.manage().setTimeouts({ pageLoad: 10000 });
-      if (isEnter) await ele.senKeys(Key.ENTER);
+      if (isEnter) await ele.sendKeys(Key.ENTER);
       else await ele.click();
     } catch (e) {
       if (e.name != "TimeoutError") {
