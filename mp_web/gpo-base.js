@@ -64,7 +64,6 @@ class GpoBase extends BaseExecuter {
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     let sele = ["span#point"];
-    if (this.isMob) sele[0] = ".point>a>strong";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();

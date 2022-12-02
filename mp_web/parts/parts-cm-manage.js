@@ -24,6 +24,10 @@ class PartsCmManage extends BaseExecuter {
     await this.answerCMPreAnq(driver, logger);
     for (let mission of this.cmMissionList) {
       let execCls = null;
+      if (!this.getDriver()) {
+        this.setDriver(await this.webDriver(this.isMob));
+        this.para.driver = this.driver;
+      }
       // 個別
       switch (mission.main) {
         case D.MISSION.CM_DOTTI:
@@ -231,7 +235,7 @@ class CmDotti extends CmSuper {
         } catch (e) {
           logger.warn(e);
         } finally {
-          await driver.close(); // このタブを閉じて
+          await this.closeDriver(); // このタブを閉じて
           await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
       }
@@ -330,7 +334,7 @@ class CmKentei extends CmSuper {
                       // let nakedText = await ele.getText();
                       answerList = nakedText.split("\n").filter((l) => l.indexOf("A.") === 0);
                     }
-                    await driver.close(); // このタブを閉じて
+                    await this.closeDriver(); // このタブを閉じて
                     await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
                   }
                   let eles = await this.getEles(sele[2], 3000);
@@ -377,7 +381,7 @@ class CmKentei extends CmSuper {
         } catch (e) {
           logger.warn(e);
         } finally {
-          await driver.close(); // このタブを閉じて
+          await this.closeDriver(); // このタブを閉じて
           await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
       }
@@ -416,7 +420,7 @@ class CmUranai extends CmSuper {
         } catch (e) {
           logger.warn(e);
         } finally {
-          await driver.close(); // このタブを閉じて
+          await this.closeDriver(); // このタブを閉じて
           await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
       }
@@ -540,7 +544,7 @@ class CmPochi extends CmSuper {
         } catch (e) {
           logger.warn(e);
         } finally {
-          await driver.close(); // このタブを閉じて
+          await this.closeDriver(); // このタブを閉じて
           await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
       }
@@ -682,7 +686,7 @@ class CmColum extends CmSuper {
         } catch (e) {
           logger.warn(e);
         } finally {
-          await driver.close(); // このタブを閉じて
+          await this.closeDriver(); // このタブを閉じて
           await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
       }
@@ -730,7 +734,7 @@ class CmPhoto extends CmSuper {
         } catch (e) {
           logger.warn(e);
         } finally {
-          await driver.close(); // このタブを閉じて
+          await this.closeDriver(); // このタブを閉じて
           await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
       }
@@ -778,7 +782,7 @@ class CmSite extends CmSuper {
         } catch (e) {
           logger.warn(e);
         } finally {
-          await driver.close(); // このタブを閉じて
+          await this.closeDriver(); // このタブを閉じて
           await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
       }
@@ -826,7 +830,7 @@ class CmZukan extends CmSuper {
         } catch (e) {
           logger.warn(e);
         } finally {
-          await driver.close(); // このタブを閉じて
+          await this.closeDriver();
           await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
       }
@@ -874,7 +878,7 @@ class CmJapan extends CmSuper {
         } catch (e) {
           logger.warn(e);
         } finally {
-          await driver.close(); // このタブを閉じて
+          await this.closeDriver(); // このタブを閉じて
           await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
       }
@@ -922,7 +926,7 @@ class CmCook extends CmSuper {
         } catch (e) {
           logger.warn(e);
         } finally {
-          await driver.close(); // このタブを閉じて
+          await this.closeDriver(); // このタブを閉じて
           await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
         }
       }

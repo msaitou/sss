@@ -26,6 +26,14 @@ class BaseWebDriverWrapper {
       this.setDriver(null);
     }
   }
+  async closeDriver() {
+    try {
+      await this.driver.close(); // このタブを閉じて
+    } catch (e) {
+      this.logger.warn(e);
+    }
+  }
+
   async findElements(cssSele) {
     return await this.driver.findElements(By.css(cssSele));
   }
