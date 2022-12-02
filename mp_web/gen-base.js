@@ -321,7 +321,7 @@ class GenAnq extends GenMissonSupper {
             eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let j = 0; j < limit; j++) {
-              if (j < 3) {
+              if (j < 4) {
                 skip++;
                 continue;
               }
