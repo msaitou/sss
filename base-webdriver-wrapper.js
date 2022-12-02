@@ -127,7 +127,7 @@ class BaseWebDriverWrapper {
     this.logger.info("rect.y", y);
     await this.driver.executeScript(`window.scrollTo(0, ${y});`);
     await this.sleep(1000);
-    if (!this.isMob) await this.driver.actions().scroll(0, 0, 5, 10, ele).perform();
+    // if (!this.isMob) await this.driver.actions().scroll(0, 0, 5, 10, ele).perform();
     const actions = this.driver.actions();
     if (!this.isMob) await actions.move({ origin: ele }).perform();
     await this.sleep(1000);

@@ -407,7 +407,7 @@ class CitClick extends CitMissonSupper {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
       for (let i = 0; i < eles.length; i++) {
-        await this.clickEle(eles[i], 3000);
+        await this.clickEle(eles[i], 3000, 40);
         await this.closeOtherWindow(driver);
       }
     }
@@ -415,7 +415,7 @@ class CitClick extends CitMissonSupper {
     if (await this.isExistEle(sele[1], true, 2000)) {
       let eles = await this.getEles(sele[1], 2000);
       for (let i = 0; i < eles.length; i++) {
-        await this.clickEle(eles[i], 3000);
+        await this.clickEle(eles[i], 3000, 40);
         await this.closeOtherWindow(driver);
       }
     }

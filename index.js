@@ -29,7 +29,7 @@ async function start(mode) {
       case "mobile":
         global.mobile = true;
         const mob = require("./exam.js");
-        await mob.alone(logger);
+        await mob.alone2(logger);
         break;
       case MODE.P_WEB_S: // 単発（開発用）
       case MODE.P_WEB_H: // 定期実行用

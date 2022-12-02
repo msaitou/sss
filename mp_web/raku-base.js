@@ -95,12 +95,12 @@ class RakuCommon extends RakuMissonSupper {
         id: "#loginInner_u",
         pass: "#loginInner_p",
         login: 'input[type="submit"]',
-        birth: "loginInner_birthday",
+        birth: "#loginInner_birthday",
       };
       if (await this.isExistEle(seleInput.id, true, 2000)) {
         logger.debug(11102);
         for (let seleGroup of [seleInput, seleInput2]) {
-          if (await this.isExistEle(seleInput.id, true, 2000)) {
+          if (await this.isExistEle(seleGroup.id, true, 2000)) {
             // アカウント（メール）入力
             let inputEle = await this.getEle(seleGroup.id, 500);
             await inputEle.clear();
@@ -115,7 +115,7 @@ class RakuCommon extends RakuMissonSupper {
               await inputEle.sendKeys(account[this.code].birth);
             }
             let ele = await this.getEle(seleGroup.login, 1000);
-            await this.clickEle(ele, 4000); // ログインボタン押下
+            await this.clickEle(ele, 3000); // ログインボタン押下
           }
         }
 

@@ -72,11 +72,15 @@ class PtoMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close"];
+    let seleOver = ["button.js-dialog__close-btn"];
     if (await this.isExistEle(seleOver[0], true, 3000)) {
       let ele = await this.getEle(seleOver[0], 2000);
       if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 2000);
+        if (!this.isMob) {
+          await this.clickEle(ele, 2000);
+        } else {
+          await ele.sendKeys(Key.ENTER);
+        }
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
   }
@@ -204,10 +208,15 @@ class PtoClick extends PtoMissonSupper {
       "https://www.pointtown.com/news/infoseek",
     ];
     await this.openUrl(this.firstUrl); // バナー
+    await this.hideOverlay();
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
       for (let i = 0; i < eles.length; i++) {
-        await this.clickEle(eles[i], 4000);
+        try {
+          await this.clickEle(eles[i], 4000);
+        } catch (e) {
+          logger.warn(e);
+        }
         await this.closeOtherWindow(driver);
       }
     }

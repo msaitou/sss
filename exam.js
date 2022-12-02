@@ -22,7 +22,7 @@ exports.alone = async (logger) => {
     }
   });
 };
-exports.alone = async (logger) => {
+exports.alone2 = async (logger) => {
   return new Promise((resolve, reject) => {
     try {
       let driver = initBrowserDriver(true);

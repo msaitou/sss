@@ -169,7 +169,7 @@ class DmyClick extends DmyMissonSupper {
           indexList.push(i);
         }
         for (let i = 0; i < 3; i++) {
-          choiceNum = libUtil.getRandomInt(0, indexList.length);
+          let choiceNum = libUtil.getRandomInt(0, indexList.length);
           await this.clickEle(eles[indexList[choiceNum]], 3000);
           indexList.splice(choiceNum, 1); // 添え字リストから今使った添え字を削除
         }
