@@ -204,7 +204,7 @@ class PointWebCls {
         opeCls = new mopBase.Mop(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.CMS:
-        opeCls = new cmsBase.Cms(0, siteInfo, aca, missionList);
+        opeCls = new cmsBase.Cms(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.GPO:
         opeCls = new gpoBase.Gpo(0, siteInfo, aca, missionList, isMob);
