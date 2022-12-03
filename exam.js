@@ -15,17 +15,7 @@ exports.main = async (logger) => {
 exports.alone = async (logger) => {
   return new Promise((resolve, reject) => {
     try {
-      let driver = initBrowserDriver();
-    } catch (e) {
-      logger.info("owata");
-      resolve();
-    }
-  });
-};
-exports.alone2 = async (logger) => {
-  return new Promise((resolve, reject) => {
-    try {
-      let driver = initBrowserDriver(true);
+      let driver = initBrowserDriver(global.mobile);
     } catch (e) {
       logger.info("owata");
       resolve();

@@ -828,9 +828,11 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         }
       }
       await this.hideOverlay();
+      await this.hideOverlay();
       if (await this.isExistEle(sele[1], true, 2000)) {
         let ele = await this.getEle(sele[1], 3000);
         await this.clickEle(ele, 3000);
+        await this.hideOverlay();
         await this.hideOverlay();
         if (await this.isExistEle(sele[5], true, 2000)) {
           let ele = await this.getEle(sele[5], 3000);
