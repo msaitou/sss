@@ -34,7 +34,10 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
+          logger.info(await ele.getText());
           // await this.clickEle(ele, 2000);
+          let rect = await ele.getRect();
+          await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
           await ele.click(); // なぜかここはこれじゃないとクリックが動作しない
           await this.sleep(3000);
           // 8問あり

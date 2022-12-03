@@ -172,8 +172,8 @@ class SugCm extends SugMissonSupper {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
+      let wid = await driver.getWindowHandle();
       if (!this.isMob) {
-        let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
       }
       let cmManage = new PartsCmManage(

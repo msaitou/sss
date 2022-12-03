@@ -102,9 +102,10 @@ class MopMissonSupper extends BaseWebDriverWrapper {
     let exSele = [
       "a.stamp__btn[href*='exchange']",
       "input.exchange__btn",
-      "a.stamp__btn.stamp__btn-return",
+      "a.stamp__btn-return",
       "p.stamp__num",
     ];
+    if (this.isMob) return; // めんどくさいのでリターン
     if (await this.isExistEle(exSele[3], true, 2000)) {
       let ele = await this.getEle(exSele[3], 3000);
       let stampStr = await ele.getText();
@@ -428,6 +429,7 @@ class MopAnzan extends MopMissonSupper {
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
+        await this.hideOverlay(); // オーバレイあり。消す
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
@@ -519,10 +521,5 @@ class MopCm extends MopMissonSupper {
     }
   }
 }
-
-// module.
 exports.MopCommon = MopCommon;
-// module.
 exports.Mop = MopBase;
-// module.
-// exports = { pex: pexBase, pexCommon: pexCommon };
