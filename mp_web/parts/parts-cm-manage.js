@@ -441,7 +441,6 @@ class CmPochi extends CmSuper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START`);
-
     let res = D.STATUS.FAIL;
     try {
       // 今のページが　cm/game/ページならこのページから始める
@@ -450,14 +449,14 @@ class CmPochi extends CmSuper {
       let sele = [
         "img[src*='pochitto_pc']",
         "#question>dd>a>p",
-        "div.btn_send>a>p",
+        "div.btn_send>a>p", // 2
         "#questionbox>p",
-        "#questionbox label",
+        "#questionbox label", // 4
         "#aaa2>div.btn_send>a>p",
-        "a[href='/point/ex']>p",
+        "a[href='/point/ex']>p",  // 6
         "a[href='/top']>p",
       ];
-      if (this.isMob) sele[0] = "img[src*='pochitto_sp']";
+      if (this.isMob) (sele[0] = "img[src*='pochitto_sp']"), (sele[1] = "#question>dd>a"), (sele[5] = sele[2]);
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
@@ -468,10 +467,13 @@ class CmPochi extends CmSuper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let j = 0; j < limit; j++) {
-              if (j !== 0 && (await this.isExistEle(sele[1], true, 3000))) {
+              if (j !== 0 && (await this.isExistEle(sele[1], true, 3000)))
                 eles = await this.getEles(sele[1], 3000);
+              try {
+                await driver.wait(until.elementIsVisible(eles[0]), 30000);
+              } catch (e) {
+                logger.warn(e);
               }
-              await driver.wait(until.elementIsVisible(eles[0]), 20000);
               await this.clickEle(eles[0], 2000); // 常に0番目で
               await this.ignoreKoukoku();
               if (await this.isExistEle(sele[2], true, 2000)) {
