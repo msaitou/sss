@@ -801,6 +801,48 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     }
     return res;
   }
+  async doMobKenkou() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "img[alt='進む']", //　9 -> 0
+        "input[alt='進む']", //　10 -> 1
+        "#que", // 2
+        "#enqueteUl label", // 3
+        "input[alt='回答する']", // 4
+        "input[alt='終了する']",
+        "#endlink", // 6
+      ];
+      if (await this.isExistEle(sele[0], true, 10000)) {
+        let ele = await this.getEle(sele[0], 10000);
+        await this.clickEle(ele, 2000);
+      } else if (await this.isExistEle(sele[1], true, 5000)) {
+        let ele = await this.getEle(sele[1], 5000);
+        await this.clickEle(ele, 2000);
+      }
+      for (let i = 0; i < 10; i++) {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let ele = await this.getEle(sele[1], 3000);
+          await this.clickEle(ele, 3000);
+        }
+      }
+      await this.hideOverlay();
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let ele = await this.getEle(sele[1], 3000);
+        await this.clickEle(ele, 3000);
+        await this.hideOverlay();
+        if (await this.isExistEle(sele[5], true, 2000)) {
+          let ele = await this.getEle(sele[5], 3000);
+          await this.clickEle(ele, 3000);
+          res = D.STATUS.DONE;
+        }
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
   async commonMobAnk(sele, ref) {
     let { retryCnt, account, logger, driver, siteInfo } = this.para,
       roopLimit = 8;
@@ -898,11 +940,15 @@ class PartsAnkPark extends BaseWebDriverWrapper {
   }
 
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close"];
+    let seleOver = ["div.close"];
     if (await this.isExistEle(seleOver[0], true, 3000)) {
       let ele = await this.getEle(seleOver[0], 2000);
       if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 2000);
+        if (!this.isMob) {
+          await this.clickEle(ele, 2000);
+        } else {
+          await ele.sendKeys(Key.ENTER);
+        }
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
   }

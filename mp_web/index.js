@@ -228,7 +228,7 @@ class PointWebCls {
         opeCls = new sugBase.Sug(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.PIC:
-        opeCls = new picBase.Pic(0, siteInfo, aca, missionList);
+        opeCls = new picBase.Pic(0, siteInfo, aca, missionList, isMob);
         break;
       case D.CODE.LFM:
         opeCls = new lfmBase.Lfm(0, siteInfo, aca, missionList, isMob);

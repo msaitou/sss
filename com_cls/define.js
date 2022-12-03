@@ -31,7 +31,6 @@ exports.Def = {
     AME: "ame",
   },
   MISSION: {
-    ANQ_SUG: "anq_sug",
     CHINJU: "chinju",
     URANAI: "uranai",
     POINT_MOLL: "point_moll",
@@ -49,13 +48,16 @@ exports.Def = {
     READ_THANK: "read_thank",
     READ_ICHI: "read_ichi",
     OTANO: "otano",
+    QUIZ_KENTEI: "quiz_kentei",
+    ANQ_SUG: "anq_sug",
     ANQ_PARK: "anq_park",
     ANQ_COLUM: "anq_colum",
     ANQ_MANGA: "anq_manga",
     ANQ_PHOTO: "anq_photo",
-    QUIZ_KENTEI: "quiz_kentei",
+    ANQ_KENKOU:"anq_kenkou",
     ANQ_CRI: "anq_cri",
     ANQ_GEN: "anq_gen",
+    GPO_ANQ: "gpo_anq",
     POINTQ: "pointq",
 
     CM: "cm", // 内部処理のダミー用
@@ -72,6 +74,5 @@ exports.Def = {
     CM_COOK: "cm_cook",
 
     MOP_RESEARCH: "mop_research",
-    GPO_ANQ: "gpo_anq",
   },
 };

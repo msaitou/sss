@@ -8,8 +8,8 @@ const mailOpe = require("../mp_mil/mail_operate");
 class AmeBase extends BaseExecuter {
   code = D.CODE.AME;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList) {
-    super(retryCnt, siteInfo, aca);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
+    super(retryCnt, siteInfo, aca, isMob);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
@@ -20,9 +20,7 @@ class AmeBase extends BaseExecuter {
       // cm系のミッションはまとめてやるため、ここでは1つ扱いのダミーミッションにする
       let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
       this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
-      if (cmMissionList.length) {
-        this.missionList.push({ main: D.MISSION.CM });
-      }
+      if (cmMissionList.length) this.missionList.push({ main: D.MISSION.CM });
       for (let i in this.missionList) {
         let mission = this.missionList[i];
         let execCls = null;
@@ -35,6 +33,9 @@ class AmeBase extends BaseExecuter {
             break;
           case D.MISSION.ANQ_PHOTO:
             execCls = new AmeAnqPhoto(para);
+            break;
+          case D.MISSION.ANQ_KENKOU:
+            execCls = new AmeAnqKenkou(para);
             break;
         }
         if (execCls) {
@@ -67,7 +68,7 @@ class AmeMissonSupper extends BaseWebDriverWrapper {
   code = D.CODE.AME;
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);
@@ -99,6 +100,7 @@ class AmeCommon extends AmeMissonSupper {
       logger.debug(11101);
       // リンクが存在することを確認
       let seleLoginLink = "li.headerNav__item--login>a";
+      if (this.isMob) seleLoginLink = "div.btn--login>a";
       if (await this.isExistEle(seleLoginLink, true, 2000)) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
@@ -227,7 +229,6 @@ class AmeAnqColum extends AmeMissonSupper {
 class AmeAnqManga extends AmeMissonSupper {
   firstUrl = "https://point.i2i.jp/";
   targetUrl = "https://point.i2i.jp/special/freepoint";
-  // cmMissionList;
   constructor(para) {
     super(para);
     // this.cmMissionList = cmMissionList;
@@ -278,10 +279,8 @@ class AmeAnqManga extends AmeMissonSupper {
 class AmeAnqPhoto extends AmeMissonSupper {
   firstUrl = "https://point.i2i.jp/";
   targetUrl = "https://point.i2i.jp/special/freepoint";
-  // cmMissionList;
   constructor(para) {
     super(para);
-    // this.cmMissionList = cmMissionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async do() {
@@ -306,6 +305,52 @@ class AmeAnqPhoto extends AmeMissonSupper {
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
             await this.clickEle(eles[eles.length - 1], 6000);
             res = await AnkPark.doPhoto();
+            await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            await this.sleep(2000);
+          }
+        } else {
+          res = D.STATUS.DONE;
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+// アンケート 健康 mobile用
+class AmeAnqKenkou extends AmeMissonSupper {
+  firstUrl = "https://point.i2i.jp/";
+  targetUrl = "https://point.i2i.jp/special/freepoint";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = ["img[alt='さらさら健康コラム']", ".enquete-list div>a"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let eles = await this.getEles(sele[1], 3000);
+          let limit = eles.length;
+          for (let i = 0; i < limit; i++) {
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+              eles = await this.getEles(sele[1], 3000);
+
+            await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+            await this.clickEle(eles[eles.length - 1], 6000);
+            res = await AnkPark.doMobKenkou();
             await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             await this.sleep(2000);
           }
