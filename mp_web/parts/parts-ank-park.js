@@ -618,7 +618,6 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "input[alt='終了する']",
         "#endlink", // 6
         "input[src*='next']",
-
       ];
       if (await this.isExistEle(sele[0], true, 10000)) {
         let ele = await this.getEle(sele[0], 10000);
@@ -661,7 +660,6 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "input[alt='終了']",
         "#endlink", // 6
         "input[src*='next']",
-
       ];
       if (await this.isExistEle(sele[0], true, 10000)) {
         let ele = await this.getEle(sele[0], 10000);
@@ -845,6 +843,119 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     }
     return res;
   }
+  async doMobMix() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "img[alt='進む']", //　9 -> 0
+        "input[alt='進む']", //　10 -> 1
+        "#enqueteTitle>p", // 2
+        "#enqueteUl label", // 3
+        "input.enquete_nextbt", // 4
+        "span.enquete_nextbt",
+        "input[alt='進む']", // 6
+        "input[src*='next']",
+      ];
+      if (await this.isExistEle(sele[4], true, 10000)) {
+        let ele = await this.getEle(sele[4], 10000);
+        await this.clickEle(ele, 2000, 250);
+        try {
+          await this.commonMobAnk(sele, "doMix");
+          res = D.STATUS.DONE;
+        } catch (e) {
+          logger.warn(e);
+        }
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+  async doMobIjin() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "img[alt='進む']", //　9 -> 0
+        "input[alt='進む']", //　10 -> 1
+        "#enqueteWrap h3>span", // 2
+        "#enqueteUl label", // 3
+        "input.enquete_nextbt", // 4
+        "input[alt='進む']",
+        "input[alt='進む']", // 6
+        "input[src*='next']",
+      ];
+      if (await this.isExistEle(sele[0], true, 10000)) {
+        let ele = await this.getEle(sele[0], 10000);
+        await this.clickEle(ele, 2000, 250);
+      } else if (await this.isExistEle(sele[1], true, 5000)) {
+        let ele = await this.getEle(sele[1], 5000);
+        await this.clickEle(ele, 2000, 250);
+      }
+      for (let i = 0; i < 7; i++) {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let ele = await this.getEle(sele[1], 3000);
+          await this.clickEle(ele, 3000, 250);
+        }
+      }
+      try {
+        await this.commonMobAnk(sele, "doIjin");
+        res = D.STATUS.DONE;
+      } catch (e) {
+        logger.warn(e);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+  async doMobHirameki() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "img[alt='進む']", //　9 -> 0
+        "input[alt='進む']", //　10 -> 1
+        "#enqueteTitle>span", // 2
+        "#enqueteUl label", // 3
+        "input.enquete_nextbt", // 4
+        "input[alt='進む']",
+        "input[alt='進む']", // 6
+        "input[src*='next']",
+      ];
+      if (await this.isExistEle(sele[0], true, 10000)) {
+        let ele = await this.getEle(sele[0], 10000);
+        await this.clickEle(ele, 2000, 250);
+      } else if (await this.isExistEle(sele[1], true, 5000)) {
+        let ele = await this.getEle(sele[1], 5000);
+        await this.clickEle(ele, 2000, 250);
+      }
+      for (let i = 0; i < 5; i++) {
+        if (i === 3) {
+          // 正解していないけど次へのボタンを表示
+          await this.driver.executeScript(
+            "document.getElementById('puzzleBtn').setAttribute('style', 'display: block');"
+          );
+          await this.sleep(2000);
+        }
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let ele = await this.getEle(sele[1], 3000);
+          await driver.wait(until.elementIsVisible(ele), 5000);
+          await this.clickEle(ele, 3000, 250);
+        }
+      }
+      try {
+        await this.commonMobAnk(sele, "doHirameki");
+        res = D.STATUS.DONE;
+      } catch (e) {
+        logger.warn(e);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
   async commonMobAnk(sele, ref) {
     let { retryCnt, account, logger, driver, siteInfo } = this.para,
       roopLimit = 8;
@@ -861,6 +972,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     //     "img[src*='again_bt.png']",
     //   ];
     if (["doColum", "doPhoto"].indexOf(ref) > -1) roopLimit = 6;
+    if (["doMix"].indexOf(ref) > -1) roopLimit = 12;
 
     // ここから共通のアンケートポイ　全8問(columは6)
     for (let i = 0; i < roopLimit; i++) {
@@ -872,17 +984,19 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           ansSele = sele[3];
         switch (qNo) {
           case "Q1": // Q1 あなたの性別をお知らせください。（ひとつだけ）
+            if (["doMix"].indexOf(ref) > -1) choiceNum = -1;
             break;
           case "Q2": // Q2. あなたの年齢をお知らせください。（ひとつだけ）
             choiceNum = 2;
+            if (["doMix"].indexOf(ref) > -1) choiceNum = -1;
             break;
           case "Q3": // Q3. あなたの居住地をお知らせください。（ひとつだけ）
             choiceNum = 2;
-            if (["doPhoto", "doManga", "doColum"].indexOf(ref) > -1) choiceNum = -1;
+            if (["doPhoto", "doManga", "doColum", "doMix"].indexOf(ref) > -1) choiceNum = -1;
             break;
           case "Q4": // Q4. あなたの職業をお知らせください。（ひとつだけ）
             choiceNum = "5";
-            if (["doPhoto", "doColum"].indexOf(ref) > -1) choiceNum = -1;
+            if (["doPhoto", "doColum", "doMix"].indexOf(ref) > -1) choiceNum = -1;
             break;
           // case "Q": // Q4. あなたの職業をお知らせください。（ひとつだけ）
           //   choiceNum = "5";
@@ -905,40 +1019,40 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           //   await select.selectByValue(choiceNum.toString());
           // } else {
           if (eles.length <= choiceNum) choiceNum = eles.length - 1;
-          await this.clickEle(eles[choiceNum], 2000);
+          await this.clickEle(eles[choiceNum], 2000, 250);
           // }
           if (await this.isExistEle(sele[4], true, 2000)) {
             ele = await this.getEle(sele[4], 3000);
-            await this.clickEle(ele, 2000); // 次のページ
+            await this.clickEle(ele, 2000, 250); // 次のページ
           }
         }
       }
     }
-    // if (ref == "doManga") {
-    //   if (await this.isExistEle(sele[5], true, 2000)) {
-    //     let ele = await this.getEle(sele[5], 3000);
-    //     await this.clickEle(ele, 2000);
-    //     if (await this.isExistEle(sele[6], true, 2000)) {
-    //       let ele = await this.getEle(sele[6], 3000);
-    //       await this.clickEle(ele, 2000); // sugでは一覧に戻る
-    //     }
-    //   }
-    // } else {
-    // for (let i = 0; i < 2; i++) {
-    //   if (await this.isExistEle(sele[0], true, 4000)) {
-    //     let ele = await this.getEle(sele[0], 3000);
-    //     await this.clickEle(ele, 2000); // 2回目　sugでは一覧に戻る
-    //   }
-    // }
-    if (await this.isExistEle(sele[6], true, 4000)) {
-      let ele = await this.getEle(sele[6], 3000);
-      await this.clickEle(ele, 2000);
-      if (await this.isExistEle(sele[5], true, 4000)) {
+    if (ref == "doMix") {
+      // Mixは1回だけだった
+      //   if (await this.isExistEle(sele[5], true, 2000)) {
+      //     let ele = await this.getEle(sele[5], 3000);
+      //     await this.clickEle(ele, 2000);
+      if (await this.isExistEle(sele[5], true, 2000)) {
         let ele = await this.getEle(sele[5], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 250);
+      }
+      //   }
+    } else {
+      // for (let i = 0; i < 2; i++) {
+      //   if (await this.isExistEle(sele[0], true, 4000)) {
+      //     let ele = await this.getEle(sele[0], 3000);
+      //     await this.clickEle(ele, 2000); // 2回目　sugでは一覧に戻る
+      //   }
+      if (await this.isExistEle(sele[6], true, 4000)) {
+        let ele = await this.getEle(sele[6], 3000);
+        await this.clickEle(ele, 2000, 250);
+        if (await this.isExistEle(sele[5], true, 4000)) {
+          let ele = await this.getEle(sele[5], 3000);
+          await this.clickEle(ele, 2000, 250);
+        }
       }
     }
-    // }
   }
 
   async hideOverlay() {
@@ -947,7 +1061,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       let ele = await this.getEle(seleOver[0], 2000);
       if (await ele.isDisplayed()) {
         // if (!this.isMob) {
-          await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000);
         // } else {
         //   await ele.sendKeys(Key.ENTER);
         // }

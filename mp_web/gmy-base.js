@@ -42,6 +42,12 @@ class GmyBase extends BaseExecuter {
           case D.MISSION.CLICK:
             execCls = new GmyClick(para);
             break;
+          case D.MISSION.ANQ_KENKOU:
+            execCls = new GmyAnqKenkou(para);
+            break;
+          case D.MISSION.ANQ_PARK:
+            execCls = new GmyAnqPark(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -61,7 +67,7 @@ class GmyBase extends BaseExecuter {
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     let sele = ["li.user_point>a"];
-    if (this.isMob) sele[0] = "div>p.user_point"; 
+    if (this.isMob) sele[0] = "div>p.user_point";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
@@ -100,7 +106,7 @@ class GmyCommon extends GmyMissonSupper {
 
     await driver.get(siteInfo.entry_url); // エントリーページ表示
     let seleIsLoggedIn = "li.user_point>a";
-    if (this.isMob) seleIsLoggedIn = "div>p.user_point"; 
+    if (this.isMob) seleIsLoggedIn = "div>p.user_point";
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
@@ -194,7 +200,7 @@ class GmyCm extends GmyMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["img[src*='pic_cmkuji.gif']"];
-    if (this.isMob) sele[0] = "img[src*='ico_cm.gif']"; 
+    if (this.isMob) sele[0] = "img[src*='ico_cm.gif']";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
@@ -202,11 +208,7 @@ class GmyCm extends GmyMissonSupper {
       await this.changeWindow(wid); // 別タブに移動する
       let targetUrl = "https://dietnavi.cmnw.jp/game/";
       if (this.isMob) targetUrl = "https://dietnavi-sp.cmnw.jp/game/";
-      let cmManage = new PartsCmManage(
-        this.para,
-        this.cmMissionList,
-        targetUrl
-      );
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, targetUrl);
       await cmManage.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -345,10 +347,145 @@ class GmyClick extends GmyMissonSupper {
     return D.STATUS.DONE;
   }
 }
-
-// module.
+const { PartsAnkPark } = require("./parts/parts-ank-park.js");
+// アンケート 健康 mobile用
+class GmyAnqKenkou extends GmyMissonSupper {
+  firstUrl = "https://dietnavi.com/sp/";
+  targetUrl = "https://dietnavi.com/sp/game/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = ["img[alt='さらさら健康コラム']", ".enquete-list div>a"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let eles = await this.getEles(sele[1], 3000);
+          let limit = eles.length;
+          for (let i = 0; i < limit; i++) {
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+              eles = await this.getEles(sele[1], 3000);
+            await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+            await this.clickEle(eles[eles.length - 1], 6000, 250);
+            res = await AnkPark.doMobKenkou();
+            await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            await this.sleep(2000);
+          }
+        } else {
+          res = D.STATUS.DONE;
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+// アンケートパーク mobile用
+class GmyAnqPark extends GmyMissonSupper {
+  firstUrl = "https://dietnavi.com/sp/";
+  targetUrl = "https://dietnavi.com/sp/game/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = [
+      "img[alt='アンケートパーク']",
+      ".enquete-list td.cate",
+      ".enquete-list td.status>a", // 2
+      "td>form>input[name='submit']",
+    ];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let eles = await this.getEles(sele[1], 3000);
+          let limit = eles.length;
+          for (let i = 0; i < limit; i++) {
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+              eles = await this.getEles(sele[1], 3000);
+            let text = await eles[eles.length - 1].getText();
+            text = text.split("\n").join("").split("\n").join("");
+            if (await this.isExistEle(sele[2], true, 2000)) {
+              let eles2 = await this.getEles(sele[2], 3000);
+              await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+              let ele = eles2[eles.length - 1];
+              let ele2 = null;
+              try {
+                ele2 = await this.getElesXFromEle(ele, "ancestor::tr");
+                ele2 = await this.getElesFromEle(ele2[0], sele[3]);
+              } catch (e) {
+                logger.debug(e);
+              }
+              if (ele2 && ele2.length) ele = ele2[0]; // 回答ボタンが実際別の場合が半分くらいあるので置き換え
+              await this.clickEle(ele, 3000);
+              switch (text.trim()) {
+                case "MIX":
+                  res = await AnkPark.doMobMix();
+                  break;
+                case "偉人":
+                  res = await AnkPark.doMobIjin();
+                  break;
+                case "ひらめき":
+                  res = await AnkPark.doMobHirameki();
+                  break;
+                // case "漫画":
+                //   res = await AnkPark.doMobManga();
+                //   break;
+                case "動物図鑑":
+                  res = await AnkPark.doMobZukan();
+                  break;
+                case "コラム":
+                  res = await AnkPark.doMobColum();
+                  break;
+                case "日本百景":
+                  res = await AnkPark.doMobJapan();
+                  break;
+                case "観察力":
+                  res = await AnkPark.doMobSite();
+                  break;
+                case "料理":
+                  res = await AnkPark.doMobCook();
+                  break;
+                case "写真":
+                  res = await AnkPark.doMobPhoto();
+                  break;
+              }
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            }
+          }
+        } else {
+          res = D.STATUS.DONE;
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
 exports.GmyCommon = GmyCommon;
-// module.
 exports.Gmy = GmyBase;
-// module.
-// exports = { pex: pexBase, pexCommon: pexCommon };

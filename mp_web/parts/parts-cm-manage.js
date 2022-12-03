@@ -94,7 +94,35 @@ class PartsCmManage extends BaseExecuter {
           }
         }
       }
-    } // モバイルではスキップしてみる。最初にポップアップを表示する操作が必要なため
+    } else {
+      // CMコインを換金
+      await this.openUrl(this.startUrl); // 操作ページ表示
+      let sele = [
+        "div.js-infolink",
+        "a[href='/bankbook/']",
+        "a[data-remodal-target='bankbookmodal']",
+        "a[href='/bankbook/exchange']",
+      ];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 3000);
+        await this.clickEle(ele, 2000);
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          ele = await this.getEle(sele[1], 3000);
+          if (await ele.isDisplayed()) {
+            await this.clickEle(ele, 2000);
+            await this.ignoreKoukoku();
+            if (await this.isExistEle(sele[2], true, 2000)) {
+              ele = await this.getEle(sele[2], 3000);
+              await this.clickEle(ele, 2000);
+              if (await this.isExistEle(sele[3], true, 2000)) {
+                ele = await this.getEle(sele[3], 3000);
+                await this.clickEle(ele, 2000);
+              }
+            }
+          }
+        }
+      }
+    }
   }
   async ignoreKoukoku() {
     let currentUrl = await this.driver.getCurrentUrl();
@@ -453,10 +481,11 @@ class CmPochi extends CmSuper {
         "#questionbox>p",
         "#questionbox label", // 4
         "#aaa2>div.btn_send>a>p",
-        "a[href='/point/ex']>p",  // 6
+        "a[href='/point/ex']>p", // 6
         "a[href='/top']>p",
       ];
-      if (this.isMob) (sele[0] = "img[src*='pochitto_sp']"), (sele[1] = "#question>dd>a"), (sele[5] = sele[2]);
+      if (this.isMob)
+        (sele[0] = "img[src*='pochitto_sp']"), (sele[1] = "#question>dd>a"), (sele[5] = sele[2]);
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
