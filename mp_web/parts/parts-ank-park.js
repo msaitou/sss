@@ -816,27 +816,27 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       ];
       if (await this.isExistEle(sele[0], true, 10000)) {
         let ele = await this.getEle(sele[0], 10000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 250);
       } else if (await this.isExistEle(sele[1], true, 5000)) {
         let ele = await this.getEle(sele[1], 5000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 250);
       }
       for (let i = 0; i < 10; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 3000);
+          await this.clickEle(ele, 3000, 250);
         }
       }
       await this.hideOverlay();
       await this.hideOverlay();
       if (await this.isExistEle(sele[1], true, 2000)) {
         let ele = await this.getEle(sele[1], 3000);
-        await this.clickEle(ele, 3000);
+        await this.clickEle(ele, 3000, 250);
         await this.hideOverlay();
         await this.hideOverlay();
         if (await this.isExistEle(sele[5], true, 2000)) {
           let ele = await this.getEle(sele[5], 3000);
-          await this.clickEle(ele, 3000);
+          await this.clickEle(ele, 3000, 250);
           res = D.STATUS.DONE;
         }
       }
@@ -946,11 +946,11 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     if (await this.isExistEle(seleOver[0], true, 3000)) {
       let ele = await this.getEle(seleOver[0], 2000);
       if (await ele.isDisplayed()) {
-        if (!this.isMob) {
+        // if (!this.isMob) {
           await this.clickEle(ele, 2000);
-        } else {
-          await ele.sendKeys(Key.ENTER);
-        }
+        // } else {
+        //   await ele.sendKeys(Key.ENTER);
+        // }
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
   }

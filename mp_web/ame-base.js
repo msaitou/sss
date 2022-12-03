@@ -349,7 +349,7 @@ class AmeAnqKenkou extends AmeMissonSupper {
               eles = await this.getEles(sele[1], 3000);
 
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
-            await this.clickEle(eles[eles.length - 1], 6000);
+            await this.clickEle(eles[eles.length - 1], 6000, 250);
             res = await AnkPark.doMobKenkou();
             await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             await this.sleep(2000);
