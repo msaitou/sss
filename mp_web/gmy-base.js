@@ -48,7 +48,10 @@ class GmyBase extends BaseExecuter {
           case D.MISSION.ANQ_PARK:
             execCls = new GmyAnqPark(para);
             break;
-        }
+            case D.MISSION.ANQ_MANGA:
+              execCls = new GmyAnqManga(para);
+              break;
+          }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
@@ -377,6 +380,51 @@ class GmyAnqKenkou extends GmyMissonSupper {
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
             await this.clickEle(eles[eles.length - 1], 6000, 250);
             res = await AnkPark.doMobKenkou();
+            await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            await this.sleep(2000);
+          }
+        } else {
+          res = D.STATUS.DONE;
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+// アンケート 漫画 mobile用
+class GmyAnqManga extends GmyMissonSupper {
+  firstUrl = "https://dietnavi.com/sp/";
+  targetUrl = "https://dietnavi.com/sp/game/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = ["img[alt='漫画でアンケート']", ".enquete-list div>a"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let eles = await this.getEles(sele[1], 3000);
+          let limit = eles.length;
+          for (let i = 0; i < limit; i++) {
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+              eles = await this.getEles(sele[1], 3000);
+            await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+            await this.clickEle(eles[eles.length - 1], 6000, 250);
+            res = await AnkPark.doMobManga();
             await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             await this.sleep(2000);
           }

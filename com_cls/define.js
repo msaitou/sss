@@ -55,6 +55,7 @@ exports.Def = {
     ANQ_MANGA: "anq_manga",
     ANQ_PHOTO: "anq_photo",
     ANQ_KENKOU:"anq_kenkou",
+    ANQ_COOK: "anq_cook",
     ANQ_CRI: "anq_cri",
     ANQ_GEN: "anq_gen",
     GPO_ANQ: "gpo_anq",

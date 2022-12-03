@@ -785,6 +785,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       for (let i = 0; i < 6; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
+          await driver.wait(until.elementIsVisible(ele), 5000);
           await this.clickEle(ele, 3000);
         }
       }
@@ -956,6 +957,46 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     }
     return res;
   }
+  async doMobManga() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "img[alt='進む']", //　9 -> 0
+        "input[alt='進む']", //　10 -> 1
+        "#que", // 2
+        "#enqueteUl label", // 3
+        "input[alt='回答する']", // 4
+        "input[alt='終了する']",
+        "#endlink", // 6
+        "input[src*='btn_next']",
+      ];
+      if (await this.isExistEle(sele[0], true, 10000)) {
+        let ele = await this.getEle(sele[0], 10000);
+        await this.clickEle(ele, 2000, 250);
+      } else if (await this.isExistEle(sele[1], true, 5000)) {
+        let ele = await this.getEle(sele[1], 5000);
+        await this.clickEle(ele, 2000, 250);
+      }
+      for (let i = 0; i < 5; i++) {
+        if (await this.isExistEle(sele[7], true, 2000)) {
+          let ele = await this.getEle(sele[7], 3000);
+          await this.clickEle(ele, 3000, 250);
+        }
+      }
+      await this.hideOverlay();
+      await this.hideOverlay();
+      try {
+        await this.commonMobAnk(sele, "doManga");
+        res = D.STATUS.DONE;
+      } catch (e) {
+        logger.warn(e);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
   async commonMobAnk(sele, ref) {
     let { retryCnt, account, logger, driver, siteInfo } = this.para,
       roopLimit = 8;
@@ -996,7 +1037,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
             break;
           case "Q4": // Q4. あなたの職業をお知らせください。（ひとつだけ）
             choiceNum = "5";
-            if (["doPhoto", "doColum", "doMix"].indexOf(ref) > -1) choiceNum = -1;
+            if (["doPhoto", "doColum", "doMix", "doManga"].indexOf(ref) > -1) choiceNum = -1;
             break;
           // case "Q": // Q4. あなたの職業をお知らせください。（ひとつだけ）
           //   choiceNum = "5";
