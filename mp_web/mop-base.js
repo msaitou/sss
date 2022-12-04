@@ -306,8 +306,8 @@ class MopEitango extends MopMissonSupper {
             res = D.STATUS.DONE;
             logger.info(`${this.constructor.name} END`);
           }
-        }
-      } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
+        } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
+      } 
     } catch (e) {
       logger.warn(e);
     }
@@ -390,8 +390,8 @@ class MopNanyoubi extends MopMissonSupper {
             res = D.STATUS.DONE;
             logger.info(`${this.constructor.name} END`);
           }
-        }
-      } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
+        } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
+      }
     } catch (e) {
       logger.warn(e);
     }
@@ -483,8 +483,8 @@ class MopAnzan extends MopMissonSupper {
             res = D.STATUS.DONE;
             logger.info(`${this.constructor.name} END`);
           }
-        }
-      } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
+        } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
+      } 
     } catch (e) {
       logger.warn(e);
     }

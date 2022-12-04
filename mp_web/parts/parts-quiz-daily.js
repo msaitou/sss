@@ -72,8 +72,8 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
             await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
             res = D.STATUS.DONE;
           }
-        }
-      } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
+        } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
+      } 
     } catch (e) {
       logger.warn(e);
     }
