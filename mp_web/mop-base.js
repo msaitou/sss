@@ -115,14 +115,14 @@ class MopMissonSupper extends BaseWebDriverWrapper {
     await this.hideOverlay();
     if (await this.isExistEle(exSele[0], true, 2000)) {
       let ele = await this.getEle(exSele[0], 3000);
-      await this.clickEle(ele, 2000);
+      await this.clickEle(ele, 2000, 0, this.isMob);
       if (await this.isExistEle(exSele[1], true, 2000)) {
         ele = await this.getEle(exSele[1], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 0, this.isMob);
       }
       if (await this.isExistEle(exSele[2], true, 2000)) {
         ele = await this.getEle(exSele[2], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 0, this.isMob);
       }
     }
   }
@@ -261,7 +261,7 @@ class MopEitango extends MopMissonSupper {
         "label.ui-label-radio",
         "input.ui-button-answer", // 3
         "input.ui-button-result",
-        "a.ui-button-close",  // 5
+        "a.ui-button-close", // 5
         "input.ui-button-end",
       ];
       if (await this.isExistEle(sele[0], true, 2000)) {
@@ -307,7 +307,7 @@ class MopEitango extends MopMissonSupper {
             logger.info(`${this.constructor.name} END`);
           }
         }
-      } else logger.info("今日はもう獲得済み");
+      } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
     } catch (e) {
       logger.warn(e);
     }
@@ -391,7 +391,7 @@ class MopNanyoubi extends MopMissonSupper {
             logger.info(`${this.constructor.name} END`);
           }
         }
-      } else logger.info("今日はもう獲得済み");
+      } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
     } catch (e) {
       logger.warn(e);
     }
@@ -484,7 +484,7 @@ class MopAnzan extends MopMissonSupper {
             logger.info(`${this.constructor.name} END`);
           }
         }
-      } else logger.info("今日はもう獲得済み");
+      } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
     } catch (e) {
       logger.warn(e);
     }
