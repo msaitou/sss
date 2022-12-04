@@ -1,7 +1,7 @@
 const { BaseExecuter } = require("./base-executer.js");
 const { BaseWebDriverWrapper } = require("../base-webdriver-wrapper");
 const { libUtil } = require("../lib/util.js");
-const { Builder, By, until, Select } = require("selenium-webdriver");
+const { Builder, By, until, Select, Key } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
 
@@ -33,6 +33,9 @@ class PtoBase extends BaseExecuter {
             break;
           case D.MISSION.POINTQ:
             execCls = new PtoPointQ(para);
+            break;
+          case D.MISSION.ANQ_PARK:
+            execCls = new PtoAnqPark(para);
             break;
         }
         if (execCls) {
@@ -412,6 +415,133 @@ class PtoPointQ extends PtoMissonSupper {
       return -1; // リセット
     }
     return 3;
+  }
+}
+const { PartsAnkPark } = require("./parts/parts-ank-park.js");
+// アンケートパーク mobile用
+class PtoAnqPark extends PtoMissonSupper {
+  firstUrl = "https://www.pointtown.com/";
+  targetUrl = "https://www.pointtown.com/game";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = [
+      "img[src*='enquete-park']",
+      ".enquete-list td.cate",
+      ".enquete-list td.status>a:not([href='#'])", // 2
+      "td>form>input[name='submit']",
+    ];
+    let mobH = this.isMob ? 50 : 0;
+    if (this.isMob) {
+      this.sleep(3000);
+      await driver.executeScript("window.scrollTo(0, 3300);");
+    }
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000, mobH);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[2], true, 2000)) {
+          let eles = await this.getEles(sele[2], 3000);
+          let limit = eles.length;
+          for (let i = 0; i < limit; i++) {
+            if (i !== 0 && (await this.isExistEle(sele[2], true, 2000)))
+              eles = await this.getEles(sele[2], 3000);
+            if (await this.isExistEle(sele[1], true, 2000)) {
+              let eles2 = await this.getEles(sele[1], 3000);
+              let targetIndex = eles.length - 1;
+              let text = await eles2[targetIndex].getText();
+              text = text.split("\n").join("").split("\n").join("");
+              let ele = eles[targetIndex];
+              let ele2 = null;
+              try {
+                ele2 = await this.getElesXFromEle(ele, "ancestor::tr");
+                ele2 = await this.getElesFromEle(ele2[0], sele[3]);
+              } catch (e) {
+                logger.debug(e);
+              }
+              let script = "arguments[0]";
+              if (ele2 && ele2.length) {
+                ele = ele2[0]; // 回答ボタンが実際別の場合が半分くらいあるので置き換え
+                script = "arguments[0].closest('form')";
+              }
+              // let rect = await ele.getRect();
+              // await this.driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+              // await this.driver.executeScript(
+              //   `document.querySelectorAll("${sele[2]}")[${targetIndex}].setAttribute('target', '_blank');`
+              // );
+              await this.driver.executeScript(`${script}.setAttribute('target', '_blank');`, ele);
+              await this.clickEle(ele, 3000);
+              // let action = await driver.actions();
+              // await action.keyDown(Key.CONTROL).click(ele).keyUp(Key.CONTROL).perform();
+              // await this.sleep(2000);
+              let wid2 = await driver.getWindowHandle();
+              await this.changeWindow(wid2); // 別タブに移動する
+              try {
+                switch (text.trim()) {
+                  case "MIX":
+                    res = await AnkPark.doMobMix();
+                    break;
+                  // case "偉人":
+                  //   res = await AnkPark.doMobIjin();
+                  //   break;
+                  case "ひらめき":
+                    res = await AnkPark.doMobHirameki();
+                    break;
+                  case "漫画":
+                    res = await AnkPark.doMobManga();
+                    break;
+                  case "動物図鑑":
+                    res = await AnkPark.doMobZukan();
+                    break;
+                  case "コラム":
+                    res = await AnkPark.doMobColum();
+                    break;
+                  case "日本百景":
+                    res = await AnkPark.doMobJapan();
+                    break;
+                  case "観察力":
+                    res = await AnkPark.doMobSite();
+                    break;
+                  case "料理":
+                    res = await AnkPark.doMobCook();
+                    break;
+                  case "写真":
+                    res = await AnkPark.doMobPhoto();
+                    break;
+                }
+              } catch (e) {
+                logger.warn(e);
+              } finally {
+                try {
+                  await driver.close(); // このタブを閉じて
+                  await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+                } catch (e) {
+                  logger.warn(e);
+                }
+                await driver.navigate().refresh(); // 画面更新  しないとスタンプが反映されん
+                await driver.sleep(1000);
+              }
+            }
+          }
+        } else {
+          res = D.STATUS.DONE;
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
   }
 }
 exports.PtoCommon = PtoCommon;

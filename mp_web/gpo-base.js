@@ -1,7 +1,7 @@
 const { BaseExecuter } = require("./base-executer.js");
 const { BaseWebDriverWrapper } = require("../base-webdriver-wrapper");
 const { libUtil } = require("../lib/util.js");
-const { Builder, By, until, Select } = require("selenium-webdriver");
+const { Builder, By, until, Select, Key } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
 
@@ -44,6 +44,31 @@ class GpoBase extends BaseExecuter {
             break;
           case D.MISSION.URANAI:
             execCls = new GpoUranai(para);
+            break;
+          case D.MISSION.ANQ_COLUM:
+            execCls = new GpoAnqColum(para);
+            break;
+          case D.MISSION.ANQ_PHOTO:
+            execCls = new GpoAnqPhoto(para);
+            break;
+          case D.MISSION.ANQ_COOK:
+            execCls = new GpoAnqCook(para);
+            break;
+
+          case D.MISSION.ANQ_HIRAMEKI:
+            execCls = new GpoAnqHirameki(para);
+            break;
+          case D.MISSION.ANQ_ZUKAN:
+            execCls = new GpoAnqZukan(para);
+            break;
+          case D.MISSION.ANQ_IJIN:
+            execCls = new GpoAnqIjin(para);
+            break;
+          case D.MISSION.ANQ_JAPAN:
+            execCls = new GpoAnqJapan(para);
+            break;
+          case D.MISSION.ANQ_SITE:
+            execCls = new GpoAnqSite(para);
             break;
         }
         if (execCls) {
@@ -514,5 +539,522 @@ class GpoUranai extends GpoMissonSupper {
     return res;
   }
 }
+const { PartsAnkPark } = require("./parts/parts-ank-park.js");
+// 'hirameki');
+// 'ryori');
+// '');
+// アンケート コラム
+class GpoAnqColum extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://kotaete.gpoint.co.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = ["a[onclick*='columntoenquete']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[3], true, 2000)) {
+          let ele0 = await this.getEle(sele[3], 3000);
+          await this.clickEle(ele0, 3000);
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+                eles = await this.getEles(sele[1], 3000);
+              let ele = eles[eles.length - 1];
+              let rect = await ele.getRect();
+              await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+              // await this.clickEle(ele, 5000);
+              let action = await driver.actions();
+              await action.keyDown(Key.CONTROL).click(ele).keyUp(Key.CONTROL).perform();
+              await this.sleep(2000);
+              let wid2 = await driver.getWindowHandle();
+              await this.changeWindow(wid2); // 別タブに移動する
+              try {
+                res = await AnkPark.doMobColum();
+              } catch (e) {
+                logger.warn(e);
+              }
+              finally{
+                await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+                await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+              }
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+              await this.sleep(2000);
+            }
+          } else {
+            res = D.STATUS.DONE;
+          }
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+// アンケート 写真
+class GpoAnqPhoto extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://kotaete.gpoint.co.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = ["a[onclick*='shashintoenquete']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[3], true, 2000)) {
+          let ele0 = await this.getEle(sele[3], 3000);
+          await this.clickEle(ele0, 3000);
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+                eles = await this.getEles(sele[1], 3000);
+              let ele = eles[eles.length - 1];
+              let rect = await ele.getRect();
+              await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+              // await this.clickEle(ele, 5000);
+              let action = await driver.actions();
+              await action.keyDown(Key.CONTROL).click(ele).keyUp(Key.CONTROL).perform();
+              await this.sleep(2000);
+              let wid2 = await driver.getWindowHandle();
+              await this.changeWindow(wid2); // 別タブに移動する
+              try {
+                res = await AnkPark.doMobPhoto();
+              } catch (e) {
+                logger.warn(e);
+              }
+              finally{
+                await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+                await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+              }
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+              await this.sleep(2000);
+            }
+          } else {
+            res = D.STATUS.DONE;
+          }
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+// アンケート 動物図鑑
+class GpoAnqZukan extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://kotaete.gpoint.co.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = ["a[onclick*='doubutsu']", ".enquete-list div>a.ui-btn-c", "", "input.LgBtnsbmt"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[3], true, 2000)) {
+          let ele0 = await this.getEle(sele[3], 3000);
+          await this.clickEle(ele0, 3000);
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+                eles = await this.getEles(sele[1], 3000);
+              let ele = eles[eles.length - 1];
+              let rect = await ele.getRect();
+              await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+              // await this.clickEle(ele, 5000);
+              let action = await driver.actions();
+              await action.keyDown(Key.CONTROL).click(ele).keyUp(Key.CONTROL).perform();
+              await this.sleep(2000);
+              let wid2 = await driver.getWindowHandle();
+              await this.changeWindow(wid2); // 別タブに移動する
+              try {
+                res = await AnkPark.doMobZukan();
+              } catch (e) {
+                logger.warn(e);
+              }
+              finally{
+                await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+                await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+              }
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+              await this.sleep(2000);
+            }
+          } else {
+            res = D.STATUS.DONE;
+          }
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+// アンケート 偉人
+class GpoAnqIjin extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://kotaete.gpoint.co.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = ["a[onclick*='ijin']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[3], true, 2000)) {
+          let ele0 = await this.getEle(sele[3], 3000);
+          await this.clickEle(ele0, 3000);
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+                eles = await this.getEles(sele[1], 3000);
+              let ele = eles[eles.length - 1];
+              let rect = await ele.getRect();
+              await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+              // await this.clickEle(ele, 5000);
+              let action = await driver.actions();
+              await action.keyDown(Key.CONTROL).click(ele).keyUp(Key.CONTROL).perform();
+              await this.sleep(2000);
+              let wid2 = await driver.getWindowHandle();
+              await this.changeWindow(wid2); // 別タブに移動する
+              try {
+                res = await AnkPark.doMobIjin();
+              } catch (e) {
+                logger.warn(e);
+              }
+              finally{
+                await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+                await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+              }
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+              await this.sleep(2000);
+            }
+          } else {
+            res = D.STATUS.DONE;
+          }
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+// アンケート ひらめき
+class GpoAnqHirameki extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://kotaete.gpoint.co.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = ["a[onclick*='hirameki']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[3], true, 2000)) {
+          let ele0 = await this.getEle(sele[3], 3000);
+          await this.clickEle(ele0, 3000);
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+                eles = await this.getEles(sele[1], 3000);
+              let ele = eles[eles.length - 1];
+              let rect = await ele.getRect();
+              await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+              // await this.clickEle(ele, 5000);
+              let action = await driver.actions();
+              await action.keyDown(Key.CONTROL).click(ele).keyUp(Key.CONTROL).perform();
+              await this.sleep(2000);
+              let wid2 = await driver.getWindowHandle();
+              await this.changeWindow(wid2); // 別タブに移動する
+              try {
+                res = await AnkPark.doMobHirameki();
+              } catch (e) {
+                logger.warn(e);
+              }
+              finally{
+                await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+                await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+              }
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+              await this.sleep(2000);
+            }
+          } else {
+            res = D.STATUS.DONE;
+          }
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+// アンケート 日本百景
+class GpoAnqJapan extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://kotaete.gpoint.co.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = ["a[onclick*='nihonhyakkeitoenquete']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[3], true, 2000)) {
+          let ele0 = await this.getEle(sele[3], 3000);
+          await this.clickEle(ele0, 3000);
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+                eles = await this.getEles(sele[1], 3000);
+              let ele = eles[eles.length - 1];
+              let rect = await ele.getRect();
+              await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+              // await this.clickEle(ele, 5000);
+              let action = await driver.actions();
+              await action.keyDown(Key.CONTROL).click(ele).keyUp(Key.CONTROL).perform();
+              await this.sleep(2000);
+              let wid2 = await driver.getWindowHandle();
+              await this.changeWindow(wid2); // 別タブに移動する
+              try {
+                res = await AnkPark.doMobJapan();
+              } catch (e) {
+                logger.warn(e);
+              }
+              finally{
+                await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+                await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+              }
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+              await this.sleep(2000);
+            }
+          } else {
+            res = D.STATUS.DONE;
+          }
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+// アンケート 観察
+class GpoAnqSite extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://kotaete.gpoint.co.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = ["a[onclick*='kansatsuryokutoenquete']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[3], true, 2000)) {
+          let ele0 = await this.getEle(sele[3], 3000);
+          await this.clickEle(ele0, 3000);
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+                eles = await this.getEles(sele[1], 3000);
+              let ele = eles[eles.length - 1];
+              let rect = await ele.getRect();
+              await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+              // await this.clickEle(ele, 5000);
+              let action = await driver.actions();
+              await action.keyDown(Key.CONTROL).click(ele).keyUp(Key.CONTROL).perform();
+              await this.sleep(2000);
+              let wid2 = await driver.getWindowHandle();
+              await this.changeWindow(wid2); // 別タブに移動する
+              try {
+                res = await AnkPark.doMobSite();
+              } catch (e) {
+                logger.warn(e);
+              }
+              finally{
+                await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+                await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+              }
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+              await this.sleep(2000);
+            }
+          } else {
+            res = D.STATUS.DONE;
+          }
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+// アンケート 料理
+class GpoAnqCook extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://kotaete.gpoint.co.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = ["a[onclick*='ryori']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[3], true, 2000)) {
+          let ele0 = await this.getEle(sele[3], 3000);
+          await this.clickEle(ele0, 3000);
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+                eles = await this.getEles(sele[1], 3000);
+              let ele = eles[eles.length - 1];
+              let rect = await ele.getRect();
+              await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+              // await this.clickEle(ele, 5000);
+              let action = await driver.actions();
+              await action.keyDown(Key.CONTROL).click(ele).keyUp(Key.CONTROL).perform();
+              await this.sleep(2000);
+              let wid2 = await driver.getWindowHandle();
+              await this.changeWindow(wid2); // 別タブに移動する
+              try {
+                res = await AnkPark.doMobCook();
+              } catch (e) {
+                logger.warn(e);
+              }
+              finally{
+                await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+                await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+              }
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+              await this.sleep(2000);
+            }
+          } else {
+            res = D.STATUS.DONE;
+          }
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+
 exports.GpoCommon = GpoCommon;
 exports.Gpo = GpoBase;
