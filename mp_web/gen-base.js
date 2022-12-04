@@ -304,7 +304,7 @@ class GenAnq extends GenMissonSupper {
       "#next-button:not([style*='display: none'])",
       "ul>li>a[data-type='crossmarketing_surveys']", // 6
       ".answer-list label",
-      "",
+      "div.question-title", // 8
     ];
     let res = D.STATUS.FAIL;
     let skip = 0; // バグって完了できないやつがあるのでスキップ
@@ -321,9 +321,19 @@ class GenAnq extends GenMissonSupper {
             eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let j = 0; j < limit; j++) {
-              if (j < 4) {
-                skip++;
-                continue;
+              if (await this.isExistEle(sele[8], true, 2000)) {
+                eles = await this.getEles(sele[8], 3000);
+                let title = await eles[skip].getText();
+                if (
+                  [
+                    "書店について",
+                    "好きな飲み物に関して",
+                    "キャラクターに関するアンケート",
+                  ].indexOf(title) > -1
+                ) {
+                  skip++;
+                  continue;
+                }
               }
               if (await this.isExistEle(sele[1], true, 2000)) {
                 // for (let i = 0; i < 9; i++) {

@@ -7,7 +7,7 @@ const mailOpe = require("../../mp_mil/mail_operate");
 class PartsQuizKentei extends BaseWebDriverWrapper {
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     this.logger.debug(`${this.constructor.name} constructor`);
@@ -23,10 +23,11 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
         "img[alt='終了する']",
         "img[alt='再挑戦']", // 4
         "form input[alt='進む']",
-        "", // 6
+        "img[alt='進む']", // 6
         "",
       ];
       if (siteInfo.code === D.CODE.PIC) sele[3] = "input[alt='終了する']";
+      if (this.isMob) sele[6] = "img[alt='OK']";
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000);
@@ -58,8 +59,8 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
           if (await this.isExistEle(sele[2], true, 3000)) {
             let ele = await this.getEle(sele[2], 3000);
             await this.clickEle(ele, 3000);
-            if (await this.isExistEle(sele[0], true, 3000)) {
-              ele = await this.getEle(sele[0], 3000);
+            if (await this.isExistEle(sele[6], true, 3000)) {
+              ele = await this.getEle(sele[6], 3000);
               await this.clickEle(ele, 4000);
               if (await this.isExistEle(sele[0], true, 3000)) {
                 // 正解
@@ -95,7 +96,7 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
       let eles = await this.getEles(sele[0], 3000);
       let limit = eles.length;
       for (let i = 0; i < limit; i++) {
-      // for (let i = 0; i < 3; i++) {
+        // for (let i = 0; i < 3; i++) {
         if (i != 0) eles = await this.getEles(sele[0], 3000);
         // await this.clickEle(eles[eles.length - 1]);
         let ele = eles[eles.length - 1];

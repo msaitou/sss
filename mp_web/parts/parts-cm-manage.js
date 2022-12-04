@@ -713,7 +713,7 @@ class CmColum extends CmSuper {
               res = await AnkPark.doMobColum();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
-          }
+          } else res = D.STATUS.DONE;
         } catch (e) {
           logger.warn(e);
         } finally {
@@ -761,7 +761,7 @@ class CmPhoto extends CmSuper {
               res = await AnkPark.doMobPhoto();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
-          }
+          } else res = D.STATUS.DONE;
         } catch (e) {
           logger.warn(e);
         } finally {
@@ -809,7 +809,7 @@ class CmSite extends CmSuper {
               res = await AnkPark.doMobSite();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
-          }
+          } else res = D.STATUS.DONE;
         } catch (e) {
           logger.warn(e);
         } finally {
@@ -857,7 +857,7 @@ class CmZukan extends CmSuper {
               res = await AnkPark.doMobZukan();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
-          }
+          } else res = D.STATUS.DONE;
         } catch (e) {
           logger.warn(e);
         } finally {
@@ -905,7 +905,7 @@ class CmJapan extends CmSuper {
               res = await AnkPark.doMobJapan();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
-          }
+          } else res = D.STATUS.DONE;
         } catch (e) {
           logger.warn(e);
         } finally {
@@ -953,7 +953,7 @@ class CmCook extends CmSuper {
               res = await AnkPark.doMobCook();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
-          }
+          } else res = D.STATUS.DONE;
         } catch (e) {
           logger.warn(e);
         } finally {
