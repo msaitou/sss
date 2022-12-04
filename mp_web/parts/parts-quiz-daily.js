@@ -51,12 +51,12 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
               await this.clickEle(eles[choiceNum], 2000);
               if (await this.isExistEle(sele[3], true, 3000)) {
                 ele = await this.getEle(sele[3], 3000);
-                await this.clickEle(ele, 2000); // 回答する
+                await this.clickEle(ele, 2000, 0, this.isMob); // 回答する
                 await this.hideOverlay(); // オーバレイあり。消す
                 // 回答結果
                 if (await this.isExistEle(sele[4], true, 3000)) {
                   ele = await this.getEle(sele[4], 3000);
-                  await this.clickEle(ele, 2000); // 次のページ
+                  await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
                   await this.hideOverlay(); // オーバレイあり。消す
                 }
               }
@@ -67,7 +67,7 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
           await this.hideOverlay();
           if (await this.isExistEle(sele[6], true, 2000)) {
             ele = await this.getEle(sele[6], 3000);
-            await this.clickEle(ele, 2000); // 次のページ
+            await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
             await driver.close(); // このタブを閉じて
             await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
             res = D.STATUS.DONE;
@@ -99,7 +99,7 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
       "a.stamp__btn.stamp__btn-return",
       "p.stamp__num",
     ];
-    if (this.isMob) return; // めんどくさいのでリターン
+    // if (this.isMob) return; // めんどくさいのでリターン
     await this.hideOverlay();
     if (await this.isExistEle(exSele[3], true, 2000)) {
       let ele = await this.getEle(exSele[3], 3000);
@@ -109,14 +109,14 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
     }
     if (await this.isExistEle(exSele[0], true, 2000)) {
       let ele = await this.getEle(exSele[0], 3000);
-      await this.clickEle(ele, 2000);
+      await this.clickEle(ele, 2000, 0, this.isMob);
       if (await this.isExistEle(exSele[1], true, 2000)) {
         ele = await this.getEle(exSele[1], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 0, this.isMob);
       }
       if (await this.isExistEle(exSele[2], true, 2000)) {
         ele = await this.getEle(exSele[2], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 0, this.isMob);
       }
     }
   }
