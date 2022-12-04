@@ -99,6 +99,7 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
       "a.stamp__btn.stamp__btn-return",
       "p.stamp__num",
     ];
+    if (this.isMob) return; // めんどくさいのでリターン
     await this.hideOverlay();
     if (await this.isExistEle(exSele[3], true, 2000)) {
       let ele = await this.getEle(exSele[3], 3000);
