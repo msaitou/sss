@@ -641,6 +641,9 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         } catch (e) {
           logger.warn(e);
         }
+      } else {
+        await this.commonMobAnk(sele, "doPhoto");
+        res = D.STATUS.DONE;
       }
     } catch (e) {
       logger.warn(e);
@@ -868,6 +871,9 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         } catch (e) {
           logger.warn(e);
         }
+      } else {
+        await this.commonMobAnk(sele, "doMix");
+        res = D.STATUS.DONE;
       }
     } catch (e) {
       logger.warn(e);
@@ -1016,58 +1022,59 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     //   ];
     if (["doColum", "doPhoto"].indexOf(ref) > -1) roopLimit = 6;
     if (["doMix"].indexOf(ref) > -1) roopLimit = 12;
-
-    // ここから共通のアンケートポイ　全8問(columは6)
-    for (let i = 0; i < roopLimit; i++) {
-      if (await this.isExistEle(sele[2], true, 2000)) {
-        let ele = await this.getEle(sele[2], 3000);
-        let q = await ele.getText(),
-          qNo = q.substr(0, 2);
-        let choiceNum = 0,
-          ansSele = sele[3];
-        switch (qNo) {
-          case "Q1": // Q1 あなたの性別をお知らせください。（ひとつだけ）
-            if (["doMix"].indexOf(ref) > -1) choiceNum = -1;
-            break;
-          case "Q2": // Q2. あなたの年齢をお知らせください。（ひとつだけ）
-            choiceNum = 2;
-            if (["doMix"].indexOf(ref) > -1) choiceNum = -1;
-            break;
-          case "Q3": // Q3. あなたの居住地をお知らせください。（ひとつだけ）
-            choiceNum = 2;
-            if (["doPhoto", "doManga", "doColum", "doMix"].indexOf(ref) > -1) choiceNum = -1;
-            break;
-          case "Q4": // Q4. あなたの職業をお知らせください。（ひとつだけ）
-            choiceNum = "5";
-            if (["doPhoto", "doColum", "doMix", "doManga"].indexOf(ref) > -1) choiceNum = -1;
-            break;
-          // case "Q": // Q4. あなたの職業をお知らせください。（ひとつだけ）
-          //   choiceNum = "5";
-          //   ansSele = sele[5];
-          //   break;
-          default: // ランダムで。 Q5~Q8
-            choiceNum = -1; // 仮値
-        }
-        // if (ansSele === sele[3] && !(await this.isExistEle(ansSele, true, 2000))) {
-        //   ansSele = sele[5];
-        // }
-        if (await this.isExistEle(ansSele, true, 2000)) {
-          let eles = await this.getEles(ansSele, 3000);
-          if (choiceNum === -1) {
-            choiceNum = libUtil.getRandomInt(0, eles.length - 1); // 最後は否定的な選択肢なので選ばないのがいい
+    if (await this.isExistEle(sele[2], true, 2000)) {
+      // ここから共通のアンケートポイ　全8問(columは6)
+      for (let i = 0; i < roopLimit; i++) {
+        if (i == 0 || (await this.isExistEle(sele[2], true, 2000))) {
+          let ele = await this.getEle(sele[2], 3000);
+          let q = await ele.getText(),
+            qNo = q.substr(0, 2);
+          let choiceNum = 0,
+            ansSele = sele[3];
+          switch (qNo) {
+            case "Q1": // Q1 あなたの性別をお知らせください。（ひとつだけ）
+              if (["doMix"].indexOf(ref) > -1) choiceNum = -1;
+              break;
+            case "Q2": // Q2. あなたの年齢をお知らせください。（ひとつだけ）
+              choiceNum = 2;
+              if (["doMix"].indexOf(ref) > -1) choiceNum = -1;
+              break;
+            case "Q3": // Q3. あなたの居住地をお知らせください。（ひとつだけ）
+              choiceNum = 2;
+              if (["doPhoto", "doManga", "doColum", "doMix"].indexOf(ref) > -1) choiceNum = -1;
+              break;
+            case "Q4": // Q4. あなたの職業をお知らせください。（ひとつだけ）
+              choiceNum = "5";
+              if (["doPhoto", "doColum", "doMix", "doManga"].indexOf(ref) > -1) choiceNum = -1;
+              break;
+            // case "Q": // Q4. あなたの職業をお知らせください。（ひとつだけ）
+            //   choiceNum = "5";
+            //   ansSele = sele[5];
+            //   break;
+            default: // ランダムで。 Q5~Q8
+              choiceNum = -1; // 仮値
           }
-          // if (ansSele === sele[5]) {
-          //   let select = new Select(eles[0]);
-          //   if (!choiceNum) choiceNum++;
-          //   await select.selectByValue(choiceNum.toString());
-          // } else {
-          if (eles.length <= choiceNum) choiceNum = eles.length - 1;
-          await this.hideOverlay();
-          await this.clickEle(eles[choiceNum], 2000, 250);
+          // if (ansSele === sele[3] && !(await this.isExistEle(ansSele, true, 2000))) {
+          //   ansSele = sele[5];
           // }
-          if (await this.isExistEle(sele[4], true, 2000)) {
-            ele = await this.getEle(sele[4], 3000);
-            await this.clickEle(ele, 2000, 250); // 次のページ
+          if (await this.isExistEle(ansSele, true, 2000)) {
+            let eles = await this.getEles(ansSele, 3000);
+            if (choiceNum === -1) {
+              choiceNum = libUtil.getRandomInt(0, eles.length - 1); // 最後は否定的な選択肢なので選ばないのがいい
+            }
+            // if (ansSele === sele[5]) {
+            //   let select = new Select(eles[0]);
+            //   if (!choiceNum) choiceNum++;
+            //   await select.selectByValue(choiceNum.toString());
+            // } else {
+            if (eles.length <= choiceNum) choiceNum = eles.length - 1;
+            await this.hideOverlay();
+            await this.clickEle(eles[choiceNum], 2000, 250);
+            // }
+            if (await this.isExistEle(sele[4], true, 2000)) {
+              ele = await this.getEle(sele[4], 3000);
+              await this.clickEle(ele, 2000, 250); // 次のページ
+            }
           }
         }
       }
