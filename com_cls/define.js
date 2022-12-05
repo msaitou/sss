@@ -31,6 +31,7 @@ exports.Def = {
     AME: "ame",
   },
   MISSION: {
+    ANQ_HAPPY: "anq_happy",
     CHINJU: "chinju",
     URANAI: "uranai",
     POINT_MOLL: "point_moll",
@@ -55,7 +56,7 @@ exports.Def = {
     ANQ_MANGA: "anq_manga",
     ANQ_COLUM: "anq_colum",
     ANQ_PHOTO: "anq_photo",
-    ANQ_KENKOU:"anq_kenkou",
+    ANQ_KENKOU: "anq_kenkou",
     ANQ_COOK: "anq_cook",
     ANQ_HIRAMEKI: "anq_hirameki",
     ANQ_ZUKAN: "anq_zukan",

@@ -473,7 +473,7 @@ class GenAnqPark extends GenMissonSupper {
                 if (j !== 0 && (await this.isExistEle(seleGen[1], true, 3000))) {
                   eles = await this.getEles(seleGen[1], 3000);
                 }
-                ele = eles[eles.length - 1];   // 常に一番↓で
+                ele = eles[eles.length - 1]; // 常に一番↓で
                 let href = await ele.getAttribute("href");
                 let keyIndex = -1;
                 [
@@ -561,7 +561,7 @@ class GenAnqPark extends GenMissonSupper {
 // アンケート 健康 mobile用
 class GenAnqKenkou extends GenMissonSupper {
   firstUrl = "https://www.gendama.jp/";
-  targetUrl = "https://www.gendama.jp/bingo/";
+  targetUrl = "https://www.gendama.jp/sp/everyday_point";
   constructor(para) {
     super(para);
     this.logger.debug(`${this.constructor.name} constructor`);
@@ -571,7 +571,7 @@ class GenAnqKenkou extends GenMissonSupper {
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
     let sele = ["#tabbox1 img[alt='さらさら健康コラム']", "div.status>a"];
-    await this.openUrl("https://www.gendama.jp/sp/everyday_point"); // 操作ページ表示
+    await this.openUrl(targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000);

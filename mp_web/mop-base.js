@@ -46,6 +46,15 @@ class MopBase extends BaseExecuter {
           case D.MISSION.CM:
             execCls = new MopCm(para, cmMissionList);
             break;
+          case D.MISSION.ANQ_PARK:
+            execCls = new MopAnqPark(para);
+            break;
+          case D.MISSION.RESEARCH1:
+            execCls = new MopResearch1(para, cmMissionList);
+            break;
+          case D.MISSION.ANQ_HAPPY:
+            execCls = new MopAnqHappy(para, cmMissionList);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -307,7 +316,7 @@ class MopEitango extends MopMissonSupper {
             logger.info(`${this.constructor.name} END`);
           }
         } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
-      } 
+      }
     } catch (e) {
       logger.warn(e);
     }
@@ -484,7 +493,7 @@ class MopAnzan extends MopMissonSupper {
             logger.info(`${this.constructor.name} END`);
           }
         } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
-      } 
+      }
     } catch (e) {
       logger.warn(e);
     }
@@ -521,5 +530,295 @@ class MopCm extends MopMissonSupper {
     }
   }
 }
+const { PartsAnkPark } = require("./parts/parts-ank-park.js");
+// アンケートパーク mobile用
+class MopAnqPark extends MopMissonSupper {
+  firstUrl = "https://pc.moppy.jp/";
+  targetUrl = "https://pc.moppy.jp/enquete/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = [
+      "a[data-ga-label='アンケートパーク']",
+      ".enquete-list td.cate",
+      ".enquete-list td.status>a", // 2
+      "td>form>input[name='submit']",
+    ];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let eles = await this.getEles(sele[1], 3000);
+          let limit = eles.length;
+          for (let i = 0; i < limit; i++) {
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+              eles = await this.getEles(sele[1], 3000);
+            let text = await eles[eles.length - 1].getText();
+            text = text.split("\n").join("").split("\n").join("");
+            if (await this.isExistEle(sele[2], true, 2000)) {
+              let eles2 = await this.getEles(sele[2], 3000);
+              await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+              let ele = eles2[eles.length - 1];
+              let ele2 = null;
+              try {
+                ele2 = await this.getElesXFromEle(ele, "ancestor::tr");
+                ele2 = await this.getElesFromEle(ele2[0], sele[3]);
+              } catch (e) {
+                logger.debug(e);
+              }
+              if (ele2 && ele2.length) ele = ele2[0]; // 回答ボタンが実際別の場合が半分くらいあるので置き換え
+              await this.clickEle(ele, 3000);
+              switch (text.trim()) {
+                case "MIX":
+                  res = await AnkPark.doMobMix();
+                  break;
+                // case "偉人":
+                //   res = await AnkPark.doMobIjin();
+                //   break;
+                case "ひらめき":
+                  res = await AnkPark.doMobHirameki();
+                  break;
+                case "漫画":
+                  res = await AnkPark.doMobManga();
+                  break;
+                case "動物図鑑":
+                  res = await AnkPark.doMobZukan();
+                  break;
+                case "コラム":
+                  res = await AnkPark.doMobColum();
+                  break;
+                case "日本百景":
+                  res = await AnkPark.doMobJapan();
+                  break;
+                case "観察力":
+                  res = await AnkPark.doMobSite();
+                  break;
+                case "料理":
+                  res = await AnkPark.doMobCook();
+                  break;
+                case "写真":
+                  res = await AnkPark.doMobPhoto();
+                  break;
+              }
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            }
+          }
+        } else {
+          res = D.STATUS.DONE;
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+const { PartsResearch1 } = require("./parts/parts-research1.js");
+// リサーチ1　mobile用
+class MopResearch1 extends MopMissonSupper {
+  firstUrl = "https://pc.moppy.jp/";
+  targetUrl = "https://pc.moppy.jp/enquete/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START###`);
+    await this.openUrl(this.targetUrl); // 最初のページ表示
+    let sele = [
+      "a[data-ga-label='ポイントリサーチ']",
+      "ol.ui-list>li a",
+      ".enquete-list td.status>a", // 2
+      "td>form>input[name='submit']",
+    ];
+    let res = D.STATUS.FAIL;
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele, 2000);
+      let Research1 = new PartsResearch1(this.para);
+      res = await Research1.doMobMop();
+    }
+    logger.info(`${this.constructor.name} END#####`);
+    return res;
+  }
+}
+// ハッピーアンケート mobile用
+class MopAnqHappy extends MopMissonSupper {
+  firstUrl = "https://pc.moppy.jp/";
+  targetUrl = "https://pc.moppy.jp/enquete/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START###`);
+    await this.openUrl(this.targetUrl); // 最初のページ表示
+    let sele = [
+      "#koffice_surveys td>a",
+      "div.question-box a",
+      "a.next-button", // 2
+      "input.submit-button",
+      ".answer-list>p", // 4
+      "#next-button:not([style*='display: none'])",
+      "a[data-ga-label='アンケートランド']", // 6
+      ".answer-list label",
+      "div.question-title", // 8
+    ];
+    let res = D.STATUS.FAIL;
+    let skip = 0; // バグって完了できないやつがあるのでスキップ
+    if (await this.isExistEle(sele[6], true, 2000)) {
+      let ele = await this.getEle(sele[6], 3000);
+      await this.clickEle(ele, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let eles = await this.getEles(sele[1], 3000);
+          let limit = eles.length;
+          for (let j = 0; j < limit; j++) {
+            let wid2 = await driver.getWindowHandle();
+            if (await this.isExistEle(sele[8], true, 2000)) {
+              eles = await this.getEles(sele[8], 3000);
+              let title = await eles[skip].getText();
+              if (
+                ["書店について", "好きな飲み物に関して", "キャラクターに関するアンケート"].indexOf(
+                  title
+                ) > -1
+              ) {
+                skip++;
+                continue;
+              }
+            }
+            if (await this.isExistEle(sele[1], true, 2000)) {
+              // for (let i = 0; i < 9; i++) {
+              //   // 隠れてるので全部オープン
+              //   if (await this.isExistEle(sele[5], true, 2000)) {
+              //     let ele = await this.getEle(sele[5], 3000);
+              //     await this.clickEle(ele, 3000);
+              //   } else break;
+              // }
+              // eles = await this.getEles(sele[1], 10000);
+              // await this.clickEle(eles[eles.length -1], 3000);
+              eles = await this.getEles(sele[1], 3000);
+              await this.clickEle(eles[skip], 3000);
+              if (await this.isExistEle(sele[2], true, 2000)) {
+                let ele = await this.getEle(sele[2], 3000);
+                await this.clickEle(ele, 3000, 500, this.isMob);
+                await this.closeElesWindow([wid, wid2]);
+                for (let i = 0; i < 30; i++) {
+                  let currentUrl = await driver.getCurrentUrl();
+                  // 広告が画面いっぱいに入る時がある
+                  if (currentUrl.indexOf("https://moppy.enquete.vip/") === -1) {
+                    await driver.navigate().back(); // 広告をクリックしたぽいので戻る
+                    await this.sleep(2000);
+                    if (currentUrl.indexOf("https://moppy.enquete.vip/") === -1) {
+                      await driver.navigate().back(); // 広告をクリックしたぽいので戻る
+                      await this.sleep(2000);
+                      logger.info("広告をクリックさせられたのでbackします");
+                    }
+                    logger.info("広告をクリックさせられたのでbackします");
+                    await driver.navigate().refresh(); // 画面更新
+                    await this.sleep(2000);
+                    i--;
+                  }
+                  if (await this.isExistEle(sele[4], true, 2000)) {
+                    let ele = await this.getEle(sele[4], 3000);
+                    let q = await ele.getText();
+                    logger.info(`${i}つ目 ${q}`);
+                    let choiceNum = 0;
+                    let keyIndex = -1;
+                    [
+                      "性別は",
+                      "年齢は",
+                      "住んでいる地方は", // 2
+                    ].some((key, i) => {
+                      if (q.indexOf(key) > -1) {
+                        keyIndex = i;
+                        return true;
+                      }
+                    });
+                    switch (keyIndex) {
+                      case 0:
+                        break;
+                      case 1:
+                        choiceNum = 3;
+                        break;
+                      case 2:
+                        choiceNum = 2;
+                        break;
+                      default:
+                        choiceNum = -1;
+                    }
+                    if (await this.isExistEle(sele[7], true, 2000)) {
+                      let eles = await this.getEles(sele[7], 3000);
+                      if (choiceNum === -1) choiceNum = libUtil.getRandomInt(0, eles.length);
+                      await this.clickEle(eles[choiceNum], 3000, 500);
+                      await this.closeElesWindow([wid, wid2]);
+                      try {
+                        let alert = await driver.switchTo().alert();
+                        await alert.dismiss();
+                        await driver.switchTo().defaultContent(); // もとのフレームに戻す
+                        await driver.navigate().refresh(); // 画面更新
+                      } catch (e) {}
+                      if (await this.isExistEle(sele[3], true, 2000)) {
+                        let ele = await this.getEle(sele[3], 3000);
+                        await this.clickEle(ele, 3000, 500, this.isMob);
+                        await this.closeElesWindow([wid, wid2]);
+                        try {
+                          let alert = await driver.switchTo().alert();
+                          await alert.dismiss();
+                          await driver.switchTo().defaultContent(); // もとのフレームに戻す
+                          await driver.navigate().refresh(); // 画面更新
+                        } catch (e) {}
+                      }
+                    }
+                  } else break;
+                }
+                if (await this.isExistEle(sele[2], true, 2000)) {
+                  let ele = await this.getEle(sele[2], 3000);
+                  await this.clickEle(ele, 3000, 500, this.isMob);
+                  await this.closeElesWindow([wid, wid2]);
+                } else {
+                  skip++;
+                  await driver.close(); // このタブを閉じて
+                  await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+                  if (await this.isExistEle(sele[6], true, 2000)) {
+                    ele = await this.getEle(sele[6], 3000);
+                    await this.clickEle(ele, 3000);
+                    await this.changeWindow(wid); // 別タブに移動する
+                  }
+                }
+              }
+            }
+          }
+        }
+        res = D.STATUS.DONE;
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+        // await driver.navigate().refresh(); // 画面更新  しないとスタンプが反映されん
+      }
+    }
+    logger.info(`${this.constructor.name} END#####`);
+    return res;
+  }
+}
+
 exports.MopCommon = MopCommon;
 exports.Mop = MopBase;

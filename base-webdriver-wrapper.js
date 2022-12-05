@@ -215,6 +215,21 @@ class BaseWebDriverWrapper {
     // 元のウインドウIDにスイッチ
     await driver.switchTo().window(wid);
   }
+  async closeElesWindow(remainIds) {
+    let wid = await this.driver.getWindowHandle();
+    let widSet = await this.driver.getAllWindowHandles();
+    if (widSet.length === 2) return;  // チェックする必要なし
+    for (let id of widSet) {
+      if (remainIds.indexOf(id) === -1) {
+        // 残したいウインドウ以外を閉じる
+        await this.driver.switchTo().window(id);
+        await this.driver.close();
+      }
+    }
+    // 元のウインドウIDにスイッチ
+    await this.driver.switchTo().window(wid);
+  }
+
   async changeWindow(wid) {
     // 別タブに移動する
     let widSet = await this.driver.getAllWindowHandles();

@@ -53,6 +53,48 @@ class PartsResearch1 extends BaseWebDriverWrapper {
     }
     return res;
   }
+  async doMobMop() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "ol.ui-list>li a",
+        "a.ui-button",
+        "input.ui-button",
+        "div.ui-item-no",
+        "li>label",
+        "select.ui-select",
+      ];
+      if (await this.isExistEle(sele[0], true, 3000)) {
+        let eles = await this.getEles(sele[0], 3000);
+        let ele,
+          limit = eles.length;
+        for (let j = 0; j < limit; j++) {
+          if (j !== 0 && (await this.isExistEle(sele[0], true, 3000))) {
+            eles = await this.getEles(sele[0], 3000);
+          }
+          await this.clickEle(eles[0], 2000); // 常に一番上で
+          let wid2 = await driver.getWindowHandle();
+          await this.changeWindow(wid2); // 別タブに移動する
+          try {
+            await this.commonResearch1(sele);
+          } catch (e) {
+            logger.warn(e);
+          }
+          await driver.close(); // このタブを閉じて
+          await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+          await driver.navigate().refresh(); // 画面更新
+        }
+        await this.exchange(); // 交換
+        // await driver.close(); // このタブを閉じて
+        // await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+        res = D.STATUS.DONE;
+      } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
   async doGen() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
@@ -177,25 +219,53 @@ class PartsResearch1 extends BaseWebDriverWrapper {
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
   }
-  async exchange() {
+  async exchange(minExcNum = 5) {
     let exSele = [
       "a.stamp__btn[href*='exchange']",
       "input.exchange__btn",
-      "a.stamp__btn.stamp__btn-return",
+      "a.stamp__btn-return",
+      "p.stamp__num",
     ];
+    if (await this.isExistEle(exSele[3], true, 2000)) {
+      let ele = await this.getEle(exSele[3], 3000);
+      let stampStr = await ele.getText();
+      let stampNum = stampStr.substr(1);
+      if (Number(stampNum) < minExcNum) return;
+    }
     await this.hideOverlay();
     if (await this.isExistEle(exSele[0], true, 2000)) {
       let ele = await this.getEle(exSele[0], 3000);
-      await this.clickEle(ele, 2000);
+      await this.clickEle(ele, 2000, 0, this.isMob);
       if (await this.isExistEle(exSele[1], true, 2000)) {
         ele = await this.getEle(exSele[1], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 0, this.isMob);
       }
       if (await this.isExistEle(exSele[2], true, 2000)) {
         ele = await this.getEle(exSele[2], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 0, this.isMob);
       }
     }
   }
+
+  // async exchange() {
+  //   let exSele = [
+  //     "a.stamp__btn[href*='exchange']",
+  //     "input.exchange__btn",
+  //     "a.stamp__btn.stamp__btn-return",
+  //   ];
+  //   await this.hideOverlay();
+  //   if (await this.isExistEle(exSele[0], true, 2000)) {
+  //     let ele = await this.getEle(exSele[0], 3000);
+  //     await this.clickEle(ele, 2000);
+  //     if (await this.isExistEle(exSele[1], true, 2000)) {
+  //       ele = await this.getEle(exSele[1], 3000);
+  //       await this.clickEle(ele, 2000);
+  //     }
+  //     if (await this.isExistEle(exSele[2], true, 2000)) {
+  //       ele = await this.getEle(exSele[2], 3000);
+  //       await this.clickEle(ele, 2000);
+  //     }
+  //   }
+  // }
 }
 exports.PartsResearch1 = PartsResearch1;
