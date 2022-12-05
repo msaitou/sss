@@ -42,6 +42,9 @@ class GenBase extends BaseExecuter {
           case D.MISSION.ANQ_PARK:
             execCls = new GenAnqPark(para);
             break;
+          case D.MISSION.ANQ_KENKOU:
+            execCls = new GenAnqKenkou(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -95,8 +98,6 @@ class GenMissonSupper extends BaseWebDriverWrapper {
     let currentUrl = await this.driver.getCurrentUrl();
     // 広告が画面いっぱいに入る時がある
     if (currentUrl.indexOf("google_vignette") > -1) {
-      // await driver.actions().sendKeys(Key.ESCAPE).perform();
-      // await this.sleep(2000);
       await this.driver.navigate().back(); // 戻って
       await this.driver.navigate().forward(); // 行く
       currentUrl = await this.driver.getCurrentUrl();
@@ -472,27 +473,27 @@ class GenAnqPark extends GenMissonSupper {
                 if (j !== 0 && (await this.isExistEle(seleGen[1], true, 3000))) {
                   eles = await this.getEles(seleGen[1], 3000);
                 }
-                ele = eles[0];
+                ele = eles[eles.length - 1];   // 常に一番↓で
                 let href = await ele.getAttribute("href");
                 let keyIndex = -1;
                 [
-                  "research",
-                  "observation",
-                  "hirameki", // 2
-                  "mix",
-                  "ijin", //4
-                  "photo",
-                  "cooking", //6
-                  "animal",
-                  "map", // 8
-                  "column",
+                  "/research/",
+                  "/observation/",
+                  "/hirameki/", // 2
+                  "/mix/",
+                  "/ijin/", //4
+                  "/photo/",
+                  "/cooking/", //6
+                  "/animal/",
+                  "/map/", // 8
+                  "/column/",
                 ].some((key, i) => {
                   if (href.indexOf(key) > -1) {
                     keyIndex = i;
                     return true;
                   }
                 });
-                await this.clickEle(eles[eles.length -1], 2000); // 常に一番↓で
+                await this.clickEle(ele, 2000);
                 let wid = await driver.getWindowHandle();
                 await this.changeWindow(wid); // 別タブに移動する
                 try {
@@ -552,6 +553,50 @@ class GenAnqPark extends GenMissonSupper {
         } catch (e) {
           logger.warn(e);
         }
+      }
+    }
+    return res;
+  }
+}
+// アンケート 健康 mobile用
+class GenAnqKenkou extends GenMissonSupper {
+  firstUrl = "https://www.gendama.jp/";
+  targetUrl = "https://www.gendama.jp/bingo/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = ["#tabbox1 img[alt='さらさら健康コラム']", "div.status>a"];
+    await this.openUrl("https://www.gendama.jp/sp/everyday_point"); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      await this.ignoreKoukoku();
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let eles = await this.getEles(sele[1], 3000);
+          let limit = eles.length;
+          for (let i = 0; i < limit; i++) {
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+              eles = await this.getEles(sele[1], 3000);
+            await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+            await this.clickEle(eles[eles.length - 1], 6000, 250);
+            res = await AnkPark.doMobKenkou();
+            await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+            await this.sleep(2000);
+          }
+        } else res = D.STATUS.DONE;
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
       }
     }
     return res;
