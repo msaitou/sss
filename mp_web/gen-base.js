@@ -1,7 +1,7 @@
 const { BaseExecuter } = require("./base-executer.js");
 const { BaseWebDriverWrapper } = require("../base-webdriver-wrapper");
 const { libUtil } = require("../lib/util.js");
-const { Builder, By, until, Select } = require("selenium-webdriver");
+const { Builder, By, until, Select, Key } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
 
@@ -38,6 +38,9 @@ class GenBase extends BaseExecuter {
             break;
           case D.MISSION.CLICK:
             execCls = new GenClick(para);
+            break;
+          case D.MISSION.ANQ_PARK:
+            execCls = new GenAnqPark(para);
             break;
         }
         if (execCls) {
@@ -80,13 +83,25 @@ class GenMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close"];
+    let seleOver = ["#close_btn>span"];
     if (await this.isExistEle(seleOver[0], true, 3000)) {
       let ele = await this.getEle(seleOver[0], 2000);
       if (await ele.isDisplayed()) {
         await this.clickEle(ele, 2000);
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
+  }
+  async ignoreKoukoku() {
+    let currentUrl = await this.driver.getCurrentUrl();
+    // 広告が画面いっぱいに入る時がある
+    if (currentUrl.indexOf("google_vignette") > -1) {
+      // await driver.actions().sendKeys(Key.ESCAPE).perform();
+      // await this.sleep(2000);
+      await this.driver.navigate().back(); // 戻って
+      await this.driver.navigate().forward(); // 行く
+      currentUrl = await this.driver.getCurrentUrl();
+    }
+    return currentUrl;
   }
 }
 // このサイトの共通処理クラス
@@ -414,5 +429,134 @@ class GenAnq extends GenMissonSupper {
     return res;
   }
 }
+const { PartsAnkPark } = require("./parts/parts-ank-park.js");
+// アンケートパーク　mobile用
+class GenAnqPark extends GenMissonSupper {
+  firstUrl = "https://www.gendama.jp/sp";
+  targetUrl = "https://www.gendama.jp/bingo/";
+  constructor(para, cmMissionList) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let sele = ["div.burger>div", "nav.menu_point a[href*='/sp/surveys_page']", "", "", ""];
+    await this.openUrl(this.firstUrl); // 操作ページ表示
+    // await driver.executeScript("window.scrollTo(0, 200);");
+    // await this.sleep(1000);
+    let Research1 = new PartsResearch1(this.para);
+    let AnkPark = new PartsAnkPark(this.para);
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele = await this.getEle(sele[0], 3000);
+      // await driver.executeScript("window.scrollTo(0, 1);");
+      // await this.hideOverlay();
+      await this.driver.executeScript(
+        `document.querySelector('nav.navigation').setAttribute('class', 'navigation nav_active');`
+      );
+      await this.sleep(2000);
+      // await this.clickEle(ele, 2000, -10, this.isMob);
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let ele = await this.getEle(sele[1], 3000);
+        await this.clickEle(ele, 2000, 0, this.isMob);
+        try {
+          await this.ignoreKoukoku();
+          let seleGen = ["ul>li>a[data-type='mini_surveys']", "#tabBox2 div.list_survey>a", "", ""];
+          if (await this.isExistEle(seleGen[0], true, 3000)) {
+            let ele = await this.getEle(seleGen[0], 3000);
+            await this.clickEle(ele, 3000); // アンケートリストを表示
+            if (await this.isExistEle(seleGen[1], true, 3000)) {
+              let eles = await this.getEles(seleGen[1], 3000),
+                limit = eles.length;
+              for (let j = 0; j < limit; j++) {
+                if (j !== 0 && (await this.isExistEle(seleGen[1], true, 3000))) {
+                  eles = await this.getEles(seleGen[1], 3000);
+                }
+                ele = eles[0];
+                let href = await ele.getAttribute("href");
+                let keyIndex = -1;
+                [
+                  "research",
+                  "observation",
+                  "hirameki", // 2
+                  "mix",
+                  "ijin", //4
+                  "photo",
+                  "cooking", //6
+                  "animal",
+                  "map", // 8
+                  "column",
+                ].some((key, i) => {
+                  if (href.indexOf(key) > -1) {
+                    keyIndex = i;
+                    return true;
+                  }
+                });
+                await this.clickEle(eles[eles.length -1], 2000); // 常に一番↓で
+                let wid = await driver.getWindowHandle();
+                await this.changeWindow(wid); // 別タブに移動する
+                try {
+                  switch (keyIndex) {
+                    case 0: // リサーチ
+                      res = await Research1.commonResearch1([
+                        "table.ui-table a.ui-button",
+                        "a.ui-button",
+                        "input.ui-button",
+                        "div.ui-item-no",
+                        "li>label",
+                        "select.ui-select",
+                      ]);
+                      break;
+                    case 1: // 観察力
+                      res = await AnkPark.doMobSite();
+                      break;
+                    case 2: // ひらめき
+                      res = await AnkPark.doMobHirameki();
+                      break;
+                    case 3: // MIX
+                      res = await AnkPark.doMobMix();
+                      break;
+                    case 4: // 偉人
+                      res = await AnkPark.doMobIjin();
+                      break;
+                    case 5: // 写真
+                      res = await AnkPark.doMobPhoto();
+                      break;
+                    case 6: // 料理
+                      res = await AnkPark.doMobCook();
+                      break;
+                    case 7: // 動物図鑑
+                      res = await AnkPark.doMobZukan();
+                      break;
+                    case 8: // 日本百景
+                      res = await AnkPark.doMobJapan();
+                      break;
+                    case 9: // コラム
+                      res = await AnkPark.doMobColum();
+                      break;
+                  }
+                } catch (e) {
+                  logger.warn(e);
+                }
+                await driver.close(); // このタブを閉じて
+                await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+                await driver.navigate().refresh(); // 画面更新
+                if (await this.isExistEle(seleGen[0], true, 3000)) {
+                  let ele = await this.getEle(seleGen[0], 3000);
+                  await this.clickEle(ele, 3000); // アンケートリストを表示
+                }
+              }
+            }
+            res = D.STATUS.DONE;
+          } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
+        } catch (e) {
+          logger.warn(e);
+        }
+      }
+    }
+    return res;
+  }
+}
+
 exports.GenCommon = GenCommon;
 exports.Gen = GenBase;

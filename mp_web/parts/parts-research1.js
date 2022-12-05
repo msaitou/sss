@@ -6,7 +6,7 @@ const { Builder, By, until, Select } = require("selenium-webdriver");
 class PartsResearch1 extends BaseWebDriverWrapper {
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     this.logger.debug(`${this.constructor.name} constructor`);
@@ -105,10 +105,10 @@ class PartsResearch1 extends BaseWebDriverWrapper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     if (await this.isExistEle(sele[1], true, 2000)) {
       let ele = await this.getEle(sele[1], 3000);
-      await this.clickEle(ele, 2000); // 次のページ
+      await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
       if (await this.isExistEle(sele[2], true, 2000)) {
         ele = await this.getEle(sele[2], 3000);
-        await this.clickEle(ele, 2000); // 次のページ
+        await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
         // 多分12問あり
         for (let i = 0; i < 12; i++) {
           if (await this.isExistEle(sele[3], true, 2000)) {
@@ -140,7 +140,7 @@ class PartsResearch1 extends BaseWebDriverWrapper {
             if (await this.isExistEle(ansSele, true, 2000)) {
               let eles = await this.getEles(ansSele, 3000);
               if (choiceNum === -1) {
-                choiceNum = libUtil.getRandomInt(0, eles.length-1);
+                choiceNum = libUtil.getRandomInt(0, eles.length - 1);
               }
               if (ansSele === sele[5]) {
                 let select = new Select(eles[0]);
@@ -151,7 +151,7 @@ class PartsResearch1 extends BaseWebDriverWrapper {
               }
               if (await this.isExistEle(sele[2], true, 2000)) {
                 ele = await this.getEle(sele[2], 3000);
-                await this.clickEle(ele, 2000); // 次のページ
+                await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
               }
             }
           }
@@ -159,7 +159,11 @@ class PartsResearch1 extends BaseWebDriverWrapper {
         await this.hideOverlay();
         if (await this.isExistEle(sele[2], true, 2000)) {
           ele = await this.getEle(sele[2], 3000);
-          await this.clickEle(ele, 2000); // 次のページ
+          await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            ele = await this.getEle(sele[1], 3000);
+            await this.clickEle(ele, 2000, 0, this.isMob); // 閉じる
+          }
         }
       }
     }

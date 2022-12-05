@@ -860,6 +860,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       ];
       if (await this.isExistEle(sele[4], true, 10000)) {
         let ele = await this.getEle(sele[4], 10000);
+        await this.hideOverlay();
         await this.clickEle(ele, 2000, 250);
         try {
           await this.commonMobAnk(sele, "doMix");
@@ -887,6 +888,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "input[alt='進む']", // 6
         "input[src*='next']",
       ];
+      await this.hideOverlay();
       if (await this.isExistEle(sele[0], true, 10000)) {
         let ele = await this.getEle(sele[0], 10000);
         await this.clickEle(ele, 2000, 250);
@@ -1060,6 +1062,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           //   await select.selectByValue(choiceNum.toString());
           // } else {
           if (eles.length <= choiceNum) choiceNum = eles.length - 1;
+          await this.hideOverlay();
           await this.clickEle(eles[choiceNum], 2000, 250);
           // }
           if (await this.isExistEle(sele[4], true, 2000)) {
@@ -1076,6 +1079,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       //     await this.clickEle(ele, 2000);
       if (await this.isExistEle(sele[5], true, 2000)) {
         let ele = await this.getEle(sele[5], 3000);
+        await this.hideOverlay();
         await this.clickEle(ele, 2000, 250);
       }
       //   }
@@ -1087,9 +1091,11 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       //   }
       if (await this.isExistEle(sele[6], true, 4000)) {
         let ele = await this.getEle(sele[6], 3000);
+        await this.hideOverlay();
         await this.clickEle(ele, 2000, 250);
         if (await this.isExistEle(sele[5], true, 4000)) {
           let ele = await this.getEle(sele[5], 3000);
+          await this.hideOverlay();
           await this.clickEle(ele, 2000, 250);
         }
       }
@@ -1097,16 +1103,18 @@ class PartsAnkPark extends BaseWebDriverWrapper {
   }
 
   async hideOverlay() {
-    let seleOver = ["div.close"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
-      let ele = await this.getEle(seleOver[0], 2000);
-      if (await ele.isDisplayed()) {
-        // if (!this.isMob) {
-        await this.clickEle(ele, 2000);
-        // } else {
-        //   await ele.sendKeys(Key.ENTER);
-        // }
-      } else this.logger.debug("オーバーレイは表示されてないです");
+    let seleOver = ["div.close", "#close"];
+    for (let i in seleOver) {
+      if (await this.isExistEle(seleOver[i], true, 3000)) {
+        let ele = await this.getEle(seleOver[i], 2000);
+        if (await ele.isDisplayed()) {
+          // if (!this.isMob) {
+          await this.clickEle(ele, 2000);
+          // } else {
+          //   await ele.sendKeys(Key.ENTER);
+          // }
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
     }
   }
 }
