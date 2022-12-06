@@ -571,7 +571,7 @@ class GenAnqKenkou extends GenMissonSupper {
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
     let sele = ["#tabbox1 img[alt='さらさら健康コラム']", "div.status>a"];
-    await this.openUrl(targetUrl); // 操作ページ表示
+    await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000);
