@@ -1,6 +1,6 @@
 const { Executor } = require("selenium-webdriver/lib/command.js");
 const { initBrowserDriver, db } = require("./initter.js");
-const { Builder, By, until,Key } = require("selenium-webdriver");
+const { Builder, By, until, Key } = require("selenium-webdriver");
 
 // DBへの試しのデータ挿入更新
 async function dbPointUpsert() {
@@ -81,10 +81,12 @@ async function getZoom() {
   await driver.get(
     "https://www.google.com/search?q=%E3%83%90%E3%83%B3%E3%83%90%E3%83%B3%E3%83%90%E3%82%B6%E3%83%BC%E3%83%AB&newwindow=1&biw=758&bih=668&sxsrf=ALiCzsblDKfdFPRlQ1UgOWnCFtv8K_mZsg%3A1668049312985&ei=oGlsY5TmO7m52roPupiRoAo&ved=0ahUKEwiUtpL2z6L7AhW5nFYBHTpMBKQQ4dUDCA8&uact=5&oq=%E3%83%90%E3%83%B3%E3%83%90%E3%83%B3%E3%83%90%E3%82%B6%E3%83%BC%E3%83%AB&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDIHCAAQBBCABDoHCCMQsAMQJzoHCCMQ6gIQJzoECCMQJzoECAAQQzoNCAAQBBCABBCxAxCDAToGCAAQBBADOgoIABAEEIAEELEDOhAIABAEEIAEELEDEIMBEMkDOgUIABCSAzoNCAAQBBCABBCxAxCxAzoJCAAQBBCABBAKSgQIQRgBSgQIRhgAUKghWNJmYPNoaAZwAHgAgAF3iAGkD5IBBDE0LjaYAQCgAQGwAQrIAQPAAQE&sclient=gws-wiz-serp"
   );
-  let zooml = await driver.executeScript('return window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth * 100;');
+  let zooml = await driver.executeScript(
+    "return window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth * 100;"
+  );
   console.log(zooml);
-	zooml = zooml*100;
-  console.log(zooml+'%');
+  zooml = zooml * 100;
+  console.log(zooml + "%");
   let action = await driver.actions();
   // 以下は失敗
   let eles = await driver.findElements(By.css("html"));
@@ -93,10 +95,12 @@ async function getZoom() {
   await eles[0].sendKeys(Key.chord(Key.CONTROL, Key.SUBTRACT)).perform();
   await eles[0].sendKeys(Key.chord(Key.CONTROL, Key.SUBTRACT)).perform();
   // await action.sendKeys(Key.chord(Key.CONTROL, Key.SUBTRACT)).perform();
-  zooml = await driver.executeScript('return window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth * 100;');
+  zooml = await driver.executeScript(
+    "return window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth * 100;"
+  );
   console.log(zooml);
-	zooml = zooml*100;
-  console.log(zooml+'%');
+  zooml = zooml * 100;
+  console.log(zooml + "%");
 
   // let eles = await driver.findElements(By.css("h3"));
   // await driver.actions().scroll(0, 0, 0, 0, eles[8]).perform();
@@ -106,6 +110,15 @@ async function getZoom() {
   await driver.sleep(5000);
   driver.quit();
   console.log("owari");
+}
+async function doKuroshio() {
+  const { default: Kuroshiro } = require("kuroshiro");
+  const KuroshiroAnalyzer = require("kuroshiro-analyzer-kuromoji");
+
+  const kuroshiro = new Kuroshiro();
+  await kuroshiro.init(new KuroshiroAnalyzer());
+  const result = await kuroshiro.convert("膝下", { to: "hiragana" });
+  console.log(result);
 }
 async function exe() {
   console.log(process.argv);
@@ -127,6 +140,9 @@ async function exe() {
       break;
     case "getZoom":
       await getZoom();
+      break;
+    case "kuroshiro":
+      await doKuroshio();
       break;
   }
   console.log("end--");

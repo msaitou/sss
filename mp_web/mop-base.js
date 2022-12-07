@@ -834,45 +834,49 @@ class MopKanji extends MopMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START`);
-
     let res = D.STATUS.FAIL;
     try {
       await this.openUrl(this.targetUrl); // 操作ページ表示
       let sele = [
-        "a[data-ga-label='この日何曜日？']",
+        "a[data-ga-label='漢字テスト']",
         "input.ui-button-start",
-        "label.ui-label-radio",
+        "label.ui-label-radio", // 2
         "input.ui-button-answer",
-        "input.ui-button-result",
+        "input.ui-button-result", // 4
         "a.ui-button-close",
         "input.ui-button-end",
-        "div.ui-item-header>h2.ui-item-title",
+        ".ui-item-title",
       ];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
-        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
+        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(3);
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           await this.clickEle(ele, 2000, 0, this.isMob);
-          // 8問あり
-          for (let i = 0; i < 8; i++) {
+          // 10問あり
+          for (let i = 0; i < 10; i++) {
             let eles;
             if (await this.isExistEle(sele[2], true, 2000)) {
               eles = await this.getEles(sele[2], 2000);
-              // 問題から曜日を換算して、選択
+              // 問題から読み仮名を変換して、選択
               if (await this.isExistEle(sele[7], true, 3000)) {
                 ele = await this.getEle(sele[7], 2000);
                 let text = await ele.getText();
                 logger.info(`${text}`);
-                let regex = "今日の(\\d+)日後は何曜日？";
-                let matches = text.match(regex);
-                logger.info(`${matches[1]}は、`);
-                let selectYoubi = libUtil.getNanyoubi(matches[1]);
-                logger.info(`${selectYoubi}です`);
-                await this.clickEle(eles[selectYoubi], 2000);
+                let selectIndex = libUtil.getRandomInt(0, eles.length);
+                let yomiResult = await libUtil.kanjiToKana(text);
+                // 答えと一致する選択肢を探す
+                for (let j = 0; j < eles.length; j++) {
+                  let radioText = await eles[j].getText();
+                  if (radioText == yomiResult) {
+                    selectIndex = j;
+                    break;
+                  }
+                }
+                await this.clickEle(eles[selectIndex], 2000);
                 if (await this.isExistEle(sele[3], true, 3000)) {
                   ele = await this.getEle(sele[3], 3000);
                   await this.clickEle(ele, 2000, 0, this.isMob); // 回答する
@@ -887,6 +891,7 @@ class MopKanji extends MopMissonSupper {
               }
             } else if (await this.isExistEle(sele[5], true, 2000)) {
               ele = await this.getEle(sele[5], 3000);
+              await this.clickEle(ele, 2000, 0, this.isMob); // エラーで閉じる
             }
           }
           await this.hideOverlay(); // オーバレイあり。消す
