@@ -728,6 +728,7 @@ class MopAnqHappy extends MopMissonSupper {
                   if (currentUrl.indexOf("https://moppy.enquete.vip/") === -1) {
                     await driver.navigate().back(); // 広告をクリックしたぽいので戻る
                     await this.sleep(2000);
+                    currentUrl = await driver.getCurrentUrl();
                     if (currentUrl.indexOf("https://moppy.enquete.vip/") === -1) {
                       await driver.navigate().back(); // 広告をクリックしたぽいので戻る
                       await this.sleep(2000);

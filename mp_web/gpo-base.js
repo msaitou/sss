@@ -54,7 +54,6 @@ class GpoBase extends BaseExecuter {
           case D.MISSION.ANQ_COOK:
             execCls = new GpoAnqCook(para);
             break;
-
           case D.MISSION.ANQ_HIRAMEKI:
             execCls = new GpoAnqHirameki(para);
             break;
@@ -69,6 +68,9 @@ class GpoBase extends BaseExecuter {
             break;
           case D.MISSION.ANQ_SITE:
             execCls = new GpoAnqSite(para);
+            break;
+          case D.MISSION.ANQ_KENKOU:
+            execCls = new GpoAnqKenkou(para);
             break;
         }
         if (execCls) {
@@ -540,10 +542,8 @@ class GpoUranai extends GpoMissonSupper {
   }
 }
 const { PartsAnkPark } = require("./parts/parts-ank-park.js");
-// 'hirameki');
-// 'ryori');
-// '');
-// アンケート コラム
+// 以下mobile
+// アンケート コラム　mobile
 class GpoAnqColum extends GpoMissonSupper {
   firstUrl = "https://www.gpoint.co.jp/";
   targetUrl = "https://kotaete.gpoint.co.jp/";
@@ -585,8 +585,7 @@ class GpoAnqColum extends GpoMissonSupper {
                 res = await AnkPark.doMobColum();
               } catch (e) {
                 logger.warn(e);
-              }
-              finally{
+              } finally {
                 await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
                 await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
               }
@@ -649,8 +648,7 @@ class GpoAnqPhoto extends GpoMissonSupper {
                 res = await AnkPark.doMobPhoto();
               } catch (e) {
                 logger.warn(e);
-              }
-              finally{
+              } finally {
                 await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
                 await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
               }
@@ -713,8 +711,7 @@ class GpoAnqZukan extends GpoMissonSupper {
                 res = await AnkPark.doMobZukan();
               } catch (e) {
                 logger.warn(e);
-              }
-              finally{
+              } finally {
                 await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
                 await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
               }
@@ -777,8 +774,7 @@ class GpoAnqIjin extends GpoMissonSupper {
                 res = await AnkPark.doMobIjin();
               } catch (e) {
                 logger.warn(e);
-              }
-              finally{
+              } finally {
                 await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
                 await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
               }
@@ -812,7 +808,12 @@ class GpoAnqHirameki extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["a[onclick*='hirameki']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
+    let sele = [
+      "a[onclick*='hirameki']",
+      ".enquete-list div>a:not(.answered)",
+      "",
+      "input.LgBtnsbmt",
+    ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000);
@@ -841,8 +842,7 @@ class GpoAnqHirameki extends GpoMissonSupper {
                 res = await AnkPark.doMobHirameki();
               } catch (e) {
                 logger.warn(e);
-              }
-              finally{
+              } finally {
                 await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
                 await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
               }
@@ -876,7 +876,12 @@ class GpoAnqJapan extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["a[onclick*='nihonhyakkeitoenquete']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
+    let sele = [
+      "a[onclick*='nihonhyakkeitoenquete']",
+      ".enquete-list div>a:not(.answered)",
+      "",
+      "input.LgBtnsbmt",
+    ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000);
@@ -905,8 +910,7 @@ class GpoAnqJapan extends GpoMissonSupper {
                 res = await AnkPark.doMobJapan();
               } catch (e) {
                 logger.warn(e);
-              }
-              finally{
+              } finally {
                 await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
                 await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
               }
@@ -940,7 +944,12 @@ class GpoAnqSite extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["a[onclick*='kansatsuryokutoenquete']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
+    let sele = [
+      "a[onclick*='kansatsuryokutoenquete']",
+      ".enquete-list div>a",
+      "",
+      "input.LgBtnsbmt",
+    ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000);
@@ -969,8 +978,7 @@ class GpoAnqSite extends GpoMissonSupper {
                 res = await AnkPark.doMobSite();
               } catch (e) {
                 logger.warn(e);
-              }
-              finally{
+              } finally {
                 await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
                 await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
               }
@@ -1033,8 +1041,7 @@ class GpoAnqCook extends GpoMissonSupper {
                 res = await AnkPark.doMobCook();
               } catch (e) {
                 logger.warn(e);
-              }
-              finally{
+              } finally {
                 await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
                 await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
               }
@@ -1044,6 +1051,59 @@ class GpoAnqCook extends GpoMissonSupper {
           } else {
             res = D.STATUS.DONE;
           }
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+// アンケート 健康 mobile
+class GpoAnqKenkou extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://www.gpoint.co.jp/gpark/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let AnkPark = new PartsAnkPark(this.para);
+    let sele = [
+      "img[alt='さらさら健康コラム']",
+      ".enquete-list div>a:not(.answered)",
+      "",
+      "input.LgBtnsbmt",
+    ];
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[3], true, 2000)) {
+          let ele0 = await this.getEle(sele[3], 3000);
+          await this.clickEle(ele0, 3000);
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+                eles = await this.getEles(sele[1], 3000);
+              await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+              await this.clickEle(eles[eles.length - 1], 6000, 250);
+              res = await AnkPark.doMobKenkou();
+              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+              await this.sleep(2000);
+            }
+          } else res = D.STATUS.DONE;
         }
       } catch (e) {
         logger.warn(e);
