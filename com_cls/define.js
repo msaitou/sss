@@ -67,6 +67,7 @@ exports.Def = {
 
     ANQ_CRI: "anq_cri",
     ANQ_GEN: "anq_gen",
+    ANQ_GEN_MOB: "anq_gen_mob",
     GPO_ANQ: "gpo_anq",
     POINTQ: "pointq",
 

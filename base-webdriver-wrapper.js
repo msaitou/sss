@@ -218,16 +218,32 @@ class BaseWebDriverWrapper {
   async closeElesWindow(remainIds) {
     let wid = await this.driver.getWindowHandle();
     let widSet = await this.driver.getAllWindowHandles();
-    if (widSet.length === 2) return;  // チェックする必要なし
+    if (widSet.length === 2) return; // チェックする必要なし
+    let done = false;
     for (let id of widSet) {
       if (remainIds.indexOf(id) === -1) {
         // 残したいウインドウ以外を閉じる
         await this.driver.switchTo().window(id);
         await this.driver.close();
+        done = true;
       }
     }
     // 元のウインドウIDにスイッチ
     await this.driver.switchTo().window(wid);
+    return done;
+  }
+  async closeAlert() {
+    try {
+      let alert = await this.driver.switchTo().alert();
+      await alert.dismiss();
+      await this.driver.switchTo().defaultContent(); // もとのフレームに戻す
+      await this.driver.navigate().refresh(); // 画面更新
+      return true;
+    } catch (e) {}
+  }
+  async closeElesWindowAndAlert(remainIds) {
+    let done = await this.closeElesWindow(remainIds);
+    return await this.closeAlert() || done;
   }
 
   async changeWindow(wid) {

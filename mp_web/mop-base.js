@@ -719,17 +719,20 @@ class MopAnqHappy extends MopMissonSupper {
               eles = await this.getEles(sele[1], 3000);
               await this.clickEle(eles[skip], 3000);
               if (await this.isExistEle(sele[2], true, 2000)) {
-                let ele = await this.getEle(sele[2], 3000);
-                await this.clickEle(ele, 3000, 500, this.isMob);
-                await this.closeElesWindow([wid, wid2]);
+                ele = await this.getEle(sele[2], 3000);
+                // await this.clickEle(ele, 3000, 500, this.isMob);
+                await this.driver.executeScript(`arguments[0].click()`, ele);
+                await this.sleep(2000);
+                await this.closeElesWindowAndAlert([wid, wid2]);
+                let isStartPage = true;
                 for (let i = 0; i < 30; i++) {
                   let currentUrl = await driver.getCurrentUrl();
                   // 広告が画面いっぱいに入る時がある
-                  if (currentUrl.indexOf("https://moppy.enquete.vip/") === -1) {
+                  if (currentUrl.indexOf("https://gendama.enquete.vip/") === -1) {
                     await driver.navigate().back(); // 広告をクリックしたぽいので戻る
                     await this.sleep(2000);
                     currentUrl = await driver.getCurrentUrl();
-                    if (currentUrl.indexOf("https://moppy.enquete.vip/") === -1) {
+                    if (currentUrl.indexOf("https://gendama.enquete.vip/") === -1) {
                       await driver.navigate().back(); // 広告をクリックしたぽいので戻る
                       await this.sleep(2000);
                       logger.info("広告をクリックさせられたのでbackします");
@@ -740,6 +743,7 @@ class MopAnqHappy extends MopMissonSupper {
                     i--;
                   }
                   if (await this.isExistEle(sele[4], true, 2000)) {
+                    isStartPage = false;
                     let ele = await this.getEle(sele[4], 3000);
                     let q = await ele.getText();
                     logger.info(`${i}つ目 ${q}`);
@@ -770,40 +774,48 @@ class MopAnqHappy extends MopMissonSupper {
                     if (await this.isExistEle(sele[7], true, 2000)) {
                       let eles = await this.getEles(sele[7], 3000);
                       if (choiceNum === -1) choiceNum = libUtil.getRandomInt(0, eles.length);
-                      await this.clickEle(eles[choiceNum], 3000, 500);
-                      await this.closeElesWindow([wid, wid2]);
-                      try {
-                        let alert = await driver.switchTo().alert();
-                        await alert.dismiss();
-                        await driver.switchTo().defaultContent(); // もとのフレームに戻す
-                        await driver.navigate().refresh(); // 画面更新
-                      } catch (e) {}
+                      // await this.clickEle(eles[choiceNum], 3000, 500);
+                      await this.driver.executeScript(`arguments[0].click()`, eles[choiceNum]);
+                      await this.sleep(2000);
+                      let done = await this.closeElesWindowAndAlert([wid, wid2]);
                       if (await this.isExistEle(sele[3], true, 2000)) {
                         let ele = await this.getEle(sele[3], 3000);
-                        await this.clickEle(ele, 3000, 500, this.isMob);
-                        await this.closeElesWindow([wid, wid2]);
-                        try {
-                          let alert = await driver.switchTo().alert();
-                          await alert.dismiss();
-                          await driver.switchTo().defaultContent(); // もとのフレームに戻す
-                          await driver.navigate().refresh(); // 画面更新
-                        } catch (e) {}
+                        // await this.clickEle(ele, 3000, 500, this.isMob);
+                        await this.driver.executeScript(`arguments[0].click()`, ele);
+                        await this.sleep(2000);
+                        if ((await this.closeElesWindowAndAlert([wid, wid2])) || done) i--;
                       }
+                    }
+                  } else if (isStartPage) {
+                    if (await this.isExistEle(sele[2], true, 2000)) {
+                      ele = await this.getEle(sele[2], 3000);
+                      // await this.clickEle(ele, 3000, 500, this.isMob);
+                      await this.driver.executeScript(`arguments[0].click()`, ele);
+                      await this.sleep(2000);
+                      await this.closeElesWindowAndAlert([wid, wid2]);
+                      i--;
+                      continue;
                     }
                   } else break;
                 }
                 if (await this.isExistEle(sele[2], true, 2000)) {
                   let ele = await this.getEle(sele[2], 3000);
-                  await this.clickEle(ele, 3000, 500, this.isMob);
-                  await this.closeElesWindow([wid, wid2]);
+                  // await this.clickEle(ele, 3000, 500, this.isMob);
+                  await this.driver.executeScript(`arguments[0].click()`, ele);
+                  await this.sleep(2000);
+                  await this.closeElesWindowAndAlert([wid, wid2]);
                 } else {
                   skip++;
-                  await driver.close(); // このタブを閉じて
+                  await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
                   await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
                   if (await this.isExistEle(sele[6], true, 2000)) {
                     ele = await this.getEle(sele[6], 3000);
                     await this.clickEle(ele, 3000);
-                    await this.changeWindow(wid); // 別タブに移動する
+                    if (await this.isExistEle(sele[0], true, 2000)) {
+                      eles = await this.getEles(sele[0], 3000);
+                      await this.clickEle(eles[0], 2000);
+                      await this.changeWindow(wid); // 別タブに移動する
+                    }
                   }
                 }
               }
