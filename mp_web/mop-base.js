@@ -728,11 +728,11 @@ class MopAnqHappy extends MopMissonSupper {
                 for (let i = 0; i < 30; i++) {
                   let currentUrl = await driver.getCurrentUrl();
                   // 広告が画面いっぱいに入る時がある
-                  if (currentUrl.indexOf("https://gendama.enquete.vip/") === -1) {
+                  if (currentUrl.indexOf("https://moppy.enquete.vip/") === -1) {
                     await driver.navigate().back(); // 広告をクリックしたぽいので戻る
                     await this.sleep(2000);
                     currentUrl = await driver.getCurrentUrl();
-                    if (currentUrl.indexOf("https://gendama.enquete.vip/") === -1) {
+                    if (currentUrl.indexOf("https://moppy.enquete.vip/") === -1) {
                       await driver.navigate().back(); // 広告をクリックしたぽいので戻る
                       await this.sleep(2000);
                       logger.info("広告をクリックさせられたのでbackします");
