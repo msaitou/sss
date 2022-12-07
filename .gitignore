@@ -3,6 +3,8 @@ node_modules/
 bin/
 config/default.json
 config/___________token.json
+config/token.json
+config/gCre.json
 config/prof/
 backup/
 .vscode/launch.json

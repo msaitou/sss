@@ -298,11 +298,11 @@ class PicPointMoll extends PicMissonSupper {
       await this.changeWindow(wid); // 別タブに移動する
       try {
         let cSeleList = [
-          // "img[src*='img_quiz01']",
-          // "img[src*='img_quiz02']",
-          // "img[src*='img_quiz03']",
-          // "img[src*='img_quiz04']",
-          // "img[src*='img_quiz05']",
+          "img[src*='img_quiz01']",
+          "img[src*='img_quiz02']",
+          "img[src*='img_quiz03']",
+          "img[src*='img_quiz04']",
+          "img[src*='img_quiz05']",
           "img[src*='img_seiza']",
           "",
           "",
