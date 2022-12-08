@@ -64,23 +64,12 @@ zooml = zooml*100;
 なんかのエラーになったら、driverを生成しなおす
 6分ログに更新がない場合、プロセスを切るする
 →nodeに名前をつけて、それを見つけて殺す。立ち上げもする。からこいつで起動が必要
-genに
-★・アンケートパーク
-★・健康
-・ハッピー
-mopに
-★・アンケートパーク
-★・リサーチ
-・漢字
-・ハッピー
 picモール
-・検定系が動いてない
 座標をクリックするを試す
 モバイル対応
 モバイルでのログイン対応していないの
 ・gmy
 ・clt
-・lfm?
 ・sug?
 ・pto?
 ・gpo
@@ -95,3 +84,47 @@ picモール
 ・どこまでのびる
 ・告白
 ・チャンネル
+document.querySelectorAll(".adn.ads a[href]").forEach((a) => {
+let isMatch = false;
+    [     "https://r.rakuten.co.jp/",
+          "http://ac.rakuten-card.co.jp/s.p",
+          "http://ac.rakuten-card.co.jp/c.p",
+        ].some(u => {
+    if (a.getAttribute("href").indexOf(u) === 0) {
+      isMatch = true;
+      return true;
+    }
+        });
+    if (isMatch) {
+    console.log(a);
+    } 
+});
+
+        // const jsdom = new JSDOM();
+        // const parser = new jsdom.window.DOMParser();
+        // const dom = parser.parseFromString(content, "text/html");
+        // const imgs = dom.querySelectorAll(
+        //   "img[src*='pg_click_banner_btn.png'], img[alt='クリックしてEdyをゲット！']"
+        // );
+        // for (let img of imgs) {
+        //   let href = img.closest("a").getAttribute("href");
+        //   urls.push(href);
+        //   console.log(href);
+        //   isBreak = true;
+        // }
+        // if (!urls.length) {
+        //   const aTags = dom.querySelectorAll("a[href]");
+        //   for (let aTag of aTags) {
+        //     let href = aTag.text;
+        //     if (href.indexOf("https://pg.rakuten.co.jp/act") > -1) {
+        //       urls.push(href);
+        //       console.log(href);
+        //       isBreak = true;
+        //     }
+        //   }
+        // }
+        // if (!urls.length) {
+        //   let date = new Date();
+        //   isBreak = true;
+        //   fs.writeFileSync(`log/${date.toISOString()}.html`, content);
+        // }

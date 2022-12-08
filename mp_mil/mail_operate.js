@@ -108,10 +108,11 @@ exports.search = async (db, log, urlMap) => {
                 if (err) throw err;
                 log.info(results);
                 if (results.length) {
+                  var msgCnt = 0;
                   var f = imap.fetch(results, { bodies: "" });
                   f.on("message", (msg, seqno) => {
                     // log.info("Message #%d", seqno);
-                    // var prefix = "(#" + seqno + ") ";
+                    var prefix = "(#" + seqno + ") ";
                     msg.on("body", (stream, info) => {
                       simpleParser(stream, null, (err, parsed) => {
                         log.info(parsed.date.toLocaleString(), parsed.subject);
@@ -133,21 +134,22 @@ exports.search = async (db, log, urlMap) => {
                         }
                         // 対象のメールだったら、ヘッダーからhtmlかtextを判別して、テキストを抽出。
                         getPointUrls(urlMap, target, content);
+                        if (++msgCnt == results.length) res2();
                       });
                     });
                     // msg.once("attributes", function (attrs) {
                     //   log.info(prefix + "Attributes: %s", inspect(attrs, false, 8));
                     // });
-                    msg.once("end", () => {
-                      // log.info(prefix + "Finished");
-                    });
+                    // msg.once("end", () => {
+                    //   log.info(prefix + "Finished");
+                    // });
                   });
                   f.once("error", function (err) {
                     rej2(), log.info("Fetch error: " + err);
                   });
-                  f.once("end", () => {
-                    res2(), log.info("Done fetching all messages!");
-                  });
+                  // f.once("end", () => {
+                  //   res2(), log.info("Done fetching all messages!");
+                  // });
                 } else {
                   res2(), log.info("no result!");
                 }
@@ -180,6 +182,8 @@ exports.search = async (db, log, urlMap) => {
     };
   }
 };
+const { JSDOM } = require("jsdom");
+const fs = require("fs");
 /**
  *
  * @param {*} urlMap 抽出したURLとサイトのマップ
@@ -190,29 +194,58 @@ function getPointUrls(urlMap, target, content) {
   let contentRow = content.split("\n");
   let urls = [];
   let signs = [];
+  let isBreak = false;
   for (let row of contentRow) {
     switch (target) {
       case D.CODE.RAKU:
-        for (let key of [
-          "https://r.rakuten.co.jp/",
-          "http://ac.rakuten-card.co.jp/s.p",
-          "http://ac.rakuten-card.co.jp/c.p",
-        ]) {
-          if (row.indexOf(key) > -1) {
-            let url = "";
-            if (row.indexOf('"', row.indexOf(key)) > 0) {
-              url = row.substring(row.indexOf(key), row.indexOf('"', row.indexOf(key)));
-            } else {
-              console.log(row);
-              url = row.substring(row.indexOf(key));
-            }
-            if (url) {
-              // .gif が含まれてるやつ、?fbu= が含まれてるやつをスキップ
-              if (url.indexOf(".gif") === -1 && url.indexOf("?fbu=") === -1) {
-                urls.push(url);
-              }
+        // for (let key of [
+        //   "https://r.rakuten.co.jp/",
+        //   "http://ac.rakuten-card.co.jp/s.p",
+        //   "http://ac.rakuten-card.co.jp/c.p",
+        // ]) {
+        //   if (row.indexOf(key) > -1) {
+        //     let url = "";
+        //     if (row.indexOf('"', row.indexOf(key)) > 0) {
+        //       url = row.substring(row.indexOf(key), row.indexOf('"', row.indexOf(key)));
+        //     } else {
+        //       console.log(row);
+        //       url = row.substring(row.indexOf(key));
+        //     }
+        //     if (url) {
+        //       // .gif が含まれてるやつ、?fbu= が含まれてるやつをスキップ
+        //       if (url.indexOf(".gif") === -1 && url.indexOf("?fbu=") === -1) {
+        //         urls.push(url);
+        //       }
+        //     }
+        //   }
+        // }
+        const jsdom = new JSDOM();
+        const parser = new jsdom.window.DOMParser();
+        const dom = parser.parseFromString(content, "text/html");
+        const imgs = dom.querySelectorAll(
+          "img[src*='pg_click_banner_btn.png'], img[alt='クリックしてEdyをゲット！']"
+        );
+        for (let img of imgs) {
+          let href = img.closest("a").getAttribute("href");
+          urls.push(href);
+          console.log(href);
+          isBreak = true;
+        }
+        if (!urls.length) {
+          const aTags = dom.querySelectorAll("a[href]");
+          for (let aTag of aTags) {
+            let href = aTag.text;
+            if (href.indexOf("https://pg.rakuten.co.jp/act") > -1) {
+              urls.push(href);
+              console.log('text:',href);
+              isBreak = true;
             }
           }
+        }
+        if (!urls.length) {
+          let date = new Date();
+          isBreak = true;
+          fs.writeFileSync(`log/${date.toISOString()}.html`, content);
         }
         break;
       case "rin":
@@ -356,6 +389,7 @@ function getPointUrls(urlMap, target, content) {
       urlMap[target] = [];
     }
     urlMap[target] = urlMap[target].concat(urls);
+    if (isBreak) break;
   }
 }
 

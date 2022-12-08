@@ -111,6 +111,7 @@ class PointMailClass extends BaseWebDriverWrapper {
   async openUrl(url) {
     return new Promise(async (resolve, reject) => {
       try {
+        // driverのタイムアウトを設定して例外の発生有無に変更したい　TODO
         let a = this.driver.get(url); // エントリーページ表示
         await a.catch((e) => {
           isComp = true;

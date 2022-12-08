@@ -120,6 +120,243 @@ async function doKuroshio() {
   const result = await kuroshiro.convert("膝下", { to: "hiragana" });
   console.log(result);
 }
+async function convDom() {
+  let html = `<html>
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Language" content="ja">
+  <title> 【楽天市場】特典付きキャンペーンニュース </title>
+  </head>
+  <body bgcolor="#FFFFFF" text="#000000"><img src="https://r.rakuten.co.jp/eWBa1ebp955x92SfLT8UU3Ql.gif?mpe=528042" width=1 height=1>
+  <!--
+  こちらのメールマガジンはHTML形式でのみ閲覧していただけます。
+  HTML形式に対応していないメールソフトでは正確に表示できない場合がございます。
+  
+  配信停止をご希望の方は、こちらからお手続きください。
+  https://emagazine.rakuten.co.jp/ns?act=chg_data
+  -->
+  <a name="pagetop"></a>
+  <div align="center">
+  <!--contents_start_02-->
+  <!--ヘッダ情報-->
+  <table width=700 border=0 cellspacing=0 cellpadding=0>
+  <tr>
+  <td width=90 rowspan=2><a href="https://r.rakuten.co.jp/gmPdZ14wS6nTd6gfbgaU0c6u?mpe=528042" target="_blank"><img src="https://point-g.r10s.jp/mailmag/common/img/incentive/r_logo_119x21.png" border=0></a>
+  <a href="https://r.rakuten.co.jp/2Ncf6s5Q39Fh6B42E5god1aQ?mpe=528042" target="_blank"><img src="https://point-g.r10s.jp/mailmag/common/img/incentive/r_tokuten_logo.png" border=0></a>
+  </td>
+  </tr>
+  </table>
+  <table width=700 border=0 cellpadding=0 cellspacing=5>
+  <tr align="right">
+  <td style="margin:;text-align:left;">※本メールは特典付きキャンペーンニュースにご登録の方にお送りしています。</td><td>
+  <!--ココカラ-->
+  <table align="right"><tbody><tr><td align="center" valign="middle" style="padding: 0 8px; height: 27px; color: #fff; background: #bf0000; border-bottom: 2px solid #b00000">
+  <a href="https://emagazine.rakuten.co.jp/nq?k=nNVHoSRDtGndpZ7TREEzzysPOF3IQtB0wzYCKj2XGDYuJbqB_68GP2rdPZFTUT4CBQ6W7N3h6ac." target="_blank" style="color: #fff;"><font size="2">&gt;&gt;配信停止</font></a>
+  </td></tr></tbody></table>
+  <!--ココマデ-->
+  </td>
+  </tr>
+  </table>
+  <!--contents_end-->
+  <!--▼▼バナーエリア▼▼-->
+  <table width="700" align="center" cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center">
+      <a href="https://r.rakuten.co.jp/cLC1O272V1p1elydg74Fu8C5?mpe=528042" target="_blank"><img src="https://point-g.r10s.jp/mailmag/etc/bta/201701/shopping_blue_20180419.jpg" width="700" height="500" border="0"></a><br><br>
+      </td>
+    </tr>
+  </table>
+  <table width="700" border="0" cellspacing="0" cellpadding="0"><tr><td>
+  <div align="center"><font size="4"><font color=#da0b00><b>
+  【期間中に1回限り】1ポイント獲得キャンペーン<br>
+  2022/12/5 （月） 10:00 ～ 2022/12/7 （水） 23:59まで<br>
+  </b></font>
+  </font>
+  </div></td></tr>
+  </table>
+  <div align="center">
+  <a href="https://r.rakuten.co.jp/1mE0bC6bj0rM2H99p9aYx8GX?mpe=528042" target="_blank"><img border="0" src="https://point-g.rakuten.co.jp/mailmag/common/pg_click_banner_btn.png"></a><br>
+    <table width="600" border="0" cellspacing="0" cellpadding="0">
+    <tr><td colspan="5" height="10" bgcolor="#ffffff"><font size="-1">
+    </font></td></tr></table>
+  </div>
+  <table width="700" border="0" cellspacing="0" cellpadding="0"><tr><td>
+  <div align="center"><font size="2"><font color=#da0b00><b>
+  ※ポイント進呈はキャンペーン期間中にお1人様1回限りとさせていただきます。<br>
+  また、既に楽天にログインされている方は、クリック後にエントリー完了画面は表示されませんが <br>
+  問題なくエントリーは完了しておりますのでご安心ください。<br><br>
+  </b></font>
+  </font>
+  </div></td></tr>
+  </table>
+  <table width="700" border="0" cellspacing="0" cellpadding="0">
+  <tr><td colspan="5" height="10" bgcolor="#ffffff">
+  <div align="left"><font size="-1">
+  <br>【楽天ポイント進呈ルール】<br>
+  ---------------------------------------------------<br>
+  2022/12/5 （月） 10:00 ～ 2022/12/7 （水） 23:59 の期間中に『楽天ポイント獲得はこちらから』下の「クリックでもれなく1ポイントGet!!」をクリックした楽天会員様を対象として、楽天ポイントを<font size="4">1</font>ポイント進呈いたします。<br>
+  ---------------------------------------------------
+  <br>
+  ・楽天ポイントは、クリック期間終了後の翌々月末頃までに、約1ヶ月間有効な期間限定ポイントとして進呈いたします。<br>
+  ・本キャンペーンでのポイント進呈はお1人様、1回限りとさせていただきます。<br>
+  ※詳しいポイント獲得ルールは<a href="https://r.rakuten.co.jp/5vg7v17ef8uV4oib3n1XD71C?mpe=528042" target="_blank">こちら</a>をご確認ください。<br>
+  ・同一期間のメールが数日間届きますのでご了承ください。<br>
+  ・ポイント獲得のためには、本メールを受信された会員様本人がご自身の楽天IDにてログインした上で上記URLをクリックしていただきます。<br>
+  ログインされていない場合は、キャンペーンページではなく、ログイン画面に遷移しますので、ログインしてください。<br>
+  ログインせずにURLをクリック頂いてもポイントを進呈出来ません。<br>
+  ※既にログインしている場合、ログイン画面は表示されません。<br>
+  ※メールアプリ等のアプリ内ブラウザは推奨環境外のため、ポイントが獲得できない可能性がございます。<br>
+  <br>
+  <br>
+  【楽天ポイントが進呈対象外となる場合】<br>
+  ・ご本人様以外の楽天IDでログイン状態のまま、該当URLをクリックいたしますとメールを受信されたユーザ様にポイントが進呈出来ません。<br>
+  ・該当URLをクリックをしても、ポイント進呈を行う際に楽天会員から退会されている場合はポイント進呈が出来ません。<br><br><br></font>
+  </div>
+  </td></tr></table>
+  
+  <!--▲▲バナーエリア▲▲-->
+  
+  <!--アクアクララ固定費枠（9/1~9/29まで）-->
+  
+  <!--アクアクララ固定費枠（9/1~9/29まで）-->
+  <br>
+  <table width="700" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td>
+        <div align="center">
+          <a href="https://r.rakuten.co.jp/gPn2dr72BaGSbRS8VkbYg2Cr?mpe=528042" target="_blank"><img border="0" src="https://point-g.r10s.jp/banner/campaign/ow_468_60.jpg"></a>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <br>
+  <table width="700" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+  <td><table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">
+    <tr>
+      <td style="padding-top:20px; font-size:0px; line-height:0px;" class="separator">&nbsp;</td>
+    </tr>
+    <tr>
+      <td width="100%" align="center" valign="middle">
+        <a href="https://r.rakuten.co.jp/4E5e6M7Uia2d90X6kH7h4aHo?mpe=528042" target="_blank">
+          <img src="https://jp.rakuten-static.com/1/grp/banner/img/mno_mail_banner_468_60.jpg"
+            style="display: block; width:468" border="0" alt="楽天モバイル 3GBまで1,078円/月" class="img-max"></a>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding-top:20px; font-size:0px; line-height:0px;" class="separator">&nbsp;</td>
+    </tr>
+  </table></td>
+  </tr>
+  </table>
+  <table width="700" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+  <td><table width="100%" align="center" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td bgcolor="" height="20">
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3px 10px 0 10px; font-size: 14px; word-break:break-all; font-family: &#39;Lucida Grande&#39;, &#39;Hiragino Kaku Gothic ProN&#39;,&#39;Meiryo&#39;, sans-serif !important;">このメールを気に入っていただけましたか？</td>
+    </tr>
+    <tr>
+      <td align="center">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff">
+          <tr>
+            <td width="16.6%" align="center" valign="middle">
+              <a href="https://r.rakuten.co.jp/fZCbo82Wnd6f8FHdBs6i9arZ?fbu=On651x7lJwzSAutNRuhyD5rK-PCw3sPCxkUxMKzVqLk." target="_blank"><img src="https://r.r10s.jp/com/img/email/ichiba/2019/0425/mqi-b-00.png" style="display: block; width:100%;" width="100" border="0" alt="0"></a>
+            </td>
+            <td width="16.6%" align="center" valign="middle">
+              <a href="https://r.rakuten.co.jp/7zj6M0dkA3T6aUM5LH0TJ4LY?fbu=On651x7lJwzSAutNRuhyD5rK-PCw3sPCxkUxMKzVqLk." target="_blank"><img src="https://r.r10s.jp/com/img/email/ichiba/2019/0425/mqi-b-01.png" style="display: block; width:100%;" width="100" border="0" alt="1"></a>
+            </td>
+            <td width="16.6%" align="center" valign="middle">
+              <a href="https://r.rakuten.co.jp/fvofF4f3yaYNgOl4hL6TXbCK?fbu=On651x7lJwzSAutNRuhyD5rK-PCw3sPCxkUxMKzVqLk." target="_blank"><img src="https://r.r10s.jp/com/img/email/ichiba/2019/0425/mqi-b-02.png" style="display: block; width:100%;" width="100" border="0" alt="2"></a>
+            </td>
+            <td width="16.6%" align="center" valign="middle">
+              <a href="https://r.rakuten.co.jp/1MT8sj6Wy4H9aW55eDee22uH?fbu=On651x7lJwzSAutNRuhyD5rK-PCw3sPCxkUxMKzVqLk." target="_blank"><img src="https://r.r10s.jp/com/img/email/ichiba/2019/0425/mqi-b-03.png" style="display: block; width:100%;" width="100" border="0" alt="3"></a>
+            </td>
+            <td width="16.6%" align="center" valign="middle">
+              <a href="https://r.rakuten.co.jp/4bAcdk4n32IG2hBaOm7sgctU?fbu=On651x7lJwzSAutNRuhyD5rK-PCw3sPCxkUxMKzVqLk." target="_blank"><img src="https://r.r10s.jp/com/img/email/ichiba/2019/0425/mqi-b-04.png" style="display: block; width:100%;" width="100" border="0" alt="4"></a>
+            </td>
+            <td width="16.6%" align="center" valign="middle">
+              <a href="https://r.rakuten.co.jp/doe3hX66y8Xu811cj1axa1g6?fbu=On651x7lJwzSAutNRuhyD5rK-PCw3sPCxkUxMKzVqLk." target="_blank"><img src="https://r.r10s.jp/com/img/email/ichiba/2019/0425/mqi-b-05.png" style="display: block; width:100%;" width="100" border="0" alt="5"></a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td width="350" align="left" valign="top" style="padding: 0 5px; font-size: 12px; word-break:break-all; font-family: &#39;Lucida Grande&#39;, &#39;Hiragino Kaku Gothic ProN&#39;,&#39;Meiryo&#39;, sans-serif;">気に入らない</td>
+            <td width="350" align="right" valign="top" style="padding: 0 5px; font-size: 12px; word-break:break-all; font-family: &#39;Lucida Grande&#39;, &#39;Hiragino Kaku Gothic ProN&#39;,&#39;Meiryo&#39;, sans-serif;">気に入った</td>
+          </tr>
+        </table>
+      
+      </td>
+    </tr>
+    <tr>
+      <td bgcolor="" height="20">
+      </td>
+    </tr>
+  </table></td>
+  </tr>
+  </table>
+  
+    <table width=700 border=0 cellspacing=0 cellpadding=3>
+    <tr>
+      <td height="10" ><img src="https://image.infoseek.rakuten.co.jp/content/adi/10/hensei/snap20100715121606_r3_c2.jpg" width="700" height="10" border="0"></td>
+    </tr>
+  <tr>
+  <td><font size="-1"><font color="#666666" size="-1">本メールでは会員限定のキャンペーンや楽天グループ、またはその他の企業のお得な情報等をお送りしています。不要な方は配信停止ページから停止ください。<br>※配信中止は、<a href="https://emagazine.rakuten.co.jp/nq?k=nNVHoSRDtGndpZ7TREEzzysPOF3IQtB0wzYCKj2XGDYuJbqB_68GP2rdPZFTUT4CBQ6W7N3h6ac.">こちら</a>にて可能です。<br>
+    ※このメールは送信専用メールアドレスから配信されています。ご返信頂いてもお答えできませんのでご了承ください。<br>
+    ※個人情報の取り扱いについては、<a target="_blank" href="https://r.rakuten.co.jp/aycffH9RH6ry8sqcX91lWbJb?mpe=528042">個人情報保護方針</a>をご覧ください。</font>
+  </font>
+  </td>
+  </tr>
+    <tr>
+      <td height="10" ><img src="https://image.infoseek.rakuten.co.jp/content/adi/10/hensei/snap20100715121606_r3_c2.jpg" width="700" height="10" border="0"></td>
+    </tr>
+    <tr>
+    <td>
+      <font color="#666666" size="-1">情報配信元：楽天グループ株式会社<br>
+  <a href="https://r.rakuten.co.jp/cQF6VQeTka9G9P60uA41N6XD?mpe=528042">お問い合わせ先</a><br>
+      </font>
+    </td>
+    </tr>
+  </table>
+  <br>
+  
+  <table width=700 border=0 cellpadding=3 cellspacing=0 bgcolor="#bf0000">
+  <tr>
+  <td><font size="-1">　
+  <img src="https://image.rakuten.co.jp/com/img/email/www/item/2007/1116/tri.gif" width=9 height=9><a href="https://r.rakuten.co.jp/1Ij7bd1Mh6WF0l75Ih4Pn32P?mpe=528042" target="_blank"><font color="#FFFFFF">特典付きキャンペーン</font></a></font></td>
+  </tr>
+  </table>
+  <!--contents_end-->
+  <br>
+  <div><font size="-1">Copyright (c) Rakuten Group, Inc. All Rights Reserved.</font></div>
+  <img src="https://rd.rakuten.co.jp/rn/opn/?i=62086&d=20100115&e=#enc_address" width=1 height=1>
+  </div>
+  </body>
+  </html>`;
+  console.log("aaa");
+  const {JSDOM} = require("jsdom");
+  const jsdom = new JSDOM();
+  const parser = new jsdom.window.DOMParser();
+  const dom = await parser.parseFromString(html, "text/html");
+  const imgs = await dom.querySelectorAll("img[src*='pg_click_banner_btn.png']");
+  console.log(imgs[0]);
+  for (let img of imgs) {
+    let href = await img.closest("a").getAttribute("href");
+    console.log(href);
+  }
+  const fs = require("fs");
+  let date = new Date();
+  fs.writeFileSync(`log/${date.toISOString()}.html`, html);
+  console.log("aaas");
+}
 async function exe() {
   console.log(process.argv);
   switch (process.argv[2]) {
@@ -143,6 +380,9 @@ async function exe() {
       break;
     case "kuroshiro":
       await doKuroshio();
+      break;
+    case "convDom":
+      await convDom();
       break;
   }
   console.log("end--");
