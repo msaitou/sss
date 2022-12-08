@@ -161,6 +161,7 @@ class CmsQuizDaily extends CmsMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START###`);
+    if (this.isMob) this.targetUrl = "https://www.cmsite.co.jp/sp/game/"; 
     let res = await this.QuizDaily.do(this.targetUrl);
     logger.info(`${this.constructor.name} END#####`);
     return res;

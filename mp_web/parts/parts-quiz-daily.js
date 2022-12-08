@@ -1,7 +1,7 @@
 const { BaseWebDriverWrapper } = require("../../base-webdriver-wrapper");
 const D = require("../../com_cls/define").Def;
 const { libUtil } = require("../../lib/util.js");
-const { Builder, By, until, Select,Key } = require("selenium-webdriver");
+const { Builder, By, until, Select, Key } = require("selenium-webdriver");
 
 class PartsQuizDaily extends BaseWebDriverWrapper {
   para;
@@ -25,10 +25,15 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
         "a.ui-button-close",
         "input.ui-button-end",
       ];
-      sele[0] = siteInfo.code == D.CODE.CMS ? "img[alt='DAILYQUIZ']" : sele[0];
+      sele[0] =
+        siteInfo.code == D.CODE.CMS
+          ? this.isMob
+            ? "img[alt='デイリークイズ']"
+            : "img[alt='DAILYQUIZ']"
+          : sele[0];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, this.isMob ? 120 : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
@@ -73,7 +78,7 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
             res = D.STATUS.DONE;
           }
         } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
-      } 
+      }
     } catch (e) {
       logger.warn(e);
     }

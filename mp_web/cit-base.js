@@ -539,7 +539,7 @@ class CitAnqCook extends CitMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["img[alt='料理とアンケート']", ".enquete-list div>a"];
+    let sele = ["img[alt='料理とアンケート']", ".enquete-list div>a:not(.answered)"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000);
