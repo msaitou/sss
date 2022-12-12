@@ -112,30 +112,33 @@ class PointMailClass extends BaseWebDriverWrapper {
     return new Promise(async (resolve, reject) => {
       try {
         // driverのタイムアウトを設定して例外の発生有無に変更したい　TODO
-        let a = this.driver.get(url); // エントリーページ表示
-        await a.catch((e) => {
-          isComp = true;
-          this.logger.warn(e);
-          reject(false);
-        });
-        let isComp = false,
-          cnt = 0;
-        while (!isComp) {
-          this.logger.debug("sleep", cnt++);
-          await this.sleep(1000);
-          if (a.state_ === "fulfilled") {
-            // fullfiledになってれば
-            this.logger.info("大丈夫らしい", cnt + "秒");
-            isComp = true;
-          } else {
-            if (cnt == 10) {
-              isComp = true;
-              this.logger.info("30超えたので強制終了です");
-              resolve(isComp); // なんか仕様変わったかも
-            }
-          }
-        }
-        resolve(isComp);
+        await this.driver.manage().setTimeouts({ pageLoad: 10000 });
+        await this.driver.get(url);
+        resolve(true);
+        // let a = this.driver.get(url); // エントリーページ表示
+        // await a.catch((e) => {
+        //   isComp = true;
+        //   this.logger.warn(e);
+        //   reject(false);
+        // });
+        // let isComp = false,
+        //   cnt = 0;
+        // while (!isComp) {
+        //   this.logger.debug("sleep", cnt++);
+        //   await this.sleep(1000);
+        //   if (a.state_ === "fulfilled") {
+        //     // fullfiledになってれば
+        //     this.logger.info("大丈夫らしい", cnt + "秒");
+        //     isComp = true;
+        //   } else {
+        //     if (cnt == 10) {
+        //       isComp = true;
+        //       this.logger.info("30超えたので強制終了です");
+        //       resolve(isComp); // なんか仕様変わったかも
+        //     }
+        //   }
+        // }
+        // resolve(isComp);
       } catch (e) {
         // throw e;
         reject(false);

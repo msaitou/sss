@@ -117,24 +117,28 @@ exports.search = async (db, log, urlMap) => {
                       simpleParser(stream, null, (err, parsed) => {
                         log.info(parsed.date.toLocaleString(), parsed.subject);
                         log.info(parsed.headers.get("content-type").value);
+                        let noAnalys = false;
                         // 件名をチェック。
                         if (targetInfo.key || targetInfo.key2) {
                           if (targetInfo.key && parsed.subject.indexOf(targetInfo.key) === -1) {
-                            return;
+                            noAnalys = true;
                           }
                           if (targetInfo.key2 && parsed.subject.indexOf(targetInfo.key2) === -1) {
-                            return;
+                            noAnalys = true;
                           }
                         }
-                        let content = "";
-                        if (parsed.headers.get("content-type").value == "text/html") {
-                          content = parsed.html;
-                        } else {
-                          content = parsed.text;
+                        if (!noAnalys) {
+                          let content = "";
+                          if (parsed.headers.get("content-type").value == "text/html") {
+                            content = parsed.html;
+                          } else {
+                            content = parsed.text;
+                          }
+                          // 対象のメールだったら、ヘッダーからhtmlかtextを判別して、テキストを抽出。
+                          getPointUrls(urlMap, target, content);
                         }
-                        // 対象のメールだったら、ヘッダーからhtmlかtextを判別して、テキストを抽出。
-                        getPointUrls(urlMap, target, content);
-                        if (++msgCnt == results.length) res2();
+                        if (++msgCnt == results.length) 
+                        res2();
                       });
                     });
                     // msg.once("attributes", function (attrs) {
@@ -242,11 +246,11 @@ function getPointUrls(urlMap, target, content) {
             }
           }
         }
-        if (!urls.length) {
-          let date = new Date();
-          isBreak = true;
-          fs.writeFileSync(`log/${date.toISOString()}.html`, content);
-        }
+        // if (!urls.length) {
+        //   let date = new Date();
+        //   isBreak = true;
+        //   fs.writeFileSync(`log/${date.toISOString()}.html`, content);
+        // }
         break;
       case "rin":
         for (let key of ["https://r.rakuten.co.jp/", "https://pmrd.rakuten.co.jp/?r="]) {

@@ -42,6 +42,9 @@ class SugBase extends BaseExecuter {
           case D.MISSION.ANQ_SUG:
             execCls = new SugAnq(para);
             break;
+          case D.MISSION.GAME_FURUFURU:
+            execCls = new SugGameFurufuru(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -60,8 +63,8 @@ class SugBase extends BaseExecuter {
     let startPage = "https://www.netmile.co.jp/sugutama/";
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
-    let sele = ["div.mile.add_mile.js-user_point" ,".js-search-switch button"];
-    if (this.isMob && await this.isExistEle(sele[1], true, 2000)) {
+    let sele = ["div.mile.add_mile.js-user_point", ".js-search-switch button"];
+    if (this.isMob && (await this.isExistEle(sele[1], true, 2000))) {
       let ele = await this.getEle(sele[1], 2000);
       await this.clickEle(ele, 2000);
     }
@@ -426,10 +429,53 @@ class SugAnq extends SugMissonSupper {
     return res;
   }
 }
+// ふるふる
+class SugGameFurufuru extends SugMissonSupper {
+  firstUrl = "https://www.netmile.co.jp/sugutama/";
+  targetUrl = "https://www.netmile.co.jp/sugutama/game?lo=124";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let sele = ["img[src*='71825fac2eeac6a2b2650f60']"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEle(eles[0], 2000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        sele = ["#start_btn", "#main_column #item", "#finish>a[href='result']", "#scoreboard>a[href='/drop/play/top']"];
+        // スコアボード後、ここに戻る　２時間毎に３回チャレンジ可
+        if (await this.isExistEle(sele[0], true, 2000)) {
+          let ele = await this.getEles(sele[0], 3000);
+          await this.clickEle(ele[0], 2000);
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let ele = await this.getEles(sele[1], 3000);
+            let rect = await ele.getRect();
+            let eleScope = {xStart:rect.x+110,xEnd:rect.x+rect.width-110,yStart:rect.y+110,yEnd:rect.y-30}
+            // sele[1]のleft,topからright,bottomの間で、ランダムで
 
-// module.
+            let x = libUtil.getRandomInt(eleScope.xStart, eleScope.xEnd);
+            let y = libUtil.getRandomInt(eleScope.yStart, eleScope.yEnd);
+            const actions = driver.actions();
+            actions.move({ x: x, y: y}).click().perform();
+            // if () {
+
+            // }
+          }
+        }
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+  }
+}
+
 exports.SugCommon = SugCommon;
-// module.
 exports.Sug = SugBase;
-// module.
-// exports = { pex: pexBase, pexCommon: pexCommon };
