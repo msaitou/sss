@@ -41,7 +41,7 @@ async function mainLinux() {
         if (lastLogTime.toString() === fileStatus.mtime.toString()) {
           // 変化がなければプロセスをキルする
           const stdout = execSync(PS_KILL_CMD);
-          console.log(stdout);
+          console.log(stdout, "node-sss is killed!!");
           isLive = false;
         }
         // 変化があれば何もしない

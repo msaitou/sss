@@ -117,7 +117,7 @@ class MopMissonSupper extends BaseWebDriverWrapper {
       "a.stamp__btn-return",
       "p.stamp__num",
     ];
-    if (this.isMob) return; // めんどくさいのでリターン
+    // if (this.isMob) return; // めんどくさいのでリターン
     if (await this.isExistEle(exSele[3], true, 2000)) {
       let ele = await this.getEle(exSele[3], 3000);
       let stampStr = await ele.getText();
@@ -811,11 +811,7 @@ class MopAnqHappy extends MopMissonSupper {
                   if (await this.isExistEle(sele[6], true, 2000)) {
                     ele = await this.getEle(sele[6], 3000);
                     await this.clickEle(ele, 3000);
-                    if (await this.isExistEle(sele[0], true, 2000)) {
-                      eles = await this.getEles(sele[0], 3000);
-                      await this.clickEle(eles[0], 2000);
-                      await this.changeWindow(wid); // 別タブに移動する
-                    }
+                    await this.changeWindow(wid); // 別タブに移動する
                   }
                 }
               }
