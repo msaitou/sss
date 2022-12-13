@@ -7,13 +7,20 @@ const LOG_FILE = "./log/a.log";
 const EXEC_P_WEB_H = " ./index.js P_WEB_H";
 const PS = {
   WIN: { PS: { NAME: "node-sss", CHECK_CMD: "Get-Process -name ", KILL_CMD: "killall " } },
-  LINUX: { PS: { NAME: "node-sss", CHECK_CMD: "ps -ae | grep ", KILL_CMD: "killall " } },
+  LINUX: {
+    PS: {
+      NAME: "node-sss",
+      CHECK_CMD: "ps -ae | grep ",
+      KILL_CMD: "killall ",
+      KILL_OTHER: " chrome",
+    },
+  },
 };
 async function mainLinux() {
   let count = 0;
   let lastLogTime = undefined;
   const PS_CHECK_CMD = `${PS.LINUX.PS.CHECK_CMD}${PS.LINUX.PS.NAME}`;
-  const PS_KILL_CMD = `${PS.LINUX.PS.KILL_CMD}${PS.LINUX.PS.NAME}`;
+  const PS_KILL_CMD = `${PS.LINUX.PS.KILL_CMD}${PS.LINUX.PS.NAME}${PS.LINUX.PS.KILL_OTHER}`;
   const EXEC_P_WEB_H_CMD = `${PS.LINUX.PS.NAME}${EXEC_P_WEB_H}`;
   const monitoring = async () => {
     console.log(count++);
