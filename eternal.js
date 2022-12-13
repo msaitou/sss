@@ -77,13 +77,21 @@ async function mainWin() {
   const PS_CHECK_CMD = `${PS.WIN.PS.CHECK_CMD}${PS.WIN.PS.NAME}`;
   const PS_KILL_CMD = `${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.NAME}${PS.WIN.PS.KILL_OTHER}`;
   const EXEC_P_WEB_H_CMD = `${PS.WIN.PS.NAME}${EXEC_P_WEB_H}`;
+  const Encoding = require("encoding-japanese");
+  const toString = (bytes) => {
+    return Encoding.convert(bytes, {
+      from: "SJIS",
+      to: "UNICODE",
+      type: "string",
+    });
+  };
   const monitoring = async () => {
     console.log(count++);
     // プロセスが生きてるかチェック
     let isLive = false;
     try {
       const stdout = execSync(PS_CHECK_CMD);
-      console.log(stdout.toString());
+      console.log(toString(stdout));
       // // 生きてる
       // let res = stdout.toString();
       // let resList = res.split('\n');
@@ -93,9 +101,11 @@ async function mainWin() {
       // resList.indexOf(psName)
       isLive = true;
     } catch (e) {
+      console.log(toString(e));
       // 生きてない
     }
     if (isLive) {
+      console.log('生きてるよ');
       let fileStatus = fs.statSync(LOG_FILE);
       // 生きてる場合、ログファイルの更新時間を取得
       if (lastLogTime) {
@@ -112,6 +122,7 @@ async function mainWin() {
       lastLogTime = fileStatus.mtime;
     }
     if (!isLive) {
+      console.log('しんだよ');
       let cmds = EXEC_P_WEB_H_CMD.split(" ");
       // 起動(非同期)
       const child = spawn('.\\'+cmds[0], [cmds[1], cmds[2]], {
@@ -129,13 +140,5 @@ async function mainWin() {
 if (IS_LINUX) {
   mainLinux();
 } else {
-  const Encoding = require("encoding-japanese");
-  const toString = (bytes) => {
-    return Encoding.convert(bytes, {
-      from: "SJIS",
-      to: "UNICODE",
-      type: "string",
-    });
-  };
   mainWin();
 }
