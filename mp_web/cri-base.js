@@ -45,6 +45,9 @@ class CriBase extends BaseExecuter {
           case D.MISSION.ANQ_PARK:
             execCls = new CriAnqPark(para);
             break;
+          case D.MISSION.ANQ_HAPPY:
+            execCls = new CriAnqHappy(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -596,6 +599,185 @@ class CriAnqPark extends CriMissonSupper {
       } finally {
         await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
         await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+}
+// ハッピーアンケート mobile用
+class CriAnqHappy extends CriMissonSupper {
+  firstUrl = "https://www.chobirich.com/";
+  targetUrl = "https://www.chobirich.com/mypage/research/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let res = D.STATUS.FAIL;
+    let sele = [
+      "#koffice_surveys td>a",
+      "div.question-box a",
+      "a.next-button", // 2
+      "input.submit-button",
+      ".answer-list>p", // 4
+      "#next-button:not([style*='display: none'])",
+      "a>img[src*='enquetesquare']", // 6
+      ".answer-list label",
+      "div.question-title", // 8
+    ];
+    let skip = 0; // バグって完了できないやつがあるのでスキップ
+    if (await this.isExistEle(sele[6], true, 2000)) {
+      let ele = await this.getEle(sele[6], 3000);
+      await this.clickEle(ele, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      try {
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let eles = await this.getEles(sele[1], 3000);
+          let limit = eles.length;
+          for (let j = 0; j < limit; j++) {
+            let wid2 = await driver.getWindowHandle();
+            if (await this.isExistEle(sele[8], true, 2000)) {
+              eles = await this.getEles(sele[8], 3000);
+              let title = await eles[skip].getText();
+              if (
+                ["書店について", "好きな飲み物に関して", "キャラクターに関するアンケート"].indexOf(
+                  title
+                ) > -1
+              ) {
+                skip++;
+                continue;
+              }
+            }
+            if (await this.isExistEle(sele[1], true, 2000)) {
+              // for (let i = 0; i < 9; i++) {
+              //   // 隠れてるので全部オープン
+              //   if (await this.isExistEle(sele[5], true, 2000)) {
+              //     let ele = await this.getEle(sele[5], 3000);
+              //     await this.clickEle(ele, 3000);
+              //   } else break;
+              // }
+              // eles = await this.getEles(sele[1], 10000);
+              // await this.clickEle(eles[eles.length -1], 3000);
+              eles = await this.getEles(sele[1], 3000);
+              await this.clickEle(eles[skip], 3000);
+              if (await this.isExistEle(sele[2], true, 2000)) {
+                ele = await this.getEle(sele[2], 3000);
+                // await this.clickEle(ele, 3000, 500, this.isMob);
+                await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+                await this.sleep(2000);
+                await this.closeElesWindowAndAlert([wid, wid2]);
+                let isStartPage = true;
+                for (let i = 0; i < 30; i++) {
+                  let currentUrl = await driver.getCurrentUrl();
+                  // 広告が画面いっぱいに入る時がある
+                  if (currentUrl.indexOf("https://chobirich.enquete.vip/") === -1) {
+                    await driver.navigate().back(); // 広告をクリックしたぽいので戻る
+                    await this.sleep(2000);
+                    logger.info("広告をクリックさせられたのでbackします");
+                    let iBreak = false;
+                    for (let k = 0; k < 5; k++) {
+                      currentUrl = await driver.getCurrentUrl();
+                      if (currentUrl.indexOf("https://chobirich.enquete.vip/") === -1) {
+                        await driver.navigate().back(); // 広告をクリックしたぽいので戻る
+                        await this.sleep(2000);
+                        logger.info("広告をクリックさせられたのでbackします");
+                      } else {
+                        if (isStartPage) iBreak = true;
+                        break;
+                      }
+                    }
+                    if (iBreak) break;
+                    await driver.navigate().refresh(); // 画面更新
+                    await this.sleep(2000);
+                    i--;
+                  }
+                  if (await this.isExistEle(sele[4], true, 2000)) {
+                    isStartPage = false;
+                    let ele = await this.getEle(sele[4], 3000);
+                    let q = await ele.getText();
+                    logger.info(`${i}つ目 ${q}`);
+                    let choiceNum = 0;
+                    let keyIndex = -1;
+                    [
+                      "性別は",
+                      "年齢は",
+                      "住んでいる地方は", // 2
+                    ].some((key, i) => {
+                      if (q.indexOf(key) > -1) {
+                        keyIndex = i;
+                        return true;
+                      }
+                    });
+                    switch (keyIndex) {
+                      case 0:
+                        break;
+                      case 1:
+                        choiceNum = 3;
+                        break;
+                      case 2:
+                        choiceNum = 2;
+                        break;
+                      default:
+                        choiceNum = -1;
+                    }
+                    if (await this.isExistEle(sele[7], true, 2000)) {
+                      let eles = await this.getEles(sele[7], 3000);
+                      if (choiceNum === -1) choiceNum = libUtil.getRandomInt(0, eles.length);
+                      if (choiceNum >= eles.length) choiceNum = eles.length;
+                      // await this.clickEle(eles[choiceNum], 3000, 500);
+                      await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[choiceNum]);
+                      await this.sleep(2000);
+                      let done = await this.closeElesWindowAndAlert([wid, wid2]);
+                      if (await this.isExistEle(sele[3], true, 2000)) {
+                        let ele = await this.getEle(sele[3], 3000);
+                        // await this.clickEle(ele, 3000, 500, this.isMob);
+                        await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+                        await this.sleep(2000);
+                        if ((await this.closeElesWindowAndAlert([wid, wid2])) || done) i--;
+                      }
+                    }
+                  } else if (isStartPage) {
+                    if (await this.isExistEle(sele[2], true, 2000)) {
+                      ele = await this.getEle(sele[2], 3000);
+                      // await this.clickEle(ele, 3000, 500, this.isMob);
+                      await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+                      await this.sleep(2000);
+                      await this.closeElesWindowAndAlert([wid, wid2]);
+                      i--;
+                      continue;
+                    }
+                  } else break;
+                }
+                if (await this.isExistEle(sele[2], true, 2000)) {
+                  let ele = await this.getEle(sele[2], 3000);
+                  // await this.clickEle(ele, 3000, 500, this.isMob);
+                  await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+                  await this.sleep(2000);
+                  await this.closeElesWindowAndAlert([wid, wid2]);
+                } else {
+                  skip++;
+                  await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+                  await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+                  if (await this.isExistEle(sele[6], true, 2000)) {
+                    ele = await this.getEle(sele[6], 3000);
+                    await this.clickEle(ele, 3000);
+                    await this.changeWindow(wid); // 別タブに移動する
+                  }
+                }
+              }
+            }
+          }
+        }
+        res = D.STATUS.DONE;
+      } catch (e) {
+        logger.warn(e);
+      } finally {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+        // await driver.navigate().refresh(); // 画面更新  しないとスタンプが反映されん
       }
     }
     return res;

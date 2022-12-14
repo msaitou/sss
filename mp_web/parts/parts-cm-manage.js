@@ -237,7 +237,7 @@ class CmDotti extends CmSuper {
                         if (await this.isExistEle(sele[7], true, 3000)) {
                           ele = await this.getEle(sele[7], 4000);
                           await driver.wait(until.elementIsEnabled(ele), 15000);
-                          await this.clickEle(ele, 2000); // シールを獲得
+                          await this.clickEle(ele, 4000); // シールを獲得
                           if (await this.isExistEle(sele[2], true, 3000)) {
                             ele = await this.getEle(sele[2], 3000);
                             await this.clickEle(ele, 2000); // topへ（この質問種類の一覧へ）

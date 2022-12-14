@@ -147,7 +147,20 @@ class BaseWebDriverWrapper {
     this.logger.debug("clicked");
     await this.sleep(time);
   }
-
+  async exeScriptNoTimeOut(script, ele = null) {
+    try {
+      if (ele) {
+        await this.driver.executeScript(script, ele);
+      }
+      else {
+        await this.driver.executeScript(script);
+      }
+    }
+    catch(e) {
+      this.logger.warn(e);
+      this.driver.navigate().refresh();
+    }
+  }
   async isExistEle(sele, showFlag, time) {
     try {
       if (!sele) throw "is not param[0]";
