@@ -233,10 +233,10 @@ class CmDotti extends CmSuper {
                       await this.clickEle(eles[choiceNum], 2000);
                       if (await this.isExistEle(sele[6], true, 3000)) {
                         ele = await this.getEle(sele[6], 3000);
-                        await this.clickEle(ele, 2000); // 次へ（回答する）
+                        await this.clickEle(ele, 5000); // 次へ（回答する）
                         if (await this.isExistEle(sele[7], true, 3000)) {
                           ele = await this.getEle(sele[7], 4000);
-                          await driver.wait(until.elementIsVisible(ele), 15000);
+                          await driver.wait(until.elementIsEnabled(ele), 15000);
                           await this.clickEle(ele, 2000); // シールを獲得
                           if (await this.isExistEle(sele[2], true, 3000)) {
                             ele = await this.getEle(sele[2], 3000);
