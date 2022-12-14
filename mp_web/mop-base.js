@@ -736,6 +736,7 @@ class MopAnqHappy extends MopMissonSupper {
                       await driver.navigate().back(); // 広告をクリックしたぽいので戻る
                       await this.sleep(2000);
                       logger.info("広告をクリックさせられたのでbackします");
+                      if (isStartPage) break;
                     }
                     logger.info("広告をクリックさせられたのでbackします");
                     await driver.navigate().refresh(); // 画面更新
@@ -775,13 +776,13 @@ class MopAnqHappy extends MopMissonSupper {
                       let eles = await this.getEles(sele[7], 3000);
                       if (choiceNum === -1) choiceNum = libUtil.getRandomInt(0, eles.length);
                       // await this.clickEle(eles[choiceNum], 3000, 500);
-                      await this.driver.executeScript(`arguments[0].click()`, eles[choiceNum]);
+                      await driver.executeScript(`arguments[0].click()`, eles[choiceNum]);
                       await this.sleep(2000);
                       let done = await this.closeElesWindowAndAlert([wid, wid2]);
                       if (await this.isExistEle(sele[3], true, 2000)) {
                         let ele = await this.getEle(sele[3], 3000);
                         // await this.clickEle(ele, 3000, 500, this.isMob);
-                        await this.driver.executeScript(`arguments[0].click()`, ele);
+                        await driver.executeScript(`arguments[0].click()`, ele);
                         await this.sleep(2000);
                         if ((await this.closeElesWindowAndAlert([wid, wid2])) || done) i--;
                       }
@@ -790,7 +791,7 @@ class MopAnqHappy extends MopMissonSupper {
                     if (await this.isExistEle(sele[2], true, 2000)) {
                       ele = await this.getEle(sele[2], 3000);
                       // await this.clickEle(ele, 3000, 500, this.isMob);
-                      await this.driver.executeScript(`arguments[0].click()`, ele);
+                      await driver.executeScript(`arguments[0].click()`, ele);
                       await this.sleep(2000);
                       await this.closeElesWindowAndAlert([wid, wid2]);
                       i--;
@@ -801,7 +802,7 @@ class MopAnqHappy extends MopMissonSupper {
                 if (await this.isExistEle(sele[2], true, 2000)) {
                   let ele = await this.getEle(sele[2], 3000);
                   // await this.clickEle(ele, 3000, 500, this.isMob);
-                  await this.driver.executeScript(`arguments[0].click()`, ele);
+                  await driver.executeScript(`arguments[0].click()`, ele);
                   await this.sleep(2000);
                   await this.closeElesWindowAndAlert([wid, wid2]);
                 } else {

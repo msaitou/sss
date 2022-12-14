@@ -142,7 +142,7 @@ class BaseWebDriverWrapper {
         await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
       }
     } finally {
-      await this.driver.manage().setTimeouts({ pageLoad: 300000 });
+      await this.driver.manage().setTimeouts({ pageLoad: 180000 });
     }
     this.logger.debug("clicked");
     await this.sleep(time);

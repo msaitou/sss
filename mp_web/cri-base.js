@@ -278,15 +278,15 @@ class CriClickMob extends CriMissonSupper {
         "",
         "",
       ];
-      // await this.openUrl(this.targetUrl); // 操作ページ表示
-      // if (await this.isExistEle(sele[0], true, 2000)) {
-      //   let ele = await this.getEle(sele[0], 2000);
-      //   await this.clickEleScrollWeak(ele, 2000, 150);
-      //   if (await this.isExistEle(sele[1], true, 2000)) {
-      //     ele = await this.getEle(sele[1], 2000);
-      //     await this.clickEleScrollWeak(ele, 2000, 150);
-      //   }
-      // }
+      await this.openUrl(this.targetUrl); // 操作ページ表示
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 2000);
+        await this.clickEleScrollWeak(ele, 2000, 150);
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          ele = await this.getEle(sele[1], 2000);
+          await this.clickEleScrollWeak(ele, 2000, 150);
+        }
+      }
       await this.openUrl(this.targetUrl); // 操作ページ表示
       if (await this.isExistEle(sele[2], true, 2000)) {
         let ele = await this.getEle(sele[2], 2000);
@@ -355,9 +355,9 @@ class CriStamp extends CriMissonSupper {
                 eles = await this.getEles(sele[1], 2000);
               } else break;
             }
-            let ele2 = null;
+            let eles2 = null;
             try {
-              ele2 = await this.getElesXFromEle(eles[0], "ancestor::a");
+              eles2 = await this.getElesXFromEle(eles[0], "ancestor::a");
             } catch (e) {
               logger.debug(e);
             }

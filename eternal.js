@@ -75,7 +75,7 @@ async function mainLinux() {
     }
   };
   await monitoring();
-  await setInterval(monitoring, 6 * 60 * 1000); // 6分毎にチェックでエンドレス
+  await setInterval(monitoring, 3 * 60 * 1000 + 10000); // 6分毎にチェックでエンドレス
   // await setInterval(monitoring, 6 * 1000); // 6分毎にチェックでエンドレス
 }
 async function mainWin() {
@@ -137,7 +137,11 @@ async function mainWin() {
       // 生きてる場合、ログファイルの更新時間を取得
       if (lastLogTime) {
         // 前回の更新時間と比較
-        console.log(lastLogTime.toString(), fileStatus.mtime.toString(),lastLogTime.toString() === fileStatus.mtime.toString());
+        console.log(
+          lastLogTime.toString(),
+          fileStatus.mtime.toString(),
+          lastLogTime.toString() === fileStatus.mtime.toString()
+        );
         if (lastLogTime.toString() === fileStatus.mtime.toString()) {
           // 変化がなければプロセスをキルする
           // const stdout = execSync(PS_KILL_CMD);
@@ -168,7 +172,7 @@ async function mainWin() {
     }
   };
   await monitoring();
-  await setInterval(monitoring, 5 * 60 * 1000); // 6分毎にチェックでエンドレス
+  await setInterval(monitoring, 3 * 60 * 1000 + 10000); // 6分毎にチェックでエンドレス
   // await setInterval(monitoring, 20 * 1000); // 6分毎にチェックでエンドレス
 }
 if (IS_LINUX) {

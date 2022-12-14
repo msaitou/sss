@@ -654,6 +654,7 @@ class GenAnqMob extends GenMissonSupper {
                             await driver.navigate().back(); // 広告をクリックしたぽいので戻る
                             await this.sleep(2000);
                             logger.info("広告をクリックさせられたのでbackします");
+                            if (isStartPage) break;
                           }
                           logger.info("広告をクリックさせられたのでbackします");
                           await driver.navigate().refresh(); // 画面更新
