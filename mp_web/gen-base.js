@@ -658,10 +658,19 @@ class GenAnqMob extends GenMissonSupper {
                               await this.sleep(2000);
                               logger.info("広告をクリックさせられたのでbackします");
                             } else {
-                              if (isStartPage) iBreak = true;
+                              currentUrl = await driver.getCurrentUrl();
+                              if (currentUrl.indexOf("https://gendama.enquete.vip/start") === 0) {
+                                await driver.navigate().back(); // 一覧からやり直す
+                                await this.sleep(2000);
+                                iBreak = true;
+                              } else if (
+                                currentUrl.indexOf("https://gendama.enquete.vip/question") === 0
+                              ) {
+                                // ナニモシナイ
+                              } else if (isStartPage) iBreak = true;
                               break;
                             }
-                          }
+                                }
                           if (iBreak) break;
                           await driver.navigate().refresh(); // 画面更新
                           await this.sleep(2000);

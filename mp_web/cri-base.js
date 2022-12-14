@@ -685,7 +685,16 @@ class CriAnqHappy extends CriMissonSupper {
                         await this.sleep(2000);
                         logger.info("広告をクリックさせられたのでbackします");
                       } else {
-                        if (isStartPage) iBreak = true;
+                        currentUrl = await driver.getCurrentUrl();
+                        if (currentUrl.indexOf("https://chobirich.enquete.vip/start") === 0) {
+                          await driver.navigate().back(); // 一覧からやり直す
+                          await this.sleep(2000);
+                          iBreak = true;
+                        } else if (
+                          currentUrl.indexOf("https://chobirich.enquete.vip/question") === 0
+                        ) {
+                          // ナニモシナイ
+                        } else if (isStartPage) iBreak = true;
                         break;
                       }
                     }
