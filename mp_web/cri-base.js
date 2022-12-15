@@ -51,7 +51,10 @@ class CriBase extends BaseExecuter {
           case D.MISSION.TAP_25:
             execCls = new CriTap25(para);
             break;
-        }
+            case D.MISSION.GAME_FURUFURU:
+              execCls = new CriGameFurufuru(para);
+              break;
+          }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
@@ -880,6 +883,31 @@ class CriAnqHappy extends CriMissonSupper {
     return res;
   }
 }
-
+const { PartsFurufuru } = require("./parts/parts-furufuru.js");
+// ふるふる
+class CriGameFurufuru extends CriMissonSupper {
+  firstUrl = "https://www.chobirich.com/";
+  targetUrl = "https://www.chobirich.com/game/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let Furufuru = new PartsFurufuru(this.para);
+    let sele = ["img[alt='ちょびんくんふるふるパニック']"];
+    let gameUrlHost = "https://chobirich.dropgame.jp/";
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEleScrollWeak(eles[0], 2000, 100);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await Furufuru.doFuru(gameUrlHost, wid);
+    }
+    return res;
+  }
+}
 exports.CriCommon = CriCommon;
 exports.Cri = CriBase;
