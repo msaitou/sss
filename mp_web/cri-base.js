@@ -293,6 +293,7 @@ class CriClickMob extends CriMissonSupper {
           await this.clickEleScrollWeak(ele, 2000, 150);
         }
       }
+      res = D.STATUS.DONE;
       await this.openUrl(this.targetUrl); // 操作ページ表示
       if (await this.isExistEle(sele[2], true, 2000)) {
         let ele = await this.getEle(sele[2], 2000);
@@ -322,7 +323,6 @@ class CriClickMob extends CriMissonSupper {
           }
         }
       }
-      res = D.STATUS.DONE;
     } catch (e) {
       logger.warn(e);
     }
@@ -400,7 +400,7 @@ class CriTap25 extends CriMissonSupper {
     try {
       let sele = [
         "a>img[alt='TAPでスタンプ']",
-        "p.list_left>img:not([alt='“済”'])", // TODO
+        "div.button2",
         "#enchant-stage div.button", // 2
       ];
       await this.openUrl(this.targetUrl); // 操作ページ表示
@@ -408,26 +408,31 @@ class CriTap25 extends CriMissonSupper {
         let ele = await this.getEle(sele[0], 2000);
         await this.clickEleScrollWeak(ele, 2000, 150);
         if (await this.isExistEle(sele[1], true, 2000)) {
-          let eles = await this.getEles(sele[1], 2000);
-          let limit = eles.length;
-          for (let i = 0; i < limit; i++) {
-            if (i !== 0) {
-              if (await this.isExistEle(sele[1], true, 2000)) {
-                eles = await this.getEles(sele[1], 2000);
-              } else break;
-            }
-            let eles2 = null;
-            try {
-              eles2 = await this.getElesXFromEle(eles[0], "ancestor::a");
-            } catch (e) {
-              logger.debug(e);
-            }
-            await this.clickEleScrollWeak(eles2[0], 2000, 150); // 常に0
-            if (await this.isExistEle(sele[2], true, 2000)) {
-              ele = await this.getEle(sele[2], 2000);
-              await this.clickEleScrollWeak(ele, 3000, 150);
-              await driver.navigate().back(); // 戻って
-              await driver.navigate().refresh(); // 更新
+          let ele = await this.getEle(sele[1], 2000);
+          await this.clickEleScrollWeak(ele, 2000, 150);
+
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles = await this.getEles(sele[1], 2000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i !== 0) {
+                if (await this.isExistEle(sele[1], true, 2000)) {
+                  eles = await this.getEles(sele[1], 2000);
+                } else break;
+              }
+              let eles2 = null;
+              try {
+                eles2 = await this.getElesXFromEle(eles[0], "ancestor::a");
+              } catch (e) {
+                logger.debug(e);
+              }
+              await this.clickEleScrollWeak(eles2[0], 2000, 150); // 常に0
+              if (await this.isExistEle(sele[2], true, 2000)) {
+                ele = await this.getEle(sele[2], 2000);
+                await this.clickEleScrollWeak(ele, 3000, 150);
+                await driver.navigate().back(); // 戻って
+                await driver.navigate().refresh(); // 更新
+              }
             }
           }
         }
@@ -701,9 +706,12 @@ class CriAnqHappy extends CriMissonSupper {
               eles = await this.getEles(sele[8], 3000);
               let title = await eles[skip].getText();
               if (
-                ["書店について", "好きな飲み物に関して", "キャラクターに関するアンケート"].indexOf(
-                  title
-                ) > -1
+                [
+                  "書店について",
+                  "好きな飲み物に関して",
+                  "キャラクターに関するアンケート",
+                  "自分の人生観、人間関係に関するアンケート",
+                ].indexOf(title) > -1
               ) {
                 skip++;
                 continue;
@@ -793,7 +801,7 @@ class CriAnqHappy extends CriMissonSupper {
                     if (await this.isExistEle(sele[7], true, 2000)) {
                       let eles = await this.getEles(sele[7], 3000);
                       if (choiceNum === -1) choiceNum = libUtil.getRandomInt(0, eles.length);
-                      if (choiceNum >= eles.length) choiceNum = eles.length;
+                      if (choiceNum >= eles.length) choiceNum = eles.length - 1;
                       // await this.clickEle(eles[choiceNum], 3000, 500);
                       await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[choiceNum]);
                       await this.sleep(2000);

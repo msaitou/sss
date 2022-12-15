@@ -698,7 +698,12 @@ class MopAnqHappy extends MopMissonSupper {
               eles = await this.getEles(sele[8], 3000);
               let title = await eles[skip].getText();
               if (
-                ["書店について", "好きな飲み物に関して", "キャラクターに関するアンケート"].indexOf(
+                [
+                  "書店について",
+                  "好きな飲み物に関して",
+                  "キャラクターに関するアンケート",
+                  "自分の人生観、人間関係に関するアンケート",
+                ].indexOf(
                   title
                 ) > -1
               ) {
@@ -788,7 +793,7 @@ class MopAnqHappy extends MopMissonSupper {
                     if (await this.isExistEle(sele[7], true, 2000)) {
                       let eles = await this.getEles(sele[7], 3000);
                       if (choiceNum === -1) choiceNum = libUtil.getRandomInt(0, eles.length);
-                      if (choiceNum >= eles.length) choiceNum = eles.length;
+                      if (choiceNum >= eles.length) choiceNum = eles.length-1;
                       // await this.clickEle(eles[choiceNum], 3000, 500);
                       await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[choiceNum]);
                       await this.sleep(2000);
