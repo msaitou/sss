@@ -769,8 +769,8 @@ class MopAnqHappy extends MopMissonSupper {
                     let choiceNum = 0;
                     let keyIndex = -1;
                     [
-                      "性別は",
-                      "年齢は",
+                      "性別",
+                      "年齢",
                       "住んでいる地方は", // 2
                     ].some((key, i) => {
                       if (q.indexOf(key) > -1) {
@@ -778,7 +778,7 @@ class MopAnqHappy extends MopMissonSupper {
                         return true;
                       }
                     });
-                    switch (keyIndex) {
+              switch (keyIndex) {
                       case 0:
                         break;
                       case 1:

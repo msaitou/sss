@@ -126,11 +126,11 @@ class BaseWebDriverWrapper {
     let y = rect.y - top;
     this.logger.info("rect.y", y);
     await this.driver.executeScript(`window.scrollTo(0, ${y});`);
-    await this.sleep(1000);
+    if (time >= 1000) await this.sleep(1000);
     // if (!this.isMob) await this.driver.actions().scroll(0, 0, 5, 10, ele).perform();
     const actions = this.driver.actions();
     if (!this.isMob) await actions.move({ origin: ele }).perform();
-    await this.sleep(1000);
+    if (time >= 1000) await this.sleep(1000);
     try {
       await this.driver.manage().setTimeouts({ pageLoad: 10000 });
       if (isEnter) await ele.sendKeys(Key.ENTER);

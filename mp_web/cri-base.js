@@ -399,43 +399,65 @@ class CriTap25 extends CriMissonSupper {
     let res = D.STATUS.FAIL;
     try {
       let sele = [
-        "a>img[alt='TAPでスタンプ']",
+        "a>img[alt='TAP25']",
         "div.button2",
         "#enchant-stage div.button", // 2
+        "iframe[src='start.php']",
+        "div[style*='timeup.png']", // 4
+        "img[src='./img/close.gif']",
+        "a[href='./index.php']>img",
+        "",
+        "",
       ];
       await this.openUrl(this.targetUrl); // 操作ページ表示
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 2000);
         await this.clickEleScrollWeak(ele, 2000, 150);
-        if (await this.isExistEle(sele[1], true, 2000)) {
-          let ele = await this.getEle(sele[1], 2000);
-          await this.clickEleScrollWeak(ele, 2000, 150);
+        if (await this.isExistEle(sele[3], true, 2000)) {
+          let iframe = await this.getEle(sele[3], 1000);
+          await driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
+          for (let j = 0; j < 3; j++) {
+            if (await this.isExistEle(sele[1], true, 2000)) {
+              let ele = await this.getEle(sele[1], 2000);
+              await this.clickEleScrollWeak(ele, 2000, 150);
 
-          if (await this.isExistEle(sele[1], true, 2000)) {
-            let eles = await this.getEles(sele[1], 2000);
-            let limit = eles.length;
-            for (let i = 0; i < limit; i++) {
-              if (i !== 0) {
-                if (await this.isExistEle(sele[1], true, 2000)) {
-                  eles = await this.getEles(sele[1], 2000);
-                } else break;
-              }
-              let eles2 = null;
-              try {
-                eles2 = await this.getElesXFromEle(eles[0], "ancestor::a");
-              } catch (e) {
-                logger.debug(e);
-              }
-              await this.clickEleScrollWeak(eles2[0], 2000, 150); // 常に0
               if (await this.isExistEle(sele[2], true, 2000)) {
-                ele = await this.getEle(sele[2], 2000);
-                await this.clickEleScrollWeak(ele, 3000, 150);
-                await driver.navigate().back(); // 戻って
-                await driver.navigate().refresh(); // 更新
+                let eles = await this.getEles(sele[2], 2000);
+                let limit = eles.length;
+                for (let i = 1; i <= limit; i++) {
+                  if (i !== 0) {
+                    if (await this.isExistEle(sele[2], true, 2000)) {
+                      eles = await this.getEles(sele[2], 2000);
+                    } else break;
+                  }
+                  for (let el of eles) {
+                    if (i.toString() == (await el.getText())) {
+                      // 数字と一致したらクリックしてブレイク
+                      await this.clickEleScrollWeak(el, 300, 150);
+                      break;
+                    }
+                  }
+                }
+                for (let i = 0; i < 2; i++) {
+                  if (await this.isExistEle(sele[5], true, 2000)) {
+                    let ele = await this.getEle(sele[5], 2000);
+                    await this.clickEleScrollWeak(ele, 3000, 150);
+                    if (await this.isExistEle(sele[6], true, 2000)) {
+                      ele = await this.getEle(sele[6], 2000);
+                      await this.clickEleScrollWeak(ele, 3000, 150);
+                      if (await this.isExistEle(sele[3], true, 2000)) {
+                        let iframe = await this.getEle(sele[3], 1000);
+                        await driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
+                      }              
+                    }
+                  }
+                }
               }
             }
           }
         }
+        // もとのフレームに戻す
+        await driver.switchTo().defaultContent();
       }
       res = D.STATUS.DONE;
     } catch (e) {
@@ -777,8 +799,8 @@ class CriAnqHappy extends CriMissonSupper {
                     let choiceNum = 0;
                     let keyIndex = -1;
                     [
-                      "性別は",
-                      "年齢は",
+                      "性別",
+                      "年齢",
                       "住んでいる地方は", // 2
                     ].some((key, i) => {
                       if (q.indexOf(key) > -1) {

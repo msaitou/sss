@@ -685,8 +685,8 @@ class GenAnqMob extends GenMissonSupper {
                           let choiceNum = 0;
                           let keyIndex = -1;
                           [
-                            "性別は",
-                            "年齢は",
+                            "性別",
+                            "年齢",
                             "住んでいる地方は", // 2
                           ].some((key, i) => {
                             if (q.indexOf(key) > -1) {
