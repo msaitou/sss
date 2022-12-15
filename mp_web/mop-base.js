@@ -691,7 +691,7 @@ class MopAnqHappy extends MopMissonSupper {
       try {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let eles = await this.getEles(sele[1], 3000);
-          let limit = eles.length;
+          let limit = eles.length < 50 ? eles.length : 50;
           for (let j = 0; j < limit; j++) {
             let wid2 = await driver.getWindowHandle();
             if (await this.isExistEle(sele[8], true, 2000)) {
@@ -745,9 +745,7 @@ class MopAnqHappy extends MopMissonSupper {
                           await driver.navigate().back(); // 一覧からやり直す
                           await this.sleep(2000);
                           iBreak = true;
-                        } else if (
-                          currentUrl.indexOf("https://moppy.enquete.vip/question") === 0
-                        ) {
+                        } else if (currentUrl.indexOf("https://moppy.enquete.vip/question") === 0) {
                           // ナニモシナイ
                         } else if (isStartPage) iBreak = true;
                         break;
