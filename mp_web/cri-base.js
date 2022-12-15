@@ -48,6 +48,9 @@ class CriBase extends BaseExecuter {
           case D.MISSION.ANQ_HAPPY:
             execCls = new CriAnqHappy(para);
             break;
+          case D.MISSION.TAP_25:
+            execCls = new CriTap25(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -344,6 +347,61 @@ class CriStamp extends CriMissonSupper {
         "a>img[alt='イチオシ']",
         "p.list_left>img:not([alt='“済”'])",
         "a.stamp__modal__item-confirm-btn", // 2
+      ];
+      await this.openUrl(this.targetUrl); // 操作ページ表示
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 2000);
+        await this.clickEleScrollWeak(ele, 2000, 150);
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let eles = await this.getEles(sele[1], 2000);
+          let limit = eles.length;
+          for (let i = 0; i < limit; i++) {
+            if (i !== 0) {
+              if (await this.isExistEle(sele[1], true, 2000)) {
+                eles = await this.getEles(sele[1], 2000);
+              } else break;
+            }
+            let eles2 = null;
+            try {
+              eles2 = await this.getElesXFromEle(eles[0], "ancestor::a");
+            } catch (e) {
+              logger.debug(e);
+            }
+            await this.clickEleScrollWeak(eles2[0], 2000, 150); // 常に0
+            if (await this.isExistEle(sele[2], true, 2000)) {
+              ele = await this.getEle(sele[2], 2000);
+              await this.clickEleScrollWeak(ele, 3000, 150);
+              await driver.navigate().back(); // 戻って
+              await driver.navigate().refresh(); // 更新
+            }
+          }
+        }
+      }
+      res = D.STATUS.DONE;
+    } catch (e) {
+      logger.warn(e);
+    }
+    logger.info(`${this.constructor.name} END`);
+    return res;
+  }
+}
+// tap25　mobile
+class CriTap25 extends CriMissonSupper {
+  firstUrl = "https://www.chobirich.com/";
+  targetUrl = "https://www.chobirich.com/game/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "a>img[alt='TAPでスタンプ']",
+        "p.list_left>img:not([alt='“済”'])", // TODO
+        "#enchant-stage div.button", // 2
       ];
       await this.openUrl(this.targetUrl); // 操作ページ表示
       if (await this.isExistEle(sele[0], true, 2000)) {

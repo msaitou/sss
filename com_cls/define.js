@@ -31,6 +31,7 @@ exports.Def = {
     AME: "ame",
   },
   MISSION: {
+    TAP_25: "tap_25",
     CRI_STAMP: "cri_stamp",
     CLICK_MOB: "click_mob",
     GAME_FURUFURU: "game_furufuru",
