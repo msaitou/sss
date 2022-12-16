@@ -583,7 +583,9 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       ];
       if (await this.isExistEle(sele[0], true, 10000)) {
         let ele = await this.getEle(sele[0], 10000);
-        await this.clickEle(ele, 2000, 0, siteInfo.code == D.CODE.LFM);
+        if (siteInfo.code == D.CODE.LFM) {
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        } else await this.clickEle(ele, 2000);
       } else if (await this.isExistEle(sele[1], true, 5000)) {
         let ele = await this.getEle(sele[1], 5000);
         await this.clickEle(ele, 2000, 0, siteInfo.code == D.CODE.LFM);
@@ -1069,7 +1071,9 @@ class PartsAnkPark extends BaseWebDriverWrapper {
             // } else {
             if (eles.length <= choiceNum) choiceNum = eles.length - 1;
             await this.hideOverlay();
-            await this.clickEle(eles[choiceNum], 2000, 250);
+            if (siteInfo.code == D.CODE.LFM) {
+              await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[choiceNum]);
+            } else await this.clickEle(eles[choiceNum], 2000, 250);
             // }
             if (await this.isExistEle(sele[4], true, 2000)) {
               ele = await this.getEle(sele[4], 3000);
