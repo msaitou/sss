@@ -24,11 +24,9 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         "#scoreboard>a[href*='/top']", // 4
         "#getpoint>a",
       ];
-      await this.openUrl(`${gameUrlHost}drop/practice/top`); // todo 練習用
-      if (await this.isExistEle(sele[5], true, 2000)) {
-        let ele = await this.getEle(sele[5], 3000);
-        await this.clickEle(ele, 2000);
-      }
+      // await this.openUrl(`${gameUrlHost}drop/practice/top`); // todo 練習用
+      await this.ignoreKoukoku();
+      await this.getPoint();
       for (let i = 0; i < 3; i++) {
         // スコアボード後、ここに戻る　２時間毎に３回チャレンジ可
         if (await this.isExistEle(sele[0], true, 2000)) {
@@ -83,6 +81,73 @@ class PartsFurufuru extends BaseWebDriverWrapper {
               await this.ignoreKoukoku();
             }
           }
+          res = D.STATUS.DONE;
+        } else {
+          res = D.STATUS.DONE;
+          break;
+        } 
+      }
+    } catch (e) {
+      logger.warn(e);
+    } finally {
+      await driver.close(); // このタブを閉じて
+      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+    }
+    return res;
+  }
+  async getPoint() {
+    let sele = ["#getpoint>a"];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele, 2000);
+    }
+  }
+  async doSearch(gameUrlHost, wid) {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "a[href='/minigame/play']",
+        "#box li[data-stat]>a>img",
+        "#minigame_end a[href='/minigame']", // 2
+        "img[src*='check_on.png']",
+        "#scoreboard>a[href*='/top']", // 4
+        "#menu a[href='/minigame']",
+      ];
+      await this.ignoreKoukoku();
+      await this.getPoint();
+      // 3回やってるんだったら終わり
+      if (await this.isExistEle(sele[3], true, 2000)) {
+        return D.STATUS.DONE;
+      }
+      if (await this.isExistEle(sele[5], true, 2000)) {
+        let ele = await this.getEle(sele[5], 3000);
+        await this.clickEle(ele, 2000);
+        await this.ignoreKoukoku();
+      }
+      for (let i = 0; i < 3; i++) {
+        // スコアボード後、ここに戻る　２時間毎に３回チャレンジ可
+        if (await this.isExistEle(sele[0], true, 2000)) {
+          let wid2 = await driver.getWindowHandle();
+          let ele = await this.getEle(sele[0], 3000);
+          await this.clickEle(ele, 2000);
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles = await this.getEles(sele[1], 3000);
+            let limit = eles.length * 2; // 最大でも
+            for (let i = 0; i < limit; i++) {
+              if (i != 0)
+                if (await this.isExistEle(sele[1], true, 2000)) {
+                  eles = await this.getEles(sele[1], 3000);
+                } else break;
+              await this.ignoreKoukoku();
+              await this.clickEle(eles[0], 2000);
+              if (await this.isExistEle(sele[2], true, 2000)) {
+                ele = await this.getEle(sele[2], 3000);
+                await this.clickEle(ele, 2000);
+              }
+            }
+          }
+          await this.closeElesWindow([wid, wid2]);
           res = D.STATUS.DONE;
         } else break;
       }

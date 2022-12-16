@@ -31,6 +31,7 @@ exports.Def = {
     AME: "ame",
   },
   MISSION: {
+    GAME_FURUFURU_SEARCH: "game_furufuru_search",
     DAILY_CM: "daily_cm",
     TAP_25: "tap_25",
     CRI_STAMP: "cri_stamp",
@@ -91,7 +92,7 @@ exports.Def = {
 
     MOP_RESEARCH: "mop_research",
   },
-  INTERVAL:{
-    "180": 3 * 60 * 1000,
-  }
+  INTERVAL: {
+    180: 3 * 60 * 1000,
+  },
 };

@@ -72,10 +72,13 @@ class GpoBase extends BaseExecuter {
           case D.MISSION.ANQ_KENKOU:
             execCls = new GpoAnqKenkou(para);
             break;
-            case D.MISSION.GAME_FURUFURU:
-              execCls = new GpoGameFurufuru(para);
-              break;
-          }
+          case D.MISSION.GAME_FURUFURU:
+            execCls = new GpoGameFurufuru(para);
+            break;
+          case D.MISSION.GAME_FURUFURU_SEARCH:
+            execCls = new GpoGameFurufuruSearch(para);
+            break;
+        }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
@@ -570,6 +573,36 @@ class GpoGameFurufuru extends GpoMissonSupper {
         let ele0 = await this.getEle(sele[1], 3000);
         await this.clickEle(ele0, 3000);
         res = await Furufuru.doFuru(gameUrlHost, wid);
+      }
+    }
+    return res;
+  }
+}
+// ふるふるの探し
+class GpoGameFurufuruSearch extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://www.gpoint.co.jp/gpark/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let Furufuru = new PartsFurufuru(this.para);
+    let sele = ["img[alt='ふるふるパニック']", "input[alt='OK']"];
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
+    let gameUrlHost = "https://gpoint.dropgame.jp/";
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEle(eles[0], 2000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let ele0 = await this.getEle(sele[1], 3000);
+        await this.clickEle(ele0, 3000);
+        res = await Furufuru.doSearch(gameUrlHost, wid);
       }
     }
     return res;
