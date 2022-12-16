@@ -51,6 +51,7 @@ class PstBase extends BaseExecuter {
     let startPage = "https://www.point-stadium.com/index.asp";
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
+    await driver.executeScript(`window.scrollTo(document.body.scrollWidth, 0);`);
     let sele = ["p.point>strong"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
