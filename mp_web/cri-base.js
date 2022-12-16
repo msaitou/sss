@@ -901,6 +901,7 @@ class CriGameFurufuru extends CriMissonSupper {
     let Furufuru = new PartsFurufuru(this.para);
     let sele = ["img[alt='ちょびんくんふるふるパニック']"];
     let gameUrlHost = "https://chobirich.dropgame.jp/";
+    if (this.isMob) gameUrlHost = "https://chobirich-sp.dropgame.jp/";
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
@@ -926,6 +927,7 @@ class CriGameFurufuruSearch extends CriMissonSupper {
     let Furufuru = new PartsFurufuru(this.para);
     let sele = ["img[alt='ちょびんくんふるふるパニック']"];
     let gameUrlHost = "https://chobirich.dropgame.jp/";
+    if (this.isMob) gameUrlHost = "https://chobirich-sp.dropgame.jp/";
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);

@@ -60,6 +60,12 @@ class PartsCmManage extends BaseExecuter {
         case D.MISSION.CM_COOK:
           execCls = new CmCook(this.para, this.startUrl);
           break;
+        case D.MISSION.CM_GAME_FURUFURU:
+          execCls = new CmGameFurufuru(this.para, this.startUrl);
+          break;
+        case D.MISSION.CM_GAME_FURUFURU_SEARCH:
+          execCls = new CmGameFurufuruSearch(this.para, this.startUrl);
+          break;
         // case "偉人":
         //   res = await AnkPark.doIjin();
         //   break;
@@ -965,6 +971,77 @@ class CmCook extends CmSuper {
       logger.warn(e);
     }
     logger.info(`${this.constructor.name} END`);
+    return res;
+  }
+}
+const { PartsFurufuru } = require("./parts-furufuru.js");
+// ふるふる
+class CmGameFurufuru extends CmSuper {
+  constructor(para, startUrl) {
+    super(para, startUrl);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let Furufuru = new PartsFurufuru(this.para);
+    try {
+      // 今のページが　cm/game/ページならこのページから始める
+      await this.openUrl(this.startUrl); // 操作ページ表示
+      await this.ignoreKoukoku();
+      let sele = ["img[src*='game/furu']"];
+      let dome = "";
+      if (siteInfo.code == D.CODE.CMS) dome = "cmnwcmsite";
+      if (siteInfo.code == D.CODE.LFM) dome = "cmnwlifemedia";
+      let gameUrlHost = `https://${dome}.dropgame.jp/`;
+      if (this.isMob) {
+        gameUrlHost = `https://${dome}-sp.dropgame.jp/`;
+      }
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 3000);
+        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
+        res = await Furufuru.doFuru(gameUrlHost, wid);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+}
+// ふるふるの探し
+class CmGameFurufuruSearch extends CmSuper {
+  constructor(para, startUrl) {
+    super(para, startUrl);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let Furufuru = new PartsFurufuru(this.para);
+    try {
+      // 今のページが　cm/game/ページならこのページから始める
+      await this.openUrl(this.startUrl); // 操作ページ表示
+      await this.ignoreKoukoku();
+      let sele = ["img[src*='game/furu']"];
+      let dome = "";
+      if (siteInfo.code == D.CODE.CMS) dome = "cmnwcmsite";
+      if (siteInfo.code == D.CODE.LFM) dome = "cmnwlifemedia";
+      let gameUrlHost = `https://${dome}.dropgame.jp/`;
+      if (this.isMob) {
+        gameUrlHost = `https://${dome}-sp.dropgame.jp/`;
+      }
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 3000);
+        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
+        res = await Furufuru.doSearch(gameUrlHost, wid);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
     return res;
   }
 }

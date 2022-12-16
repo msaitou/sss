@@ -48,10 +48,16 @@ class GmyBase extends BaseExecuter {
           case D.MISSION.ANQ_PARK:
             execCls = new GmyAnqPark(para);
             break;
-            case D.MISSION.ANQ_MANGA:
-              execCls = new GmyAnqManga(para);
-              break;
-          }
+          case D.MISSION.ANQ_MANGA:
+            execCls = new GmyAnqManga(para);
+            break;
+          case D.MISSION.GAME_FURUFURU:
+            execCls = new GmyGameFurufuru(para);
+            break;
+          case D.MISSION.GAME_FURUFURU_SEARCH:
+            execCls = new GmyGameFurufuruSearch(para);
+            break;
+        }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
@@ -348,6 +354,65 @@ class GmyClick extends GmyMissonSupper {
     }
     logger.info(`${this.constructor.name} END`);
     return D.STATUS.DONE;
+  }
+}
+const { PartsFurufuru } = require("./parts/parts-furufuru.js");
+// ふるふる
+class GmyGameFurufuru extends GmyMissonSupper {
+  firstUrl = "https://dietnavi.com/pc/";
+  targetUrl = "https://dietnavi.com/pc/game/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let Furufuru = new PartsFurufuru(this.para);
+    let sele = ["img[alt='ふるふるパニック']"];
+    let gameUrlHost = "https://getmoney.dropgame.jp/";
+    if (this.isMob) {
+      this.targetUrl = "https://dietnavi.com/sp/game/";
+      gameUrlHost = "https://getmoney-sp.dropgame.jp/";
+    }
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEleScrollWeak(eles[0], 2000, 100);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await Furufuru.doFuru(gameUrlHost, wid);
+    }
+    return res;
+  }
+}
+// ふるふるの探し
+class GmyGameFurufuruSearch extends GmyMissonSupper {
+  firstUrl = "https://dietnavi.com/pc/";
+  targetUrl = "https://dietnavi.com/pc/game/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let Furufuru = new PartsFurufuru(this.para);
+    let sele = ["img[alt='ふるふるパニック']"];
+    let gameUrlHost = "https://getmoney.dropgame.jp/";
+    if (this.isMob) {
+      this.targetUrl = "https://dietnavi.com/sp/game/";
+      gameUrlHost = "https://getmoney-sp.dropgame.jp/";
+    }
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEleScrollWeak(eles[0], 2000, 100);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await Furufuru.doSearch(gameUrlHost, wid);
+    }
+    return res;
   }
 }
 const { PartsAnkPark } = require("./parts/parts-ank-park.js");

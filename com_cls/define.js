@@ -31,11 +31,13 @@ exports.Def = {
     AME: "ame",
   },
   MISSION: {
+    CM_GAME_FURUFURU_SEARCH: "cm_game_furufuru_search",
     GAME_FURUFURU_SEARCH: "game_furufuru_search",
     DAILY_CM: "daily_cm",
     TAP_25: "tap_25",
     CRI_STAMP: "cri_stamp",
     CLICK_MOB: "click_mob",
+    CM_GAME_FURUFURU: "cm_game_furufuru",
     GAME_FURUFURU: "game_furufuru",
     KANJI: "kanji",
     ANQ_HAPPY: "anq_happy",

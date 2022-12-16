@@ -447,6 +447,10 @@ class SugGameFurufuru extends SugMissonSupper {
     let Furufuru = new PartsFurufuru(this.para);
     let sele = ["img[src*='71825fac2eeac6a2b2650f60']"];
     let gameUrlHost = "https://sugutama.dropgame.jp/";
+    if (this.isMob) {
+      sele = ["img[src*='b086b0a182915e5c0e57329d225b28a1']"];
+      gameUrlHost = "https://sugutama-sp.dropgame.jp/";
+    }
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
@@ -472,6 +476,10 @@ class SugGameFurufuruSearch extends SugMissonSupper {
     let Furufuru = new PartsFurufuru(this.para);
     let sele = ["img[src*='71825fac2eeac6a2b2650f60']"];
     let gameUrlHost = "https://sugutama.dropgame.jp/";
+    if (this.isMob) {
+      sele = ["img[src*='b086b0a182915e5c0e57329d225b28a1']"];
+      gameUrlHost = "https://sugutama-sp.dropgame.jp/";
+    }
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
