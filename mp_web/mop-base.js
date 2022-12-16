@@ -58,6 +58,9 @@ class MopBase extends BaseExecuter {
           case D.MISSION.KANJI:
             execCls = new MopKanji(para);
             break;
+          case D.MISSION.GAME_FURUFURU:
+            execCls = new MopGameFurufuru(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -533,6 +536,32 @@ class MopCm extends MopMissonSupper {
     }
   }
 }
+const { PartsFurufuru } = require("./parts/parts-furufuru.js");
+// ふるふる
+class MopGameFurufuru extends MopMissonSupper {
+  firstUrl = "https://pc.moppy.jp/";
+  targetUrl = "https://pc.moppy.jp/gamecontents/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let Furufuru = new PartsFurufuru(this.para);
+    let sele = ["a[data-ga-label='ふるふるモッピー']"];
+    let gameUrlHost = "https://moppy.dropgame.jp/";
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEleScrollWeak(eles[0], 2000, 100);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await Furufuru.doFuru(gameUrlHost, wid);
+    }
+    return res;
+  }
+}
 const { PartsAnkPark } = require("./parts/parts-ank-park.js");
 // アンケートパーク mobile用
 class MopAnqPark extends MopMissonSupper {
@@ -703,9 +732,7 @@ class MopAnqHappy extends MopMissonSupper {
                   "好きな飲み物に関して",
                   "キャラクターに関するアンケート",
                   "自分の人生観、人間関係に関するアンケート",
-                ].indexOf(
-                  title
-                ) > -1
+                ].indexOf(title) > -1
               ) {
                 skip++;
                 continue;
@@ -778,7 +805,7 @@ class MopAnqHappy extends MopMissonSupper {
                         return true;
                       }
                     });
-              switch (keyIndex) {
+                    switch (keyIndex) {
                       case 0:
                         break;
                       case 1:
@@ -793,7 +820,7 @@ class MopAnqHappy extends MopMissonSupper {
                     if (await this.isExistEle(sele[7], true, 2000)) {
                       let eles = await this.getEles(sele[7], 3000);
                       if (choiceNum === -1) choiceNum = libUtil.getRandomInt(0, eles.length);
-                      if (choiceNum >= eles.length) choiceNum = eles.length-1;
+                      if (choiceNum >= eles.length) choiceNum = eles.length - 1;
                       // await this.clickEle(eles[choiceNum], 3000, 500);
                       await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[choiceNum]);
                       await this.sleep(2000);

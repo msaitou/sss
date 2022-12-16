@@ -31,6 +31,7 @@ exports.Def = {
     AME: "ame",
   },
   MISSION: {
+    DAILY_CM: "daily_cm",
     TAP_25: "tap_25",
     CRI_STAMP: "cri_stamp",
     CLICK_MOB: "click_mob",
@@ -90,4 +91,7 @@ exports.Def = {
 
     MOP_RESEARCH: "mop_research",
   },
+  INTERVAL:{
+    "180": 3 * 60 * 1000,
+  }
 };

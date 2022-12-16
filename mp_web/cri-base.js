@@ -51,10 +51,10 @@ class CriBase extends BaseExecuter {
           case D.MISSION.TAP_25:
             execCls = new CriTap25(para);
             break;
-            case D.MISSION.GAME_FURUFURU:
-              execCls = new CriGameFurufuru(para);
-              break;
-          }
+          case D.MISSION.GAME_FURUFURU:
+            execCls = new CriGameFurufuru(para);
+            break;
+        }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
@@ -451,7 +451,7 @@ class CriTap25 extends CriMissonSupper {
                       if (await this.isExistEle(sele[3], true, 2000)) {
                         let iframe = await this.getEle(sele[3], 1000);
                         await driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
-                      }              
+                      }
                     }
                   }
                 }

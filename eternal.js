@@ -1,6 +1,7 @@
 // winかlinuxかでコマンドが変わるだけ
 const { execSync, exec, spawn } = require("child_process");
 const fs = require("fs");
+const { Def: D } = require("./com_cls/define");
 const IS_WIN = process.platform === "win32";
 const IS_LINUX = process.platform === "linux";
 const LOG_FILE = "./log/a.log";
@@ -47,15 +48,21 @@ async function mainLinux() {
     } catch (e) {
       // 生きてない
       console.log(e.toString());
+      console.log(e);
     }
     if (isLive) {
-      console.log("生きてるよ");
+      console.log("lived");
       let fileStatus = fs.statSync(LOG_FILE);
       // 生きてる場合、ログファイルの更新時間を取得
       if (lastLogTime) {
         // 前回の更新時間と比較
+        console.log(
+          lastLogTime.toString(),
+          fileStatus.mtime.toString(),
+          lastLogTime.toString() === fileStatus.mtime.toString()
+        );
         if (lastLogTime.toString() === fileStatus.mtime.toString()) {
-          console.log("変化がないので新しく立ち上げます");
+          console.log("not different");
           // 変化がなければプロセスをキルする
           isLive = false;
         }
@@ -78,7 +85,7 @@ async function mainLinux() {
     }
   };
   await monitoring();
-  await setInterval(monitoring, 3 * 60 * 1000 + 10000); // 6分毎にチェックでエンドレス
+  await setInterval(monitoring, D.INTERVAL[180] + 10000); // 6分毎にチェックでエンドレス
   // await setInterval(monitoring, 6 * 1000); // 6分毎にチェックでエンドレス
 }
 async function mainWin() {
@@ -175,7 +182,7 @@ async function mainWin() {
     }
   };
   await monitoring();
-  await setInterval(monitoring, 3 * 60 * 1000 + 10000); // 6分毎にチェックでエンドレス
+  await setInterval(monitoring, D.INTERVAL[180] + 10000); // 6分毎にチェックでエンドレス
   // await setInterval(monitoring, 20 * 1000); // 6分毎にチェックでエンドレス
 }
 if (IS_LINUX) {

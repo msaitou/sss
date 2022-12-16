@@ -24,7 +24,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         "#scoreboard>a[href*='/top']", // 4
         "#getpoint>a",
       ];
-      // await this.openUrl("https://sugutama.dropgame.jp/drop/practice/top"); // todo 練習用
+      await this.openUrl(`${gameUrlHost}drop/practice/top`); // todo 練習用
       if (await this.isExistEle(sele[5], true, 2000)) {
         let ele = await this.getEle(sele[5], 3000);
         await this.clickEle(ele, 2000);
@@ -39,10 +39,10 @@ class PartsFurufuru extends BaseWebDriverWrapper {
             let ele = await this.getEle(sele[1], 3000);
             let rect = await ele.getRect();
             let eleScope = {
-              xStart: rect.x + 120,
-              xEnd: rect.x + rect.width - 120,
+              xStart: rect.x + 150,
+              xEnd: rect.x + rect.width - 150,
               yStart: rect.y + 110,
-              yEnd: rect.y + rect.height - 30,
+              yEnd: rect.y + rect.height - 70,
             };
             for (;;) {
               if (await this.isExistEle(sele[2], true, 2000)) {

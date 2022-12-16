@@ -21,7 +21,7 @@ class CmsBase extends BaseExecuter {
       let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
       this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
       if (cmMissionList.length) {
-        this.missionList.push({main:D.MISSION.CM});
+        this.missionList.push({ main: D.MISSION.CM });
       }
       for (let i in this.missionList) {
         let mission = this.missionList[i];
@@ -34,7 +34,10 @@ class CmsBase extends BaseExecuter {
             execCls = new CmsCm(para, cmMissionList);
             break;
           case D.MISSION.RESEARCH1:
-            execCls = new CmsResearch1(para, cmMissionList);
+            execCls = new CmsResearch1(para);
+            break;
+          case D.MISSION.DAILY_CM:
+            execCls = new CmsDailyCm(para);
             break;
         }
         if (execCls) {
@@ -161,7 +164,7 @@ class CmsQuizDaily extends CmsMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START###`);
-    if (this.isMob) this.targetUrl = "https://www.cmsite.co.jp/sp/game/"; 
+    if (this.isMob) this.targetUrl = "https://www.cmsite.co.jp/sp/game/";
     let res = await this.QuizDaily.do(this.targetUrl);
     logger.info(`${this.constructor.name} END#####`);
     return res;
@@ -198,11 +201,9 @@ class CmsCm extends CmsMissonSupper {
   firstUrl = "https://www.cmsite.co.jp/top/home/";
   targetUrl = "https://www.cmsite.co.jp/top/cm/";
   cmMissionList;
-  // ChirashiCls;
   constructor(para, cmMissionList) {
     super(para);
     this.cmMissionList = cmMissionList;
-    // this.ChirashiCls = new PartsChirashi(para);
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async do() {
@@ -214,10 +215,14 @@ class CmsCm extends CmsMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://cmsite.cmnw.jp/game/");
+      let cmManage = new PartsCmManage(
+        this.para,
+        this.cmMissionList,
+        "https://cmsite.cmnw.jp/game/"
+      );
       await cmManage.do();
       await driver.close(); // このタブを閉じて
-      await driver.switchTo().window(wid);  // 元のウインドウIDにスイッチ
+      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
     }
   }
 }
@@ -237,9 +242,23 @@ class CmsDailyCm extends CmsMissonSupper {
     let res = D.STATUS.FAIL;
     await this.openUrl(this.targetUrl);
     try {
-      let sele = ["iframe[src='../dailycm/']","#dailycm_start_img", "#dailycm_end_img"];
-    }
-    catch(e) {
+      let sele = ["iframe[src='../dailycm/']", "#dailycm_start_img", "#dailycm_end_img"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let iframe = await this.getEle(sele[0], 1000);
+        await driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let ele = await this.getEle(sele[1], 3000);
+          await this.clickEle(ele, 2000);
+          await this.sleep(60000); // 1分くらい待つ
+          if (await this.isExistEle(sele[2], true, 2000)) {
+            let ele = await this.getEle(sele[2], 3000);
+            await this.clickEle(ele, 2000);
+          }
+        }
+        // もとのフレームに戻す
+        await driver.switchTo().defaultContent();
+      }
+    } catch (e) {
       logger.warn(e);
     }
     logger.info(`${this.constructor.name} END#####`);

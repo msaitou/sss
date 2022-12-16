@@ -181,7 +181,7 @@ class PointWebCls {
       } else this.logger.debug("前回のタスクが実行中です");
     };
     await countUp();
-    await setInterval(countUp, 3 * 60 * 1000);
+    await setInterval(countUp, D.INTERVAL[180]);
     // いま時点で未実行のミッションを抽出
     // main()に未実行ミッションリストを渡す　同期的に
     // 5分ごとにエンドレス・・
