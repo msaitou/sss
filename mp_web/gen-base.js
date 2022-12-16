@@ -485,6 +485,11 @@ class GenGameFurufuruSearch extends GenMissonSupper {
     let Furufuru = new PartsFurufuru(this.para);
     let sele = ["#wrapper_rec_game a[href='/panic/pc']"];
     let gameUrlHost = "https://gendama.dropgame.jp/";
+    if (this.isMob) {
+      this.targetUrl = "https://www.gendama.jp/sp/everyday_point"; // 操作ページ表示
+      sele = ["a[href*='/panic/sp']>p>img"];
+      gameUrlHost = "https://gendama-sp.dropgame.jp/";
+    }
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 3000);

@@ -24,6 +24,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         "#scoreboard>a[href*='/top']", // 4
         "#getpoint>a",
       ];
+      if (this.isMob) (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
       // await this.openUrl(`${gameUrlHost}drop/practice/top`); // todo 練習用
       await this.ignoreKoukoku();
       await this.getPoint();
@@ -37,10 +38,10 @@ class PartsFurufuru extends BaseWebDriverWrapper {
             let ele = await this.getEle(sele[1], 3000);
             let rect = await ele.getRect();
             let eleScope = {
-              xStart: rect.x + 150,
-              xEnd: rect.x + rect.width - 150,
-              yStart: rect.y + 110,
-              yEnd: rect.y + rect.height - 70,
+              xStart: rect.x + (this.isMob ? 30 : 150),
+              xEnd: rect.x + rect.width - (this.isMob ? 30 : 150),
+              yStart: rect.y + (this.isMob ? 30 : 110),
+              yEnd: rect.y + rect.height - (this.isMob ? 10 : 70),
             };
             for (;;) {
               if (await this.isExistEle(sele[2], true, 2000)) {
@@ -90,7 +91,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         } else {
           res = D.STATUS.DONE;
           break;
-        } 
+        }
       }
     } catch (e) {
       logger.warn(e);
@@ -119,6 +120,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         "#scoreboard>a[href*='/top']", // 4
         "#menu a[href='/minigame']",
       ];
+      if (this.isMob) sele[5] = "#mode_bar a[href='/minigame']";
       await this.ignoreKoukoku();
       await this.getPoint();
       // 3回やってるんだったら終わり

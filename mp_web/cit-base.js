@@ -456,6 +456,10 @@ class CitGameFurufuru extends CitMissonSupper {
     let Furufuru = new PartsFurufuru(this.para);
     let sele = ["img[alt='ふるふるチャンシー']"];
     let gameUrlHost = "https://chanceit.dropgame.jp/";
+    if (this.isMob) {
+      this.targetUrl = "https://www.chance.com/sp/mypage/tasklist.jsp";
+      gameUrlHost = "https://chanceit-sp.dropgame.jp/";
+    }
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
@@ -481,6 +485,10 @@ class CitGameFurufuruSearch extends CitMissonSupper {
     let Furufuru = new PartsFurufuru(this.para);
     let sele = ["img[alt='ふるふるチャンシー']"];
     let gameUrlHost = "https://chanceit.dropgame.jp/";
+    if (this.isMob) {
+      this.targetUrl = "https://www.chance.com/sp/mypage/tasklist.jsp";
+      gameUrlHost = "https://chanceit-sp.dropgame.jp/";
+    }
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);

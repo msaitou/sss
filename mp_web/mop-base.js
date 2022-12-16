@@ -554,6 +554,7 @@ class MopGameFurufuru extends MopMissonSupper {
     let Furufuru = new PartsFurufuru(this.para);
     let sele = ["a[data-ga-label='ふるふるモッピー']"];
     let gameUrlHost = "https://moppy.dropgame.jp/";
+    if (this.isMob) gameUrlHost = "https://moppy-sp.dropgame.jp/";
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
@@ -579,6 +580,7 @@ class MopGameFurufuruSearch extends MopMissonSupper {
     let Furufuru = new PartsFurufuru(this.para);
     let sele = ["a[data-ga-label='ふるふるモッピー']"];
     let gameUrlHost = "https://moppy.dropgame.jp/";
+    if (this.isMob) gameUrlHost = "https://moppy-sp.dropgame.jp/";
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
