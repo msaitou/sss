@@ -48,7 +48,6 @@ async function mainLinux() {
     } catch (e) {
       // 生きてない
       console.log(e.toString());
-      console.log(e);
     }
     if (isLive) {
       console.log("lived");
@@ -72,8 +71,13 @@ async function mainLinux() {
       lastLogTime = fileStatus.mtime;
     }
     if (!isLive) {
-      const stdout = execSync(PS_KILL_CMD);
-      console.log(stdout.toString(), "node-sss is killed!!");
+      try{
+        const stdout = execSync(PS_KILL_CMD);
+        console.log(stdout.toString(), "node-sss is killed!!");
+      }
+      catch(e) {
+        console.log(e.toString());
+      }
       let cmds = EXEC_P_WEB_H_CMD.split(" ");
       // 起動(非同期)
       const child = spawn(cmds[0], [cmds[1], cmds[2]], {
