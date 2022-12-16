@@ -60,6 +60,12 @@ class CitBase extends BaseExecuter {
           case D.MISSION.ANQ_COOK:
             execCls = new CitAnqCook(para);
             break;
+          case D.MISSION.GAME_FURUFURU:
+            execCls = new CitGameFurufuru(para);
+            break;
+          case D.MISSION.GAME_FURUFURU_SEARCH:
+            execCls = new CitGameFurufuruSearch(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -435,6 +441,58 @@ class CitClick extends CitMissonSupper {
     return D.STATUS.DONE;
   }
 }
+const { PartsFurufuru } = require("./parts/parts-furufuru.js");
+// ふるふる
+class CitGameFurufuru extends CitMissonSupper {
+  firstUrl = "https://www.chance.com/";
+  targetUrl = "https://www.chance.com/game/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let Furufuru = new PartsFurufuru(this.para);
+    let sele = ["img[alt='ふるふるチャンシー']"];
+    let gameUrlHost = "https://chanceit.dropgame.jp/";
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEleScrollWeak(eles[0], 2000, 100);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await Furufuru.doFuru(gameUrlHost, wid);
+    }
+    return res;
+  }
+}
+// ふるふるの探し
+class CitGameFurufuruSearch extends CitMissonSupper {
+  firstUrl = "https://www.chance.com/";
+  targetUrl = "https://www.chance.com/game/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let Furufuru = new PartsFurufuru(this.para);
+    let sele = ["img[alt='ふるふるチャンシー']"];
+    let gameUrlHost = "https://chanceit.dropgame.jp/";
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 3000);
+      await this.clickEleScrollWeak(eles[0], 2000, 100);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await Furufuru.doSearch(gameUrlHost, wid);
+    }
+    return res;
+  }
+}
+
 const { PartsAnkPark } = require("./parts/parts-ank-park.js");
 // アンケート 漫画 mobile用
 class CitAnqManga extends CitMissonSupper {

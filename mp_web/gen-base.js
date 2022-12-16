@@ -48,6 +48,12 @@ class GenBase extends BaseExecuter {
           case D.MISSION.ANQ_KENKOU:
             execCls = new GenAnqKenkou(para);
             break;
+          case D.MISSION.GAME_FURUFURU:
+            execCls = new GenGameFurufuru(para);
+            break;
+          case D.MISSION.GAME_FURUFURU_SEARCH:
+            execCls = new GenGameFurufuruSearch(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -433,6 +439,65 @@ class GenAnq extends GenMissonSupper {
     return res;
   }
 }
+const { PartsFurufuru } = require("./parts/parts-furufuru.js");
+// ふるふる
+class GenGameFurufuru extends GenMissonSupper {
+  firstUrl = "https://www.gendama.jp/";
+  targetUrl = "https://www.gendama.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let Furufuru = new PartsFurufuru(this.para);
+    let sele = ["#wrapper_rec_game a[href='/panic/pc']"];
+    let gameUrlHost = "https://gendama.dropgame.jp/";
+    if (this.isMob) {
+      this.targetUrl = "https://www.gendama.jp/sp/everyday_point"; // 操作ページ表示
+      sele = ["a[href*='/panic/sp']>p>img"];
+      gameUrlHost = "https://gendama-sp.dropgame.jp/";
+    }
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele = await this.getEle(sele[0], 3000);
+      // await this.clickEleScrollWeak(eles[0], 2000, 100);
+      await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await Furufuru.doFuru(gameUrlHost, wid);
+    }
+    return res;
+  }
+}
+// ふるふるの探し
+class GenGameFurufuruSearch extends GenMissonSupper {
+  firstUrl = "https://www.gendama.jp/";
+  targetUrl = "https://www.gendama.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let Furufuru = new PartsFurufuru(this.para);
+    let sele = ["#wrapper_rec_game a[href='/panic/pc']"];
+    let gameUrlHost = "https://gendama.dropgame.jp/";
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele = await this.getEle(sele[0], 3000);
+      // await this.clickEleScrollWeak(eles[0], 2000, 100);
+      await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await Furufuru.doSearch(gameUrlHost, wid);
+    }
+    return res;
+  }
+}
+
 const { PartsAnkPark } = require("./parts/parts-ank-park.js");
 // アンケートパーク　mobile用
 class GenAnqPark extends GenMissonSupper {
@@ -671,7 +736,7 @@ class GenAnqMob extends GenMissonSupper {
                               } else if (isStartPage) iBreak = true;
                               break;
                             }
-                                }
+                          }
                           if (iBreak) break;
                           await driver.navigate().refresh(); // 画面更新
                           await this.sleep(2000);
@@ -709,7 +774,7 @@ class GenAnqMob extends GenMissonSupper {
                           if (await this.isExistEle(sele[7], true, 2000)) {
                             let eles = await this.getEles(sele[7], 3000);
                             if (choiceNum === -1) choiceNum = libUtil.getRandomInt(0, eles.length);
-                            if (choiceNum >= eles.length) choiceNum = eles.length-1;
+                            if (choiceNum >= eles.length) choiceNum = eles.length - 1;
                             // await this.clickEle(eles[choiceNum], 3000, 500);
                             await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[choiceNum]);
                             await this.sleep(2000);
