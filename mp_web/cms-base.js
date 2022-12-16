@@ -221,5 +221,30 @@ class CmsCm extends CmsMissonSupper {
     }
   }
 }
+// 本日の1本
+class CmsDailyCm extends CmsMissonSupper {
+  firstUrl = "https://www.cmsite.co.jp/top/home/";
+  targetUrl = "https://www.cmsite.co.jp/top/home/";
+  QuizDaily;
+  constructor(para) {
+    super(para);
+    this.QuizDaily = new PartsQuizDaily(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START###`);
+    let res = D.STATUS.FAIL;
+    await this.openUrl(this.targetUrl);
+    try {
+      let sele = ["iframe[src='../dailycm/']","#dailycm_start_img", "#dailycm_end_img"];
+    }
+    catch(e) {
+      logger.warn(e);
+    }
+    logger.info(`${this.constructor.name} END#####`);
+    return res;
+  }
+}
 exports.CmsCommon = CmsCommon;
 exports.Cms = CmsBase;

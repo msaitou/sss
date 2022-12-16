@@ -46,16 +46,17 @@ async function mainLinux() {
       isLive = true;
     } catch (e) {
       // 生きてない
+      console.log(e.toString());
     }
     if (isLive) {
+      console.log("生きてるよ");
       let fileStatus = fs.statSync(LOG_FILE);
       // 生きてる場合、ログファイルの更新時間を取得
       if (lastLogTime) {
         // 前回の更新時間と比較
         if (lastLogTime.toString() === fileStatus.mtime.toString()) {
+          console.log("変化がないので新しく立ち上げます");
           // 変化がなければプロセスをキルする
-          const stdout = execSync(PS_KILL_CMD);
-          console.log(stdout.toString(), "node-sss is killed!!");
           isLive = false;
         }
         // 変化があれば何もしない
@@ -64,6 +65,8 @@ async function mainLinux() {
       lastLogTime = fileStatus.mtime;
     }
     if (!isLive) {
+      const stdout = execSync(PS_KILL_CMD);
+      console.log(stdout.toString(), "node-sss is killed!!");
       let cmds = EXEC_P_WEB_H_CMD.split(" ");
       // 起動(非同期)
       const child = spawn(cmds[0], [cmds[1], cmds[2]], {
