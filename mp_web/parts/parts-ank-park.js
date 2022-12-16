@@ -863,8 +863,13 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "input[alt='進む']", // 6
         "input[src*='next']",
       ];
+      let ele;
       if (await this.isExistEle(sele[4], true, 10000)) {
-        let ele = await this.getEle(sele[4], 10000);
+        ele = await this.getEle(sele[4], 10000);
+      } else if (await this.isExistEle(sele[5], true, 3000)) {
+        ele = await this.getEle(sele[5], 3000);
+      }
+      if (ele) {
         await this.hideOverlay();
         await this.clickEle(ele, 2000, 250);
         try {
