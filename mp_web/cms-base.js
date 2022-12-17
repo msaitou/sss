@@ -242,7 +242,7 @@ class CmsDailyCm extends CmsMissonSupper {
     let res = D.STATUS.FAIL;
     await this.openUrl(this.targetUrl);
     try {
-      let sele = ["iframe[src='../dailycm/']", "#dailycm_start_img", "#dailycm_end_img"];
+      let sele = ["iframe[src='../dailycm/']", "#dailycm_start_img", "#dailycm_msg_area"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let iframe = await this.getEle(sele[0], 1000);
         await driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
@@ -253,6 +253,7 @@ class CmsDailyCm extends CmsMissonSupper {
           if (await this.isExistEle(sele[2], true, 2000)) {
             let ele = await this.getEle(sele[2], 3000);
             await this.clickEle(ele, 2000);
+            await this.changeWindow();
           }
         }
         // もとのフレームに戻す

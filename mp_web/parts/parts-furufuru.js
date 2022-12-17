@@ -43,29 +43,37 @@ class PartsFurufuru extends BaseWebDriverWrapper {
               yStart: rect.y + (this.isMob ? 30 : 110),
               yEnd: rect.y + rect.height - (this.isMob ? 10 : 70),
             };
-            for (;;) {
-              if (await this.isExistEle(sele[2], true, 2000)) {
-                // sele[1]のleft,topからright,bottomの間で、ランダムで
-                let x = libUtil.getRandomInt(eleScope.xStart, eleScope.xEnd);
-                let y = libUtil.getRandomInt(eleScope.yStart, eleScope.yEnd);
-                logger.info(x, y);
-                const actions = driver.actions();
-                actions.move({ x: x, y: y }).click().perform();
-                x = libUtil.getRandomInt(eleScope.xStart, eleScope.xEnd);
-                actions.move({ x: x, y: y }).click().perform();
-              } else break;
+            try {
+              await this.driver.manage().setTimeouts({ pageLoad: 10000 });
+              for (;;) {
+                if (await this.isExistEle(sele[2], true, 2000)) {
+                  // sele[1]のleft,topからright,bottomの間で、ランダムで
+                  let x = libUtil.getRandomInt(eleScope.xStart, eleScope.xEnd);
+                  let y = libUtil.getRandomInt(eleScope.yStart, eleScope.yEnd);
+                  logger.info(x, y);
+                  const actions = driver.actions();
+                  actions.move({ x: x, y: y }).click().perform();
+                  x = libUtil.getRandomInt(eleScope.xStart, eleScope.xEnd);
+                  actions.move({ x: x, y: y }).click().perform();
+                } else break;
+              }
+            } catch (e) {
+              logger.warn(e);
             }
           }
           await this.closeElesWindow([wid, wid2]);
+          await this.driver.manage().setTimeouts({ pageLoad: D.INTERVAL[180] });  // 元のタイムアウト時間に戻す
           let currentUrl = await driver.getCurrentUrl();
           if (currentUrl.indexOf(gameUrlHost) === -1) {
             await driver.navigate().back();
             await this.sleep(1000);
-            currentUrl = await driver.getCurrentUrl();
-            // 2回くらい戻る必要あり
-            if (currentUrl.indexOf(gameUrlHost) === -1) {
-              await driver.navigate().back();
-              await this.sleep(1000);
+            for (let k = 0; k < 8; k++) {
+              currentUrl = await driver.getCurrentUrl();
+              if (currentUrl.indexOf(gameUrlHost) === -1) {
+                await driver.navigate().back(); // 広告をクリックしたぽいので戻る
+                await this.sleep(2000);
+                logger.info("広告をクリックさせられたのでbackします");
+              } else break;
             }
             if (await this.isExistEle(sele[3], true, 2000)) {
               let ele = await this.getEle(sele[3], 3000);
