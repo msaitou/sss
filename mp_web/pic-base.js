@@ -266,6 +266,7 @@ class PicClick extends PicMissonSupper {
     return D.STATUS.DONE;
   }
 }
+const { PartsGame } = require("./parts/parts-game.js");
 const { PartsQuizKentei } = require("./parts/parts-quiz-kentei.js");
 // ポイントモール
 class PicPointMoll extends PicMissonSupper {
@@ -298,18 +299,19 @@ class PicPointMoll extends PicMissonSupper {
       await this.changeWindow(wid); // 別タブに移動する
       try {
         let cSeleList = [
-          "img[src*='img_quiz01']",
-          "img[src*='img_quiz02']",
-          "img[src*='img_quiz03']",
-          "img[src*='img_quiz04']",
-          "img[src*='img_quiz05']",
-          "img[src*='img_seiza']",
-          "",
+          // "img[src*='img_quiz01']",
+          // "img[src*='img_quiz02']",
+          // "img[src*='img_quiz03']",
+          // "img[src*='img_quiz04']",
+          // "img[src*='img_quiz05']",
+          // "img[src*='img_seiza']",　// なんか0しか稼げないので
+          "div>img[src*='img_kokuhaku']",
           "",
           "",
           "",
           "",
         ];
+        let Game = new PartsGame(this.para);
         for (let cSele of cSeleList) {
           if (await this.isExistEle(cSele, true, 2000)) {
             ele = await this.getEle(cSele, 3000);
@@ -324,6 +326,10 @@ class PicPointMoll extends PicMissonSupper {
               // 占い
               let execCls = new Uranai(this.para);
               res = await execCls.do();
+            }
+            else if (cSele.indexOf("img_kokuhaku") > -1) {
+              // 告白
+              res = await Game.doKokuhaku(wid2);
             }
             else if (cSele.indexOf("aaaaa") > -1) {
             }

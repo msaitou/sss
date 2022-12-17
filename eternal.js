@@ -160,12 +160,6 @@ async function mainWin() {
           // 変化がなければプロセスをキルする
           // const stdout = execSync(PS_KILL_CMD);
           // console.log('dededede');
-          child = spawn("powershell.exe", ["-Command", "-"]);
-          await child.stdin.write(PS_KILL_CMD + "\n");
-          child.stdin.end();
-          await ok();
-          // console.log("ok:  ", self.stout);
-          console.log("node-sss is killed!!");
           isLive = false;
         }
         // 変化があれば何もしない
@@ -174,6 +168,12 @@ async function mainWin() {
       lastLogTime = fileStatus.mtime;
     }
     if (!isLive) {
+      child = spawn("powershell.exe", ["-Command", "-"]);
+      await child.stdin.write(PS_KILL_CMD + "\n");
+      child.stdin.end();
+      await ok();
+      // console.log("ok:  ", self.stout);
+      console.log("node-sss is killed!!");
       console.log("しんだよ");
       let cmds = EXEC_P_WEB_H_CMD.split(" ");
       // 起動(非同期)
