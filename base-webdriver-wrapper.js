@@ -139,7 +139,11 @@ class BaseWebDriverWrapper {
       if (e.name != "TimeoutError") {
         throw e;
       } else {
-        await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
+        try {
+          await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
+        } catch (e) {
+          this.logger.warn(e);
+        }
       }
     } finally {
       await this.driver.manage().setTimeouts({ pageLoad: 180000 });
@@ -151,12 +155,10 @@ class BaseWebDriverWrapper {
     try {
       if (ele) {
         await this.driver.executeScript(script, ele);
-      }
-      else {
+      } else {
         await this.driver.executeScript(script);
       }
-    }
-    catch(e) {
+    } catch (e) {
       this.logger.warn(e);
       this.driver.navigate().refresh();
     }
@@ -256,7 +258,7 @@ class BaseWebDriverWrapper {
   }
   async closeElesWindowAndAlert(remainIds) {
     let done = await this.closeElesWindow(remainIds);
-    return await this.closeAlert() || done;
+    return (await this.closeAlert()) || done;
   }
 
   async changeWindow(wid) {
@@ -325,6 +327,18 @@ class BaseWebDriverWrapper {
     if (currentUrl != targetUrl) {
       await this.driver.get(targetUrl); // 最初のページ表示
     }
+  }
+  async ignoreKoukoku() {
+    let currentUrl = await this.driver.getCurrentUrl();
+    // 広告が画面いっぱいに入る時がある
+    if (currentUrl.indexOf("google_vignette") > -1) {
+      // await driver.actions().sendKeys(Key.ESCAPE).perform();
+      // await this.sleep(2000);
+      await this.driver.navigate().back(); // 戻って
+      await this.driver.navigate().forward(); // 行く
+      currentUrl = await this.driver.getCurrentUrl();
+    }
+    return currentUrl;
   }
 }
 exports.BaseWebDriverWrapper = BaseWebDriverWrapper;

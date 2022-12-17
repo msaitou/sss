@@ -44,13 +44,13 @@ class PartsFurufuru extends BaseWebDriverWrapper {
               yEnd: rect.y + rect.height - (this.isMob ? 10 : 70),
             };
             try {
-              await this.driver.manage().setTimeouts({ pageLoad: 10000 });
+              await driver.manage().setTimeouts({ pageLoad: 5000 });
               for (;;) {
+                let x = libUtil.getRandomInt(eleScope.xStart, eleScope.xEnd);
+                let y = libUtil.getRandomInt(eleScope.yStart, eleScope.yEnd);
+                logger.debug(x, y);
                 if (await this.isExistEle(sele[2], true, 2000)) {
                   // sele[1]のleft,topからright,bottomの間で、ランダムで
-                  let x = libUtil.getRandomInt(eleScope.xStart, eleScope.xEnd);
-                  let y = libUtil.getRandomInt(eleScope.yStart, eleScope.yEnd);
-                  logger.info(x, y);
                   const actions = driver.actions();
                   actions.move({ x: x, y: y }).click().perform();
                   x = libUtil.getRandomInt(eleScope.xStart, eleScope.xEnd);
@@ -173,18 +173,6 @@ class PartsFurufuru extends BaseWebDriverWrapper {
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
     }
     return res;
-  }
-  async ignoreKoukoku() {
-    let currentUrl = await this.driver.getCurrentUrl();
-    // 広告が画面いっぱいに入る時がある
-    if (currentUrl.indexOf("google_vignette") > -1) {
-      // await driver.actions().sendKeys(Key.ESCAPE).perform();
-      // await this.sleep(2000);
-      await this.driver.navigate().back(); // 戻って
-      await this.driver.navigate().forward(); // 行く
-      currentUrl = await this.driver.getCurrentUrl();
-    }
-    return currentUrl;
   }
   async hideOverlay() {
     let seleOver = ["div.overlay-item a.button-close"];

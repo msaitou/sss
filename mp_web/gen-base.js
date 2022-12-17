@@ -103,16 +103,6 @@ class GenMissonSupper extends BaseWebDriverWrapper {
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
   }
-  async ignoreKoukoku() {
-    let currentUrl = await this.driver.getCurrentUrl();
-    // 広告が画面いっぱいに入る時がある
-    if (currentUrl.indexOf("google_vignette") > -1) {
-      await this.driver.navigate().back(); // 戻って
-      await this.driver.navigate().forward(); // 行く
-      currentUrl = await this.driver.getCurrentUrl();
-    }
-    return currentUrl;
-  }
 }
 // このサイトの共通処理クラス
 class GenCommon extends GenMissonSupper {

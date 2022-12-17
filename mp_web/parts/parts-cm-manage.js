@@ -130,18 +130,6 @@ class PartsCmManage extends BaseExecuter {
       }
     }
   }
-  async ignoreKoukoku() {
-    let currentUrl = await this.driver.getCurrentUrl();
-    // 広告が画面いっぱいに入る時がある
-    if (currentUrl.indexOf("google_vignette") > -1) {
-      // await driver.actions().sendKeys(Key.ESCAPE).perform();
-      // await this.sleep(2000);
-      await this.driver.navigate().back(); // 戻って
-      await this.driver.navigate().forward(); // 行く
-      currentUrl = await this.driver.getCurrentUrl();
-    }
-    return currentUrl;
-  }
 }
 class CmSuper extends BaseWebDriverWrapper {
   para;
@@ -152,18 +140,6 @@ class CmSuper extends BaseWebDriverWrapper {
     this.startUrl = startUrl;
     this.setDriver(this.para.driver);
     this.logger.debug(`${this.constructor.name} constructor`);
-  }
-  async ignoreKoukoku() {
-    let currentUrl = await this.driver.getCurrentUrl();
-    // 広告が画面いっぱいに入る時がある
-    if (currentUrl.indexOf("google_vignette") > -1) {
-      // await driver.actions().sendKeys(Key.ESCAPE).perform();
-      // await this.sleep(2000);
-      await this.driver.navigate().back(); // 戻って
-      await this.driver.navigate().forward(); // 行く
-      currentUrl = await this.driver.getCurrentUrl();
-    }
-    return currentUrl;
   }
 }
 // クマクマどっち

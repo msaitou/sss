@@ -66,6 +66,9 @@ class CitBase extends BaseExecuter {
           case D.MISSION.GAME_FURUFURU_SEARCH:
             execCls = new CitGameFurufuruSearch(para);
             break;
+          case D.MISSION.GAME_KOKUHAKU:
+            execCls = new CitGameKokuhaku(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -500,7 +503,37 @@ class CitGameFurufuruSearch extends CitMissonSupper {
     return res;
   }
 }
-
+const { PartsGame } = require("./parts/parts-game.js");
+// 告白
+class CitGameKokuhaku extends CitMissonSupper {
+  firstUrl = "https://www.chance.com/";
+  targetUrl = "https://www.chance.com/game/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let PGame = new PartsGame(this.para);
+    let se = ["img[alt='告白アルバム']"];
+    let gameUrlHost = "https://chanceit.dropgame.jp/";
+    if (this.isMob) {
+      this.targetUrl = "https://www.chance.com/sp/mypage/tasklist.jsp";
+      gameUrlHost = "https://chanceit-sp.dropgame.jp/";
+    }
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(se[0], true, 2000)) {
+      let el = await this.getEle(se[0], 3000);
+      await this.clickEleScrollWeak(el, 2000, 100);
+      await this.ignoreKoukoku();
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await PGame.doKokuhaku(wid);
+    }
+    return res;
+  }
+}
 const { PartsAnkPark } = require("./parts/parts-ank-park.js");
 // アンケート 漫画 mobile用
 class CitAnqManga extends CitMissonSupper {

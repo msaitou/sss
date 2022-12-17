@@ -31,6 +31,7 @@ exports.Def = {
     AME: "ame",
   },
   MISSION: {
+    GAME_KOKUHAKU: "game_kokuhaku",
     CM_GAME_FURUFURU_SEARCH: "cm_game_furufuru_search",
     GAME_FURUFURU_SEARCH: "game_furufuru_search",
     DAILY_CM: "daily_cm",
