@@ -35,8 +35,9 @@ class PointWebCls {
     if (missionMap && Object.keys(missionMap).length) {
       let tmpKeys = Object.keys(missionMap);
       let targetKeys = [];
-      tmpKeys.forEach(key => {  // m_系をPCと同じキーとしてログイン情報を取得
-        if (key.indexOf("m_") === 0) (key = key.replace("m_", ""));
+      tmpKeys.forEach((key) => {
+        // m_系をPCと同じキーとしてログイン情報を取得
+        if (key.indexOf("m_") === 0) key = key.replace("m_", "");
         targetKeys.push(key);
       });
 
@@ -45,10 +46,38 @@ class PointWebCls {
         kind: "web-pc",
         code: { $in: targetKeys },
       });
-      for (let [key, line] of Object.entries(missionMap)) {
-        let isMob = false;
-        if (key.indexOf("m_") === 0) (key = key.replace("m_", "")), (isMob = true);
-        await this.execOperator(key, line, aca, siteInfos.filter((i) => i.code === key)[0], isMob);
+      let maxDate = new Date("2099-12-31");
+      let tmpMap = {};
+      // ミッション終了時間毎に整理
+      for (let [key, lines] of Object.entries(missionMap)) {
+        for (let line of lines) {
+          let dateKey =
+            line.valid_term && line.valid_term.const_h_to ? line.valid_term.const_h_to : maxDate;
+          if (!tmpMap[dateKey]) tmpMap[dateKey] = {};
+          if (!tmpMap[dateKey][key]) tmpMap[dateKey][key] = [];
+          tmpMap[dateKey][key].push(line);
+        }
+      }
+      let limitList = Object.keys(tmpMap);
+      limitList.sort(function (a, b) {
+        return a > b ? 1 : -1;
+      });
+      let ascLimitList = [];
+      for (let limit of limitList) {
+        ascLimitList.push(tmpMap[limit]);
+      }
+      for (let missions of ascLimitList) {
+        for (let [key, line] of Object.entries(missions)) {
+          let isMob = false;
+          // toを過ぎてたらスキップ(間引く)
+          line = line.filter(
+            (l) =>
+              !(line.valid_term && line.valid_term.const_h_to) ||
+              new Date() < line.valid_term.const_h_to
+          );
+          if (key.indexOf("m_") === 0) (key = key.replace("m_", "")), (isMob = true);
+          await this.execOperator(key, line, aca, siteInfos.filter((i) => i.code == key)[0], isMob);
+        }
       }
     } else this.logger.info("ミッションは登録されていません");
   }
