@@ -530,8 +530,8 @@ class GenAnqPark extends GenMissonSupper {
             let ele = await this.getEle(seleGen[0], 3000);
             await this.clickEle(ele, 3000); // アンケートリストを表示
             if (await this.isExistEle(seleGen[1], true, 3000)) {
-              let eles = await this.getEles(seleGen[1], 3000),
-                limit = eles.length;
+              let eles = await this.getEles(seleGen[1], 3000);
+              let limit = eles.length < 5 ? eles.length : 5;
               for (let j = 0; j < limit; j++) {
                 if (j !== 0 && (await this.isExistEle(seleGen[1], true, 3000))) {
                   eles = await this.getEles(seleGen[1], 3000);
@@ -611,7 +611,9 @@ class GenAnqPark extends GenMissonSupper {
                 }
               }
             }
-            res = D.STATUS.DONE;
+            if (await this.isExistEle(seleGen[1], true, 3000))
+              (eles = await this.getEles(seleGen[1], 3000)),
+                (res = eles.length < 10 ? D.STATUS.DONE : res);
           } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
         } catch (e) {
           logger.warn(e);

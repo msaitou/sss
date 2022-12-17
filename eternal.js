@@ -20,7 +20,7 @@ const PS = {
       NAME: "node-sss",
       CHECK_CMD: "ps -ae | grep ",
       KILL_CMD: "killall ",
-      KILL_OTHER: " chrome",
+      KILL_OTHER: " chrome chromedriver",
     },
   },
 };

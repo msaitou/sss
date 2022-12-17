@@ -57,7 +57,10 @@ class GmyBase extends BaseExecuter {
           case D.MISSION.GAME_FURUFURU_SEARCH:
             execCls = new GmyGameFurufuruSearch(para);
             break;
-        }
+          case D.MISSION.GAME_KOKUHAKU:
+            execCls = new GmyGameKokuhaku(para);
+            break;
+          }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
@@ -415,6 +418,36 @@ class GmyGameFurufuruSearch extends GmyMissonSupper {
     return res;
   }
 }
+const { PartsGame } = require("./parts/parts-game.js");
+// 告白
+class GmyGameKokuhaku extends GmyMissonSupper {
+  firstUrl = "https://dietnavi.com/pc/";
+  targetUrl = "https://dietnavi.com/pc/game/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let PGame = new PartsGame(this.para);
+    let se = ["img[alt='告白アルバム']"];
+    if (this.isMob) {
+      this.targetUrl = "https://dietnavi.com/sp/game/";
+    }
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(se[0], true, 2000)) {
+      let el = await this.getEle(se[0], 3000);
+      await this.clickEleScrollWeak(el, 2000, 100);
+      await this.ignoreKoukoku();
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await PGame.doKokuhaku(wid);
+    }
+    return res;
+  }
+}
+
 const { PartsAnkPark } = require("./parts/parts-ank-park.js");
 // アンケート 健康 mobile用
 class GmyAnqKenkou extends GmyMissonSupper {

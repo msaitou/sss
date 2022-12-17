@@ -507,12 +507,7 @@ class SugGameKokuhaku extends SugMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
     let PGame = new PartsGame(this.para);
-    let se = ["img[alt='告白アルバム']"];
-    let gameUrlHost = "https://chanceit.dropgame.jp/";
-    if (this.isMob) {
-      sele = ["img[src*='b086b0a182915e5c0e57329d225b28a1']"];
-      gameUrlHost = "https://sugutama-sp.dropgame.jp/";
-    }
+    let se = ["img[src*='f0a4790d8fbd0d045c2498fe25fa3fa8']"];
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(se[0], true, 2000)) {
       let el = await this.getEle(se[0], 3000);
