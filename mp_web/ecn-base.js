@@ -50,6 +50,7 @@ class EcnBase extends BaseExecuter {
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(3000);
     let sele = ["a>span.new-my-menu-point__point"];
+    if (this.isMob) sele[0] = "span.global-header__point";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.driver.findElement(By.css(sele[0]));
       let nakedNum = await ele.getText();
@@ -88,6 +89,7 @@ class EcnCommon extends EcnMissonSupper {
     await driver.get(siteInfo.entry_url); // エントリーページ表示
     await this.hideOverlay();
     let seleIsLoggedIn = "a>span.new-my-menu-point__point"; // ポイント数のセレクタでもあります
+    if (this.isMob) seleIsLoggedIn = "span.global-header__point";
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
@@ -227,7 +229,7 @@ class EcnChinju extends EcnMissonSupper {
           let choiceNum = libUtil.getRandomInt(0, eles.length);
           await this.clickEle(eles[choiceNum], 2000); // 同一ページを切り替えてます
           return D.STATUS.DONE;
-        }
+        } else return D.STATUS.DONE;
       }
     }
     return D.STATUS.FAIL;
@@ -248,6 +250,11 @@ class EcnNewsWatch extends EcnMissonSupper {
     try {
       await this.openUrl(this.firstUrl); // 操作ページ表示
       let sele0 = ["li.type-daily>button.global-menu__link", "a[href*='mainichi_news']"];
+      if (this.isMob)
+        sele0 = [
+          "li span.c_icon-contents-game",
+          "li.daily-contents-window__item>a[href*='mainichi_news']",
+        ];
       // ポップアップから動線をクリックして遷移
       if (await this.isExistEle(sele0[0], true, 2000)) {
         let ele = await this.getEle(sele0[0], 2000);
@@ -255,6 +262,7 @@ class EcnNewsWatch extends EcnMissonSupper {
         if (await this.isExistEle(sele0[1], true, 2000)) {
           ele = await this.getEle(sele0[1], 2000);
           await this.clickEle(ele, 2000);
+          await this.ignoreKoukoku();
           let sele = [
             ".article-latest li:not([style*='display: none'])>a",
             "button.article-reaction__feeling-button",
@@ -276,6 +284,7 @@ class EcnNewsWatch extends EcnMissonSupper {
               for (let j = eles.length - 1; j >= 0; j--) {
                 // なんか既読じゃなかったらみたいな条件ない
                 await this.clickEle(eles[j - i], 2000); // 同一ページを切り替えてます
+                await this.ignoreKoukoku();
                 // リアクションを選ぶ
                 let eles1 = await this.getEles(sele[1], 2000);
                 // ランダムで。
@@ -286,6 +295,7 @@ class EcnNewsWatch extends EcnMissonSupper {
                 if (await this.isExistEle(sele[2], true, 2000)) {
                   ele = await this.getEle(sele[2], 2000);
                   await this.clickEle(ele, 2000); // newsのトップページへ戻る
+                  await this.ignoreKoukoku();
                   break;
                 }
               }

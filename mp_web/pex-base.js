@@ -8,8 +8,8 @@ const mailOpe = require("../mp_mil/mail_operate");
 class PexBase extends BaseExecuter {
   code = D.CODE.PEX;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList) {
-    super(retryCnt, siteInfo, aca);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
+    super(retryCnt, siteInfo, aca, isMob);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
@@ -61,7 +61,7 @@ class PexMissonSupper extends BaseWebDriverWrapper {
   code = D.CODE.PEX;
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);
@@ -161,7 +161,6 @@ class PexCommon extends PexMissonSupper {
   }
 }
 const { PartsChirashi } = require("./parts/parts-chirashi.js");
-const { db } = require("../initter.js");
 // オリチラ
 class PexChirashi extends PexMissonSupper {
   firstUrl = "https://pex.jp/";
@@ -200,6 +199,7 @@ class PexNewsWatch extends PexMissonSupper {
         "a>div.go_top",
         "ul#point-action-",
       ];
+      if (this.isMob) sele[2] ="form>input[type='submit']";
       if (await this.isExistEle(sele[0], true, 2000)) {
         // let eles = await this.getEles(sele[0], 2000);
         // let repeatNum = eles.length === 3 ? 5 : eles.length === 2 ? 3 : 1;
@@ -222,18 +222,22 @@ class PexNewsWatch extends PexMissonSupper {
             // なんか既読じゃなかったらみたいな条件あり
             if (await this.isExistElesFromEle(eles[j], selePart[0], false, 2000)) {
               let ele0 = await this.getElesFromEle(eles[j], selePart[1], 2000);
-              await this.clickEle(eles[j], 2000); // 同一ページを切り替えてます
-              // リアクションを選ぶ
-              let eles1 = await this.getEles(sele[2], 2000);
-              // ランダムで。
-              let choiceNum = libUtil.getRandomInt(0, eles1.length);
-              // クリック場所へスクロールが必要（画面に表示しないとだめぽい）
-              await this.clickEle(eles1[choiceNum], 2000); // 同一ページを切り替えてます
-              cnt++;
-              if (await this.isExistEle(sele[3], true, 2000)) {
-                let ele = await this.getEle(sele[3], 2000);
-                await this.clickEle(ele, 2000); // newsのトップページへ戻る
-                break;
+              await this.clickEle(eles[j], 2000, this.isMob ? 70 : 0); // 同一ページを切り替えてます
+              await this.ignoreKoukoku();
+              if (await this.isExistEle(sele[2], true, 3000)) {
+                // リアクションを選ぶ
+                let eles1 = await this.getEles(sele[2], 5000);
+                // ランダムで。
+                let choiceNum = libUtil.getRandomInt(0, eles1.length);
+                // クリック場所へスクロールが必要（画面に表示しないとだめぽい）
+                await this.clickEle(eles1[choiceNum], 5000, this.isMob ? 120 : 0, this.isMob); // 同一ページを切り替えてます
+                cnt++;
+                if (await this.isExistEle(sele[3], true, 2000)) {
+                  let ele = await this.getEle(sele[3], 2000);
+                  await this.clickEle(ele, 2000, this.isMob ? 120 : 0); // newsのトップページへ戻る
+                  await this.ignoreKoukoku();
+                  break;
+                }
               }
             }
           }
@@ -262,7 +266,6 @@ class PexCm extends PexMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
 
     this.answerCMPreAnq(driver, logger);
-
   }
 }
 // module.
