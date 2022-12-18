@@ -31,6 +31,8 @@ exports.Def = {
     AME: "ame",
   },
   MISSION: {
+    MOLL_KOKUHAKU: "moll_kokuhaku",
+    POTARO_FIND: "potaro_find",
     GAME_KOKUHAKU: "game_kokuhaku",
     CM_GAME_FURUFURU_SEARCH: "cm_game_furufuru_search",
     GAME_FURUFURU_SEARCH: "game_furufuru_search",
@@ -62,6 +64,15 @@ exports.Def = {
     QUIZ_KENTEI: "quiz_kentei",
     ANQ_SUG: "anq_sug",
     ANQ_PARK: "anq_park",
+
+    MOLL_MANGA: "moll_manga",
+    MOLL_COLUM: "moll_colum",
+    MOLL_PHOTO: "moll_photo",
+    MOLL_COOK: "moll_cook",
+    MOLL_HIRAMEKI: "moll_hirameki",
+    MOLL_IJIN: "moll_ijin",
+    MOLL_JAPAN: "moll_japan",
+    MOLL_SITE: "moll_site",
 
     ANQ_MANGA: "anq_manga",
     ANQ_COLUM: "anq_colum",

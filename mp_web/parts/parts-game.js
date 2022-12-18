@@ -67,8 +67,10 @@ class PartsGame extends BaseWebDriverWrapper {
     } catch (e) {
       logger.warn(e);
     } finally {
-      await driver.close(); // このタブを閉じて
-      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      if (wid) {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
     }
     return res;
   }

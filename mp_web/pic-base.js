@@ -1,15 +1,15 @@
 const { BaseExecuter } = require("./base-executer.js");
 const { BaseWebDriverWrapper } = require("../base-webdriver-wrapper");
 const { libUtil } = require("../lib/util.js");
-const { Builder, By, until, Select } = require("selenium-webdriver");
+const { Builder, By, until, Select, Key } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
 
 class PicBase extends BaseExecuter {
   code = D.CODE.PIC;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList) {
-    super(retryCnt, siteInfo, aca);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
+    super(retryCnt, siteInfo, aca, isMob);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
@@ -48,8 +48,14 @@ class PicBase extends BaseExecuter {
           case D.MISSION.READ_ICHI:
             execCls = new PicReadIchi(para);
             break;
+          case D.MISSION.MOLL_KOKUHAKU:
+          // case D.MISSION.POINT_MOLL:
           case D.MISSION.POINT_MOLL:
-            execCls = new PicPointMoll(para);
+            execCls = new PicPointMoll(para, mission.main);
+            // TODO 2回やモバイルできそうなやつは、別のMISSIONとして、このクラスを利用するように
+            break;
+          case D.MISSION.POTARO_FIND:
+            execCls = new PicPotaroFind(para);
             break;
         }
         if (execCls) {
@@ -67,9 +73,10 @@ class PicBase extends BaseExecuter {
   }
   async saveNowPoint() {
     let startPage = "https://pointi.jp/";
+    let sele = ["span.red.pt_count"];
+    if (this.isMob) (startPage = "https://sp.pointi.jp/"), (sele = ["span.pt_count"]);
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
-    let sele = ["span.red.pt_count"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
@@ -82,7 +89,7 @@ class PicMissonSupper extends BaseWebDriverWrapper {
   code = D.CODE.PIC;
   para;
   constructor(para) {
-    super();
+    super(para.isMob);
     this.para = para;
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);
@@ -105,25 +112,27 @@ class PicCommon extends PicMissonSupper {
   }
   async login() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-
     await driver.get(siteInfo.entry_url); // エントリーページ表示
     let seleIsLoggedIn = "span.red.pt_count";
-
+    let seleLoginLink = "a[href='/entrance.php']";
+    let seleInput = {
+      id: "input[name='email_address']",
+      pass: "input[name='password']",
+      login: "input[name='Submit']",
+    };
+    if (this.isMob)
+      (seleIsLoggedIn = "span.pt_count"),
+        (seleLoginLink = "img[alt='ログイン']"),
+        (seleInput.login = "input[name='subject']");
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
       // リンクが存在することを確認
-      let seleLoginLink = "a[href='/entrance.php']";
       if (await this.isExistEle(seleLoginLink, true, 2000)) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
         await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
-        let seleInput = {
-          id: "input[name='email_address']",
-          pass: "input[name='password']",
-          login: "input[name='Submit']",
-        };
         // アカウント（メール）入力
         let inputEle = await this.getEle(seleInput.id, 500);
         await inputEle.clear();
@@ -136,6 +145,18 @@ class PicCommon extends PicMissonSupper {
 
         ele = await this.getEle(seleInput.login, 1000);
         await this.clickEle(ele, 4000);
+        if (this.isMob) {
+          let sele = ["label[for='checkcrr4']", "#form_btn"];
+          if (await this.isExistEle(sele[0], true, 2000)) {
+            // 次のページで、利用キャリアを選択せなあかん
+            ele = await this.getEle(sele[0], 1000);
+            await this.clickEle(ele, 1000);
+            if (await this.isExistEle(sele[1], true, 2000)) {
+              ele = await this.getEle(sele[1], 1000);
+              await this.clickEle(ele, 1000);
+            }
+          }
+        }
         // ログインできてるか、チェック
         if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
           // ログインできてるのでOK
@@ -266,12 +287,10 @@ class PicClick extends PicMissonSupper {
     return D.STATUS.DONE;
   }
 }
-const { PartsGame } = require("./parts/parts-game.js");
-const { PartsQuizKentei } = require("./parts/parts-quiz-kentei.js");
-// ポイントモール
-class PicPointMoll extends PicMissonSupper {
+// ぽ太郎を探せ
+class PicPotaroFind extends PicMissonSupper {
   firstUrl = "https://pointi.jp/";
-  targetUrl = "https://pointi.jp/game/";
+  targetUrl = "https://pointi.jp/amusement_daily.php";
   constructor(para) {
     super(para);
     this.logger.debug(`${this.constructor.name} constructor`);
@@ -279,39 +298,80 @@ class PicPointMoll extends PicMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START`);
-    let res = D.STATUS.FAIL;
-    let QuizKentei = new PartsQuizKentei(this.para);
     await this.openUrl(this.targetUrl); // 操作ページ表示
 
-    let sele = [
-      "img[alt='メダルモール']",
-      "",
-      "", // 2
-      "",
-      "",
-      "",
-      "",
-    ];
+    let sele = ["div.start_button img", ""];
+    if ("ダービーなら") sele[2] = "div[style*='intro_select_btn']";
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      for (let i = 0; i < 2; i++) {
+        if (i != 0) eles = await this.getEles(sele[0], 2000);
+        await this.clickEle(eles[i], 4000);
+        // await this.closeOtherWindow(driver);
+      }
+    }
+    logger.info(`${this.constructor.name} END`);
+    return D.STATUS.DONE;
+  }
+}
+const { PartsGame } = require("./parts/parts-game.js");
+const { PartsAnkPark } = require("./parts/parts-ank-park.js");
+const { PartsQuizKentei } = require("./parts/parts-quiz-kentei.js");
+// ポイントモール
+class PicPointMoll extends PicMissonSupper {
+  firstUrl = "https://pointi.jp/";
+  targetUrl = "https://pointi.jp/game/";
+  main = "";
+  constructor(para, main) {
+    super(para);
+    this.main = main == D.MISSION.POINT_MOLL ? null : main;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    let res = D.STATUS.FAIL;
+    if (this.isMob) this.targetUrl = "https://sp.pointi.jp/daily/daily_list.php";
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let sele = ["img[alt='メダルモール']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 3000);
       await this.clickEle(ele, 3000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       try {
+        let anqSeleMap = {
+          [D.MISSION.MOLL_IJIN]: "div>img[src*='img_ijin']",
+          [D.MISSION.MOLL_HIRAMEKI]: "div>img[src*='img_hirameki']",
+          [D.MISSION.MOLL_COOK]: "div>img[src*='img_food']",
+          [D.MISSION.MOLL_JAPAN]: "div>img[src*='img_hyakkei']",
+          [D.MISSION.MOLL_SITE]: "div>img[src*='img_kansatsu']",
+          [D.MISSION.MOLL_MANGA]: "div>img[src*='img_manga']",
+          [D.MISSION.MOLL_PHOTO]: "div>img[src*='img_photo']",
+          [D.MISSION.MOLL_COLUM]: "div>img[src*='img_column']",
+        };
+        let anqSeleList = Object.values(anqSeleMap);
+        let mainSeleMap = {
+          ...anqSeleMap,
+          [D.MISSION.MOLL_KOKUHAKU]: "div>img[src*='img_kokuhaku']",
+        };
         let cSeleList = [
-          // "img[src*='img_quiz01']",
-          // "img[src*='img_quiz02']",
-          // "img[src*='img_quiz03']",
-          // "img[src*='img_quiz04']",
-          // "img[src*='img_quiz05']",
+          "img[src*='img_quiz01']",
+          "img[src*='img_quiz02']",
+          "img[src*='img_quiz03']",
+          "img[src*='img_quiz04']",
+          "img[src*='img_quiz05']",
           // "img[src*='img_seiza']",　// なんか0しか稼げないので
-          "div>img[src*='img_kokuhaku']",
-          "",
-          "",
-          "",
-          "",
+          // ...Object.values(mainSeleMap), // 値を配列で列挙して展開
         ];
+        if (this.main) {
+          cSeleList = [mainSeleMap[this.main]]; // 単体実行
+        } else {
+          if (this.isMob) cSeleList = Object.values(anqSeleMap);
+        }
         let Game = new PartsGame(this.para);
+        let AnkPark = new PartsAnkPark(this.para);
+        let QuizKentei = new PartsQuizKentei(this.para);
         for (let cSele of cSeleList) {
           if (await this.isExistEle(cSele, true, 2000)) {
             ele = await this.getEle(cSele, 3000);
@@ -321,17 +381,78 @@ class PicPointMoll extends PicMissonSupper {
             if (cSele.indexOf("img_quiz0") > -1) {
               // クイズ検定系
               res = await QuizKentei.startKentei();
-            }
-            else if (cSele.indexOf("img_seiza") > -1) {
+            } else if (cSele.indexOf("img_seiza") > -1) {
               // 占い
               let execCls = new Uranai(this.para);
               res = await execCls.do();
-            }
-            else if (cSele.indexOf("img_kokuhaku") > -1) {
+            } else if (cSele.indexOf("img_kokuhaku") > -1) {
               // 告白
-              res = await Game.doKokuhaku(wid2);
-            }
-            else if (cSele.indexOf("aaaaa") > -1) {
+              res = await Game.doKokuhaku(); // wid2は外で閉じるので引数で渡さない
+            } else if (anqSeleList.indexOf(cSele) > -1) {
+              try {
+                let se = ["div>a:not(.answered)"];
+                if (await this.isExistEle(se[0], true, 3000)) {
+                  let eles = await this.getEles(se[0], 3000);
+                  let limit = eles.length;
+                  for (let i = 0; i < limit; i++) {
+                    if (i != 0 && (await this.isExistEle(se[0], true, 3000)))
+                      eles = await this.getEles(se[0], 3000);
+                    let wid3 = await driver.getWindowHandle();
+                    if (cSele == mainSeleMap[D.MISSION.MOLL_HIRAMEKI]) {
+                      // 終了後一覧に戻らずブラウザが閉じるので、矯正別タブで
+                      let rect = await eles[eles.length - 1].getRect();
+                      await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+                      let action = await driver.actions();
+                      await action
+                        .keyDown(Key.CONTROL)
+                        .click(eles[eles.length - 1])
+                        .keyUp(Key.CONTROL)
+                        .perform();
+                      await this.sleep(2000);
+                      await this.changeWindow(wid3); // 別タブに移動する
+                    } else {
+                      await this.clickEle(eles[eles.length - 1], 2000);
+                    }
+                    // アンケート系
+                    switch (cSele) {
+                      case mainSeleMap[D.MISSION.MOLL_IJIN]: // "偉人":
+                        res = await AnkPark.doMobIjin();
+                        break;
+                      case mainSeleMap[D.MISSION.MOLL_HIRAMEKI]: //"ひらめき":
+                        res = await AnkPark.doMobHirameki();
+                        await this.closeDriver(); // このタブを閉じて
+                        await driver.switchTo().window(wid3); // 別タブが閉じるので、一覧が表示されてるタブへスイッチ
+                        break;
+                      case mainSeleMap[D.MISSION.MOLL_MANGA]: //"漫画":
+                        res = await AnkPark.doMobManga();
+                        break;
+                      case mainSeleMap[D.MISSION.MOLL_COLUM]: //"コラム":
+                        res = await AnkPark.doMobColum();
+                        break;
+                      case mainSeleMap[D.MISSION.MOLL_JAPAN]: //"日本百景":
+                        res = await AnkPark.doMobJapan();
+                        break;
+                      case mainSeleMap[D.MISSION.MOLL_SITE]: //"観察力":
+                        res = await AnkPark.doMobSite();
+                        break;
+                      case mainSeleMap[D.MISSION.MOLL_COOK]: //"料理":
+                        res = await AnkPark.doMobCook();
+                        break;
+                      case mainSeleMap[D.MISSION.MOLL_PHOTO]: // "写真":
+                        res = await AnkPark.doMobPhoto();
+                        break;
+                    }
+                    await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+                  }
+                } else res = D.STATUS.DONE;
+              } catch (e) {
+                logger.warn(e);
+              }
+              //  finally {
+              //   await this.closeDriver(); // このタブを閉じて
+              //   await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+              // }
+            } else if (cSele.indexOf("aaaaa") > -1) {
             }
             await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
             await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
@@ -344,12 +465,6 @@ class PicPointMoll extends PicMissonSupper {
         await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
         await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
       }
-
-      // let eles = await this.getEles(sele[0], 2000);
-      // for (let i = 0; i < eles.length; i++) {
-      //   await this.clickEle(eles[i], 4000);
-      //   await this.closeOtherWindow(driver);
-      // }
     }
     logger.info(`${this.constructor.name} END`);
     return res;
@@ -445,10 +560,5 @@ class PicReadIchi extends PicMissonSupper {
     return res;
   }
 }
-
-// module.
 exports.PicCommon = PicCommon;
-// module.
 exports.Pic = PicBase;
-// module.
-// exports = { pex: pexBase, pexCommon: pexCommon };
