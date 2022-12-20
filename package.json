@@ -16,7 +16,7 @@
     "kuroshiro-analyzer-kuromoji": "^1.1.0",
     "log4js": "^6.7.0",
     "mailparser": "^3.5.0",
-    "mongodb": "^4.11.0",
+    "mongodb": "4.1",
     "node-imap": "^0.9.6",
     "selenium-download": "^2.0.16",
     "selenium-webdriver": "^4.6.0"
