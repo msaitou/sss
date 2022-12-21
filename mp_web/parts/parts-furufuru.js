@@ -23,6 +23,9 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         "#finish>a[href='result']",
         "#scoreboard>a[href*='/top']", // 4
         "#getpoint>a",
+        "a[target='_blank'], iframe", // 6
+        "",
+        "",
       ];
       if (this.isMob) (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
       // await this.openUrl(`${gameUrlHost}drop/practice/top`); // todo 練習用
@@ -43,18 +46,30 @@ class PartsFurufuru extends BaseWebDriverWrapper {
               yStart: rect.y + (this.isMob ? 30 : 110),
               yEnd: rect.y + rect.height - (this.isMob ? 10 : 70),
             };
+            // $("a[target='_blank'], iframe").attr('target', '').attr('style','display:none;')
+            await this.driver.executeScript(
+              `for (let t of document.querySelectorAll("a[target='_blank'],iframe,ins")){t.setAttribute('target','');t.setAttribute('style','display:none;');}`
+            );
             try {
               await driver.manage().setTimeouts({ pageLoad: 5000 });
+              const actions = driver.actions();
               for (;;) {
                 let x = libUtil.getRandomInt(eleScope.xStart, eleScope.xEnd);
                 let y = libUtil.getRandomInt(eleScope.yStart, eleScope.yEnd);
-                logger.debug(x, y);
+                // logger.debug(x, y);
                 if (await this.isExistEle(sele[2], true, 2000)) {
                   // sele[1]のleft,topからright,bottomの間で、ランダムで
-                  const actions = driver.actions();
-                  actions.move({ x: x, y: y }).click().perform();
+                  await actions.move({ x: x, y: y }).click().perform();
                   x = libUtil.getRandomInt(eleScope.xStart, eleScope.xEnd);
-                  actions.move({ x: x, y: y }).click().perform();
+                  await actions.move({ x: x, y: y }).click().perform();
+                  x = libUtil.getRandomInt(eleScope.xStart, eleScope.xEnd);
+                  await actions.move({ x: x, y: y }).click().perform();
+// for (let i = 0;i < 500;i++) {
+//   let items = document.querySelectorAll("div.item_type_2");
+//   items.forEach(item => {
+//     item.click();
+//   });
+// }                  
                 } else break;
               }
             } catch (e) {
@@ -62,7 +77,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
             }
           }
           await this.closeElesWindow([wid, wid2]);
-          await this.driver.manage().setTimeouts({ pageLoad: D.INTERVAL[180] });  // 元のタイムアウト時間に戻す
+          await this.driver.manage().setTimeouts({ pageLoad: D.INTERVAL[180] }); // 元のタイムアウト時間に戻す
           let currentUrl = await driver.getCurrentUrl();
           if (currentUrl.indexOf(gameUrlHost) === -1) {
             await driver.navigate().back();
@@ -77,21 +92,21 @@ class PartsFurufuru extends BaseWebDriverWrapper {
             }
             if (await this.isExistEle(sele[3], true, 2000)) {
               let ele = await this.getEle(sele[3], 3000);
-              await this.clickEle(ele, 2000);
+              await this.clickEle(ele, 2000, this.isMob ? 150 : 0);
               await this.ignoreKoukoku();
             }
             if (await this.isExistEle(sele[4], true, 2000)) {
               let ele = await this.getEle(sele[4], 3000);
-              await this.clickEle(ele, 2000);
+              await this.clickEle(ele, 2000, this.isMob ? 150 : 0);
               await this.ignoreKoukoku();
             }
           } else if (await this.isExistEle(sele[3], true, 2000)) {
             let ele = await this.getEle(sele[3], 3000);
-            await this.clickEle(ele, 2000);
+            await this.clickEle(ele, 2000, this.isMob ? 150 : 0);
             await this.ignoreKoukoku();
             if (await this.isExistEle(sele[4], true, 2000)) {
               let ele = await this.getEle(sele[4], 3000);
-              await this.clickEle(ele, 2000);
+              await this.clickEle(ele, 2000, this.isMob ? 150 : 0);
               await this.ignoreKoukoku();
             }
           }

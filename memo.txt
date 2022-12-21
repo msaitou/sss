@@ -78,7 +78,6 @@ picモール
 ・pic
 時間系
 ・モグラ
-・ふるふる
 ・スロット
 ・ナンバー
 ・ダービー
@@ -101,31 +100,7 @@ let isMatch = false;
     } 
 });
 
-        // const jsdom = new JSDOM();
-        // const parser = new jsdom.window.DOMParser();
-        // const dom = parser.parseFromString(content, "text/html");
-        // const imgs = dom.querySelectorAll(
-        //   "img[src*='pg_click_banner_btn.png'], img[alt='クリックしてEdyをゲット！']"
-        // );
-        // for (let img of imgs) {
-        //   let href = img.closest("a").getAttribute("href");
-        //   urls.push(href);
-        //   console.log(href);
-        //   isBreak = true;
-        // }
-        // if (!urls.length) {
-        //   const aTags = dom.querySelectorAll("a[href]");
-        //   for (let aTag of aTags) {
-        //     let href = aTag.text;
-        //     if (href.indexOf("https://pg.rakuten.co.jp/act") > -1) {
-        //       urls.push(href);
-        //       console.log(href);
-        //       isBreak = true;
-        //     }
-        //   }
-        // }
-        // if (!urls.length) {
-        //   let date = new Date();
-        //   isBreak = true;
-        //   fs.writeFileSync(`log/${date.toISOString()}.html`, content);
-        // }
+・全PC止める
+・dumpをとってリストアしておく
+・各PCでgitpullしてnpmiして、DBサーバのアドレス変更して、
+起動開始
