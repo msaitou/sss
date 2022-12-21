@@ -31,8 +31,9 @@ exports.Def = {
     AME: "ame",
   },
   MISSION: {
+    GAME_DOKOMADE: "game_dokomade",
     MOLL_KOKUHAKU: "moll_kokuhaku",
-    POTARO_FIND: "potaro_find",
+    PIC_VARIABLE: "pic_variable",
     GAME_KOKUHAKU: "game_kokuhaku",
     CM_GAME_FURUFURU_SEARCH: "cm_game_furufuru_search",
     GAME_FURUFURU_SEARCH: "game_furufuru_search",

@@ -74,6 +74,72 @@ class PartsGame extends BaseWebDriverWrapper {
     }
     return res;
   }
+  async doDokomade(wid) {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let se = [
+        "a>img[alt='ボタン']",
+        "div.game-buttons>img",
+        "img[alt='進む']", // 2
+        "#status_1>span",
+        "",
+      ];
+      // if (this.isMob) (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
+      // await this.ignoreKoukoku();
+      let limit = 20; // 基本は
+      // if (await this.isExistEle(se[3], true, 2000)) {
+      //   let el = await this.getEle(se[3], 3000);
+      //   let text = await el.getText();
+      //   let regex = "あと(\\d+)回*";
+      //   let matches = text.match(regex);
+      //   if (matches[1]) limit = Number(matches[1]);
+      // }
+      let gameUrlHost = await driver.getCurrentUrl();
+      gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
+      for (let j = 0; j < limit; j++) {
+        logger.info(`${j}/${limit}回目-----------`);
+        if (await this.isExistEle(se[0], true, 2000)) {
+          let el = await this.getEle(se[0], 3000);
+          await driver.wait(until.elementIsVisible(el), 5000);
+          await this.clickEle(el, 2000);
+          await this.backNowMissionPage(gameUrlHost);
+          if (await this.isExistEle(se[1], true, 2000)) {
+            let els = await this.getEles(se[1], 3000);
+            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 7000);
+            await this.backNowMissionPage(gameUrlHost);
+            if (await this.isExistEle(se[2], true, 2000)) {
+              let el = await this.getEle(se[2], 3000);
+              await driver.wait(until.elementIsVisible(el), 10000);
+              await this.clickEle(el, 3000);
+              await this.backNowMissionPage(gameUrlHost);
+              if (await this.isExistEle(se[0], true, 2000)) {
+                let el = await this.getEle(se[0], 3000);
+                await driver.wait(until.elementIsVisible(el), 5000);
+                await this.clickEle(el, 2000);
+                await this.backNowMissionPage(gameUrlHost);
+              }
+            }
+          }
+        }
+      }
+      // if (await this.isExistEle(se[3], true, 2000)) {
+      //   let el = await this.getEle(se[3], 3000);
+      //   let text = await el.getText();
+      //   let regex = "あと(\\d+)回*";
+      //   let matches = text.match(regex);
+      //   if (matches[1] && matches[1] == "0") res = D.STATUS.DONE;
+      // }
+    } catch (e) {
+      logger.warn(e);
+    } finally {
+      if (wid) {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
   async getPoint() {
     let sele = ["#getpoint>a"];
     if (await this.isExistEle(sele[0], true, 2000)) {

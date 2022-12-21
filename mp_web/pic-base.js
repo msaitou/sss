@@ -54,8 +54,8 @@ class PicBase extends BaseExecuter {
             execCls = new PicPointMoll(para, mission.main);
             // TODO 2回やモバイルできそうなやつは、別のMISSIONとして、このクラスを利用するように
             break;
-          case D.MISSION.POTARO_FIND:
-            execCls = new PicPotaroFind(para);
+          case D.MISSION.PIC_VARIABLE:
+            execCls = new PicVariable(para);
             break;
         }
         if (execCls) {
@@ -288,7 +288,7 @@ class PicClick extends PicMissonSupper {
   }
 }
 // ぽ太郎を探せ
-class PicPotaroFind extends PicMissonSupper {
+class PicVariable extends PicMissonSupper {
   firstUrl = "https://pointi.jp/";
   targetUrl = "https://pointi.jp/amusement_daily.php";
   constructor(para) {
@@ -299,16 +299,31 @@ class PicPotaroFind extends PicMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START`);
     await this.openUrl(this.targetUrl); // 操作ページ表示
-
-    let sele = ["div.start_button img", ""];
-    if ("ダービーなら") sele[2] = "div[style*='intro_select_btn']";
+    let sele = ["div.box_wrap>p"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
-      for (let i = 0; i < 2; i++) {
-        if (i != 0) eles = await this.getEles(sele[0], 2000);
-        await this.clickEle(eles[i], 4000);
-        // await this.closeOtherWindow(driver);
+      let kind = await eles[0].getText();
+      if (kind == "ポ太郎を探せ！") {
+        sele = ["div.start_button img", "div[style*='box_close']", "#game_js_area>iframe"];
+        if (await this.isExistEle(sele[0], true, 2000)) {
+          let ele = await this.getEle(sele[0], 2000);
+          await this.clickEle(ele, 2000);
+          if (await this.isExistEle(sele[2], true, 2000)) {
+            let iframe = await this.getEle(sele[2], 1000);
+            await driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
+            if (await this.isExistEle(sele[1], true, 2000)) {
+              let eles = await this.getEles(sele[1], 2000);
+              for (let i = 0; i < 2; i++) {
+                if (i != 0) eles = await this.getEles(sele[1], 2000);
+                await this.clickEle(eles[i], 4000);
+              }
+            }
+            await driver.switchTo().defaultContent(); // もとのフレームに戻す
+          }
+          await this.sleep(4000);
+        }
       }
+      // if ("ダービーなら") sele[2] = "div[style*='intro_select_btn']";
     }
     logger.info(`${this.constructor.name} END`);
     return D.STATUS.DONE;
