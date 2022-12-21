@@ -78,6 +78,11 @@ class GpoBase extends BaseExecuter {
           case D.MISSION.GAME_FURUFURU_SEARCH:
             execCls = new GpoGameFurufuruSearch(para);
             break;
+          case D.MISSION.MOLL_KOKUHAKU:
+          case D.MISSION.POINT_MOLL:
+            execCls = new GpoPointMoll(para, mission.main);
+            // TODO 2回やモバイルできそうなやつは、別のMISSIONとして、このクラスを利用するように
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -600,8 +605,160 @@ class GpoGameFurufuruSearch extends GpoMissonSupper {
     return res;
   }
 }
-
+const { PartsGame } = require("./parts/parts-game.js");
 const { PartsAnkPark } = require("./parts/parts-ank-park.js");
+// ポイントモール
+class GpoPointMoll extends GpoMissonSupper {
+  firstUrl = "https://www.gpoint.co.jp/";
+  targetUrl = "https://www.gpoint.co.jp/gpark/";
+  main = "";
+  constructor(para, main) {
+    super(para);
+    this.main = main == D.MISSION.POINT_MOLL ? null : main;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    let res = D.STATUS.FAIL;
+    let sele = ["img[alt='メダルモール']", "input[alt='OK']"];
+    if (this.isMob) sele[1] = "input[value='OK']";
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele, 3000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let ele0 = await this.getEle(sele[1], 3000);
+        await this.clickEle(ele0, 3000);
+        try {
+          let anqSeleMap = {
+            // [D.MISSION.MOLL_IJIN]: "div>img[src*='img_ijin']",
+            // [D.MISSION.MOLL_HIRAMEKI]: "div>img[src*='img_hirameki']",
+            // [D.MISSION.MOLL_COOK]: "div>img[src*='img_food']",
+            // [D.MISSION.MOLL_JAPAN]: "div>img[src*='img_hyakkei']",
+            // [D.MISSION.MOLL_SITE]: "div>img[src*='img_kansatsu']",
+            // [D.MISSION.MOLL_MANGA]: "div>img[src*='img_manga']",
+            // [D.MISSION.MOLL_PHOTO]: "div>img[src*='img_photo']",
+            // [D.MISSION.MOLL_COLUM]: "div>img[src*='img_column']",
+          };
+          let anqSeleList = Object.values(anqSeleMap);
+          let mainSeleMap = {
+            ...anqSeleMap,
+            [D.MISSION.MOLL_KOKUHAKU]: "div>img[src*='img_kokuhaku']",
+          };
+          let cSeleList = [
+            "img[src*='img_quiz01']",
+            "img[src*='img_quiz02']",
+            "img[src*='img_quiz03']",
+            "img[src*='img_quiz04']",
+            "img[src*='img_quiz05']",
+            // "img[src*='img_seiza']",　// なんか0しか稼げないので
+            // ...Object.values(mainSeleMap), // 値を配列で列挙して展開
+          ];
+          if (this.main) {
+            cSeleList = [mainSeleMap[this.main]]; // 単体実行
+          } else {
+            if (this.isMob) cSeleList = Object.values(anqSeleMap);
+          }
+          let Game = new PartsGame(this.para);
+          let AnkPark = new PartsAnkPark(this.para);
+          let QuizKentei = new PartsQuizKentei(this.para);
+          for (let cSele of cSeleList) {
+            if (await this.isExistEle(cSele, true, 2000)) {
+              ele = await this.getEle(cSele, 3000);
+              await this.clickEle(ele, 3000);
+              let wid2 = await driver.getWindowHandle();
+              await this.changeWindow(wid2); // 別タブに移動する
+              if (cSele.indexOf("img_kokuhaku") > -1) {
+                // 告白
+                res = await Game.doKokuhaku(); // wid2は外で閉じるので引数で渡さない
+              } else if (anqSeleList.indexOf(cSele) > -1) {
+                try {
+                  let se = ["div>a:not(.answered)"];
+                  if (await this.isExistEle(se[0], true, 3000)) {
+                    let eles = await this.getEles(se[0], 3000);
+                    let limit = eles.length;
+                    for (let i = 0; i < limit; i++) {
+                      if (i != 0 && (await this.isExistEle(se[0], true, 3000)))
+                        eles = await this.getEles(se[0], 3000);
+                      let wid3 = await driver.getWindowHandle();
+                      if (cSele == mainSeleMap[D.MISSION.MOLL_HIRAMEKI]) {
+                        // 終了後一覧に戻らずブラウザが閉じるので、矯正別タブで
+                        let rect = await eles[eles.length - 1].getRect();
+                        await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+                        let action = await driver.actions();
+                        await action
+                          .keyDown(Key.CONTROL)
+                          .click(eles[eles.length - 1])
+                          .keyUp(Key.CONTROL)
+                          .perform();
+                        await this.sleep(2000);
+                        await this.changeWindow(wid3); // 別タブに移動する
+                      } else {
+                        await this.clickEle(eles[eles.length - 1], 2000);
+                      }
+                      // アンケート系
+                      switch (cSele) {
+                        case mainSeleMap[D.MISSION.MOLL_IJIN]: // "偉人":
+                          res = await AnkPark.doMobIjin();
+                          break;
+                        case mainSeleMap[D.MISSION.MOLL_HIRAMEKI]: //"ひらめき":
+                          res = await AnkPark.doMobHirameki();
+                          await this.closeDriver(); // このタブを閉じて
+                          await driver.switchTo().window(wid3); // 別タブが閉じるので、一覧が表示されてるタブへスイッチ
+                          break;
+                        case mainSeleMap[D.MISSION.MOLL_MANGA]: //"漫画":
+                          res = await AnkPark.doMobManga();
+                          break;
+                        case mainSeleMap[D.MISSION.MOLL_COLUM]: //"コラム":
+                          res = await AnkPark.doMobColum();
+                          break;
+                        case mainSeleMap[D.MISSION.MOLL_JAPAN]: //"日本百景":
+                          res = await AnkPark.doMobJapan();
+                          break;
+                        case mainSeleMap[D.MISSION.MOLL_SITE]: //"観察力":
+                          res = await AnkPark.doMobSite();
+                          break;
+                        case mainSeleMap[D.MISSION.MOLL_COOK]: //"料理":
+                          res = await AnkPark.doMobCook();
+                          break;
+                        case mainSeleMap[D.MISSION.MOLL_PHOTO]: // "写真":
+                          res = await AnkPark.doMobPhoto();
+                          break;
+                      }
+                      await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+                    }
+                  } else res = D.STATUS.DONE;
+                } catch (e) {
+                  logger.warn(e);
+                }
+                //  finally {
+                //   await this.closeDriver(); // このタブを閉じて
+                //   await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+                // }
+              } else if (cSele.indexOf("aaaaa") > -1) {
+              }
+              await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+              await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+            }
+          }
+          res = D.STATUS.DONE;
+        } catch (e) {
+          logger.warn(e);
+        } finally {
+          await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+        }
+      }
+    }
+    logger.info(`${this.constructor.name} END`);
+    return res;
+  }
+}
+
 // 以下mobile
 // アンケート コラム　mobile
 class GpoAnqColum extends GpoMissonSupper {
