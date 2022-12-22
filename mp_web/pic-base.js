@@ -58,9 +58,13 @@ class PicBase extends BaseExecuter {
           case D.MISSION.MOLL_IJIN:
           case D.MISSION.MOLL_JAPAN:
           case D.MISSION.MOLL_SITE:
+          case D.MISSION.MOLL_TRAIN:
+          case D.MISSION.MOLL_YUUSYA:
+          case D.MISSION.MOLL_EGG:
+          case D.MISSION.MOLL_TENKI:
+          case D.MISSION.MOLL_HIGHLOW:
           case D.MISSION.POINT_MOLL:
             execCls = new PicPointMoll(para, mission.main);
-            // TODO 2回やモバイルできそうなやつは、別のMISSIONとして、このクラスを利用するように
             break;
           case D.MISSION.PIC_VARIABLE:
             execCls = new PicVariable(para);
@@ -330,8 +334,7 @@ class PicVariable extends PicMissonSupper {
           }
           await this.sleep(4000);
         }
-      }
-      else if (kind == "ポイントインカム ダービー") {
+      } else if (kind == "ポイントインカム ダービー") {
         sele = ["div.start_button img", "div[style*='intro_select_btn']", "#game_js_area>iframe"];
         if (await this.isExistEle(sele[0], true, 2000)) {
           let ele = await this.getEle(sele[0], 2000);
@@ -396,6 +399,11 @@ class PicPointMoll extends PicMissonSupper {
           ...anqSeleMap,
           [D.MISSION.MOLL_KOKUHAKU]: "div>img[src*='img_kokuhaku']",
           [D.MISSION.MOLL_DOKOMADE]: "div>img[src*='nobi']",
+          [D.MISSION.MOLL_TRAIN]: "div>img[src*='train']",
+          [D.MISSION.MOLL_YUUSYA]: "div>img[src*='img_yusha']",
+          [D.MISSION.MOLL_EGG]: "div>img[src*='egg_choice']",
+          [D.MISSION.MOLL_HIGHLOW]: "div>img[src*='high_and_low']",
+          [D.MISSION.MOLL_TENKI]: "div>img[src*='tenkiate']",
         };
         let cSeleList = [
           "img[src*='img_quiz01']",
@@ -430,6 +438,21 @@ class PicPointMoll extends PicMissonSupper {
             } else if (cSele.indexOf("img_kokuhaku") > -1) {
               // 告白
               res = await Game.doKokuhaku();
+            } else if (cSele.indexOf("train") > -1) {
+              // ピタットトレイン
+              res = await Game.doTrain();
+            } else if (cSele.indexOf("img_yusha") > -1) {
+              // 誰でも勇者
+              res = await Game.doYuusya();
+            } else if (cSele.indexOf("egg_choice") > -1) {
+              // エッグチョイス
+              res = await Game.doEgg();
+            } else if (cSele.indexOf("high_and_low") > -1) {
+              // ハイアンドロー
+              res = await Game.doHighLow();
+            } else if (cSele.indexOf("tenkiate") > -1) {
+              // 天気当て
+              res = await Game.doTenki();
             } else if (cSele.indexOf("nobi") > -1) {
               // どこまで
               res = await Game.doDokomade();

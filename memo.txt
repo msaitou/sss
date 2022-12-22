@@ -158,9 +158,8 @@ gpo_moll
 m_mop
 ・お手
 m_mop
-＊・トレイン ★m_gpo_moll ★gpo_moll
+＊・トレイン ★m_gpo_moll ★gpo_moll　★m_sug
 m_mop
-m_sug
 ##############################
 for (let doc of document.querySelectorAll("a[target='_blank'], iframe")) {doc.setAttribute('target','');}
 ##############################

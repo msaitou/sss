@@ -67,6 +67,12 @@ class MopBase extends BaseExecuter {
           case D.MISSION.GAME_KOKUHAKU:
             execCls = new MopGameKokuhaku(para);
             break;
+          case D.MISSION.GAME_TRAIN:
+            execCls = new MopGameTrain(para);
+            break;
+          case D.MISSION.GAME_YUUSYA:
+            execCls = new MopGameYuusya(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -1022,6 +1028,56 @@ class MopGameKokuhaku extends MopMissonSupper {
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       res = await PGame.doKokuhaku(wid);
+    }
+    return res;
+  }
+}
+// ピタットトレイン mobile
+class MopGameTrain extends MopMissonSupper {
+  firstUrl = "https://pc.moppy.jp/";
+  targetUrl = "https://pc.moppy.jp/gamecontents/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let PGame = new PartsGame(this.para);
+    let se = ["a[data-ga-label='ピタッとトレイン']"];
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(se[0], true, 2000)) {
+      let el = await this.getEle(se[0], 3000);
+      await this.clickEleScrollWeak(el, 2000, 100);
+      await this.ignoreKoukoku();
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await PGame.doTrain(wid);
+    }
+    return res;
+  }
+}
+// 勇者 mobile
+class MopGameYuusya extends MopMissonSupper {
+  firstUrl = "https://pc.moppy.jp/";
+  targetUrl = "https://pc.moppy.jp/gamecontents/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let PGame = new PartsGame(this.para);
+    let se = ["a[data-ga-label='誰でも勇者']"];
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(se[0], true, 2000)) {
+      let el = await this.getEle(se[0], 3000);
+      await this.clickEleScrollWeak(el, 2000, 100);
+      await this.ignoreKoukoku();
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await PGame.doYuusya(wid);
     }
     return res;
   }

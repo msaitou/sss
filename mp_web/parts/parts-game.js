@@ -216,7 +216,7 @@ class PartsGame extends BaseWebDriverWrapper {
       ];
       // if (this.isMob) (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
       // await this.ignoreKoukoku();
-      let limit = 20; // 基本は
+      let limit = 30; // 基本は
       // if (await this.isExistEle(se[3], true, 2000)) {
       //   let el = await this.getEle(se[3], 3000);
       //   let text = await el.getText();
