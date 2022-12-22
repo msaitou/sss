@@ -51,6 +51,9 @@ class SugBase extends BaseExecuter {
           case D.MISSION.GAME_KOKUHAKU:
             execCls = new SugGameKokuhaku(para);
             break;
+          case D.MISSION.GAME_TRAIN:
+            execCls = new SugGameTrain(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -516,6 +519,31 @@ class SugGameKokuhaku extends SugMissonSupper {
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       res = await PGame.doKokuhaku(wid);
+    }
+    return res;
+  }
+}
+// ピタットトレイン mobile
+class SugGameTrain extends SugMissonSupper {
+  firstUrl = "https://www.netmile.co.jp/sugutama/";
+  targetUrl = "https://www.netmile.co.jp/sugutama/game?lo=124";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let PGame = new PartsGame(this.para);
+    let se = ["img[src*='1a6ddc77ac3971bbbe7e0baee7a2271c']"];
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(se[0], true, 2000)) {
+      let el = await this.getEle(se[0], 3000);
+      await this.clickEleScrollWeak(el, 2000, 100);
+      await this.ignoreKoukoku();
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await PGame.doTrain(wid);
     }
     return res;
   }

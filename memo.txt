@@ -74,6 +74,16 @@ zooml = zooml*100;
 ・gen
 ・pic
 ■時間系
+キツめ
+・ハイアンドロー
+m_cit
+m_pst
+m_mop
+・エッグチョイス
+m_pst
+・天気
+m_mop
+・どこまでのびる　★m_pic★m_cit
 ・ビンゴ
 m_lfm
 ・モグラ
@@ -83,11 +93,6 @@ m_gpo
 m_gpo
 ・てるてる
 m_cit
-m_pst
-・ハイアンドロー
-m_cit
-m_pst
-・エッグチョイス
 m_pst
 ・ルーレット
 m_cit
@@ -99,6 +104,7 @@ m_cit
 m_cms_cm
 m_lfm_cm
 m_pst
+m_mop
 ・ナンバー
 m_gen
 m_pic
@@ -118,9 +124,6 @@ m_cit
 m_gpo
 ・アニマル10
 m_gpo
-
-・どこまでのびる　★m_pic
-m_cit
 ・告白
 m_pto
 ・チャンネル
@@ -130,22 +133,34 @@ m_cit
 m_sug
 m_pto
 m_cit
+m_mop
 ・ペンギン
 m_sug
 m_pto
 m_pic
 m_cit
+m_gpo_moll
+m_mop
 ・ロシアン
 m_pto
 m_cit
 m_gpo
+m_mop
 ・アニマルポーカー
 m_pto
 m_cit
 m_gpo
+m_mop
 ・都道府県
 m_sug
-
+・勇者
+gpo_moll
+m_mop
+・お手
+m_mop
+＊・トレイン ★m_gpo_moll ★gpo_moll
+m_mop
+m_sug
 ##############################
 for (let doc of document.querySelectorAll("a[target='_blank'], iframe")) {doc.setAttribute('target','');}
 ##############################

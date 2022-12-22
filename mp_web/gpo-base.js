@@ -79,6 +79,15 @@ class GpoBase extends BaseExecuter {
             execCls = new GpoGameFurufuruSearch(para);
             break;
           case D.MISSION.MOLL_KOKUHAKU:
+          case D.MISSION.MOLL_DOKOMADE:
+          case D.MISSION.MOLL_TRAIN:
+          case D.MISSION.MOLL_YUUSYA:
+          case D.MISSION.MOLL_EGG:
+          case D.MISSION.MOLL_TENKI:
+          case D.MISSION.MOLL_HIGHLOW:
+          // case D.MISSION.MOLL_TRAIN:
+          // case D.MISSION.MOLL_TRAIN:
+          // case D.MISSION.MOLL_TRAIN:
           case D.MISSION.POINT_MOLL:
             execCls = new GpoPointMoll(para, mission.main);
             // TODO 2回やモバイルできそうなやつは、別のMISSIONとして、このクラスを利用するように
@@ -648,13 +657,14 @@ class GpoPointMoll extends GpoMissonSupper {
           let mainSeleMap = {
             ...anqSeleMap,
             [D.MISSION.MOLL_KOKUHAKU]: "div>img[src*='img_kokuhaku']",
+            [D.MISSION.MOLL_DOKOMADE]: "div>img[src*='nobi']",
+            [D.MISSION.MOLL_TRAIN]: "div>img[src*='train']",
+            [D.MISSION.MOLL_YUUSYA]: "div>img[src*='img_yusha']",
+            [D.MISSION.MOLL_EGG]: "div>img[src*='egg_choice']",
+            [D.MISSION.MOLL_HIGHLOW]: "div>img[src*='high_and_low']",
+            [D.MISSION.MOLL_TENKI]: "div>img[src*='tenkiate']",
           };
           let cSeleList = [
-            "img[src*='img_quiz01']",
-            "img[src*='img_quiz02']",
-            "img[src*='img_quiz03']",
-            "img[src*='img_quiz04']",
-            "img[src*='img_quiz05']",
             // "img[src*='img_seiza']",　// なんか0しか稼げないので
             // ...Object.values(mainSeleMap), // 値を配列で列挙して展開
           ];
@@ -675,6 +685,24 @@ class GpoPointMoll extends GpoMissonSupper {
               if (cSele.indexOf("img_kokuhaku") > -1) {
                 // 告白
                 res = await Game.doKokuhaku(); // wid2は外で閉じるので引数で渡さない
+              } else if (cSele.indexOf("nobi") > -1) {
+                // どこまで
+                res = await Game.doDokomade();
+              } else if (cSele.indexOf("train") > -1) {
+                // ピタットトレイン
+                res = await Game.doTrain();
+              } else if (cSele.indexOf("img_yusha") > -1) {
+                // 誰でも勇者
+                res = await Game.doYuusya();
+              } else if (cSele.indexOf("egg_choice") > -1) {
+                // エッグチョイス
+                res = await Game.doEgg();
+              } else if (cSele.indexOf("high_and_low") > -1) {
+                // ハイアンドロー
+                res = await Game.doHighLow();
+              } else if (cSele.indexOf("tenkiate") > -1) {
+                // 天気当て
+                res = await Game.doTenki();
               } else if (anqSeleList.indexOf(cSele) > -1) {
                 try {
                   let se = ["div>a:not(.answered)"];

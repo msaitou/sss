@@ -310,7 +310,7 @@ class PicVariable extends PicMissonSupper {
     let sele = ["div.box_wrap>p"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
-      let kind = await eles[0].getText();
+      let kind = await eles[0].getText(); // 0番目
       if (kind == "ポ太郎を探せ！") {
         sele = ["div.start_button img", "div[style*='box_close']", "#game_js_area>iframe"];
         if (await this.isExistEle(sele[0], true, 2000)) {
@@ -325,6 +325,24 @@ class PicVariable extends PicMissonSupper {
                 if (i != 0) eles = await this.getEles(sele[1], 2000);
                 await this.clickEle(eles[i], 4000);
               }
+            }
+            await driver.switchTo().defaultContent(); // もとのフレームに戻す
+          }
+          await this.sleep(4000);
+        }
+      }
+      else if (kind == "ポイントインカム ダービー") {
+        sele = ["div.start_button img", "div[style*='intro_select_btn']", "#game_js_area>iframe"];
+        if (await this.isExistEle(sele[0], true, 2000)) {
+          let ele = await this.getEle(sele[0], 2000);
+          await this.clickEle(ele, 2000);
+          if (await this.isExistEle(sele[2], true, 2000)) {
+            let iframe = await this.getEle(sele[2], 1000);
+            await driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
+            if (await this.isExistEle(sele[1], true, 2000)) {
+              let eles = await this.getEles(sele[1], 2000);
+              await this.clickEle(eles[libUtil.getRandomInt(0, eles.length)], 3000);
+              await this.sleep(20000);
             }
             await driver.switchTo().defaultContent(); // もとのフレームに戻す
           }
@@ -499,6 +517,7 @@ class PicPointMoll extends PicMissonSupper {
 }
 
 const { PartsReadPic } = require("./parts/parts-read.js");
+const { util } = require("config");
 // 犬の気持ち
 class PicReadDog extends PicMissonSupper {
   firstUrl = "https://www.chance.com/";
