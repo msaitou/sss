@@ -63,7 +63,7 @@ class GmyBase extends BaseExecuter {
           case D.MISSION.GAME_DOKOMADE:
             execCls = new GmyGameDokomade(para);
             break;
-          }
+        }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();

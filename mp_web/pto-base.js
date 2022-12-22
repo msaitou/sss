@@ -37,6 +37,9 @@ class PtoBase extends BaseExecuter {
           case D.MISSION.ANQ_PARK:
             execCls = new PtoAnqPark(para);
             break;
+          case D.MISSION.GAME_KOKUHAKU:
+            execCls = new PtoGameKokuhaku(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -75,7 +78,7 @@ class PtoMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["button.js-dialog__close-btn"];
+    let seleOver = ["button.js-dialog__close-btn", "div.qg-inweb-close"];
     if (await this.isExistEle(seleOver[0], true, 3000)) {
       let ele = await this.getEle(seleOver[0], 2000);
       if (await ele.isDisplayed()) {
@@ -544,5 +547,38 @@ class PtoAnqPark extends PtoMissonSupper {
     return res;
   }
 }
+const { PartsGame } = require("./parts/parts-game.js");
+// 告白 mobile
+class PtoGameKokuhaku extends PtoMissonSupper {
+  firstUrl = "https://www.pointtown.com/";
+  targetUrl = "https://www.pointtown.com/game";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let PGame = new PartsGame(this.para);
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let se = ["img[src*='kokuhaku']"];
+    let mobH = this.isMob ? 50 : 0;
+    if (this.isMob) {
+      this.sleep(3000);
+      await driver.executeScript("window.scrollTo(0, 3800);");
+    }
+    await this.hideOverlay();
+    if (await this.isExistEle(se[0], true, 2000)) {
+      let el = await this.getEle(se[0], 3000);
+      await this.clickEleScrollWeak(el, 2000, mobH);
+      await this.ignoreKoukoku();
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await PGame.doKokuhaku(wid);
+    }
+    return res;
+  }
+}
+
 exports.PtoCommon = PtoCommon;
 exports.Pto = PtoBase;

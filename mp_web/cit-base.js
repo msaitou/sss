@@ -69,7 +69,10 @@ class CitBase extends BaseExecuter {
           case D.MISSION.GAME_KOKUHAKU:
             execCls = new CitGameKokuhaku(para);
             break;
-        }
+            case D.MISSION.GAME_DOKOMADE:
+              execCls = new CitGameDokomade(para);
+              break;
+          }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
@@ -530,6 +533,34 @@ class CitGameKokuhaku extends CitMissonSupper {
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       res = await PGame.doKokuhaku(wid);
+    }
+    return res;
+  }
+}
+// どこまでのびるかな
+class CitGameDokomade extends CitMissonSupper {
+  firstUrl = "https://www.chance.com/";
+  targetUrl = "https://www.chance.com/game/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let PGame = new PartsGame(this.para);
+    let se = ["img[alt='どこまでのびるかな？']"];
+    if (this.isMob) {
+      this.targetUrl = "https://www.chance.com/sp/mypage/tasklist.jsp";
+    }
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(se[0], true, 2000)) {
+      let el = await this.getEle(se[0], 3000);
+      await this.clickEleScrollWeak(el, 2000, 100);
+      await this.ignoreKoukoku();
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await PGame.doDokomade(wid);
     }
     return res;
   }

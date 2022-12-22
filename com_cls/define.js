@@ -32,6 +32,7 @@ exports.Def = {
   },
   MISSION: {
     GAME_DOKOMADE: "game_dokomade",
+    MOLL_DOKOMADE: "moll_dokomade",
     MOLL_KOKUHAKU: "moll_kokuhaku",
     PIC_VARIABLE: "pic_variable",
     GAME_KOKUHAKU: "game_kokuhaku",

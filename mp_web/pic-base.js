@@ -49,7 +49,15 @@ class PicBase extends BaseExecuter {
             execCls = new PicReadIchi(para);
             break;
           case D.MISSION.MOLL_KOKUHAKU:
-          // case D.MISSION.POINT_MOLL:
+          case D.MISSION.MOLL_DOKOMADE:
+          case D.MISSION.MOLL_MANGA:
+          case D.MISSION.MOLL_COLUM:
+          case D.MISSION.MOLL_PHOTO:
+          case D.MISSION.MOLL_COOK:
+          case D.MISSION.MOLL_HIRAMEKI:
+          case D.MISSION.MOLL_IJIN:
+          case D.MISSION.MOLL_JAPAN:
+          case D.MISSION.MOLL_SITE:
           case D.MISSION.POINT_MOLL:
             execCls = new PicPointMoll(para, mission.main);
             // TODO 2回やモバイルできそうなやつは、別のMISSIONとして、このクラスを利用するように
@@ -369,6 +377,7 @@ class PicPointMoll extends PicMissonSupper {
         let mainSeleMap = {
           ...anqSeleMap,
           [D.MISSION.MOLL_KOKUHAKU]: "div>img[src*='img_kokuhaku']",
+          [D.MISSION.MOLL_DOKOMADE]: "div>img[src*='nobi']",
         };
         let cSeleList = [
           "img[src*='img_quiz01']",
@@ -402,7 +411,10 @@ class PicPointMoll extends PicMissonSupper {
               res = await execCls.do();
             } else if (cSele.indexOf("img_kokuhaku") > -1) {
               // 告白
-              res = await Game.doKokuhaku(); // wid2は外で閉じるので引数で渡さない
+              res = await Game.doKokuhaku();
+            } else if (cSele.indexOf("nobi") > -1) {
+              // どこまで
+              res = await Game.doDokomade();
             } else if (anqSeleList.indexOf(cSele) > -1) {
               try {
                 let se = ["div>a:not(.answered)"];

@@ -120,7 +120,7 @@ class PartsGame extends BaseWebDriverWrapper {
                 await this.backNowMissionPage(gameUrlHost);
               }
             }
-          }
+          } else break;
         }
       }
       res = D.STATUS.DONE;
