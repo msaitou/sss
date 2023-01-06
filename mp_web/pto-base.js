@@ -168,7 +168,7 @@ class PtoCm extends PtoMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let sele = ["img[src*='cm-jk.png']"];
-    let mobH = this.isMob ? 50 : 0;
+    let mobH = this.isMob ? 100 : 0;
     if (this.isMob) {
       sele[0] = "img[src*='cm-jk.png']";
       this.sleep(3000);
@@ -440,7 +440,7 @@ class PtoAnqPark extends PtoMissonSupper {
       ".enquete-list td.status>a:not([href='#'])", // 2
       "td>form>input[name='submit']",
     ];
-    let mobH = this.isMob ? 50 : 0;
+    let mobH = this.isMob ? 100 : 0;
     if (this.isMob) {
       this.sleep(3000);
       await driver.executeScript("window.scrollTo(0, 3300);");
@@ -562,7 +562,7 @@ class PtoGameKokuhaku extends PtoMissonSupper {
     let PGame = new PartsGame(this.para);
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let se = ["img[src*='kokuhaku']"];
-    let mobH = this.isMob ? 50 : 0;
+    let mobH = this.isMob ? 100 : 0;
     if (this.isMob) {
       this.sleep(3000);
       await driver.executeScript("window.scrollTo(0, 3800);");

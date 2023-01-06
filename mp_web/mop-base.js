@@ -771,6 +771,7 @@ class MopAnqHappy extends MopMissonSupper {
                   "好きな飲み物に関して",
                   "キャラクターに関するアンケート",
                   "自分の人生観、人間関係に関するアンケート",
+                  "好きな生物に関するアンケート",
                 ].indexOf(title) > -1
               ) {
                 skip++;
