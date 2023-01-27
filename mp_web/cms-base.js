@@ -230,10 +230,8 @@ class CmsCm extends CmsMissonSupper {
 class CmsDailyCm extends CmsMissonSupper {
   firstUrl = "https://www.cmsite.co.jp/top/home/";
   targetUrl = "https://www.cmsite.co.jp/top/home/";
-  QuizDaily;
   constructor(para) {
     super(para);
-    this.QuizDaily = new PartsQuizDaily(para);
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async do() {

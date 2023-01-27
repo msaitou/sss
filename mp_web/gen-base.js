@@ -655,6 +655,7 @@ class GenAnqMob extends GenMissonSupper {
       if (await this.isExistEle(sele[10], true, 2000)) {
         let ele = await this.getEle(sele[10], 3000);
         await this.clickEle(ele, 2000, 0, this.isMob);
+        await this.ignoreKoukoku();
         let skip = 0; // バグって完了できないやつがあるのでスキップ
         if (await this.isExistEle(sele[6], true, 2000)) {
           let ele = await this.getEle(sele[6], 3000);
@@ -667,7 +668,7 @@ class GenAnqMob extends GenMissonSupper {
             try {
               if (await this.isExistEle(sele[1], true, 2000)) {
                 eles = await this.getEles(sele[1], 3000);
-                let limit = eles.length < 5 ? eles.length : 5;
+                let limit = eles.length < 5 ? eles.length : 50;
                 for (let j = 0; j < limit; j++) {
                   let wid2 = await driver.getWindowHandle();
                   if (await this.isExistEle(sele[8], true, 2000)) {
@@ -677,8 +678,9 @@ class GenAnqMob extends GenMissonSupper {
                       [
                         "書店について",
                         "好きな飲み物に関して",
-                        "キャラクターに関するアンケート",
                         "自分の人生観、人間関係に関するアンケート",
+                        "バッグについてのアンケート",
+                        "食生活に関するアンケート"
                       ].indexOf(title) > -1
                     ) {
                       skip++;
@@ -704,7 +706,7 @@ class GenAnqMob extends GenMissonSupper {
                       await this.sleep(2000);
                       await this.closeElesWindowAndAlert([wid, wid2]);
                       let isStartPage = true;
-                      for (let i = 0; i < 30; i++) {
+                      for (let i = 0; i < 50; i++) {
                         let currentUrl = await driver.getCurrentUrl();
                         // 広告が画面いっぱいに入る時がある
                         if (currentUrl.indexOf("https://gendama.enquete.vip/") === -1) {

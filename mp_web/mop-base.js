@@ -769,9 +769,10 @@ class MopAnqHappy extends MopMissonSupper {
                 [
                   "書店について",
                   "好きな飲み物に関して",
-                  "キャラクターに関するアンケート",
+                  // "キャラクターに関するアンケート",
                   "自分の人生観、人間関係に関するアンケート",
                   "好きな生物に関するアンケート",
+                  "二次創作に関するアンケート"
                 ].indexOf(title) > -1
               ) {
                 skip++;
@@ -797,7 +798,7 @@ class MopAnqHappy extends MopMissonSupper {
                 await this.sleep(2000);
                 await this.closeElesWindowAndAlert([wid, wid2]);
                 let isStartPage = true;
-                for (let i = 0; i < 30; i++) {
+                for (let i = 0; i < 50; i++) {
                   let currentUrl = await driver.getCurrentUrl();
                   // 広告が画面いっぱいに入る時がある
                   if (currentUrl.indexOf("https://moppy.enquete.vip/") === -1) {
