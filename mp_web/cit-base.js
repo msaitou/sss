@@ -8,8 +8,8 @@ const mailOpe = require("../mp_mil/mail_operate");
 class CitBase extends BaseExecuter {
   code = D.CODE.CIT;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
-    super(retryCnt, siteInfo, aca, isMob);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob, isHeadless) {
+    super(retryCnt, siteInfo, aca, isMob, isHeadless);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }

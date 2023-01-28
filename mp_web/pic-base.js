@@ -8,8 +8,8 @@ const mailOpe = require("../mp_mil/mail_operate");
 class PicBase extends BaseExecuter {
   code = D.CODE.PIC;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
-    super(retryCnt, siteInfo, aca, isMob);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob, isHeadless) {
+    super(retryCnt, siteInfo, aca, isMob, isHeadless);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
@@ -404,14 +404,14 @@ class PicPointMoll extends PicMissonSupper {
       await this.changeWindow(wid); // 別タブに移動する
       try {
         let anqSeleMap = {
-          [D.MISSION.MOLL_IJIN]: "div>img[src*='img_ijin']",
-          [D.MISSION.MOLL_HIRAMEKI]: "div>img[src*='img_hirameki']",
-          [D.MISSION.MOLL_COOK]: "div>img[src*='img_food']",
-          [D.MISSION.MOLL_JAPAN]: "div>img[src*='img_hyakkei']",
-          [D.MISSION.MOLL_SITE]: "div>img[src*='img_kansatsu']",
-          [D.MISSION.MOLL_MANGA]: "div>img[src*='img_manga']",
-          [D.MISSION.MOLL_PHOTO]: "div>img[src*='img_photo']",
-          [D.MISSION.MOLL_COLUM]: "div>img[src*='img_column']",
+          [D.MISSION.MOLL_IJIN]: "div>img[src*='img_ijin.']",
+          [D.MISSION.MOLL_HIRAMEKI]: "div>img[src*='img_hirameki.']",
+          [D.MISSION.MOLL_COOK]: "div>img[src*='img_food.']",
+          [D.MISSION.MOLL_JAPAN]: "div>img[src*='img_hyakkei.']",
+          [D.MISSION.MOLL_SITE]: "div>img[src*='img_kansatsu.']",
+          [D.MISSION.MOLL_MANGA]: "div>img[src*='img_manga.']",
+          [D.MISSION.MOLL_PHOTO]: "div>img[src*='img_photo.']",
+          [D.MISSION.MOLL_COLUM]: "div>img[src*='img_column.']",
         };
         let anqSeleList = Object.values(anqSeleMap);
         let mainSeleMap = {

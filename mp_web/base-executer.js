@@ -11,13 +11,15 @@ class BaseExecuter extends BaseWebDriverWrapper {
   siteInfo;
   account;
   isMob;
-  constructor(retryCnt, siteInfo, aca, isMob = false) {
+  isHeadless;
+  constructor(retryCnt, siteInfo, aca, isMob = false, isHeadless = false) {
     super(isMob);
     this.logger = global.log;
     this.retryMax = retryCnt ? retryCnt : 1;
     this.siteInfo = siteInfo;
     this.account = aca;
     this.isMob = isMob;
+    this.isHeadless = isHeadless;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async main() {
@@ -28,11 +30,12 @@ class BaseExecuter extends BaseWebDriverWrapper {
       logger: this.logger,
       siteInfo: this.siteInfo,
       isMob: this.isMob,
+      isHeadless: this.isHeadless,
     };
     for (let i = 0; i < this.retryMax; i++) {
       try {
         if (!this.getDriver()) {
-          this.setDriver(await this.webDriver(this.isMob));
+          this.setDriver(await this.webDriver(this.isMob, this.isHeadless));
         }
         para.driver = this.driver;
         await this.exec(para);

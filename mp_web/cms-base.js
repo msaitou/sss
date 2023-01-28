@@ -8,8 +8,8 @@ const mailOpe = require("../mp_mil/mail_operate");
 class CmsBase extends BaseExecuter {
   code = D.CODE.CMS;
   missionList;
-  constructor(retryCnt, siteInfo, aca, missionList, isMob) {
-    super(retryCnt, siteInfo, aca, isMob);
+  constructor(retryCnt, siteInfo, aca, missionList, isMob, isHeadless) {
+    super(retryCnt, siteInfo, aca, isMob, isHeadless);
     this.missionList = missionList;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
@@ -252,6 +252,7 @@ class CmsDailyCm extends CmsMissonSupper {
             let ele = await this.getEle(sele[2], 3000);
             await this.clickEle(ele, 2000);
             await this.changeWindow();
+            res = D.STATUS.DONE;
           }
         }
         // もとのフレームに戻す

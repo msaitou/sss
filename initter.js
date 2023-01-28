@@ -116,7 +116,7 @@ const getDriverPath = async function () {
 };
 exports.getDriverPath = getDriverPath;
 
-exports.initBrowserDriver = async function (isMob = false, headless = true) {
+exports.initBrowserDriver = async function (isMob = false, headless = false) {
   let log = getLogInstance();
   // # Driverのパスを取得する
   let driverPath = await getDriverPath();
@@ -135,6 +135,7 @@ exports.initBrowserDriver = async function (isMob = false, headless = true) {
   // アプリ内にプロファイルは保存しておきたい気がする。
   // pexのクッキーでログインの期限ぽいもの　削除すればログインが切れた。期限を過去にするのは意味なかった。
   // _pex_session
+  if (headless) chromeOptions.addArguments("--headless");
   let defoSer = null;
   try {
     defoSer = chrome.getDefaultService();
