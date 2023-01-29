@@ -115,13 +115,14 @@ class SugCommon extends SugMissonSupper {
 
     await driver.get(siteInfo.entry_url); // エントリーページ表示
     let seleIsLoggedIn = "div.mile.add_mile.js-user_point";
-
+    if (this.isMob) seleIsLoggedIn = ".js-search-switch button";
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
       // リンクが存在することを確認
       let seleLoginLink = "div.login>a";
+      if (this.isMob) seleLoginLink = "div.login_btn>a";
       if (await this.isExistEle(seleLoginLink, true, 2000)) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
@@ -188,11 +189,7 @@ class SugCm extends SugMissonSupper {
       if (!this.isMob) {
         await this.changeWindow(wid); // 別タブに移動する
       }
-      let cmManage = new PartsCmManage(
-        this.para,
-        this.cmMissionList,
-        "https://sugutama.cmnw.jp/game/"
-      );
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://sugutama.cmnw.jp/game/");
       await cmManage.do();
       if (!this.isMob) {
         await driver.close(); // このタブを閉じて
@@ -233,8 +230,7 @@ class SugAnqPark extends SugMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             let text = await eles[eles.length - 1].getText();
             if (await this.isExistEle(sele[2], true, 2000)) {
               let eles2 = await this.getEles(sele[2], 3000);
@@ -317,8 +313,7 @@ class SugQuizKentei extends SugMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             let text = await eles[eles.length - 1].getText();
             if (await this.isExistEle(sele[2], true, 2000)) {
               let eles2 = await this.getEles(sele[2], 3000);
@@ -403,8 +398,7 @@ class SugAnq extends SugMissonSupper {
       let eles = await this.getEles(sele[1], 3000);
       let limit = eles.length;
       for (let i = 0; i < limit; i++) {
-        if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-          eles = await this.getEles(sele[1], 3000);
+        if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
         let text = await eles[i].getText();
         // 【コラム付き】ヘアスタイルに関するアンケート
         let kind = text.split("】")[0]; // 【コラム付き
