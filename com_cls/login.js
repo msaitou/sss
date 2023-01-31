@@ -12,8 +12,8 @@ class Login {
     switch (code) {
       case "rin":
       case D.CODE.RAKU:
-        let rakuCom = new rakuCommon(this.cPara);
-        await rakuCom.login2();
+        let rakuCom = new RakuCommon(this.cPara);
+        await rakuCom.login();
         break;
       // これ不要なクラスの気がしてるので、以降ここに追加しないつもり。
       case D.CODE.PEX:

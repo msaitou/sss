@@ -50,13 +50,24 @@ class PointMailClass extends BaseWebDriverWrapper {
         let url = uniqueUrls[i];
         try {
           if (!this.driver) {
-            this.driver = await this.webDriver();
+            this.driver = await this.webDriver(false, conf.chrome.headless);
           }
           this.logger.info(`${Number(i) + 1}/${uniqueUrls.length}`, url);
           if (!isLoginNow && loginSiteList.indexOf(site) !== -1) {
             // ログインが必要そうなサイトだけログイン
             if (!loginCls) {
-              loginCls = new Login(0, aca, this.logger, this.driver, null);
+              let siteInfos = await db("www", "find", {
+                kind: "web-pc",
+                code: { $in: [site == "rin" ? D.CODE.RAKU : site] },
+              });
+
+              loginCls = new Login(
+                0,
+                aca,
+                this.logger,
+                this.driver,
+                siteInfos.filter((i) => ((i.code == site) == "rin" ? D.CODE.RAKU : site))[0]
+              );
               this.logger.info("ログいんしました");
             }
             await loginCls.login(site);

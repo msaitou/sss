@@ -229,8 +229,7 @@ function getPointUrls(urlMap, target, content, cType) {
                 ]
               : [
                   "https://pmrd.rakuten.co.jp/?r=",
-                  "img[src*='pg_click_banner_btn.png'], img[src*='maildepoint_btn2.gif']",
-                  "img[src*='dreamkuji_mail'][src*='mv.png']",
+                  "img[src*='pg_click_banner_btn.png'], img[src*='maildepoint_btn2.gif'], img[src*='dreamkuji_mail'][src*='mv.png']",
                 ];
           const imgs = dom.querySelectorAll(sele[1]);
           for (let img of imgs) {
