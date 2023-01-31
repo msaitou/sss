@@ -59,10 +59,7 @@ exports.search = async (db, log, urlMap) => {
 
   // user=someuser@example.com^Aauth=Bearer ya29.vF9dft4qmTc2Nvb3RlckBhdHRhdmlzdGEuY29tCg^A^A
   const _build_XOAuth2_token = (user = "", access_token = "") =>
-    Buffer.from(
-      [`user=${user}`, `auth=Bearer ${access_token}`, "", ""].join("\x01"),
-      "utf-8"
-    ).toString("base64");
+    Buffer.from([`user=${user}`, `auth=Bearer ${access_token}`, "", ""].join("\x01"), "utf-8").toString("base64");
 
   let imap = new Imap({
     user: rec.user,
@@ -135,10 +132,9 @@ exports.search = async (db, log, urlMap) => {
                             content = parsed.text;
                           }
                           // 対象のメールだったら、ヘッダーからhtmlかtextを判別して、テキストを抽出。
-                          getPointUrls(urlMap, target, content);
+                          getPointUrls(urlMap, target, content, parsed.headers.get("content-type").value);
                         }
-                        if (++msgCnt == results.length) 
-                        res2();
+                        if (++msgCnt == results.length) res2();
                       });
                     });
                     // msg.once("attributes", function (attrs) {
@@ -194,55 +190,64 @@ const fs = require("fs");
  * @param {*} target サイトコード
  * @param {*} content 本文の文字列
  */
-function getPointUrls(urlMap, target, content) {
+function getPointUrls(urlMap, target, content, cType) {
   let contentRow = content.split("\n");
   let urls = [];
   let signs = [];
   let isBreak = false;
+  let rinUrlFlag = false;
   for (let row of contentRow) {
     switch (target) {
       case D.CODE.RAKU:
-        // for (let key of [
-        //   "https://r.rakuten.co.jp/",
-        //   "http://ac.rakuten-card.co.jp/s.p",
-        //   "http://ac.rakuten-card.co.jp/c.p",
-        // ]) {
-        //   if (row.indexOf(key) > -1) {
-        //     let url = "";
-        //     if (row.indexOf('"', row.indexOf(key)) > 0) {
-        //       url = row.substring(row.indexOf(key), row.indexOf('"', row.indexOf(key)));
-        //     } else {
-        //       console.log(row);
-        //       url = row.substring(row.indexOf(key));
-        //     }
-        //     if (url) {
-        //       // .gif が含まれてるやつ、?fbu= が含まれてるやつをスキップ
-        //       if (url.indexOf(".gif") === -1 && url.indexOf("?fbu=") === -1) {
-        //         urls.push(url);
-        //       }
-        //     }
-        //   }
-        // }
-        const jsdom = new JSDOM();
-        const parser = new jsdom.window.DOMParser();
-        const dom = parser.parseFromString(content, "text/html");
-        const imgs = dom.querySelectorAll(
-          "img[src*='pg_click_banner_btn.png'], img[alt='クリックしてEdyをゲット！']"
-        );
-        for (let img of imgs) {
-          let href = img.closest("a").getAttribute("href");
-          urls.push(href);
-          console.log(href);
-          isBreak = true;
-        }
-        if (!urls.length) {
-          const aTags = dom.querySelectorAll("a[href]");
-          for (let aTag of aTags) {
-            let href = aTag.text;
-            if (href.indexOf("https://pg.rakuten.co.jp/act") > -1) {
-              urls.push(href);
-              console.log('text:',href);
+      case "rin":
+        if (cType == "text/plain") {
+          let flagStr = "↓ クリックでもれなく1ポイントGet!! ↓";
+          if (!rinUrlFlag && row.indexOf(flagStr) > -1) {
+            rinUrlFlag = true;
+          }
+          if (rinUrlFlag) {
+            if (row.indexOf("https://pmrd.rakuten.co.jp/?r=") > -1) {
+              let url = "";
+              // text/plain　前提
+              url = row.substring(row.indexOf("https://"));
+              if (url) {
+                urls.push(url.trim());
+              }
               isBreak = true;
+            }
+          }
+        } else {
+          const jsdom = new JSDOM();
+          const parser = new jsdom.window.DOMParser();
+          // 1行づつでなく全行を一括解析なので、終わったらforをbreak
+          const dom = parser.parseFromString(content, "text/html");
+          let sele =
+            target == D.CODE.RAKU
+              ? [
+                  "https://pg.rakuten.co.jp/act",
+                  "img[src*='pg_click_banner_btn.png'], img[alt='クリックしてEdyをゲット！']",
+                ]
+              : [
+                  "https://pmrd.rakuten.co.jp/?r=",
+                  "img[src*='pg_click_banner_btn.png'], img[src*='maildepoint_btn2.gif']",
+                  "img[src*='dreamkuji_mail'][src*='mv.png']",
+                ];
+          const imgs = dom.querySelectorAll(sele[1]);
+          for (let img of imgs) {
+            let href = img.closest("a").getAttribute("href");
+            urls.push(href);
+            console.log(href);
+            isBreak = true;
+          }
+          if (!urls.length) {
+            const aTags = dom.querySelectorAll("a[href]");
+            for (let aTag of aTags) {
+              let href = aTag.text;
+              if (href.indexOf(sele[0]) > -1) {
+                urls.push(href);
+                console.log("text:", href);
+                isBreak = true;
+              }
             }
           }
         }
@@ -252,25 +257,25 @@ function getPointUrls(urlMap, target, content) {
         //   fs.writeFileSync(`log/${date.toISOString()}.html`, content);
         // }
         break;
-      case "rin":
-        for (let key of ["https://r.rakuten.co.jp/", "https://pmrd.rakuten.co.jp/?r="]) {
-          if (row.indexOf(key) > -1) {
-            let url = "";
-            if (row.indexOf('"', row.indexOf(key)) > 0) {
-              url = row.substring(row.indexOf(key), row.indexOf('"', row.indexOf(key)));
-            } else {
-              console.log(row);
-              url = row.substring(row.indexOf(key));
-            }
-            if (url) {
-              // .gif が含まれてるやつ、?fbu= が含まれてるやつをスキップ
-              if (url.indexOf(".gif") === -1 && url.indexOf("?fbu=") === -1) {
-                urls.push(url);
-              }
-            }
-          }
-        }
-        break;
+      // case "rin":
+      //   for (let key of ["https://r.rakuten.co.jp/", "https://pmrd.rakuten.co.jp/?r="]) {
+      //     if (row.indexOf(key) > -1) {
+      //       let url = "";
+      //       if (row.indexOf('"', row.indexOf(key)) > 0) {
+      //         url = row.substring(row.indexOf(key), row.indexOf('"', row.indexOf(key)));
+      //       } else {
+      //         console.log(row);
+      //         url = row.substring(row.indexOf(key));
+      //       }
+      //       if (url) {
+      //         // .gif が含まれてるやつ、?fbu= が含まれてるやつをスキップ
+      //         if (url.indexOf(".gif") === -1 && url.indexOf("?fbu=") === -1) {
+      //           urls.push(url);
+      //         }
+      //       }
+      //     }
+      //   }
+      //   break;
       case D.CODE.CIT:
         for (let key of ["&s="]) {
           if (row.indexOf(key) > -1) {
