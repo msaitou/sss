@@ -212,11 +212,7 @@ class PicCm extends PicMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(
-        this.para,
-        this.cmMissionList,
-        "https://pointi.cmnw.jp/game/"
-      );
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://pointi.cmnw.jp/game/");
       await cmManage.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -242,8 +238,7 @@ class PicOtano extends PicMissonSupper {
       let eles0 = await this.getEles(sele[0], 3000),
         limit = eles0.length;
       for (let i = 0; i < limit; i++) {
-        if (i !== 0 && (await this.isExistEle(sele[0], true, 2000)))
-          eles0 = await this.getEles(sele[0], 3000);
+        if (i !== 0 && (await this.isExistEle(sele[0], true, 2000))) eles0 = await this.getEles(sele[0], 3000);
         let limit2 = eles0.length;
         for (let j = 0; j < limit2; j++) {
           let index = limit2 - 1 - j;
@@ -285,13 +280,43 @@ class PicClick extends PicMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START`);
-    await this.openUrl(this.targetUrl); // 操作ページ表示
-
     let sele = ["div.click_btn"];
+    if (this.isMob) {
+      // 先に　カードです
+      sele = ["img[alt='スタートボタン']", "#last_btn"];
+      await this.openUrl("https://sp.pointi.jp/sites/campaign/carddess/"); // 操作ページ表示
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 2000);
+        await this.clickEle(ele, 10000);
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let ele = await this.getEle(sele[1], 2000);
+          await this.clickEle(ele, 1000);
+        }
+      }
+      sele = ["div.daily_btn", "li.send_ok_btn>a", "li.send_cancel_btn"];
+      await this.openUrl("https://sp.pointi.jp/daily/"); // 操作ページ表示
+    } else await this.openUrl(this.targetUrl); // 操作ページ表示
+
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
       for (let i = 0; i < eles.length; i++) {
-        await this.clickEle(eles[i], 4000);
+        await this.clickEle(eles[i], 2000);
+        if (this.isMob) {
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles2 = await this.getEles(sele[1], 2000);
+            for (let j in eles2) {
+              let ele = eles2[j];
+              if (await ele.isDisplayed()) {
+                await this.clickEle(ele, 2000);
+                if (await this.isExistEle(sele[2], true, 2000)) {
+                  let eles3 = await this.getEles(sele[2], 2000);
+                  await this.clickEle(eles3[j], 1000);
+                }
+                break;
+              }
+            }
+          }
+        }
         await this.closeOtherWindow(driver);
       }
     }
@@ -370,7 +395,7 @@ class PicVariable extends PicMissonSupper {
           await this.sleep(4000);
         }
       }
-      
+
       // if ("ダービーなら") sele[2] = "div[style*='intro_select_btn']";
     }
     logger.info(`${this.constructor.name} END`);
@@ -482,8 +507,7 @@ class PicPointMoll extends PicMissonSupper {
                   let eles = await this.getEles(se[0], 3000);
                   let limit = eles.length;
                   for (let i = 0; i < limit; i++) {
-                    if (i != 0 && (await this.isExistEle(se[0], true, 3000)))
-                      eles = await this.getEles(se[0], 3000);
+                    if (i != 0 && (await this.isExistEle(se[0], true, 3000))) eles = await this.getEles(se[0], 3000);
                     let wid3 = await driver.getWindowHandle();
                     if (cSele == mainSeleMap[D.MISSION.MOLL_HIRAMEKI]) {
                       // 終了後一覧に戻らずブラウザが閉じるので、矯正別タブで
