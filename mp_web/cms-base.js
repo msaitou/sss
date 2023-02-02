@@ -186,7 +186,7 @@ class CmsResearch1 extends CmsMissonSupper {
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele, 2000);
+      await this.clickEle(ele, 2000, 115);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       let Research1 = new PartsResearch1(this.para);
@@ -212,17 +212,17 @@ class CmsCm extends CmsMissonSupper {
     let sele = ["a[target='cmnw']>img"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
-      await this.clickEle(eles[0], 2000);
+      await this.clickEle(eles[0], 2000, 115);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(
-        this.para,
-        this.cmMissionList,
-        "https://cmsite.cmnw.jp/game/"
-      );
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://cmsite.cmnw.jp/game/");
       await cmManage.do();
       await driver.close(); // このタブを閉じて
-      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      try {
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      } catch (e) {
+        logger.warn(e);
+      }
     }
   }
 }

@@ -152,7 +152,7 @@ class PartsResearch1 extends BaseWebDriverWrapper {
         ele = await this.getEle(sele[2], 3000);
         await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
         // 多分12問あり
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < 15; i++) {
           if (await this.isExistEle(sele[3], true, 2000)) {
             ele = await this.getEle(sele[3], 3000);
             let qNo = await ele.getText();
@@ -173,7 +173,7 @@ class PartsResearch1 extends BaseWebDriverWrapper {
               case "Q5": // Q5 ご職業をお知らせ下さい。
                 choiceNum = 5;
                 break;
-              default: // ランダムで。 Q6~Q12
+              default: // ランダムで。 Q6~Q15
                 choiceNum = -1; // 仮値
             }
             if (ansSele === sele[4] && !(await this.isExistEle(ansSele, true, 2000))) {

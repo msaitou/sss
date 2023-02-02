@@ -231,13 +231,16 @@ class MopClick extends MopMissonSupper {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
       for (let i = 0; i < eles.length; i++) {
+        if (i !=0) eles = await this.getEles(sele[0], 2000);
         await this.clickEle(eles[i], 2000);
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 2000);
-          await this.clickEle(ele, 4000);
-          await this.closeOtherWindow(driver);
-          // リフレッシュ
-          await driver.navigate().refresh();
+          if (await ele.isDisplayed()) {
+            await this.clickEle(ele, 4000);
+            await this.closeOtherWindow(driver);
+            // リフレッシュ
+            await driver.navigate().refresh();
+          }
         }
       }
     }

@@ -212,11 +212,14 @@ class EcnChinju extends EcnMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.firstUrl); // 操作ページ表示
-    let sele = [
-      "li.type-daily>button.global-menu__link",
-      "a[href*='chinju_lesson']",
-      "a.chinju-lesson-question__link",
-    ];
+    let sele = ["li.type-daily>button.global-menu__link", "a[href*='chinju_lesson']", "a.chinju-lesson-question__link"];
+    if (this.isMob)
+      sele = [
+        "li span.c_icon-contents-game",
+        "li.daily-contents-window__item>a[href*='chinju_lesson']",
+        "#cta1 a[href*='result']",
+      ];
+
     // ポップアップから動線をクリックして遷移
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
@@ -251,10 +254,7 @@ class EcnNewsWatch extends EcnMissonSupper {
       await this.openUrl(this.firstUrl); // 操作ページ表示
       let sele0 = ["li.type-daily>button.global-menu__link", "a[href*='mainichi_news']"];
       if (this.isMob)
-        sele0 = [
-          "li span.c_icon-contents-game",
-          "li.daily-contents-window__item>a[href*='mainichi_news']",
-        ];
+        sele0 = ["li span.c_icon-contents-game", "li.daily-contents-window__item>a[href*='mainichi_news']"];
       // ポップアップから動線をクリックして遷移
       if (await this.isExistEle(sele0[0], true, 2000)) {
         let ele = await this.getEle(sele0[0], 2000);
@@ -335,93 +335,160 @@ class EcnClick extends EcnMissonSupper {
         ".secondary-contents__item>a[href*='click_fund']", // クリック募金 // 4
         "a[href*='dictionary_search']", // 辞書検索
       ];
-      for (let i in missionSeleList) {
-        let mSele = missionSeleList[i];
-        // ポップアップから動線をクリックして遷移
-        if (await this.isExistEle(sele[0], true, 2000)) {
-          let ele = await this.getEle(sele[0], 2000);
-          await this.clickEle(ele, 2000); // ポップアップオープン
-          if (await this.isExistEle(mSele, true, 2000)) {
-            ele = await this.getEle(mSele, 2000);
-            await this.clickEle(ele, 2000);
-            let eachSele = [];
-            switch (i) {
-              case "0": // 教えてどっち
-                eachSele = ["ul.answer_botton button"];
-                if (await this.isExistEle(eachSele[0], true, 2000)) {
-                  let eles = await this.getEles(eachSele[0], 2000);
-                  let choiceNum = libUtil.getRandomInt(0, eles.length);
-                  await this.clickEle(eles[choiceNum], 2000);
-                }
-                break;
-              case "1": // たぬきときつね
-                eachSele = ["img[alt='itemName']"];
-                if (await this.isExistEle(eachSele[0], true, 2000)) {
-                  let eles = await this.getEles(eachSele[0], 2000);
-                  for (let ele0 of eles) {
-                    await this.clickEle(ele0, 2000);
-                    await this.closeOtherWindow(driver);
+      if (this.isMob) {
+        sele = ["li span.c_icon-contents-game"];
+        missionSeleList = [
+          "a[href*='vote/choice']", // 教えてどっち
+          "a[href*='garapon']", //　宝くじ　ガラポン  // 1
+          "a[href*='dictionary_search']", // 辞書検索
+        ];
+
+        for (let i in missionSeleList) {
+          let mSele = missionSeleList[i];
+          // ポップアップから動線をクリックして遷移
+          if (await this.isExistEle(sele[0], true, 2000)) {
+            let ele = await this.getEle(sele[0], 2000);
+            await this.clickEle(ele, 2000); // ポップアップオープン
+            if (await this.isExistEle(mSele, true, 2000)) {
+              ele = await this.getEle(mSele, 2000);
+              await this.clickEle(ele, 2000);
+              await this.ignoreKoukoku();
+              let eachSele = [];
+              switch (i) {
+                case "0": // 教えてどっち
+                  eachSele = ["li>button[type='submit']"];
+                  if (await this.isExistEle(eachSele[0], true, 2000)) {
+                    let eles = await this.getEles(eachSele[0], 2000);
+                    let choiceNum = libUtil.getRandomInt(0, eles.length);
+                    await this.clickEle(eles[choiceNum], 2000);
                   }
-                }
-                break;
-              case "2": // 宝くじ　ガラポン
-                // 月初は、参加するみたいなボタンをクリックしないといけない
-                eachSele = [".unit a>img", "p.btn_entry>a", ".garapon a"];
-                if (await this.isExistEle(eachSele[1], true, 2000)) {
-                  let ele = await this.getEle(eachSele[1], 2000);
-                  await this.clickEle(ele, 2000);
-                  if (await this.isExistEle(eachSele[2], true, 2000)) {
-                    let ele = await this.getEle(eachSele[2], 2000);
+                  break;
+                case "1": // 宝くじ　ガラポン
+                  // 月初は、参加するみたいなボタンをクリックしないといけない
+                  eachSele = [".unit a>img", "p.btn_entry>a", ".garapon a"];
+                  if (await this.isExistEle(eachSele[1], true, 2000)) {
+                    let ele = await this.getEle(eachSele[1], 2000);
                     await this.clickEle(ele, 2000);
-                  }
-                }
-                if (await this.isExistEle(eachSele[0], true, 2000)) {
-                  let eles = await this.getEles(eachSele[0], 2000);
-                  for (let ele0 of eles) {
-                    await this.clickEle(ele0, 2000);
-                    await this.closeOtherWindow(driver);
-                  }
-                }
-                break;
-              case "3": // 検索募金
-                eachSele = ["dl.word>dd>button"];
-                if (await this.isExistEle(eachSele[0], true, 2000)) {
-                  let eles = await this.getEles(eachSele[0], 2000);
-                  let cnt = 0;
-                  for (let ele0 of eles) {
-                    await this.clickEle(ele0, 2000);
-                    await this.closeOtherWindow(driver);
-                    if (++cnt > 1) break;
-                  }
-                }
-                break;
-              case "4": // クリック募金
-                eachSele = ["a>p>img"];
-                if (await this.isExistEle(eachSele[0], true, 2000)) {
-                  let eles = await this.getEles(eachSele[0], 2000);
-                  for (let ele0 of eles) {
-                    await this.clickEle(ele0, 2000);
-                    await this.closeOtherWindow(driver);
-                  }
-                }
-                break;
-              case "5": // 辞書検索
-                eachSele = ["dl.dictionary-search-word-list>dd>a"];
-                if (await this.isExistEle(eachSele[0], true, 2000)) {
-                  let eles = await this.getEles(eachSele[0], 2000);
-                  let limit = eles.length;
-                  for (let j = 0; j < limit; j++) {
-                    if (j != 0 && (await this.isExistEle(eachSele[0], true, 2000))) {
-                      eles = await this.getEles(eachSele[0], 2000);
+                    if (await this.isExistEle(eachSele[2], true, 2000)) {
+                      let ele = await this.getEle(eachSele[2], 2000);
+                      await this.clickEle(ele, 2000);
                     }
-                    await this.clickEle(eles[j], 2000);
                   }
-                }
-                break;
+                  if (await this.isExistEle(eachSele[0], true, 2000)) {
+                    let eles = await this.getEles(eachSele[0], 2000);
+                    for (let ele0 of eles) {
+                      await this.clickEle(ele0, 2000);
+                      await this.closeOtherWindow(driver);
+                    }
+                  }
+                  break;
+                case "2": // 辞書検索
+                  eachSele = ["dl.dictionary-search-word-list>dd>a"];
+                  if (await this.isExistEle(eachSele[0], true, 2000)) {
+                    let eles = await this.getEles(eachSele[0], 2000);
+                    let limit = eles.length;
+                    for (let j = 0; j < limit; j++) {
+                      if (j != 0 && (await this.isExistEle(eachSele[0], true, 2000))) {
+                        eles = await this.getEles(eachSele[0], 2000);
+                      }
+                      await this.clickEle(eles[j], 2000);
+                    }
+                  }
+                  break;
+              }
             }
           }
+          res = D.STATUS.DONE;
         }
-        res = D.STATUS.DONE;
+      } else {
+        for (let i in missionSeleList) {
+          let mSele = missionSeleList[i];
+          // ポップアップから動線をクリックして遷移
+          if (await this.isExistEle(sele[0], true, 2000)) {
+            let ele = await this.getEle(sele[0], 2000);
+            await this.clickEle(ele, 2000); // ポップアップオープン
+            if (await this.isExistEle(mSele, true, 2000)) {
+              ele = await this.getEle(mSele, 2000);
+              await this.clickEle(ele, 2000);
+              let eachSele = [];
+              switch (i) {
+                case "0": // 教えてどっち
+                  eachSele = ["ul.answer_botton button"];
+                  if (await this.isExistEle(eachSele[0], true, 2000)) {
+                    let eles = await this.getEles(eachSele[0], 2000);
+                    let choiceNum = libUtil.getRandomInt(0, eles.length);
+                    await this.clickEle(eles[choiceNum], 2000);
+                  }
+                  break;
+                case "1": // たぬきときつね
+                  eachSele = ["img[alt='itemName']"];
+                  if (await this.isExistEle(eachSele[0], true, 2000)) {
+                    let eles = await this.getEles(eachSele[0], 2000);
+                    for (let ele0 of eles) {
+                      await this.clickEle(ele0, 2000);
+                      await this.closeOtherWindow(driver);
+                    }
+                  }
+                  break;
+                case "2": // 宝くじ　ガラポン
+                  // 月初は、参加するみたいなボタンをクリックしないといけない
+                  eachSele = [".unit a>img", "p.btn_entry>a", ".garapon a"];
+                  if (await this.isExistEle(eachSele[1], true, 2000)) {
+                    let ele = await this.getEle(eachSele[1], 2000);
+                    await this.clickEle(ele, 2000);
+                    if (await this.isExistEle(eachSele[2], true, 2000)) {
+                      let ele = await this.getEle(eachSele[2], 2000);
+                      await this.clickEle(ele, 2000);
+                    }
+                  }
+                  if (await this.isExistEle(eachSele[0], true, 2000)) {
+                    let eles = await this.getEles(eachSele[0], 2000);
+                    for (let ele0 of eles) {
+                      await this.clickEle(ele0, 2000);
+                      await this.closeOtherWindow(driver);
+                    }
+                  }
+                  break;
+                case "3": // 検索募金
+                  eachSele = ["dl.word>dd>button"];
+                  if (await this.isExistEle(eachSele[0], true, 2000)) {
+                    let eles = await this.getEles(eachSele[0], 2000);
+                    let cnt = 0;
+                    for (let ele0 of eles) {
+                      await this.clickEle(ele0, 2000);
+                      await this.closeOtherWindow(driver);
+                      if (++cnt > 1) break;
+                    }
+                  }
+                  break;
+                case "4": // クリック募金
+                  eachSele = ["a>p>img"];
+                  if (await this.isExistEle(eachSele[0], true, 2000)) {
+                    let eles = await this.getEles(eachSele[0], 2000);
+                    for (let ele0 of eles) {
+                      await this.clickEle(ele0, 2000);
+                      await this.closeOtherWindow(driver);
+                    }
+                  }
+                  break;
+                case "5": // 辞書検索
+                  eachSele = ["dl.dictionary-search-word-list>dd>a"];
+                  if (await this.isExistEle(eachSele[0], true, 2000)) {
+                    let eles = await this.getEles(eachSele[0], 2000);
+                    let limit = eles.length;
+                    for (let j = 0; j < limit; j++) {
+                      if (j != 0 && (await this.isExistEle(eachSele[0], true, 2000))) {
+                        eles = await this.getEles(eachSele[0], 2000);
+                      }
+                      await this.clickEle(eles[j], 2000);
+                    }
+                  }
+                  break;
+              }
+            }
+          }
+          res = D.STATUS.DONE;
+        }
       }
     } catch (e) {
       logger.warn(e);
