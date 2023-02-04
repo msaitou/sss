@@ -225,11 +225,12 @@ function getPointUrls(urlMap, target, content, cType) {
             target == D.CODE.RAKU
               ? [
                   "https://pg.rakuten.co.jp/act",
-                  "img[src*='pg_click_banner_btn.png'], img[alt='クリックしてEdyをゲット！']",
+                  "img[src*='pg_click_banner_btn.png'], img[alt='クリックしてEdyをゲット！'], a[href*='https://cl.rakuten-bank.co.jp']>span",
+                  "https://cl.rakuten-bank.co.jp",
                 ]
               : [
                   "https://pmrd.rakuten.co.jp/?r=",
-                  "img[src*='pg_click_banner_btn.png'], img[src*='maildepoint_btn2.gif'], img[src*='dreamkuji_mail'][src*='mv.png']",
+                  "img[src*='pg_click_banner_btn.png'], img[src*='maildepoint_btn2.gif'], img[src*='dreamkuji_mail'][src*='mv.png'], img[src*='bookmark_ai_btn.jpg'], img[src*='plan_btn.gif']",
                 ];
           const imgs = dom.querySelectorAll(sele[1]);
           for (let img of imgs) {
@@ -242,7 +243,7 @@ function getPointUrls(urlMap, target, content, cType) {
             const aTags = dom.querySelectorAll("a[href]");
             for (let aTag of aTags) {
               let href = aTag.text;
-              if (href.indexOf(sele[0]) > -1) {
+              if (href.indexOf(sele[0]) > -1 || (sele[2] && href.indexOf(sele[2]) > -1)) {
                 urls.push(href);
                 console.log("text:", href);
                 isBreak = true;

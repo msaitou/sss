@@ -68,7 +68,7 @@ class PointMailClass extends BaseWebDriverWrapper {
                 this.driver,
                 siteInfos.filter((i) => ((i.code == site) == "rin" ? D.CODE.RAKU : site))[0]
               );
-              this.logger.info("ログいんしました");
+              // this.logger.info("ログいんしました");
             }
             await loginCls.login(site);
             isLoginNow = true;
@@ -125,6 +125,7 @@ class PointMailClass extends BaseWebDriverWrapper {
         // driverのタイムアウトを設定して例外の発生有無に変更したい　TODO
         await this.driver.manage().setTimeouts({ pageLoad: 10000 });
         await this.driver.get(url);
+        await this.sleep(3000);
         resolve(true);
         // let a = this.driver.get(url); // エントリーページ表示
         // await a.catch((e) => {
