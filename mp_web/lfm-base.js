@@ -164,14 +164,14 @@ class LfmCm extends LfmMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(
-        this.para,
-        this.cmMissionList,
-        "https://lifemedia.cmnw.jp/game/"
-      );
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://lifemedia.cmnw.jp/game/");
       await cmManage.do();
       await driver.close(); // このタブを閉じて
-      await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      try {
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      } catch (e) {
+        logger.warn(e);
+      }
     }
   }
 }
@@ -205,8 +205,7 @@ class LfmQuizKentei extends LfmMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             // let text = await eles[eles.length - 1].getText();
             if (await this.isExistEle(sele[2], true, 2000)) {
               let eles2 = await this.getEles(sele[2], 3000);
@@ -270,8 +269,7 @@ class LfmAnqPark extends LfmMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             let text = await eles[eles.length - 1].getText();
             text = text.split("\n").join("").split("\n").join("");
             if (await this.isExistEle(sele[2], true, 2000)) {
