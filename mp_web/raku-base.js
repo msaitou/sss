@@ -30,6 +30,9 @@ class RakuBase extends BaseExecuter {
           case D.MISSION.CLICK:
             execCls = new RakuClick(para);
             break;
+          case D.MISSION.NEWS:
+            execCls = new RakuNews(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -155,9 +158,9 @@ class RakuClick extends RakuMissonSupper {
     let sele = [
       ".rce-userDetails__linkItem a[href*='click-point']",
       "span.rce-number",
-      "p.dateArrival img",  // 2
+      "p.dateArrival img", // 2
       "div.bnrBoxInner a>img",
-      "ancestor::div[contains(@class, 'topArea')]"
+      "ancestor::div[contains(@class, 'topArea')]",
     ];
     await this.openUrl(this.firstUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -180,6 +183,131 @@ class RakuClick extends RakuMissonSupper {
       }
       res = D.STATUS.DONE;
     }
+    await this.openUrl("https://point-g.rakuten.co.jp/point_get/"); // 操作ページ表示
+    sele = [
+      "iframe[name*='PointGet/Rect_']",
+      "img[src*='click_rectangle_A_Before_login']",
+      "", // 2
+      "",
+      "",
+    ];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      for (let i in eles) {
+        let iframe = eles[i];
+        let rect = await iframe.getRect();
+        await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
+        await driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let ele = await this.getEle(sele[1], 2000);
+          await this.clickEle(ele, 2000);
+          await this.closeOtherWindow(driver);
+        }
+        await driver.switchTo().defaultContent();
+      }
+      res = D.STATUS.DONE;
+    }
+    logger.info(`${this.constructor.name} END`);
+    return res;
+  }
+}
+// infoseek
+class RakuNews extends RakuMissonSupper {
+  firstUrl = "https://www.infoseek.co.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    let res = D.STATUS.FAIL;
+    let sele = [
+      "#missionBox div.missionBox_text",
+      "div.topic-detail-title>h1>a", // 2
+      "a[data-ratid*='MissionList_GetPoint']",
+      "ancestor::div[contains(@class, 'topArea')]",
+    ];
+    // topに飛ぶ
+    await this.openUrl(this.firstUrl); // 操作ページ表示
+    let ele,
+      eles,
+      readedList = [];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      ele = await this.getEle(sele[0], 2000);
+      await this.clickEle(ele, 2000);
+      await this.driver.navigate().back(); // 戻って
+      await this.driver.navigate().forward(); // 行く
+      // TODO　月1？月初にミッションの参加をしないとあかんぽい
+      // TODO 週3回アクセスは先にアクセス
+    }
+    let cSeleList = [
+      "#topics-category-all",
+      "#topics-category-entertainment", // 2
+      "#topics-category-poli-soci",
+      "#topics-category-sports",
+      "#topics-category-busi-econ",
+      "#topics-category-world",
+      "#topics-category-it",
+      "#topics-category-life",
+    ];
+    await this.openUrl(this.firstUrl); // 操作ページ表示
+    for (let cSele of cSeleList) {
+      while (true) {
+        let scSele = `a[href='${cSele}']`;
+        if (await this.isExistEle(scSele, true, 2000)) {
+          ele = await this.getEle(scSele, 2000);
+          await this.clickEle(ele, 1000); // タブの切り替え
+          let acSele = `${cSele} div.main-topics-body a`;
+          if (await this.isExistEle(acSele, true, 2000)) {
+            eles = await this.getEles(acSele, 2000);
+            let unReadEle = null;
+            for (let j = eles.length - 1; j > -1; j--) {
+              let tmpUrl = await eles[j].getAttribute("href");
+              if (readedList.indexOf(tmpUrl) === -1) {
+                readedList.push(tmpUrl);
+                unReadEle = eles[j];
+                break;
+              }
+            }
+            if (unReadEle) {
+              await this.clickEle(unReadEle, 2000);
+              if (await this.isExistEle(sele[1], true, 2000)) {
+                ele = await this.getEle(sele[1], 2000);
+                // 1記事を10秒待機。その後ページの最下部へ移動して、2秒待機？TOPページを表示
+                await this.clickEle(ele, 10000); // 10秒待機
+                await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+                await this.sleep(2000);
+              }
+              await this.openUrl(this.firstUrl); // 操作ページ表示
+            } else {
+              logger.debug("このタブは全部読んだので次のタブを見る");
+              break;
+            }
+          }
+        }
+        if (readedList.length > 25) break;
+      }
+      if (readedList.length > 25) break;
+    }
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      // ループ完了後、ミッションページでポイント獲得ボタンを押下（押せるやつのみ）
+      ele = await this.getEle(sele[0], 2000);
+      await this.clickEle(ele, 2000);
+      if (await this.isExistEle(sele[2], true, 2000)) {
+        eles = await this.getEles(sele[2], 2000);
+        let limit = eles.length;
+        for (let i = 0; i < limit; i++) {
+          if (i != 0) eles = await this.getEles(sele[2], 2000);
+          await this.clickEle(eles[0], 2000);
+          await this.driver.navigate().back(); // 戻って
+        }
+      }
+      res = D.STATUS.DONE;
+    }
+    // TOPページの総合タブに表示されてるリンクを下から順に表示する
+    // リンクは保持して、同じものはスキップする。このタブに表示するものがなくなったら次のタブ。
+    // 26回ループ
     logger.info(`${this.constructor.name} END`);
     return res;
   }
