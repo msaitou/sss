@@ -31,6 +31,9 @@ class MopBase extends BaseExecuter {
           case D.MISSION.CLICK:
             execCls = new MopClick(para);
             break;
+          case D.MISSION.GACHA:
+            execCls = new MopGacha(para);
+            break;
           case D.MISSION.QUIZ_DAILY:
             execCls = new MopQuizDaily(para);
             break;
@@ -126,12 +129,7 @@ class MopMissonSupper extends BaseWebDriverWrapper {
     }
   }
   async exchange(minExcNum) {
-    let exSele = [
-      "a.stamp__btn[href*='exchange']",
-      "input.exchange__btn",
-      "a.stamp__btn-return",
-      "p.stamp__num",
-    ];
+    let exSele = ["a.stamp__btn[href*='exchange']", "input.exchange__btn", "a.stamp__btn-return", "p.stamp__num"];
     // if (this.isMob) return; // めんどくさいのでリターン
     if (await this.isExistEle(exSele[3], true, 2000)) {
       let ele = await this.getEle(exSele[3], 3000);
@@ -228,10 +226,11 @@ class MopClick extends MopMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
 
     let sele = ["div.gamecontents__wrapper li.gamecontents__box>a>div", "#modal_detail"];
+    if (this.isMob) sele[1] = "div[style*='display: block;']>#modal_detail div.m-btn>a";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
       for (let i = 0; i < eles.length; i++) {
-        if (i !=0) eles = await this.getEles(sele[0], 2000);
+        if (i != 0) eles = await this.getEles(sele[0], 2000);
         await this.clickEle(eles[i], 2000);
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 2000);
@@ -240,6 +239,52 @@ class MopClick extends MopMissonSupper {
             await this.closeOtherWindow(driver);
             // リフレッシュ
             await driver.navigate().refresh();
+          }
+        } else {
+          await this.sleep(13000);
+          await this.closeOtherWindow(driver);
+        }
+      }
+    }
+    logger.info(`${this.constructor.name} END`);
+    return D.STATUS.DONE;
+    // return await this.ChirashiCls.do(this.targetUrl);
+  }
+}
+// ガチャ
+class MopGacha extends MopMissonSupper {
+  firstUrl = "https://pc.moppy.jp/";
+  targetUrl = "https://pc.moppy.jp/gamecontents/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START`);
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+
+    let sele = [
+      "a[data-ga-label='モッピーガチャ']",
+      "a[data-ga-label*='まわす']",
+      "a[data-ga-label*='結果を見る']",
+      "span.popup-block__delete",
+      "img[alt='バナー']",
+    ];
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      await this.clickEle(sele[0], 2000);
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        await this.clickEle(sele[1], 5000);
+        if (await this.isExistEle(sele[2], true, 2000)) {
+          await this.clickEle(sele[2], 2000);
+          if (await this.isExistEle(sele[3], true, 2000)) {
+            await this.clickEle(sele[3], 2000);
+            if (await this.isExistEle(sele[4], true, 2000)) {
+              await this.clickEle(sele[4], 2000);
+              await this.closeOtherWindow(driver);
+            }
           }
         }
       }
@@ -540,11 +585,7 @@ class MopCm extends MopMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(
-        this.para,
-        this.cmMissionList,
-        "https://moppy.cmnw.jp/game/"
-      );
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://moppy.cmnw.jp/game/");
       await cmManage.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -634,8 +675,7 @@ class MopAnqPark extends MopMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             let text = await eles[eles.length - 1].getText();
             text = text.split("\n").join("").split("\n").join("");
             if (await this.isExistEle(sele[2], true, 2000)) {
@@ -775,7 +815,7 @@ class MopAnqHappy extends MopMissonSupper {
                   // "キャラクターに関するアンケート",
                   "自分の人生観、人間関係に関するアンケート",
                   "好きな生物に関するアンケート",
-                  "二次創作に関するアンケート"
+                  "二次創作に関するアンケート",
                 ].indexOf(title) > -1
               ) {
                 skip++;
