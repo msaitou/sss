@@ -233,14 +233,15 @@ class RakuNews extends RakuMissonSupper {
     let ele,
       eles,
       readedList = [];
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      ele = await this.getEle(sele[0], 2000);
-      await this.clickEle(ele, 2000);
-      await this.driver.navigate().back(); // 戻って
-      await this.driver.navigate().forward(); // 行く
-      // TODO　月1？月初にミッションの参加をしないとあかんぽい
-      // TODO 週3回アクセスは先にアクセス
-    }
+    // if (await this.isExistEle(sele[0], true, 2000)) {
+    //   ele = await this.getEle(sele[0], 2000);
+    //   await this.clickEle(ele, 2000);
+    // }
+    await this.openUrl("https://www.infoseek.co.jp/mission/list/");
+    await this.driver.navigate().back(); // 戻って
+    await this.driver.navigate().forward(); // 行く
+    // TODO　月1？月初にミッションの参加をしないとあかんぽい
+    // TODO 週3回アクセスは先にアクセス
     let cSeleList = [
       "#topics-category-all",
       "#topics-category-entertainment", // 2
@@ -290,22 +291,23 @@ class RakuNews extends RakuMissonSupper {
       }
       if (readedList.length > 25) break;
     }
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      // ループ完了後、ミッションページでポイント獲得ボタンを押下（押せるやつのみ）
-      ele = await this.getEle(sele[0], 2000);
-      await this.clickEle(ele, 2000);
-      if (await this.isExistEle(sele[2], true, 2000)) {
-        eles = await this.getEles(sele[2], 2000);
-        let limit = eles.length;
-        for (let i = 0; i < limit; i++) {
-          if (i != 0) eles = await this.getEles(sele[2], 2000);
-          await this.clickEle(eles[0], 2000);
-          await this.driver.navigate().back(); // 戻って
-        }
+    // if (await this.isExistEle(sele[0], true, 2000)) {
+    //   ele = await this.getEle(sele[0], 2000);
+    //   await this.clickEle(ele, 2000);
+    // }
+    await this.openUrl("https://www.infoseek.co.jp/mission/list/");
+    // ループ完了後、ミッションページでポイント獲得ボタンを押下（押せるやつのみ）
+    if (await this.isExistEle(sele[2], true, 2000)) {
+      eles = await this.getEles(sele[2], 2000);
+      let limit = eles.length;
+      for (let i = 0; i < limit; i++) {
+        if (i != 0) eles = await this.getEles(sele[2], 2000);
+        await this.clickEle(eles[0], 2000);
+        await this.driver.navigate().back(); // 戻って
       }
       res = D.STATUS.DONE;
     }
-    // TOPページの総合タブに表示されてるリンクを下から順に表示する
+  // TOPページの総合タブに表示されてるリンクを下から順に表示する
     // リンクは保持して、同じものはスキップする。このタブに表示するものがなくなったら次のタブ。
     // 26回ループ
     logger.info(`${this.constructor.name} END`);
