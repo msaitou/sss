@@ -76,6 +76,7 @@ exports.Def = {
     QUIZ_KENTEI: "quiz_kentei",
     ANQ_SUG: "anq_sug",
     ANQ_PARK: "anq_park",
+    GACHA: "gacha",
 
     MOLL_MANGA: "moll_manga",
     MOLL_COLUM: "moll_colum",

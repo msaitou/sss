@@ -272,17 +272,22 @@ class MopGacha extends MopMissonSupper {
       "img[alt='バナー']",
     ];
     if (await this.isExistEle(sele[0], true, 2000)) {
-      await this.clickEle(sele[0], 2000);
+      let ele = await this.getEle(sele[0], 2000);
+      await this.clickEle(ele, 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       if (await this.isExistEle(sele[1], true, 2000)) {
-        await this.clickEle(sele[1], 5000);
+        ele = await this.getEle(sele[1], 2000);
+        await this.clickEle(ele, 2000);
         if (await this.isExistEle(sele[2], true, 2000)) {
-          await this.clickEle(sele[2], 2000);
+          ele = await this.getEle(sele[2], 2000);
+          await this.clickEle(ele, 2000);
           if (await this.isExistEle(sele[3], true, 2000)) {
-            await this.clickEle(sele[3], 2000);
+            ele = await this.getEle(sele[3], 2000);
+            await this.clickEle(ele, 2000);
             if (await this.isExistEle(sele[4], true, 2000)) {
-              await this.clickEle(sele[4], 2000);
+              ele = await this.getEle(sele[4], 2000);
+              await this.clickEle(ele, 2000);
               await this.closeOtherWindow(driver);
             }
           }
