@@ -54,6 +54,12 @@ class GenBase extends BaseExecuter {
           case D.MISSION.GAME_FURUFURU_SEARCH:
             execCls = new GenGameFurufuruSearch(para);
             break;
+          case D.MISSION.QUIZ_KENTEI:
+            execCls = new GenQuizKentei(para);
+            break;
+          case D.MISSION.GAME_DOKOMADE:
+            execCls = new GenGameDokomade(para);
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
@@ -223,11 +229,7 @@ class GenCm extends GenMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(
-        this.para,
-        this.cmMissionList,
-        "https://gendama.cmnw.jp/game/"
-      );
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://gendama.cmnw.jp/game/");
       await cmManage.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -339,13 +341,7 @@ class GenAnq extends GenMissonSupper {
               if (await this.isExistEle(sele[8], true, 2000)) {
                 eles = await this.getEles(sele[8], 3000);
                 let title = await eles[skip].getText();
-                if (
-                  [
-                    "書店について",
-                    "好きな飲み物に関して",
-                    "キャラクターに関するアンケート",
-                  ].indexOf(title) > -1
-                ) {
+                if (["書店について", "好きな飲み物に関して", "キャラクターに関するアンケート"].indexOf(title) > -1) {
                   skip++;
                   continue;
                 }
@@ -680,7 +676,7 @@ class GenAnqMob extends GenMissonSupper {
                         "好きな飲み物に関して",
                         "自分の人生観、人間関係に関するアンケート",
                         "バッグについてのアンケート",
-                        "食生活に関するアンケート"
+                        "食生活に関するアンケート",
                       ].indexOf(title) > -1
                     ) {
                       skip++;
@@ -726,9 +722,7 @@ class GenAnqMob extends GenMissonSupper {
                                 await driver.navigate().back(); // 一覧からやり直す
                                 await this.sleep(2000);
                                 iBreak = true;
-                              } else if (
-                                currentUrl.indexOf("https://gendama.enquete.vip/question") === 0
-                              ) {
+                              } else if (currentUrl.indexOf("https://gendama.enquete.vip/question") === 0) {
                                 // ナニモシナイ
                               } else if (isStartPage) iBreak = true;
                               break;
@@ -821,8 +815,7 @@ class GenAnqMob extends GenMissonSupper {
                 }
               }
               if (await this.isExistEle(sele[1], true, 3000))
-                (eles = await this.getEles(sele[1], 3000)),
-                  (res = eles.length < 10 ? D.STATUS.DONE : res);
+                (eles = await this.getEles(sele[1], 3000)), (res = eles.length < 10 ? D.STATUS.DONE : res);
             } catch (e) {
               logger.warn(e);
             } finally {
@@ -862,8 +855,7 @@ class GenAnqKenkou extends GenMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
             await this.clickEle(eles[eles.length - 1], 6000, 250);
             res = await AnkPark.doMobKenkou();
@@ -881,6 +873,111 @@ class GenAnqKenkou extends GenMissonSupper {
     return res;
   }
 }
-
+const { PartsQuizKentei } = require("./parts/parts-quiz-kentei.js");
+// クイズ検定Q mobile用
+class GenQuizKentei extends GenMissonSupper {
+  firstUrl = "https://www.gendama.jp/";
+  targetUrl = "https://www.gendama.jp/sp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let QuizKentei = new PartsQuizKentei(this.para);
+    let sele = [
+      "a.btn_game",
+      "img[alt='クイズ検定Q']",
+      ".enquete-list td.cate", // 2
+      ".enquete-list td.status>a",
+    ];
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        ele0 = await this.getEle(sele[1], 3000);
+        await this.clickEle(ele0, 3000);
+        await this.ignoreKoukoku();
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
+        try {
+          if (await this.isExistEle(sele[2], true, 2000)) {
+            let eles = await this.getEles(sele[2], 3000);
+            let limit = eles.length;
+            for (let i = 0; i < limit; i++) {
+              if (i !== 0 && (await this.isExistEle(sele[2], true, 2000))) eles = await this.getEles(sele[2], 3000);
+              let text = await eles[eles.length - 1].getText();
+              if (await this.isExistEle(sele[3], true, 2000)) {
+                let eles2 = await this.getEles(sele[3], 3000);
+                await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+                let ele = eles2[eles.length - 1];
+                let ele2;
+                try {
+                  ele2 = await ele.findElements(By.xpath("ancestor::tr"));
+                  ele2 = await this.getElesFromEle(ele2[0], "td>form>input[name='submit']");
+                } catch (e) {
+                  logger.debug(e);
+                }
+                if (ele2 && ele2.length) {
+                  ele = ele2[0];
+                }
+                await this.clickEle(ele, 3000);
+                res = await QuizKentei.doKentei();
+                await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+              }
+            }
+          } else {
+            res = D.STATUS.DONE;
+          }
+        } catch (e) {
+          logger.warn(e);
+        } finally {
+          await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+        }
+      }
+    }
+    return res;
+  }
+}
+const { PartsGame } = require("./parts/parts-game.js");
+// どこまでのびるか
+class GenGameDokomade extends GenMissonSupper {
+  firstUrl = "https://www.gendama.jp/";
+  targetUrl = "https://www.gendama.jp/sp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let PGame = new PartsGame(this.para);
+    let sele = [
+      "a.btn_game",
+      "img[alt='どこまでのびるかな？']",
+      "#fluct-ad-overlay"
+    ];
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let ele0 = await this.getEle(sele[0], 3000);
+      await this.clickEle(ele0, 3000);
+      if (await this.isExistEle(sele[2], true, 2000)) {
+        await this.driver.executeScript(`document.querySelector('#fluct-ad-overlay').setAttribute('style', 'display:none;');`);
+      }
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        ele0 = await this.getEle(sele[1], 3000);
+        await this.clickEle(ele0, 3000);
+        await this.ignoreKoukoku();
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
+        res = await PGame.doDokomade(wid);
+      }
+    }
+    return res;
+  }
+}
 exports.GenCommon = GenCommon;
 exports.Gen = GenBase;
