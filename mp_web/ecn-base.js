@@ -38,7 +38,7 @@ class EcnBase extends BaseExecuter {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
           this.logger.info(`${mission.main} 終了--`);
-          await this.updateMissionQue(mission, res, this.code);
+          await this.updateMissionQue(mission, res, `${this.isMob ? "m_" : ""}${this.code}`);
         }
       }
       // ポイント数取得し保持
@@ -227,6 +227,7 @@ class EcnChinju extends EcnMissonSupper {
       if (await this.isExistEle(sele[1], true, 2000)) {
         ele = await this.getEle(sele[1], 2000);
         await this.clickEle(ele, 2000);
+        await this.ignoreKoukoku();
         if (await this.isExistEle(sele[2], true, 2000)) {
           let eles = await this.getEles(sele[2], 2000);
           let choiceNum = libUtil.getRandomInt(0, eles.length);
