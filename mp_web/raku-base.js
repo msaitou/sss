@@ -224,9 +224,13 @@ class RakuNews extends RakuMissonSupper {
     let res = D.STATUS.FAIL;
     let sele = [
       "#missionBox div.missionBox_text",
-      "div.topic-detail-title>h1>a", // 2
+      "div.topic-detail-title>h1>a", // 1
       "a[data-ratid*='MissionList_GetPoint']",
-      "ancestor::div[contains(@class, 'topArea')]",
+      "ancestor::div[contains(@class, 'topArea')]", // 3
+      "li.list-challenge>div>h4",
+      "a[href='/mission/visit/']", //5
+      "",
+      "",
     ];
     // topに飛ぶ
     await this.openUrl(this.firstUrl); // 操作ページ表示
@@ -240,6 +244,21 @@ class RakuNews extends RakuMissonSupper {
     await this.openUrl("https://www.infoseek.co.jp/mission/list/");
     await this.driver.navigate().back(); // 戻って
     await this.driver.navigate().forward(); // 行く
+    if (await this.isExistEle(sele[5], true, 2000)) {
+      ele = await this.getEle(sele[5], 2000);
+      await this.clickEle(ele, 2000); // タブの切り替え
+    }
+    // if (await this.isExistEle(sele[4], true, 2000)) {
+    //   eles = await this.getEles(sele[4], 2000);
+    //   for (let el of eles) {
+    //     let text = await el.getText();
+    //     if ("週に3日アクセスで1ポイント" === text.trim()) {
+    //       // let ele2 = await this.getElesXFromEle(el, sele[4], 2000);
+    //       // ele2 = await this.getElesFromEle(ele2[0], sele[3]);
+    //     }
+    //   }
+    // }
+
     // TODO　月1？月初にミッションの参加をしないとあかんぽい
     // TODO 週3回アクセスは先にアクセス
     let cSeleList = [
@@ -307,7 +326,7 @@ class RakuNews extends RakuMissonSupper {
       }
       res = D.STATUS.DONE;
     }
-  // TOPページの総合タブに表示されてるリンクを下から順に表示する
+    // TOPページの総合タブに表示されてるリンクを下から順に表示する
     // リンクは保持して、同じものはスキップする。このタブに表示するものがなくなったら次のタブ。
     // 26回ループ
     logger.info(`${this.constructor.name} END`);
