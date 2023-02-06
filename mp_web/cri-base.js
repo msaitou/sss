@@ -115,6 +115,9 @@ class CriCommon extends CriMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
 
     await driver.get(siteInfo.entry_url); // エントリーページ表示
+    if (await this.isExistEle(sele[0])) {
+      await this.driver.executeScript(`document.querySelector('#interstitialSpecialAd').setAttribute('style', 'display:none;');`);
+    }
     let seleIsLoggedIn = "p.g-navi__user__pt";
     if (this.isMob) seleIsLoggedIn = "p.pt_num";
     logger.debug(11100);

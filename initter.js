@@ -73,6 +73,7 @@ const thisLog = () => {
         pattern: "yyMMdd",
         keepFileExt: true,
         layout: { type: "pattern", pattern: "[%d{yy-MM-dd hh:mm:ss} %.4p] %m ->%f{2} %l" },
+        daysToKeep: 14, // 指定した日数分保持
       },
       wrapInfo: { type: "logLevelFilter", appender: "app", level: "info" },
     },
