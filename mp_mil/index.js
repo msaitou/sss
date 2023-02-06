@@ -89,6 +89,52 @@ class PointMailClass extends BaseWebDriverWrapper {
             if (site === D.CODE.CRI) {
               this.logger.info("２分待ってみる");
               await this.driver.sleep(120000); // 2分待ってみる
+            } else if ([D.CODE.PST, D.CODE.PIL]) {
+              // ポイント獲得ボタンをクリック
+              let sele = ["[name='getpoint']"];
+              if (site === D.CODE.PIL) {
+                if (await this.isExistEle(sele[0], true, 2000)) {
+                  let ele = await this.getEle(sele[0], 0,2000);
+                  await this.clickEle(ele, 1000);
+                  await this.closeOtherWindow(this.driver);
+                }
+              } else if (site === D.CODE.PST) {
+                sele = [
+                  "img[hsrc*='bt_cert_01_o.gif']",
+                  "img[src*='_close_']",
+                  "li>input[type='radio']",
+                  "input[type='submit']", // 3
+                  "input[type='button']"
+                ];
+                if (await this.isExistEle(sele[4], true, 2000)) {
+                  let ele = await this.getEle(sele[4], 2000);
+                  await this.clickEle(ele, 1000);
+                  if (await this.isExistEle(sele[1], true, 2000)) {
+                    let ele = await this.getEle(sele[1], 2000);
+                    await this.clickEle(ele, 1000);
+                    for (let i = 0; i < 10; i++) {
+                      if (await this.isExistEle(sele[2], true, 2000)) {
+                        let eles = await this.getEles(sele[2], 2000);
+                        let choiceNum = libUtil.getRandomInt(0, eles.length - 2); // 最後は否定的な選択肢なので選ばないのがいい
+                        await this.clickEle(eles[choiceNum], 1000);
+                        if (await this.isExistEle(sele[3], true, 2000)) {
+                          let ele = await this.getEle(sele[3], 2000);
+                          await this.clickEle(ele, 1000);
+                        }
+                      }
+                    }
+                    if (await this.isExistEle(sele[3], true, 2000)) {
+                      let ele = await this.getEle(sele[3], 2000);
+                      await this.clickEle(ele, 1000);
+                    }
+                  }
+                }
+                else if (await this.isExistEle(sele[0], true, 2000)) {
+                  let ele = await this.getEle(sele[0], 2000);
+                  await this.clickEle(ele, 1000);
+                  await this.closeOtherWindow(this.driver);
+                }
+              }
             }
           } else {
             await this.driver.quit();
@@ -162,11 +208,11 @@ class PointMailClass extends BaseWebDriverWrapper {
   }
 
   // TODO 多分もう一つ親クラス作ってそこに実装がいいかも
-  async getEle(sele, i, time) {
+  async getEle(sele, time) {
     try {
-      if (!sele || !libUtil.isZeroOver(i)) throw "is not param[0] or param[1] is invalid";
+      if (!sele) throw "is not param[0] or param[1] is invalid";
       let eles = await this.getEles(sele, time);
-      return eles[i];
+      return eles[0];
     } catch (e) {
       this.logger.warn(e);
     }
@@ -192,7 +238,7 @@ class PointMailClass extends BaseWebDriverWrapper {
   async isExistEle(sele, showFlag, time) {
     try {
       if (!sele) throw "is not param[0]";
-      showFlag = showFlag === void 0 ? true : false;
+      // showFlag = showFlag === void 0 ? true : false;
       time = time ? time : 0;
       // let register = By.css(selector);
       // let is = isExistEle(this.driver.findElements(register));

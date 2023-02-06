@@ -324,6 +324,28 @@ function getPointUrls(urlMap, target, content, cType) {
           }
         }
         break;
+      case D.CODE.PIL:
+        signs = ["/mcd.asp?"];
+        if (row.indexOf(signs[0]) > -1) {
+          let url = "";
+          // text/plain　前提
+          url = row.substring(row.indexOf("http"));
+          if (url) {
+            urls.push(url.trim());
+          }
+        }
+        break;
+      case D.CODE.PST:
+        signs = ["/mclick.asp?", "/meqk.asp?pid="];
+        if (row.indexOf(signs[1]) > -1) {
+          let url = "";
+          // text/plain　前提
+          url = row.substring(row.indexOf("http"));
+          if (url) {
+            urls.push(url.trim());
+          }
+        }
+        break;
       case D.CODE.ECN:
         // https://ecnavi.jp/m/go/5QrIrSbi90/
         // https://ecnavi.jp/shopping_magazine/?p=zNck05beUJ1KRwb21PW3kh1nJhenUtpz7Qokd5Fen%2BbgGraEoeEGTF7Pg6mWB2fjKp1%2FCIEilXInjSbwM7Z0F8Qkc6YKlRLx7D2A0vNGO39Etlg7Kp%2FUyynjJIdgaPs8HyNsDXMtApbakvHB9xphdPfqbAA%2Byfc4Laqav1DCdfdLxujsHzpTF%2FH2Qo%2BRGnD0
