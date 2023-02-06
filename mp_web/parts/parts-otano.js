@@ -21,7 +21,7 @@ class PartsOtano extends BaseWebDriverWrapper {
         "input.btn-success",
         "li.list-group-item.active>strong",
         "div>label", // 2
-        "div>select",
+        "select.form-select",
         "", // 4
         "",
         "",
