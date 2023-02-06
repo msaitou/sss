@@ -19,7 +19,7 @@ class PartsOtano extends BaseWebDriverWrapper {
       // await driver.get(targetUrl); // 操作ページ表示
       let sele = [
         "input.btn-success",
-        "div.panel-heading>strong",
+        "li.list-group-item.active>strong",
         "div>label", // 2
         "div>select",
         "", // 4
@@ -89,8 +89,8 @@ class PartsOtano extends BaseWebDriverWrapper {
         if (await this.isExistEle(sele[0], true, 2000)) {
           ele = await this.getEle(sele[0], 3000);
           await this.clickEle(ele, 2000); // このページが閉じる？　picは少なくとも　gmyは閉じない
+          res = D.STATUS.DONE;
         }
-        res = D.STATUS.DONE;
       }
     } catch (e) {
       logger.warn(e);
