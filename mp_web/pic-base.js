@@ -264,6 +264,7 @@ class PicOtano extends PicMissonSupper {
             res = D.STATUS.DONE;
           }
         }
+        await driver.navigate().refresh();
       }
     }
     return res;
