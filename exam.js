@@ -32,7 +32,7 @@ const credentials = require("./config/gCre.json");
 // // なんか認証トークンを取得するためのコードを取得する？
 const { client_secret, client_id, redirect_uris } = credentials.installed;
 const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
-// const GET_CODE_FLAG = true;
+// const GET_CODE_FLAG = true;    // で、コンソールにでたURLをクリックして、なんか許可して進んでアクセスできないURLのcode=　の値を以下コードに書き換えて、下を有効にして実行するとtoken.jsonができる
 const GET_CODE_FLAG = false;
 if (!(global.manual || global.mobile)) {
   if (GET_CODE_FLAG) {
@@ -49,7 +49,7 @@ if (!(global.manual || global.mobile)) {
   } else {
     // // 認証コードの取得
     // Replace with the code you received from Google
-    const code = "4/0AX4XfWhpU4pDFr2mOd2FrijV32sPzgLd-9-nDBmaagYqyLJFJeChj_EvZPNrpBZ3MadbXg";
+    const code = "4/0AWtgzh7q1Sbsh4rNZYpKJonH710FkqGTJqDQ4RgzaNEeF3gttjMT5QZMMY_x1PvnMDLX-Q";
 
     oAuth2Client.getToken(code).then(({ tokens }) => {
       const tokenPath = path.join(__dirname, "token.json");

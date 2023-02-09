@@ -233,7 +233,23 @@ class RakuNews extends RakuMissonSupper {
       "",
     ];
     // topに飛ぶ
-    await this.openUrl(this.firstUrl); // 操作ページ表示
+    try {
+      await this.driver.manage().setTimeouts({ pageLoad: 10000 });
+      await this.openUrl(this.firstUrl); // 操作ページ表示
+    } catch (e) {
+      if (e.name != "TimeoutError") {
+        throw e;
+      } else {
+        try {
+          await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
+        } catch (e) {
+          this.logger.warn(e);
+        }
+      }
+    } finally {
+      await this.driver.manage().setTimeouts({ pageLoad: 180000 });
+    }
+
     let ele,
       eles,
       readedList = [];
@@ -262,14 +278,14 @@ class RakuNews extends RakuMissonSupper {
     // TODO　月1？月初にミッションの参加をしないとあかんぽい
     // TODO 週3回アクセスは先にアクセス
     let cSeleList = [
-      "#topics-category-all",
-      "#topics-category-entertainment", // 2
+      "#topics-category-entertainment",
       "#topics-category-poli-soci",
       "#topics-category-sports",
       "#topics-category-busi-econ",
       "#topics-category-world",
       "#topics-category-it",
       "#topics-category-life",
+      "#topics-category-all",
     ];
     await this.openUrl(this.firstUrl); // 操作ページ表示
     for (let cSele of cSeleList) {
