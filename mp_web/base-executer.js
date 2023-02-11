@@ -100,17 +100,18 @@ class BaseExecuter extends BaseWebDriverWrapper {
         diff = p - oldDoc[siteCode].p;
         diff = Math.round(diff * 100) / 100; // 小数点の誤差をなくす
         if (diff < 0) {
-          // TODO ちゃんと作るまではメール飛ばす
-          await mailOpe.send(this.logger, {
-            subject: `換金した疑い[${siteCode}]`,
-            contents: `直前のポイント：${oldDoc[siteCode].p}\n今回のポイント：${p}\n差額：${diff}`,
-          });
           if (nowDoc && nowDoc[siteCode] && nowDoc[siteCode].exch) {
             exch = nowDoc[siteCode].exch;
             // 手動で入力されたexchと今のポイント（円換算）を加算し、diffを再計算
             let tmpP = Math.round((p + exch) * 100) / 100; // 小数点の誤差をなくす
             diff = tmpP - oldDoc[siteCode].p;
             diff = Math.round(diff * 100) / 100; // 小数点の誤差をなくす
+          } else {
+            // TODO ちゃんと作るまではメール飛ばす
+            await mailOpe.send(this.logger, {
+              subject: `換金した疑い[${siteCode}]`,
+              contents: `直前のポイント：${oldDoc[siteCode].p}\n今回のポイント：${p}\n差額：${diff}`,
+            });
           }
         }
       }

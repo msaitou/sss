@@ -325,7 +325,11 @@ class BaseWebDriverWrapper {
   async openUrl(targetUrl) {
     let currentUrl = await this.driver.getCurrentUrl();
     if (currentUrl != targetUrl) {
-      await this.driver.get(targetUrl); // 最初のページ表示
+      try {
+        await this.driver.get(targetUrl); // 最初のページ表示
+      } catch (e) {
+        this.logger.warn(e);
+      }
     }
   }
   async ignoreKoukoku() {
