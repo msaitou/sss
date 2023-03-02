@@ -41,6 +41,7 @@ class PartsRead extends BaseWebDriverWrapper {
         let limit = matches[1];
         let triedFlag = false,
           isReaded = false;
+        let superBreakCnt = 0;
         for (let i = 0; i < limit; i++) {
           if (!triedFlag) await this.moveLastPage(isReaded), (triedFlag = true); // 最後のページに移動
           if (await this.isExistEle(sele[0], true, 2000)) {
@@ -83,6 +84,7 @@ class PartsRead extends BaseWebDriverWrapper {
             await this.movePrevPage();
             isReaded = false;
             i--; // ノーカン
+            if (superBreakCnt > 100) throw("無限ループしてるので失敗にします");
           }
         }
         res = D.STATUS.DONE;
@@ -117,7 +119,7 @@ class PartsRead extends BaseWebDriverWrapper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let sele = ["ol.pager>li>a", "ol.pager>li.next>a", "ol.pager>li.back>a"];
     if (siteInfo.code == D.CODE.GMY) {
-      sele = ["ul.pager>li>a", "ul.pager>li.next>a", "ul.pager>li.back>a"];
+      sele = ["ul.pager>li>a", "ul.pager>li.next>a", "ul.pager>li.prev>a"];
     }
     // 途中のページで呼ばれること前提　1つ前に遷移できるようにする
     if (await this.isExistEle(sele[2], true, 2000)) {
