@@ -929,6 +929,10 @@ class MopAnqHappy extends MopMissonSupper {
                       await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
                       await this.sleep(2000);
                       await this.closeElesWindowAndAlert([wid, wid2]);
+                      if (await this.isExistEle(sele[1], true, 2000)) {
+                        eles = await this.getEles(sele[1], 3000);
+                        await this.clickEle(eles[skip], 3000);
+                      }
                       i--;
                       continue;
                     }

@@ -566,8 +566,10 @@ class PicPointMoll extends PicMissonSupper {
               // }
             } else if (cSele.indexOf("aaaaa") > -1) {
             }
-            await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
-            await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+            if (wid2 != wid) {
+              await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+              await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+            }
           }
         }
         res = D.STATUS.DONE;
