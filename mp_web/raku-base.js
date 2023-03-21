@@ -322,6 +322,7 @@ class RakuNews extends RakuMissonSupper {
             }
           }
         }
+        else break;
         if (readedList.length > 25) break;
       }
       if (readedList.length > 25) break;
