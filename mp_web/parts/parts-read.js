@@ -84,7 +84,7 @@ class PartsRead extends BaseWebDriverWrapper {
             await this.movePrevPage();
             isReaded = false;
             i--; // ノーカン
-            if (superBreakCnt > 100) throw("無限ループしてるので失敗にします");
+            if (superBreakCnt++ > 100) throw("無限ループしてるので失敗にします");
           }
         }
         res = D.STATUS.DONE;
