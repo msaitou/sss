@@ -528,7 +528,7 @@ class CitGameKokuhaku extends CitMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(se[0], true, 2000)) {
       let el = await this.getEle(se[0], 3000);
-      await this.clickEleScrollWeak(el, 2000, 100);
+      await this.clickEleScrollWeak(el, 2000);
       await this.ignoreKoukoku();
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
