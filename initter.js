@@ -1,7 +1,7 @@
 const conf = require("config");
 const { Builder, By, until } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
-
+const fs = require("fs");
 exports.db = async function (coll, method, cond = {}, doc) {
   let log = getLogInstance();
   // log.info(0);
