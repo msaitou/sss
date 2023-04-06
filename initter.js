@@ -60,6 +60,7 @@ function getLogInstance() {
  */
 const thisLog = () => {
   const log = require("log4js");
+  const logPath = "./log/";
   log.configure({
     appenders: {
       // フォーマットリファレンス　https://log4js-node.github.io/log4js-node/layouts.html#pattern-format
@@ -69,11 +70,11 @@ const thisLog = () => {
       },
       app: {
         type: "dateFile",
-        filename: "log/a.log",
+        filename: `${logPath}/a.log`,
         pattern: "yyMMdd",
         keepFileExt: true,
         layout: { type: "pattern", pattern: "[%d{yy-MM-dd hh:mm:ss} %.4p] %m ->%f{2} %l" },
-        daysToKeep: 14, // 指定した日数分保持
+        // daysToKeep: 14, // 指定した日数分保持
       },
       wrapInfo: { type: "logLevelFilter", appender: "app", level: "info" },
     },
@@ -83,6 +84,18 @@ const thisLog = () => {
       default: { appenders: ["out", "wrapInfo"], level: "all", enableCallStack: true },
     },
   });
+    // 古いファイルを削除してくれないので、自分で消す
+  // 2個残す。　logファイルがあるフォルダで、m.*.logを古い順にけす
+  const KEEP_NUM = 7;
+  let files = fs.readdirSync(logPath);
+  files = files.filter((f) => /^(a|m)\.\d{6}\.log$/.test(f)); // aかm.数字6桁.logという文字列をチェック
+  let cnt = files.length;
+  for (let f of files) {
+    if (cnt > KEEP_NUM) {
+      fs.unlinkSync(`${logPath}/${f}`);
+      cnt--;
+    }
+  }
   const logger = log.getLogger();
   logger.level = "all";
   return logger;
@@ -99,7 +112,8 @@ const getDriverPath = async function () {
     try {
       // # Driverのダウンロードとアップデート
       await new Promise((resolve, reject) => {
-        selenium.ensure(path, (e) => {
+        // selenium.ensure(path, (e) => {
+        selenium.update(path, (e) => {
           if (e) console.error(e.stack);
           // log.info("?????");
           resolve(true);
