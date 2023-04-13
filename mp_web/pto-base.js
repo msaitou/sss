@@ -112,7 +112,8 @@ class PtoCommon extends PtoMissonSupper {
       if (await this.isExistEle(seleLoginLink, true, 2000)) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
-        let mobH = this.isMob ? 100 : 0;
+        // let mobH = this.isMob ? 100 : 0;
+        let mobH = 100;
         await this.clickEle(ele, 2000, mobH); // ログイン入力画面へ遷移 なぜかログインボタン押しただけでおｋ
         // let seleInput = {
         //   id: "input[name='rwsid']",
