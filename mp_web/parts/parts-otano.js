@@ -18,7 +18,7 @@ class PartsOtano extends BaseWebDriverWrapper {
     try {
       // await driver.get(targetUrl); // 操作ページ表示
       let sele = [
-        "input.btn-success",
+        "p>input.btn-success",
         "li.list-group-item.active>strong",
         "div>label", // 2
         "select.form-select",
