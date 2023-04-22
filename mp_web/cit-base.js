@@ -69,10 +69,10 @@ class CitBase extends BaseExecuter {
           case D.MISSION.GAME_KOKUHAKU:
             execCls = new CitGameKokuhaku(para);
             break;
-            case D.MISSION.GAME_DOKOMADE:
-              execCls = new CitGameDokomade(para);
-              break;
-          }
+          case D.MISSION.GAME_DOKOMADE:
+            execCls = new CitGameDokomade(para);
+            break;
+        }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
@@ -240,11 +240,7 @@ class CitCm extends CitMissonSupper {
 
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(
-        this.para,
-        this.cmMissionList,
-        "https://chance.cmnw.jp/game/"
-      );
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://chance.cmnw.jp/game/");
       await cmManage.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -395,8 +391,7 @@ class CitOtano extends CitMissonSupper {
           let eles0 = await this.getEles(sele[0], 3000),
             limit = eles0.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[0], true, 2000)))
-              eles0 = await this.getEles(sele[0], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[0], true, 2000))) eles0 = await this.getEles(sele[0], 3000);
             await this.clickEle(eles0[0], 3000);
             res = await Otano.do();
           }
@@ -425,22 +420,55 @@ class CitClick extends CitMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START`);
-    await this.openUrl(this.targetUrl); // 操作ページ表示
-
-    let sele = [".click_list a>img", ".pochitto a[target='_blank']"];
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      let eles = await this.getEles(sele[0], 2000);
-      for (let i = 0; i < eles.length; i++) {
-        await this.clickEle(eles[i], 3000, 40);
-        await this.closeOtherWindow(driver);
+    if (this.isMob) {
+      this.targetUrl = "https://www.chance.com/sp/mypage/tasklist.jsp";
+      let sele = [
+        "img[alt='タップして貯める']",
+        ".tap_list a>div>img",
+        "img[alt='毎日タップ']",
+        ".everyday_tap a>div>img",
+      ];
+      await this.openUrl(this.targetUrl); // 操作ページ表示
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 2000);
+        await this.clickEle(ele, 3000);
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let eles = await this.getEles(sele[1], 2000);
+          for (let i = 0; i < eles.length; i++) {
+            await this.clickEle(eles[i], 3000, 40);
+            await this.closeOtherWindow(driver);
+          }
+        }
       }
-    }
-    await this.openUrl(this.firstUrl); // 操作ページ表示
-    if (await this.isExistEle(sele[1], true, 2000)) {
-      let eles = await this.getEles(sele[1], 2000);
-      for (let i = 0; i < eles.length; i++) {
-        await this.clickEle(eles[i], 3000, 40);
-        await this.closeOtherWindow(driver);
+      await this.openUrl(this.targetUrl); // 操作ページ表示
+      if (await this.isExistEle(sele[2], true, 2000)) {
+        let ele = await this.getEle(sele[2], 2000);
+        await this.clickEle(ele, 3000);
+        if (await this.isExistEle(sele[3], true, 2000)) {
+          let eles = await this.getEles(sele[3], 2000);
+          for (let i = 0; i < eles.length; i++) {
+            await this.clickEle(eles[i], 3000, 40);
+            await this.closeOtherWindow(driver);
+          }
+        }
+      }
+    } else {
+      await this.openUrl(this.targetUrl); // 操作ページ表示
+      let sele = [".click_list a>img", ".pochitto a[target='_blank']"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let eles = await this.getEles(sele[0], 2000);
+        for (let i = 0; i < eles.length; i++) {
+          await this.clickEle(eles[i], 3000, 40);
+          await this.closeOtherWindow(driver);
+        }
+      }
+      await this.openUrl(this.firstUrl); // 操作ページ表示
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let eles = await this.getEles(sele[1], 2000);
+        for (let i = 0; i < eles.length; i++) {
+          await this.clickEle(eles[i], 3000, 40);
+          await this.closeOtherWindow(driver);
+        }
       }
     }
     logger.info(`${this.constructor.name} END`);
@@ -590,8 +618,7 @@ class CitAnqManga extends CitMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
             await this.clickEle(eles[eles.length - 1], 6000, 250);
             res = await AnkPark.doMobManga();
@@ -635,8 +662,7 @@ class CitAnqKenkou extends CitMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
             await this.clickEle(eles[eles.length - 1], 6000, 250);
             res = await AnkPark.doMobKenkou();
@@ -680,8 +706,7 @@ class CitAnqCook extends CitMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
             await this.clickEle(eles[eles.length - 1], 6000, 250);
             res = await AnkPark.doMobCook();
@@ -730,8 +755,7 @@ class CitAnqPark extends CitMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             let text = await eles[eles.length - 1].getText();
             text = text.split("\n").join("").split("\n").join("");
             if (await this.isExistEle(sele[2], true, 2000)) {

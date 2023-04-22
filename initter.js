@@ -150,7 +150,7 @@ exports.initBrowserDriver = async function (isMob = false, headless = false) {
   // アプリ内にプロファイルは保存しておきたい気がする。
   // pexのクッキーでログインの期限ぽいもの　削除すればログインが切れた。期限を過去にするのは意味なかった。
   // _pex_session
-  if (headless) chromeOptions.addArguments("--headless");
+  if (headless) chromeOptions.addArguments("--headless=new");
   let defoSer = null;
   try {
     defoSer = chrome.getDefaultService();
