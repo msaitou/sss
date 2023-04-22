@@ -34,7 +34,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
       for (let i = 0; i < 3; i++) {
         // スコアボード後、ここに戻る　２時間毎に３回チャレンジ可
         if (await this.isExistEle(sele[0], true, 2000)) {
-          let wid2 = await driver.getWindowHandle();
+          let winList = await driver.getAllWindowHandles();
           let ele = await this.getEles(sele[0], 3000);
           await this.clickEle(ele[0], 2000);
           if (await this.isExistEle(sele[1], true, 2000)) {
@@ -76,7 +76,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
               logger.warn(e);
             }
           }
-          await this.closeElesWindow([wid, wid2]);
+          await this.closeElesWindow(winList);
           await this.driver.manage().setTimeouts({ pageLoad: D.INTERVAL[180] }); // 元のタイムアウト時間に戻す
           let currentUrl = await driver.getCurrentUrl();
           if (currentUrl.indexOf(gameUrlHost) === -1) {
