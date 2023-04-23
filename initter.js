@@ -145,6 +145,7 @@ exports.initBrowserDriver = async function (isMob = false, headless = false) {
   chromeOptions.addArguments(`--profile-directory=${conf.chrome["profile"]}`);
   chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
   chromeOptions.addArguments("--lang=en");
+  chromeOptions.addArguments('--window-size=1920,1080');
   // アプリ外で操作したプロファイルでログイン中にし、アプリでそのプロファイルを利用する。
   // アプリ外で、どのプロファイルを使うか、デフォルトどのプロファイルを使うのがいいか。
   // アプリ内にプロファイルは保存しておきたい気がする。
