@@ -332,9 +332,9 @@ class EcnClick extends EcnMissonSupper {
         "a[href*='vote/choice']", // 教えてどっち
         "a[href*='doron']", // たぬきときつね
         "a[href*='garapon']", //　宝くじ　ガラポン  // 2
-        "a[href*='search_fund']", // 検索募金
+        // "a[href*='search_fund']", // 検索募金
         ".secondary-contents__item>a[href*='click_fund']", // クリック募金 // 4
-        "a[href*='dictionary_search']", // 辞書検索
+        // "a[href*='dictionary_search']", // 辞書検索
       ];
       if (this.isMob) {
         sele = ["li span.c_icon-contents-game"];
@@ -397,7 +397,7 @@ class EcnClick extends EcnMissonSupper {
                   }
                   break;
               }
-            }
+            } else await this.clickEle(ele, 2000); // ポップアップオープン
           }
           res = D.STATUS.DONE;
         }
@@ -486,7 +486,7 @@ class EcnClick extends EcnMissonSupper {
                   }
                   break;
               }
-            }
+            } else await this.clickEle(ele, 2000); // ポップアップオープン
           }
           res = D.STATUS.DONE;
         }

@@ -20,7 +20,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
     this.account = aca;
     this.isMob = isMob;
     this.isHeadless = isHeadless;
-    this.logger.debug(`${this.constructor.name} constructor`);
+    this.logger.debug(`${this.constructor.name} ${this.isMob ? "mobile Version" : ""} constructor`);
   }
   async main() {
     this.logger.info("BaseExecuter", "start");
@@ -34,9 +34,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
     };
     for (let i = 0; i < this.retryMax; i++) {
       try {
-        if (!this.getDriver()) {
-          this.setDriver(await this.webDriver(this.isMob, this.isHeadless));
-        }
+        if (!this.getDriver()) this.setDriver(await this.webDriver(this.isMob, this.isHeadless));
         para.driver = this.driver;
         await this.exec(para);
       } catch (e) {
