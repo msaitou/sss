@@ -785,6 +785,10 @@ class GenAnqMob extends GenMissonSupper {
                             await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
                             await this.sleep(2000);
                             await this.closeElesWindowAndAlert([wid, wid2]);
+                            if (await this.isExistEle(sele[1], true, 2000)) {
+                              eles = await this.getEles(sele[1], 3000);
+                              await this.clickEle(eles[skip], 3000);
+                            }
                             i--;
                             continue;
                           }
@@ -955,17 +959,15 @@ class GenGameDokomade extends GenMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
     let PGame = new PartsGame(this.para);
-    let sele = [
-      "a.btn_game",
-      "img[alt='どこまでのびるかな？']",
-      "#fluct-ad-overlay"
-    ];
+    let sele = ["a.btn_game", "img[alt='どこまでのびるかな？']", "#fluct-ad-overlay"];
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000);
       if (await this.isExistEle(sele[2], true, 2000)) {
-        await this.driver.executeScript(`document.querySelector('#fluct-ad-overlay').setAttribute('style', 'display:none;');`);
+        await this.driver.executeScript(
+          `document.querySelector('#fluct-ad-overlay').setAttribute('style', 'display:none;');`
+        );
       }
       if (await this.isExistEle(sele[1], true, 2000)) {
         ele0 = await this.getEle(sele[1], 3000);
