@@ -20,7 +20,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
     this.account = aca;
     this.isMob = isMob;
     this.isHeadless = isHeadless;
-    this.logger.debug(`${this.constructor.name} ${this.isMob ? "mobile Version" : ""} constructor`);
+    this.logger.info(`${this.constructor.name} ${this.isMob ? "mobile Version" : ""} constructor`);
   }
   async main() {
     this.logger.info("BaseExecuter", "start");

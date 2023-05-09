@@ -96,15 +96,15 @@ class DmyCommon extends DmyMissonSupper {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
         await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
-        seleLoginLink = "form[action*='login/ameba']>input";
-        if (await this.isExistEle(seleLoginLink, true, 2000)) {
+        // seleLoginLink = "form[action*='login/ameba']>input";
+        // if (await this.isExistEle(seleLoginLink, true, 2000)) {
           logger.debug(11102 - 2);
           ele = await this.getEle(seleLoginLink, 2000);
           await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
           let seleInput = {
             id: "input[name='accountId']",
             pass: "input[name='password']",
-            login: "input.c-btn--primary",
+            login: "[data-tap-id='login-button']",
           };
           // アカウント（メール）入力
           let inputEle = await this.getEle(seleInput.id, 500);
@@ -132,10 +132,10 @@ class DmyCommon extends DmyMissonSupper {
             });
             return;
           }
-        } else {
-          // 未ログインで、ログインボタンが見つかりません。
-          return;
-        }
+        // } else {
+        //   // 未ログインで、ログインボタンが見つかりません。
+        //   return;
+        // }
       } else {
         // 未ログインで、ログインボタンが見つかりません。
         return;

@@ -58,8 +58,8 @@ class PtoBase extends BaseExecuter {
     let startPage = "https://www.pointtown.com/";
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
-    let sele = ["div.c-header-user-point>p.c-point-large-label"];
-    if (this.isMob) sele[0] = "div.c-header-status__l-num>a.c-point-large-label";
+    let sele = ["li.c-header-youser-status-list__item>a.c-point-label"];
+    if (this.isMob) sele[0] = "dd.c-header-user__l-point>a.c-point-mid-label";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
@@ -101,8 +101,8 @@ class PtoCommon extends PtoMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
 
     await driver.get(siteInfo.entry_url); // エントリーページ表示
-    let seleIsLoggedIn = "div.c-header-user-point>p.c-point-large-label";
-    if (this.isMob) seleIsLoggedIn = "div.c-header-status__l-num>a.c-point-large-label";
+    let seleIsLoggedIn = "li.c-header-youser-status-list__item>a.c-point-label";
+    if (this.isMob) seleIsLoggedIn = "dd.c-header-user__l-point>a.c-point-mid-label";
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
