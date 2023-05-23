@@ -99,8 +99,8 @@ class DmyCommon extends DmyMissonSupper {
         // seleLoginLink = "form[action*='login/ameba']>input";
         // if (await this.isExistEle(seleLoginLink, true, 2000)) {
           logger.debug(11102 - 2);
-          ele = await this.getEle(seleLoginLink, 2000);
-          await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
+          // ele = await this.getEle(seleLoginLink, 2000);
+          // await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
           let seleInput = {
             id: "input[name='accountId']",
             pass: "input[name='password']",

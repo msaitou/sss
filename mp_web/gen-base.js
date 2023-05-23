@@ -226,7 +226,7 @@ class GenCm extends GenMissonSupper {
     } else await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
-      await this.clickEle(eles[0], 2000);
+      await this.clickEle(eles[0], 2000, this.isMob?155:0);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://gendama.cmnw.jp/game/");
@@ -850,7 +850,7 @@ class GenAnqKenkou extends GenMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele0, 3000);
+      await this.clickEle(ele0, 3000, this.isMob?155:0);
       await this.ignoreKoukoku();
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
