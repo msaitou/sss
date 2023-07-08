@@ -655,10 +655,10 @@ class GenAnqMob extends GenMissonSupper {
         let skip = 0; // バグって完了できないやつがあるのでスキップ
         if (await this.isExistEle(sele[6], true, 2000)) {
           let ele = await this.getEle(sele[6], 3000);
-          await this.clickEle(ele, 3000);
+          await this.clickEle(ele, 3000, 150);
           if (await this.isExistEle(sele[0], true, 2000)) {
             let eles = await this.getEles(sele[0], 3000);
-            await this.clickEle(eles[0], 2000);
+            await this.clickEle(eles[0], 2000, 150);
             let wid = await driver.getWindowHandle();
             await this.changeWindow(wid); // 別タブに移動する
             try {
@@ -809,7 +809,7 @@ class GenAnqMob extends GenMissonSupper {
                           await this.clickEle(ele, 3000);
                           if (await this.isExistEle(sele[0], true, 2000)) {
                             eles = await this.getEles(sele[0], 3000);
-                            await this.clickEle(eles[0], 2000);
+                            await this.clickEle(eles[0], 2000, 150);
                             await this.changeWindow(wid); // 別タブに移動する
                           }
                         }
