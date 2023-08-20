@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chromedriver": "^116.0.0",
     "config": "^3.3.8",
     "googleapis": "^109.0.1",
     "jsdom": "^20.0.3",
@@ -19,6 +20,6 @@
     "mongodb": "4.1",
     "node-imap": "^0.9.6",
     "selenium-download": "^2.0.16",
-    "selenium-webdriver": "^4.6.0"
+    "selenium-webdriver": "^4.11.1"
   }
 }

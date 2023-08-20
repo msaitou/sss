@@ -1,3 +1,5 @@
+https://googlechromelabs.github.io/chrome-for-testing/#stable
+
 mongodbドライバーは最初4.11だったけど、mongodb3.2系に接続できないため、4.1に固定
 ブレスト：：
 今動いてるマシン（saitonote,saitonote2,saitonote4）と、共存ができない。

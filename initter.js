@@ -1,5 +1,5 @@
 const conf = require("config");
-const { Builder, By, until } = require("selenium-webdriver");
+const { Builder, By, until, Capabilities } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const fs = require("fs");
 exports.db = async function (coll, method, cond = {}, doc) {
@@ -84,7 +84,7 @@ const thisLog = () => {
       default: { appenders: ["out", "wrapInfo"], level: "all", enableCallStack: true },
     },
   });
-    // 古いファイルを削除してくれないので、自分で消す
+  // 古いファイルを削除してくれないので、自分で消す
   // 2個残す。　logファイルがあるフォルダで、m.*.logを古い順にけす
   const KEEP_NUM = 7;
   let files = fs.readdirSync(logPath);
@@ -145,7 +145,7 @@ exports.initBrowserDriver = async function (isMob = false, headless = false) {
   chromeOptions.addArguments(`--profile-directory=${conf.chrome["profile"]}`);
   chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
   chromeOptions.addArguments("--lang=en");
-  chromeOptions.addArguments('--window-size=1920,1080');
+  chromeOptions.addArguments("--window-size=1920,1080");
   // アプリ外で操作したプロファイルでログイン中にし、アプリでそのプロファイルを利用する。
   // アプリ外で、どのプロファイルを使うか、デフォルトどのプロファイルを使うのがいいか。
   // アプリ内にプロファイルは保存しておきたい気がする。
@@ -163,6 +163,7 @@ exports.initBrowserDriver = async function (isMob = false, headless = false) {
     // chrome.setDefaultService(service);
     // chromeOptions.addArguments("--headless");
     if (isMob) {
+      chromeOptions.addArguments("--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 15_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148");
       chromeOptions.setMobileEmulation({
         deviceName: "Pixel 5",
       });
