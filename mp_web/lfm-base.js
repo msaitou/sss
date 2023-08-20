@@ -194,6 +194,7 @@ class LfmQuizKentei extends LfmMissonSupper {
       ".enquete-list td.cate",
       ".enquete-list td.status>a", // 2
       "td>form>input[name='submit']",
+      "#pfx_interstitial_close"
     ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
@@ -222,6 +223,7 @@ class LfmQuizKentei extends LfmMissonSupper {
                 ele = ele2[0];
               }
               await this.clickEle(ele, 3000);
+              
               res = await QuizKentei.doKentei();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             }
