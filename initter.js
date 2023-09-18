@@ -112,8 +112,8 @@ const getDriverPath = async function () {
     try {
       // # Driverのダウンロードとアップデート
       await new Promise((resolve, reject) => {
-        // selenium.ensure(path, (e) => {
-        selenium.update(path, (e) => {
+        selenium.ensure(path, (e) => {
+        // selenium.update(path, (e) => {
           if (e) console.error(e.stack);
           // log.info("?????");
           resolve(true);
