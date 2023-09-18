@@ -77,6 +77,7 @@ exports.Def = {
     ANQ_SUG: "anq_sug",
     ANQ_PARK: "anq_park",
     GACHA: "gacha",
+    NONE:"none",// ミッションが無いけどポイント総数だけ取得したいやつ
 
     MOLL_MANGA: "moll_manga",
     MOLL_COLUM: "moll_colum",

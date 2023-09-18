@@ -28,6 +28,9 @@ class DmyBase extends BaseExecuter {
           case D.MISSION.CLICK:
             execCls = new DmyClick(para);
             break;
+          case D.MISSION.NONE:
+            execCls = {do:()=>{true}};
+            break;
         }
         if (execCls) {
           this.logger.info(`${mission.main} 開始--`);
