@@ -239,6 +239,14 @@ const getDownloadUrl = async () => {
                   if (`${CHROME.DRIVER.NAME}${CHROME.DRIVER.EXTENSION[localOS]}` == fName) {
                     // ドライバーを所定の位置に移動
                     fs.renameSync(CHROME.DRIVER.DIR + zipEntry.entryName, CHROME.DRIVER.DIR + fName); // デフォルト上書き
+                    if (localOS === "linux64") {
+                      try {
+                        fs.chmodSync(CHROME.DRIVER.DIR + fName, "755");
+                      } catch (e) {
+                        console.log("The permissions for chromedriver have been changed!");
+                        throw e;
+                      }
+                    }
                     break;
                   }
                 }
