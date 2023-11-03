@@ -188,7 +188,7 @@ const CHROME = {
   },
   DRIVER: {
     DOWNLOAD_NAME: "chromedriver.zip",
-    DIR: "C:\\workspace\\sss\\bin\\",
+    DIR: conf.chrome.bin,
     NAME: "chromedriver",
     EXTENSION: { win64: ".exe", linux64: "" },
   },
