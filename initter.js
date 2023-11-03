@@ -201,18 +201,21 @@ const getDownloadUrl = async () => {
   let localDriverFullPath = `${CHROME.DRIVER.DIR}${CHROME.DRIVER.NAME}${CHROME.DRIVER.EXTENSION[localOS]}`;
   // console.log(localDriverFullPath, fs.existsSync(localDriverFullPath));
   if (fs.existsSync(localDriverFullPath))
-    localDriverVer = await getNowChromeVer(localDriverFullPath.split("\\").join("\\\\"), true);
+    localDriverVer = await getNowChromeVer(
+      localOS === "win64" ? localDriverFullPath.split("\\").join("\\\\") : localDriverFullPath,
+      true
+    );
   console.info(`localOS: ${localOS} local chromeDriverVersion:${localDriverVer} now chromeVersion:${browseVer}`);
 
   try {
-    return new Promise((resu, rej) =>{
+    return new Promise((resu, rej) => {
       req(url, async (err, res, body) => {
         // console.log(res);
         // let resObj = res.json();
         // レスポンスコードとHTMLを表示
-        // console.log('resObj:', resObj);
         // console.log('body:', JSON.stringify(JSON.parse(body), null, 2));
         let dObj = JSON.parse(body);
+        // console.log("resObj:", dObj.milestones, browseVer);
         if (dObj && dObj.milestones[browseVer]) {
           // console.log(dObj.milestones[browseVer].downloads.chromedriver);
           if (dObj.milestones[browseVer].downloads.chromedriver) {
@@ -273,7 +276,11 @@ const downloadDriver = async (url) => {
 const getNowChromeVer = async (fullPath, isDriver) => {
   return new Promise(async (res, rej) => {
     let v = "";
-    let cmd = isDriver ? `${fullPath} --version` : `wmic datafile where name="${fullPath}" get Version /value`;
+    let os = getLocalPlatformKey();
+    let cmd =
+      isDriver || os === "linux64"
+        ? `${fullPath} --version`
+        : `wmic datafile where name="${fullPath}" get Version /value`;
     await exec(cmd, (err, stdout, stderr) => {
       if (err) {
         console.error(err);
@@ -282,13 +289,9 @@ const getNowChromeVer = async (fullPath, isDriver) => {
       // console.log(stdout.trim());
       let browseVer = "";
       // どっちのchromeのバージョン文字列によって、切り取り方が変わる（メジャーバージョンの部分だけ抽出）
-      if (isDriver)
-        browseVer = stdout
-          .trim()
-          .replace("ChromeDriver ", "")
-          .split(
-            "."
-          )[0]; // ChromeDriver 116.0.5845.96 (1a391816688002153ef791ffe60d9e899a71a037-refs/branch-heads/5845@{#1382})
+      if (isDriver) browseVer = stdout.trim().replace("ChromeDriver ", "").split(".")[0];
+      else if (os === "linux64" && !isDriver) browseVer = stdout.trim().replace("Google Chrome ", "").split(".")[0];
+      // ChromeDriver 116.0.5845.96 (1a391816688002153ef791ffe60d9e899a71a037-refs/branch-heads/5845@{#1382})
       else browseVer = stdout.trim().replace("Version=", "").split(".")[0]; // Version=117.0.5938.150
       res(browseVer);
     });
@@ -300,5 +303,3 @@ const getLocalPlatformKey = () => {
   if ("win32" === process.platform) return "win64";
   else return "linux64"; // macは考慮外
 };
-
-
