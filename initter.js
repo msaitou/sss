@@ -169,7 +169,7 @@ exports.initBrowserDriver = async function (isMob = false, headless = false) {
         "--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 15_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
       );
       chromeOptions.setMobileEmulation({
-        deviceName: "Pixel 5",
+        deviceName: conf.chrome.mobile ? conf.chrome.mobile : "Pixel 5",
       });
     }
   }

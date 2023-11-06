@@ -101,6 +101,7 @@ class PstCommon extends PstMissonSupper {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
         await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
+        await this.ignoreKoukoku();
         let seleInput = {
           id: "input[name='mailadr']",
           pass: "input[name='passwd']",
