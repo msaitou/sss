@@ -221,8 +221,10 @@ class LfmQuizKentei extends LfmMissonSupper {
               }
               if (ele2 && ele2.length) {
                 ele = ele2[0];
+                await this.clickEle(ele, 3000);
               }
-              await this.clickEle(ele, 3000);
+              else ele = eles2[eles.length - 1], 
+                await this.clickEle(ele, 3000, 0, true);
               
               res = await QuizKentei.doKentei();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる

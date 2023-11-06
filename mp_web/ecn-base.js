@@ -265,7 +265,7 @@ class EcnNewsWatch extends EcnMissonSupper {
           await this.clickEle(ele, 2000);
           await this.ignoreKoukoku();
           let sele = [
-            ".article-latest li:not([style*='display: none'])>a",
+            ".article-latest-item a",
             "button.article-reaction__feeling-button",
             "a[href='/mainichi_news/']",
             "nnnn",
@@ -304,7 +304,7 @@ class EcnNewsWatch extends EcnMissonSupper {
             if (repeatNum === cnt) {
               res = D.STATUS.DONE;
             }
-          } else logger.info("今日はもう獲得済み");
+          } else logger.info("今日はもう獲得済み"), res = D.STATUS.DONE;
         }
       }
     } catch (e) {

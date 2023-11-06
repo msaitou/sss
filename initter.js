@@ -179,7 +179,6 @@ exports.initBrowserDriver = async function (isMob = false, headless = false) {
 
 const req = require("request"); // npm i request adm-zip
 const AdmZip = require("adm-zip");
-console.log("8888");
 const url = "https://googlechromelabs.github.io/chrome-for-testing/latest-versions-per-milestone-with-downloads.json";
 const exec = require("child_process").exec;
 const CHROME = {
@@ -283,7 +282,6 @@ const downloadDriver = async (url) => {
 
 const getNowChromeVer = async (fullPath, isDriver) => {
   return new Promise(async (res, rej) => {
-    let v = "";
     let os = getLocalPlatformKey();
     let cmd =
       isDriver || os === "linux64"
@@ -307,7 +305,7 @@ const getNowChromeVer = async (fullPath, isDriver) => {
 };
 // 実行環境によって、キーを返す。win32はwin64として、それ以外はlinux64　で返す
 const getLocalPlatformKey = () => {
-  console.log(process.platform);
+  // console.log(process.platform);
   if ("win32" === process.platform) return "win64";
   else return "linux64"; // macは考慮外
 };
