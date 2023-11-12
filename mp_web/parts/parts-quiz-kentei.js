@@ -139,7 +139,17 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
       // "div.overlay-item a.button-close"
     ];
     for (let s of seleOver) {
-      if (await this.isExistEle(s, true, 3000)) {
+      if (["a.gmoam_close_button"].indexOf(s) > -1) {
+        let iSele = ["iframe[title='GMOSSP iframe']"];
+        let iframe = await this.getEles(iSele[0], 1000);
+        await driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+        let inputEle = await this.getEle(s, 1000);
+        await inputEle.click();
+        if (await inputEle.isDisplayed()) {
+          await this.clickEle(inputEle, 2000);
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
+      else if (await this.isExistEle(s, true, 3000)) {
         let ele = await this.getEle(s, 2000);
         if (await ele.isDisplayed()) {
           if (s == seleOver[0]) {
