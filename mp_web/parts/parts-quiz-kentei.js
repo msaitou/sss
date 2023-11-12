@@ -135,6 +135,7 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
     let seleOver = [
       "#pfx_interstitial_close",
       "#inter-close",
+      "a.gmoam_close_button"
       // "div.overlay-item a.button-close"
     ];
     for (let s of seleOver) {
