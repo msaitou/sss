@@ -29,7 +29,7 @@ class DmyBase extends BaseExecuter {
             execCls = new DmyClick(para);
             break;
           case D.MISSION.NONE:
-            execCls = {do:()=>{true}};
+            execCls = { do: () => D.STATUS.DONE };
             break;
         }
         if (execCls) {
@@ -101,40 +101,40 @@ class DmyCommon extends DmyMissonSupper {
         await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
         // seleLoginLink = "form[action*='login/ameba']>input";
         // if (await this.isExistEle(seleLoginLink, true, 2000)) {
-          logger.debug(11102 - 2);
-          // ele = await this.getEle(seleLoginLink, 2000);
-          // await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
-          let seleInput = {
-            id: "input[name='accountId']",
-            pass: "input[name='password']",
-            login: "[data-tap-id='login-button']",
-          };
-          // アカウント（メール）入力
-          let inputEle = await this.getEle(seleInput.id, 500);
-          await inputEle.clear();
-          await inputEle.sendKeys(account[this.code].loginid);
+        logger.debug(11102 - 2);
+        // ele = await this.getEle(seleLoginLink, 2000);
+        // await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
+        let seleInput = {
+          id: "input[name='accountId']",
+          pass: "input[name='password']",
+          login: "[data-tap-id='login-button']",
+        };
+        // アカウント（メール）入力
+        let inputEle = await this.getEle(seleInput.id, 500);
+        await inputEle.clear();
+        await inputEle.sendKeys(account[this.code].loginid);
 
-          // パスワード入力
-          inputEle = await this.getEle(seleInput.pass, 500);
-          await inputEle.clear();
-          await inputEle.sendKeys(account[this.code].loginpass);
+        // パスワード入力
+        inputEle = await this.getEle(seleInput.pass, 500);
+        await inputEle.clear();
+        await inputEle.sendKeys(account[this.code].loginpass);
 
-          ele = await this.getEle(seleInput.login, 1000);
-          await this.clickEle(ele, 4000);
-          // ログインできてるか、チェック
-          if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
-            // ログインできてるのでOK
-            logger.info("ログインできました！");
-            return true;
-          } else {
-            // ログインできてないので、メール
-            logger.info("ログインできませんでした");
-            await mailOpe.send(logger, {
-              subject: `ログインできません[${this.code}] `,
-              contents: `なぜか ${this.code} にログインできません`,
-            });
-            return;
-          }
+        ele = await this.getEle(seleInput.login, 1000);
+        await this.clickEle(ele, 4000);
+        // ログインできてるか、チェック
+        if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
+          // ログインできてるのでOK
+          logger.info("ログインできました！");
+          return true;
+        } else {
+          // ログインできてないので、メール
+          logger.info("ログインできませんでした");
+          await mailOpe.send(logger, {
+            subject: `ログインできません[${this.code}] `,
+            contents: `なぜか ${this.code} にログインできません`,
+          });
+          return;
+        }
         // } else {
         //   // 未ログインで、ログインボタンが見つかりません。
         //   return;

@@ -107,12 +107,28 @@ class PicMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
-      let ele = await this.getEle(seleOver[0], 2000);
-      if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 2000);
-      } else this.logger.debug("オーバーレイは表示されてないです");
+    let seleOver = ["#pfx_interstitial_close", "div.overlay-item a.button-close"];
+    for (let s of seleOver) {
+      if (["a.gmoam_close_button"].indexOf(s) > -1) {
+        let iSele = ["iframe[title='GMOSSP iframe']"];
+        if (await this.isExistEle(iSele[0], true, 3000)) {
+          let iframe = await this.getEles(iSele[0], 1000);
+          await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+          let inputEle = await this.getEle(s, 1000);
+          if (await inputEle.isDisplayed()) {
+            await this.clickEle(inputEle, 2000);
+          } else this.logger.debug("オーバーレイは表示されてないです");
+          // もとのフレームに戻す
+          await this.driver.switchTo().defaultContent();
+        }
+      } else if (await this.isExistEle(s, true, 3000)) {
+        let ele = await this.getEle(s, 2000);
+        if (s == seleOver[0]) {
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        } else if (await ele.isDisplayed()) {
+          await this.clickEle(ele, 2000);
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
     }
   }
 }
@@ -212,7 +228,11 @@ class PicCm extends PicMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://pointi.cmnw.jp/game/");
+      let cmManage = new PartsCmManage(
+        this.para,
+        this.cmMissionList,
+        "https://pointi.cmnw.jp/game/"
+      );
       await cmManage.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -238,7 +258,8 @@ class PicOtano extends PicMissonSupper {
       let eles0 = await this.getEles(sele[0], 3000),
         limit = eles0.length;
       for (let i = 0; i < limit; i++) {
-        if (i !== 0 && (await this.isExistEle(sele[0], true, 2000))) eles0 = await this.getEles(sele[0], 3000);
+        if (i !== 0 && (await this.isExistEle(sele[0], true, 2000)))
+          eles0 = await this.getEles(sele[0], 3000);
         let limit2 = eles0.length;
         for (let j = 0; j < limit2; j++) {
           let index = limit2 - 1 - j;
@@ -508,8 +529,10 @@ class PicPointMoll extends PicMissonSupper {
                   let eles = await this.getEles(se[0], 3000);
                   let limit = eles.length;
                   for (let i = 0; i < limit; i++) {
-                    if (i != 0 && (await this.isExistEle(se[0], true, 3000))) eles = await this.getEles(se[0], 3000);
+                    if (i != 0 && (await this.isExistEle(se[0], true, 3000)))
+                      eles = await this.getEles(se[0], 3000);
                     let wid3 = await driver.getWindowHandle();
+                    await this.hideOverlay();
                     if (cSele == mainSeleMap[D.MISSION.MOLL_HIRAMEKI]) {
                       // 終了後一覧に戻らずブラウザが閉じるので、矯正別タブで
                       let rect = await eles[eles.length - 1].getRect();
