@@ -654,7 +654,7 @@ const { PartsAnkPark } = require("./parts/parts-ank-park.js");
 // アンケートパーク mobile用
 class MopAnqPark extends MopMissonSupper {
   firstUrl = "https://pc.moppy.jp/";
-  targetUrl = "https://pc.moppy.jp/enquete/";
+  targetUrl = "https://pc.moppy.jp/gamecontents/";
   constructor(para) {
     super(para);
     this.logger.debug(`${this.constructor.name} constructor`);
@@ -748,7 +748,7 @@ const { PartsResearch1 } = require("./parts/parts-research1.js");
 // リサーチ1　mobile用
 class MopResearch1 extends MopMissonSupper {
   firstUrl = "https://pc.moppy.jp/";
-  targetUrl = "https://pc.moppy.jp/enquete/";
+  targetUrl = "https://pc.moppy.jp/gamecontents/";
   constructor(para) {
     super(para);
     this.logger.debug(`${this.constructor.name} constructor`);
@@ -777,7 +777,7 @@ class MopResearch1 extends MopMissonSupper {
 // ハッピーアンケート mobile用
 class MopAnqHappy extends MopMissonSupper {
   firstUrl = "https://pc.moppy.jp/";
-  targetUrl = "https://pc.moppy.jp/enquete/";
+  targetUrl = "https://pc.moppy.jp/gamecontents/";
   constructor(para) {
     super(para);
     this.logger.debug(`${this.constructor.name} constructor`);
