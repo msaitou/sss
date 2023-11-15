@@ -60,12 +60,12 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
           await this.clickEle(eles[choiceNum], 2000);
           await this.hideOverlay();
           if (await this.isExistEle(sele[2], true, 3000)) {
-            let ele = await this.getEle(sele[2], 3000);
-            await this.clickEle(ele, 3000);
+            let ele = await this.getEle(sele[2], 1000);
+            await this.clickEle(ele, 1000);
             await this.hideOverlay();
             if (await this.isExistEle(sele[6], true, 3000)) {
               ele = await this.getEle(sele[6], 3000);
-              await this.clickEle(ele, 4000);
+              await this.clickEle(ele, 2000);
               await this.hideOverlay();
               if (await this.isExistEle(sele[0], true, 3000)) {
                 // 正解
@@ -73,8 +73,8 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
                 await this.clickEle(ele, 3000);
                 await this.hideOverlay();
                 if (await this.isExistEle(sele[3], true, 3000)) {
-                  ele = await this.getEle(sele[3], 5000);
-                  await this.clickEle(ele, 3000);
+                  ele = await this.getEle(sele[3], 3000);
+                  await this.clickEle(ele, 2000);
                   res = D.STATUS.DONE;
                 }
               } else if (await this.isExistEle(sele[4], true, 3000)) {
@@ -82,8 +82,8 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
                 i--;
                 wrongList.push(choiceText.trim());
                 logger.debug("wrongList:", wrongList);
-                ele = await this.getEle(sele[4], 5000);
-                await this.clickEle(ele, 3000);
+                ele = await this.getEle(sele[4], 3000);
+                await this.clickEle(ele, 2000);
               }
               await this.hideOverlay();
             }

@@ -76,7 +76,7 @@ class CriBase extends BaseExecuter {
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     let sele = ["p.g-navi__user__pt"];
-    if (this.isMob) sele[0] = "p.pt_num";
+    if (this.isMob) sele[0] = "p.HeaderNav__userPt";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
@@ -120,7 +120,7 @@ class CriCommon extends CriMissonSupper {
       await this.driver.executeScript(`document.querySelector('${sele[0]}').setAttribute('style', 'display:none;');`);
     }
     let seleIsLoggedIn = "p.g-navi__user__pt";
-    if (this.isMob) seleIsLoggedIn = "p.pt_num";
+    if (this.isMob) seleIsLoggedIn = "p.HeaderNav__userPt";
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
@@ -725,7 +725,7 @@ class CriAnqHappy extends CriMissonSupper {
     let skip = 0; // バグって完了できないやつがあるのでスキップ
     if (await this.isExistEle(sele[6], true, 2000)) {
       let ele = await this.getEle(sele[6], 3000);
-      await this.clickEle(ele, 3000);
+      await this.clickEle(ele, 3000, 50);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       try {
