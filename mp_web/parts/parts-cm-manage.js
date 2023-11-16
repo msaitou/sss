@@ -141,6 +141,37 @@ class CmSuper extends BaseWebDriverWrapper {
     this.setDriver(this.para.driver);
     this.logger.debug(`${this.constructor.name} constructor`);
   }
+  async hideOverlay() {
+    let seleOver = [
+      "#pfx_interstitial_close",
+      // "#inter-close",
+      // "a.gmoam_close_button"
+      // "div.overlay-item a.button-close"
+    ];
+    for (let s of seleOver) {
+      if (["a.gmoam_close_button"].indexOf(s) > -1) {
+        let iSele = ["iframe[title='GMOSSP iframe']"];
+        if (await this.isExistEle(iSele[0], true, 3000)) {
+          let iframe = await this.getEles(iSele[0], 1000);
+          await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+          let inputEle = await this.getEle(s, 1000);
+          if (await inputEle.isDisplayed()) {
+            await this.clickEle(inputEle, 2000);
+          } else this.logger.debug("オーバーレイは表示されてないです");
+          // もとのフレームに戻す
+          await this.driver.switchTo().defaultContent();
+        }
+      }
+      else if (await this.isExistEle(s, true, 3000)) {
+        let ele = await this.getEle(s, 2000);
+        if (await ele.isDisplayed()) {
+          if (s == seleOver[0]) {
+            await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+          } else await this.clickEle(ele, 2000);
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
+    }
+  }
 }
 // クマクマどっち
 class CmDotti extends CmSuper {
@@ -289,6 +320,7 @@ class CmKentei extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       let sele = [
         "img[src*='gotochi_pc']",
         "div>a[name='start button']",
@@ -308,12 +340,14 @@ class CmKentei extends CmSuper {
             ele = await this.getEle(sele[1], 3000);
             await this.clickEle(ele, 2000, 0, this.isMob);
             await this.ignoreKoukoku();
+            await this.hideOverlay();
             if (await this.isExistEle(sele[1], true, 3000)) {
               ele = await this.getEle(sele[1], 3000);
               await this.clickEle(ele, 2000, 0, this.isMob);
               // 12問
               for (let i = 0; i < 12; i++) {
                 await this.ignoreKoukoku();
+                await this.hideOverlay();
                 if (await this.isExistEle(sele[2], true, 3000)) {
                   let answerList = [];
                   if (await this.isExistEle(sele[3], true, 3000)) {

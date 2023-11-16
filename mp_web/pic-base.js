@@ -302,7 +302,7 @@ class PicClick extends PicMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START`);
-    let sele = ["div.click_btn"];
+    let sele = ["div.go_btn"];
     if (this.isMob) {
       // 先に　カードです
       sele = ["img[alt='スタートボタン']", "#last_btn"];
