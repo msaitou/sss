@@ -128,8 +128,9 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
-  async hideOverlay() {
+  async hideOverlay(seleStr) {
     let sele0 = ["#modal20th .btn_close>img"];
+    if (seleStr) sele0 = [seleStr];
     if (await this.isExistEle(sele0[0], true, 2000)) {
       let ele = await this.getEle(sele0[0], 3000);
       if (await ele.isDisplayed()) {
@@ -222,11 +223,7 @@ class GpoCm extends GpoMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(
-        this.para,
-        this.cmMissionList,
-        "https://gpoint.cmnw.jp/game/"
-      );
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://gpoint.cmnw.jp/game/");
       await cmManage.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -269,8 +266,7 @@ class GpoQuizKentei extends GpoMissonSupper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
               let text = await eles[eles.length - 1].getText();
               if (await this.isExistEle(sele[2], true, 2000)) {
                 let eles2 = await this.getEles(sele[2], 3000);
@@ -322,12 +318,7 @@ class GpoClick extends GpoMissonSupper {
       "https://pmall.gpoint.co.jp/kokangen/",
       "https://www.gpoint.co.jp/special/all/",
     ];
-    let sele = [
-      "#dailyChallenge a>img",
-      "#marutokuchallenge a>img",
-      ".mainichi1g a>img",
-      "#atarima10 a>img",
-    ];
+    let sele = ["#dailyChallenge a>img", "#marutokuchallenge a>img", ".mainichi1g a>img", "#atarima10 a>img"];
     for (let j in urls) {
       await this.openUrl(urls[j]); // 操作ページ表示
       if (await this.isExistEle(sele[j], true, 2000)) {
@@ -396,21 +387,20 @@ class GpoAnq extends GpoMissonSupper {
     await this.hideOverlay();
     let sele = [
       ".surveyList div.button>a",
-      "button[name='movenext']",
+      "button[value='movenext']",
       ".question-text", // 2
       "label:not(.hide)",
       "select", // 4
-      "button[name='movesubmit']",
+      "button[value='movesubmit']",
       "button.nextBtn", // 6
       "button[type='type']:not(.nextBtn)",
-      "",
+      "#dynamicReloadContainer a[data-bs-dismiss='modal']",
     ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
       let limit = eles.length;
       for (let j = 0; j < limit; j++) {
-        if (j !== 0 && (await this.isExistEle(sele[0], true, 2000)))
-          eles = await this.getEles(sele[0], 3000);
+        if (j !== 0 && (await this.isExistEle(sele[0], true, 2000))) eles = await this.getEles(sele[0], 3000);
         if (!eles.length) break;
         await this.clickEle(eles[0], 4000); //
         let wid = await driver.getWindowHandle();
@@ -419,6 +409,7 @@ class GpoAnq extends GpoMissonSupper {
           if (await this.isExistEle(sele[1], true, 2000)) {
             let ele = await this.getEle(sele[1], 3000);
             await this.clickEle(ele, 3000);
+            await this.hideOverlay(sele[8]);  // 選択しないで回答した場合、選んでポップアップが表示
             let noFoundCnt = 0;
             if (await this.isExistEle(sele[1], true, 2000)) {
               // 多分15問あり
@@ -430,14 +421,28 @@ class GpoAnq extends GpoMissonSupper {
                   q = q.split("\n").forEach((t) => {
                     qTmp += t.trim();
                   });
-                  let regex = "\\* (\\d+)*";
+                  let regex = "\\* (\\d+)*",
+                    qNo = "";
                   let matches = qTmp.match(regex);
                   logger.info(qTmp);
+                  matches && matches.length > 1 ? (qNo = matches[1]) : null;
                   let choiceNum = 0,
-                    qNo = matches[1],
                     ansSele = sele[3];
+                  if (qNo == "") {
+                    if (qTmp.indexOf("このアンケートに最後まで答えていただけますか") > -1) qNo = "1";
+                    else if (qTmp.indexOf("本アンケートへの回答に利用しているデバイスはどれですか") > -1) qNo = "2";
+                    else if (qTmp.indexOf("あなたの性別をお選びください") > -1) qNo = "3";
+                    else if (qTmp.indexOf("あなたは結婚をしていますか") > -1) qNo = "4";
+                    else if (qTmp.indexOf("あなたの年齢をお選びください") > -1) qNo = "5";
+                    else if (qTmp.indexOf("あなたのご職業をお選びください") > -1) qNo = "6";
+                    else if (qTmp.indexOf("あなたの居住形態をお選びください") > -1) qNo = "7";
+                    else if (qTmp.indexOf("お住まいの都道府県をお選びください") > -1) qNo = "8";
+                    else qNo = "9";
+                  }
                   switch (qNo) {
                     case "1": // *1 このアンケートに最後まで答えていただけますか？
+                      choiceNum = 0;
+                      break;
                     case "2": // * 2 本アンケートへの回答に利用しているデバイスはどれですか？
                     case "3": // *3 性別は？
                     case "4": // 結婚？
@@ -566,8 +571,7 @@ class GpoGameFurufuru extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     await this.hideOverlay();
     let gameUrlHost = "https://gpoint.dropgame.jp/";
-    if (this.isMob)
-      (gameUrlHost = "https://gpoint-sp.dropgame.jp/"), (sele[1] = "input[value='OK']");
+    if (this.isMob) (gameUrlHost = "https://gpoint-sp.dropgame.jp/"), (sele[1] = "input[value='OK']");
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
@@ -598,8 +602,7 @@ class GpoGameFurufuruSearch extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     await this.hideOverlay();
     let gameUrlHost = "https://gpoint.dropgame.jp/";
-    if (this.isMob)
-      (gameUrlHost = "https://gpoint-sp.dropgame.jp/"), (sele[1] = "input[value='OK']");
+    if (this.isMob) (gameUrlHost = "https://gpoint-sp.dropgame.jp/"), (sele[1] = "input[value='OK']");
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
@@ -710,8 +713,7 @@ class GpoPointMoll extends GpoMissonSupper {
                     let eles = await this.getEles(se[0], 3000);
                     let limit = eles.length;
                     for (let i = 0; i < limit; i++) {
-                      if (i != 0 && (await this.isExistEle(se[0], true, 3000)))
-                        eles = await this.getEles(se[0], 3000);
+                      if (i != 0 && (await this.isExistEle(se[0], true, 3000))) eles = await this.getEles(se[0], 3000);
                       let wid3 = await driver.getWindowHandle();
                       if (cSele == mainSeleMap[D.MISSION.MOLL_HIRAMEKI]) {
                         // 終了後一覧に戻らずブラウザが閉じるので、矯正別タブで
@@ -815,8 +817,7 @@ class GpoAnqColum extends GpoMissonSupper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -878,8 +879,7 @@ class GpoAnqPhoto extends GpoMissonSupper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -941,8 +941,7 @@ class GpoAnqZukan extends GpoMissonSupper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -1004,8 +1003,7 @@ class GpoAnqIjin extends GpoMissonSupper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -1053,12 +1051,7 @@ class GpoAnqHirameki extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = [
-      "a[onclick*='hirameki']",
-      ".enquete-list div>a:not(.answered)",
-      "",
-      "input.LgBtnsbmt",
-    ];
+    let sele = ["a[onclick*='hirameki']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000);
@@ -1072,8 +1065,7 @@ class GpoAnqHirameki extends GpoMissonSupper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -1121,12 +1113,7 @@ class GpoAnqJapan extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = [
-      "a[onclick*='nihonhyakkeitoenquete']",
-      ".enquete-list div>a:not(.answered)",
-      "",
-      "input.LgBtnsbmt",
-    ];
+    let sele = ["a[onclick*='nihonhyakkeitoenquete']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000);
@@ -1140,8 +1127,7 @@ class GpoAnqJapan extends GpoMissonSupper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -1189,12 +1175,7 @@ class GpoAnqSite extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = [
-      "a[onclick*='kansatsuryokutoenquete']",
-      ".enquete-list div>a",
-      "",
-      "input.LgBtnsbmt",
-    ];
+    let sele = ["a[onclick*='kansatsuryokutoenquete']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000);
@@ -1208,8 +1189,7 @@ class GpoAnqSite extends GpoMissonSupper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -1271,8 +1251,7 @@ class GpoAnqCook extends GpoMissonSupper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -1319,12 +1298,7 @@ class GpoAnqKenkou extends GpoMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = [
-      "img[alt='さらさら健康コラム']",
-      ".enquete-list div>a:not(.answered)",
-      "",
-      "input.LgBtnsbmt",
-    ];
+    let sele = ["img[alt='さらさら健康コラム']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
     await this.openUrl(this.targetUrl); // 操作ページ表示
     await this.hideOverlay();
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -1340,8 +1314,7 @@ class GpoAnqKenkou extends GpoMissonSupper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
               await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
               await this.clickEle(eles[eles.length - 1], 6000, 250);
               res = await AnkPark.doMobKenkou();
