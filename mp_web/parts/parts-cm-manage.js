@@ -145,24 +145,24 @@ class CmSuper extends BaseWebDriverWrapper {
     let seleOver = [
       "#pfx_interstitial_close",
       // "#inter-close",
-      // "a.gmoam_close_button"
+      "a.gmoam_close_button",
       // "div.overlay-item a.button-close"
     ];
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
         if (await this.isExistEle(iSele[0], true, 3000)) {
-          let iframe = await this.getEles(iSele[0], 1000);
-          await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
-          let inputEle = await this.getEle(s, 1000);
-          if (await inputEle.isDisplayed()) {
-            await this.clickEle(inputEle, 2000);
-          } else this.logger.debug("オーバーレイは表示されてないです");
-          // もとのフレームに戻す
-          await this.driver.switchTo().defaultContent();
+          await this.driver.executeScript(`document.querySelector("${iSele[0]}").remove();`);
+          // let iframe = await this.getEles(iSele[0], 1000);
+          // await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+          // let inputEle = await this.getEle(s, 1000);
+          // if (await inputEle.isDisplayed()) {
+          //   await this.clickEle(inputEle, 2000, 0, true);
+          // } else this.logger.debug("オーバーレイは表示されてないです");
+          // // もとのフレームに戻す
+          // await this.driver.switchTo().defaultContent();
         }
-      }
-      else if (await this.isExistEle(s, true, 3000)) {
+      } else if (await this.isExistEle(s, true, 3000)) {
         let ele = await this.getEle(s, 2000);
         if (await ele.isDisplayed()) {
           if (s == seleOver[0]) {
@@ -207,6 +207,7 @@ class CmDotti extends CmSuper {
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
+        await this.hideOverlay();
         try {
           if (await this.isExistEle(sele[1], true, 3000)) {
             // 3種各10問の計30問
@@ -216,6 +217,7 @@ class CmDotti extends CmSuper {
               if (j !== 0 && (await this.isExistEle(sele[1], true, 3000))) {
                 eles = await this.getEles(sele[1], 3000);
               }
+              await this.hideOverlay();
               await this.clickEle(eles[j], 2000); // ゆるめ、かため、究極のいずれかから進む
               let currentUrl = await this.ignoreKoukoku(); // 広告が画面いっぱいに入る時がある
               if (currentUrl.substr(-2) == "/n") {
@@ -230,6 +232,7 @@ class CmDotti extends CmSuper {
                 }
               }
               for (let i = 0; i < 10; i++) {
+                await this.hideOverlay();
                 if (await this.isExistEle(sele[3], true, 3000)) {
                   eles = await this.getEles(sele[3], 3000);
                   // clickして質問を選び、次へ　10問ある
@@ -238,6 +241,7 @@ class CmDotti extends CmSuper {
                   if (await this.isExistEle(sele[4], true, 3000)) {
                     ele = await this.getEle(sele[4], 3000);
                     await driver.wait(until.elementIsVisible(ele), 15000);
+                    await this.hideOverlay();
                     await this.clickEle(ele, 2000); // 次へ
                     if (await this.isExistEle(sele[5], true, 3000)) {
                       eles = await this.getEles(sele[5], 3000);
@@ -261,6 +265,7 @@ class CmDotti extends CmSuper {
                     }
                   }
                 } else {
+                  await this.hideOverlay();
                   if (await this.isExistEle(sele[9], true, 3000)) {
                     ele = await this.getEle(sele[9], 1000);
                     await this.clickEle(ele, 2000); // 大元に戻る
@@ -320,7 +325,6 @@ class CmKentei extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
-      await this.hideOverlay();
       let sele = [
         "img[src*='gotochi_pc']",
         "div>a[name='start button']",
@@ -335,6 +339,7 @@ class CmKentei extends CmSuper {
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
+        await this.hideOverlay();
         try {
           if (await this.isExistEle(sele[1], true, 3000)) {
             ele = await this.getEle(sele[1], 3000);
@@ -500,25 +505,25 @@ class CmPochi extends CmSuper {
         "a[href='/point/ex']>p", // 6
         "a[href='/top']>p",
       ];
-      if (this.isMob)
-        (sele[0] = "img[src*='pochitto_sp']"), (sele[1] = "#question>dd>a"), (sele[5] = sele[2]);
+      if (this.isMob) (sele[0] = "img[src*='pochitto_sp']"), (sele[1] = "#question>dd>a"), (sele[5] = sele[2]);
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
+        await this.hideOverlay();
         try {
           if (await this.isExistEle(sele[1], true, 3000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let j = 0; j < limit; j++) {
-              if (j !== 0 && (await this.isExistEle(sele[1], true, 3000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (j !== 0 && (await this.isExistEle(sele[1], true, 3000))) eles = await this.getEles(sele[1], 3000);
               try {
                 await driver.wait(until.elementIsVisible(eles[0]), 30000);
               } catch (e) {
                 logger.warn(e);
               }
+              await this.hideOverlay();
               await this.clickEle(eles[0], 2000); // 常に0番目で
               await this.ignoreKoukoku();
               if (await this.isExistEle(sele[2], true, 2000)) {
@@ -723,8 +728,7 @@ class CmColum extends CmSuper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i != 0 && (await this.isExistEle(sele[1], true, 3000))) eles = await this.getEles(sele[1], 3000);
               await this.clickEle(eles[eles.length - 1], 2000);
               res = await AnkPark.doMobColum();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
@@ -771,8 +775,7 @@ class CmPhoto extends CmSuper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i != 0 && (await this.isExistEle(sele[1], true, 3000))) eles = await this.getEles(sele[1], 3000);
               await this.clickEle(eles[eles.length - 1], 2000);
               res = await AnkPark.doMobPhoto();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
@@ -819,8 +822,7 @@ class CmSite extends CmSuper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i != 0 && (await this.isExistEle(sele[1], true, 3000))) eles = await this.getEles(sele[1], 3000);
               await this.clickEle(eles[eles.length - 1], 2000);
               res = await AnkPark.doMobSite();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
@@ -867,8 +869,7 @@ class CmZukan extends CmSuper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i != 0 && (await this.isExistEle(sele[1], true, 3000))) eles = await this.getEles(sele[1], 3000);
               await this.clickEle(eles[eles.length - 1], 2000);
               res = await AnkPark.doMobZukan();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
@@ -915,8 +916,7 @@ class CmJapan extends CmSuper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i != 0 && (await this.isExistEle(sele[1], true, 3000))) eles = await this.getEles(sele[1], 3000);
               await this.clickEle(eles[eles.length - 1], 2000);
               res = await AnkPark.doMobJapan();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
@@ -963,8 +963,7 @@ class CmCook extends CmSuper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
-              if (i != 0 && (await this.isExistEle(sele[1], true, 3000)))
-                eles = await this.getEles(sele[1], 3000);
+              if (i != 0 && (await this.isExistEle(sele[1], true, 3000))) eles = await this.getEles(sele[1], 3000);
               await this.clickEle(eles[eles.length - 1], 2000);
               res = await AnkPark.doMobCook();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる

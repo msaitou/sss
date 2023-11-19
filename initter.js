@@ -205,15 +205,17 @@ const getDownloadUrl = async () => {
       true
     );
   console.info(`localOS: ${localOS} local chromeDriverVersion:${localDriverVer} now chromeVersion:${browseVer}`);
+  if (localDriverVer === browseVer) return true; // 同じバージョンなら終了
 
   try {
     return new Promise((resu, rej) => {
-      req(url, async (err, res, body) => {
+      req({url, timeout:180000}, async (err, res, body) => {
+        if (err) rej(err );
         // console.log(res);
         // let resObj = res.json();
         // レスポンスコードとHTMLを表示
         // console.log('body:', JSON.stringify(JSON.parse(body), null, 2));
-        let dObj = JSON.parse(body);
+        let dObj =  JSON.parse(body);
         // console.log("resObj:", dObj.milestones, browseVer);
         if (dObj && dObj.milestones[browseVer]) {
           // console.log(dObj.milestones[browseVer].downloads.chromedriver);
