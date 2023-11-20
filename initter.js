@@ -137,7 +137,7 @@ exports.initBrowserDriver = async function (isMob = false, headless = false) {
   let log = getLogInstance();
   // # Driverのパスを取得する
   let driverPath = await getDriverPath();
-  log.info(`driver${driverPath}`);
+  // log.info(`driver${driverPath}`);
 
   // # Driverのパスを渡す
   let service = new chrome.ServiceBuilder(driverPath).build();
@@ -147,7 +147,6 @@ exports.initBrowserDriver = async function (isMob = false, headless = false) {
   chromeOptions.addArguments(`--profile-directory=${conf.chrome["profile"]}`);
   chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
   chromeOptions.addArguments("--lang=en");
-  chromeOptions.addArguments("--window-size=1920,1080");
   // アプリ外で操作したプロファイルでログイン中にし、アプリでそのプロファイルを利用する。
   // アプリ外で、どのプロファイルを使うか、デフォルトどのプロファイルを使うのがいいか。
   // アプリ内にプロファイルは保存しておきたい気がする。
@@ -171,6 +170,12 @@ exports.initBrowserDriver = async function (isMob = false, headless = false) {
       chromeOptions.setMobileEmulation({
         deviceName: conf.chrome.mobile ? conf.chrome.mobile : "Pixel 5",
       });
+      chromeOptions.addArguments("--window-size=1920,540");
+    }
+    else {
+      chromeOptions.addArguments("--window-size=1920,2160");  // ほんとは1080だけど以下の拡大率のため倍にする
+      chromeOptions.addArguments("force-device-scale-factor=0.5");  // 50%の拡大率で上記
+      chromeOptions.addArguments("high-dpi-support=0.5");
     }
   }
   return chrome.Driver.createSession(chromeOptions, service);
@@ -258,7 +263,7 @@ const getDownloadUrl = async () => {
           }
           // 今ローカルにあるchromedriverのバージョンを取得して、異なっている場合のみダウンロードする　TODO
         }
-        console.log("end");
+        // console.log("end");
         resu(true);
         // process.exit(1);
       });

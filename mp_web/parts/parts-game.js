@@ -140,6 +140,13 @@ class PartsGame extends BaseWebDriverWrapper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
     try {
+      // await this.exeScriptNoTimeOut(`document.body.style.zoom='50%'`);
+      // let ele = await this.getEle("body", 1000);
+      // await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SUBTRACT).keyUp(Key.SUBTRACT).perform();
+      // await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SUBTRACT).keyUp(Key.SUBTRACT).perform();
+      // await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SUBTRACT).keyUp(Key.SUBTRACT).perform();
+      // await driver.actions().keyDown(Key.CONTROL).sendKeys(ele, Key.SUBTRACT).keyUp(Key.CONTROL).perform();
+      // await driver.actions().keyDown(Key.CONTROL).sendKeys(ele, Key.SUBTRACT).perform();
       let se = [
         "a>img[alt='ボタン']",
         "div.game-buttons>img",
@@ -176,6 +183,7 @@ class PartsGame extends BaseWebDriverWrapper {
               await this.clickEle(el, 3000);
               await this.backNowMissionPage(gameUrlHost);
               if (await this.isExistEle(se[0], true, 2000)) {
+                await this.hideOverlay();
                 let el = await this.getEle(se[0], 3000);
                 await driver.wait(until.elementIsVisible(el), 5000);
                 await this.clickEle(el, 2000);
@@ -574,6 +582,37 @@ class PartsGame extends BaseWebDriverWrapper {
       if (await ele.isDisplayed()) {
         await this.clickEle(ele, 2000);
       } else this.logger.debug("オーバーレイは表示されてないです");
+    }
+  }
+  async hideOverlay() {
+    let seleOver = [
+      "div.overlay-item a.button-close",
+      // "#pfx_interstitial_close",
+      // "#inter-close",
+      "a.gmoam_close_button",
+    ];
+    for (let s of seleOver) {
+      if (["a.gmoam_close_button"].indexOf(s) > -1) {
+        let iSele = ["iframe[title='GMOSSP iframe']"];
+        if (await this.isExistEle(iSele[0], true, 3000)) {
+          await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").remove();`);
+          // let iframe = await this.getEles(iSele[0], 1000);
+          // await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+          // let inputEle = await this.getEle(s, 1000);
+          // if (await inputEle.isDisplayed()) {
+          //   await this.clickEle(inputEle, 2000, 0, true);
+          // } else this.logger.debug("オーバーレイは表示されてないです");
+          // // もとのフレームに戻す
+          // await this.driver.switchTo().defaultContent();
+        }
+      } else if (await this.isExistEle(s, true, 3000)) {
+        let ele = await this.getEle(s, 2000);
+        if (await ele.isDisplayed()) {
+          if (s == seleOver[0]) {
+            await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+          } else await this.clickEle(ele, 2000);
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
     }
   }
 }
