@@ -78,6 +78,25 @@ class PilMissonSupper extends BaseWebDriverWrapper {
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
   }
+  async hideOverlay2() {
+    let sele = [
+      "div.fc-dialog button.fc-user-interests-button",
+      "div.fc-dialog-content button.fc-chip",
+      "button.fc-user-interests-save-button",
+    ];
+    if (await this.isExistEle(sele[0], true, 4000)) {
+      let ele = await this.getEle(sele[0], 1000);
+      await this.clickEle(ele, 1000);
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let eles = await this.getEles(sele[1], 1000);
+        await this.clickEle(eles[libUtil.getRandomInt(0, eles.length)], 1000);
+        if (await this.isExistEle(sele[2], true, 2000)) {
+          let ele = await this.getEle(sele[2], 1000);
+          await this.clickEle(ele, 1000);
+        }
+      }
+    }
+  }
 }
 // このサイトの共通処理クラス
 class PilCommon extends PilMissonSupper {
@@ -160,11 +179,7 @@ class PilCm extends PilMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(
-        this.para,
-        this.cmMissionList,
-        "https://sugutama.cmnw.jp/game/"
-      );
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://sugutama.cmnw.jp/game/");
       await cmManage.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -193,6 +208,7 @@ class PilAnqPark extends PilMissonSupper {
       ".enquete-list td.status>a", // 2
       "td>form>input[name='submit']",
     ];
+    await this.hideOverlay2();
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000);
@@ -203,8 +219,7 @@ class PilAnqPark extends PilMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             let text = await eles[eles.length - 1].getText();
             if (await this.isExistEle(sele[2], true, 2000)) {
               let eles2 = await this.getEles(sele[2], 3000);
@@ -277,14 +292,12 @@ class PilClick extends PilMissonSupper {
     logger.info(`${this.constructor.name} START`);
 
     let sele = ["#frmMain a>img", "#mlist>li>a", "input[name='btnentry']"];
-    let urlList = [
-      this.targetUrl,
-      "https://www.point-island.com/otokuc2.asp",
-    ];
+    let urlList = [this.targetUrl, "https://www.point-island.com/otokuc2.asp"];
     await this.openUrl(urlList[0]); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
       for (let i = 0; i < eles.length; i++) {
+        await this.hideOverlay2();
         await this.clickEle(eles[i], 4000);
         await this.closeOtherWindow(driver);
       }
@@ -294,9 +307,11 @@ class PilClick extends PilMissonSupper {
       if (await this.isExistEle(sele[1], true, 2000)) {
         let eles = await this.getEles(sele[1], 2000);
         for (let i = 0; i < eles.length && i < 6; i++) {
+          await this.hideOverlay2();
           await this.clickEle(eles[i], 4000);
           await this.closeOtherWindow(driver);
         }
+        await this.hideOverlay2();
         if (await this.isExistEle(sele[2], true, 2000)) {
           let ele = await this.getEle(sele[2], 2000);
           await this.clickEle(ele, 4000);

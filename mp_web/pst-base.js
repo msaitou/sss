@@ -79,6 +79,25 @@ class PstMissonSupper extends BaseWebDriverWrapper {
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
   }
+  async hideOverlay2() {
+    let sele = [
+      "div.fc-dialog button.fc-user-interests-button",
+      "div.fc-dialog-content button.fc-chip",
+      "button.fc-user-interests-save-button",
+    ];
+    if (await this.isExistEle(sele[0], true, 4000)) {
+      let ele = await this.getEle(sele[0], 1000);
+      await this.clickEle(ele, 1000);
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let eles = await this.getEles(sele[1], 1000);
+        await this.clickEle(eles[libUtil.getRandomInt(0, eles.length)], 1000);
+        if (await this.isExistEle(sele[2], true, 2000)) {
+          let ele = await this.getEle(sele[2], 1000);
+          await this.clickEle(ele, 1000);
+        }
+      }
+    }
+  }
 }
 // このサイトの共通処理クラス
 class PstCommon extends PstMissonSupper {
@@ -195,6 +214,7 @@ class PstAnqPark extends PstMissonSupper {
       ".enquete-list td.status>a", // 2
       "td>form>input[name='submit']",
     ];
+    await this.hideOverlay2();
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000);
@@ -288,6 +308,7 @@ class PstClick extends PstMissonSupper {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
       for (let i = 0; i < eles.length; i++) {
+        await this.hideOverlay2();
         await this.clickEle(eles[i], 4000);
         await this.closeOtherWindow(driver);
       }
@@ -297,10 +318,12 @@ class PstClick extends PstMissonSupper {
       if (await this.isExistEle(sele[1], true, 2000)) {
         let eles = await this.getEles(sele[1], 2000);
         for (let i = 0; i < eles.length && i < 6; i++) {
+          await this.hideOverlay2();
           await this.clickEle(eles[i], 4000);
           await this.closeOtherWindow(driver);
         }
         if (await this.isExistEle(sele[2], true, 2000)) {
+          await this.hideOverlay2();
           let ele = await this.getEle(sele[2], 2000);
           await this.clickEle(ele, 4000);
         }
