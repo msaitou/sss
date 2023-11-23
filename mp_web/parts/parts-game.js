@@ -50,6 +50,8 @@ class PartsGame extends BaseWebDriverWrapper {
           await this.backNowMissionPage(gameUrlHost);
           // 勝手に動く
           await this.sleep(10000);
+          await this.hideOverlay();
+          await this.sleep(5000);
           if (await this.isExistEle(se[2], true, 3000)) {
             let el = await this.getEle(se[2], 3000);
             await this.clickEle(el, 2000); // トップへ
@@ -112,6 +114,7 @@ class PartsGame extends BaseWebDriverWrapper {
           await this.backNowMissionPage(gameUrlHost);
           // 勝手に動く
           await this.sleep(20000);
+          await this.hideOverlay();
           if (await this.isExistEle(se[2], true, 3000)) {
             let el = await this.getEle(se[2], 3000);
             await this.clickEle(el, 2000); // トップへ
@@ -245,6 +248,7 @@ class PartsGame extends BaseWebDriverWrapper {
             let els = await this.getEles(se[1], 3000);
             await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 7000);
             await this.backNowMissionPage(gameUrlHost);
+            await this.hideOverlay();
             await this.sleep(5000);
             if (await this.isExistEle(se[0], true, 2000)) {
               let el = await this.getEle(se[0], 3000);
@@ -309,16 +313,29 @@ class PartsGame extends BaseWebDriverWrapper {
             await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 3000);
             await this.backNowMissionPage(gameUrlHost);
             await this.sleep(10000);
+            let waitEls = [];
             for (let seButton of [se[2], se[4]]) {
               if (await this.isExistEle(seButton, true, 3000)) {
                 let el = await this.getEle(seButton, 2000);
-                if (await el.isDisplayed()) {
-                  await driver.wait(until.elementIsVisible(el), 10000);
-                  await this.clickEle(el, 3000);
-                  await this.backNowMissionPage(gameUrlHost);
-                }
+                waitEls.push(el);
               }
             }
+            try {
+              await driver.wait(
+                until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null,
+                10000
+              );
+            } catch (e) {
+              this.logger.info("表示待ちのタイムアウト");
+            }
+            for (let button of waitEls) {
+              if (await button.isDisplayed()) {
+                await this.clickEle(button, 3000);
+                await this.backNowMissionPage(gameUrlHost);
+                break;
+              }
+            }
+            await this.hideOverlay();
             if (await this.isExistEle(se[0], true, 2000)) {
               let el = await this.getEle(se[0], 3000);
               await driver.wait(until.elementIsVisible(el), 10000);
@@ -352,21 +369,13 @@ class PartsGame extends BaseWebDriverWrapper {
     try {
       let se = [
         "a>img[alt='ボタン']",
-        "div.game-cards[style='display: block;']>img",
+        // "div.game-cards[style='display: block;']>img",
+        "div.game-card div.game-card-inner",
         "img[alt='進む']", // 2
         "#status_1>span",
         "img[alt='獲得した報酬をゲットする']",
       ];
-      // if (this.isMob) (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
-      // await this.ignoreKoukoku();
       let limit = 20; // 基本は
-      // if (await this.isExistEle(se[3], true, 2000)) {
-      //   let el = await this.getEle(se[3], 3000);
-      //   let text = await el.getText();
-      //   let regex = "あと(\\d+)回*";
-      //   let matches = text.match(regex);
-      //   if (matches[1]) limit = Number(matches[1]);
-      // }
       let gameUrlHost = await driver.getCurrentUrl();
       gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
       for (let j = 0; j < limit; j++) {
@@ -381,17 +390,29 @@ class PartsGame extends BaseWebDriverWrapper {
             await driver.wait(until.elementIsVisible(els[0]), 5000);
             await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 3000);
             await this.backNowMissionPage(gameUrlHost);
-            await this.sleep(10000);
+            let waitEls = [];
             for (let seButton of [se[2], se[4]]) {
               if (await this.isExistEle(seButton, true, 3000)) {
                 let el = await this.getEle(seButton, 2000);
-                if (await el.isDisplayed()) {
-                  await driver.wait(until.elementIsVisible(el), 10000);
-                  await this.clickEle(el, 3000);
-                  await this.backNowMissionPage(gameUrlHost);
-                }
+                waitEls.push(el);
               }
             }
+            try {
+              await driver.wait(
+                until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null,
+                10000
+              );
+            } catch (e) {
+              this.logger.info("表示待ちのタイムアウト");
+            }
+            for (let button of waitEls) {
+              if (await button.isDisplayed()) {
+                await this.clickEle(button, 3000);
+                await this.backNowMissionPage(gameUrlHost);
+                break;
+              }
+            }
+            await this.hideOverlay();
             if (await this.isExistEle(se[0], true, 2000)) {
               let el = await this.getEle(se[0], 3000);
               await driver.wait(until.elementIsVisible(el), 10000);
@@ -431,16 +452,7 @@ class PartsGame extends BaseWebDriverWrapper {
         "#status_1>span",
         "img[alt='獲得した報酬をゲットする']",
       ];
-      // if (this.isMob) (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
-      // await this.ignoreKoukoku();
       let limit = 20; // 基本は
-      // if (await this.isExistEle(se[3], true, 2000)) {
-      //   let el = await this.getEle(se[3], 3000);
-      //   let text = await el.getText();
-      //   let regex = "あと(\\d+)回*";
-      //   let matches = text.match(regex);
-      //   if (matches[1]) limit = Number(matches[1]);
-      // }
       let gameUrlHost = await driver.getCurrentUrl();
       gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
       for (let j = 0; j < limit; j++) {
@@ -450,31 +462,44 @@ class PartsGame extends BaseWebDriverWrapper {
           await driver.wait(until.elementIsVisible(el), 5000);
           await this.clickEle(el, 2000);
           await this.backNowMissionPage(gameUrlHost);
-
-          if (await this.isExistEle(se[1], true, 2000)) {
-            let els = await this.getEles(se[1], 3000);
-            await driver.wait(until.elementIsVisible(els[0]), 5000);
-            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 3000);
-            await this.backNowMissionPage(gameUrlHost);
-            await this.sleep(10000);
-            for (let seButton of [se[2], se[4]]) {
-              if (await this.isExistEle(seButton, true, 3000)) {
-                let el = await this.getEle(seButton, 2000);
-                if (await el.isDisplayed()) {
-                  await driver.wait(until.elementIsVisible(el), 10000);
-                  await this.clickEle(el, 3000);
+          for (let k = 0; k < 5; k++) {
+            if (await this.isExistEle(se[1], true, 2000)) {
+              let els = await this.getEles(se[1], 3000);
+              await driver.wait(until.elementIsVisible(els[0]), 5000);
+              await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 3000);
+              await this.backNowMissionPage(gameUrlHost);
+              let waitEls = [];
+              for (let seButton of [se[2], se[4]]) {
+                if (await this.isExistEle(seButton, true, 3000)) {
+                  let el = await this.getEle(seButton, 2000);
+                  waitEls.push(el);
+                }
+              }
+              try {
+                await driver.wait(
+                  until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null,
+                  10000
+                );
+              } catch (e) {
+                this.logger.info("表示待ちのタイムアウト");
+              }
+              for (let button of waitEls) {
+                if (await button.isDisplayed()) {
+                  await this.clickEle(button, 3000);
                   await this.backNowMissionPage(gameUrlHost);
+                  break;
                 }
               }
             }
-            if (await this.isExistEle(se[0], true, 2000)) {
-              let el = await this.getEle(se[0], 3000);
-              await driver.wait(until.elementIsVisible(el), 10000);
-              await this.clickEle(el, 3000);
-              await this.backNowMissionPage(gameUrlHost);
-            }
-          } else break;
-        }
+          }
+          await this.hideOverlay();
+          if (await this.isExistEle(se[0], true, 2000)) {
+            let el = await this.getEle(se[0], 3000);
+            await driver.wait(until.elementIsVisible(el), 10000);
+            await this.clickEle(el, 3000);
+            await this.backNowMissionPage(gameUrlHost);
+          }
+        } else break;
       }
       res = D.STATUS.DONE;
       // if (await this.isExistEle(se[3], true, 2000)) {
@@ -575,15 +600,6 @@ class PartsGame extends BaseWebDriverWrapper {
     }
   }
 
-  async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
-      let ele = await this.getEle(seleOver[0], 2000);
-      if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 2000);
-      } else this.logger.debug("オーバーレイは表示されてないです");
-    }
-  }
   async hideOverlay() {
     let seleOver = [
       "div.overlay-item a.button-close",
