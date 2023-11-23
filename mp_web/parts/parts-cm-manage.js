@@ -716,7 +716,7 @@ class CmColum extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
-      let sele = [".o-content__boxlist img[src*='colum']", "div>a:not(.answered)"];
+      let sele = [".o-content__boxlist img[src*='colum']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
@@ -763,7 +763,7 @@ class CmPhoto extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
-      let sele = [".o-content__boxlist img[src*='photo']", "div>a:not(.answered)"];
+      let sele = [".o-content__boxlist img[src*='photo']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
@@ -810,7 +810,7 @@ class CmSite extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
-      let sele = [".o-content__boxlist img[src*='observation']", "div>a:not(.answered)"];
+      let sele = [".o-content__boxlist img[src*='observation']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
@@ -857,7 +857,7 @@ class CmZukan extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
-      let sele = [".o-content__boxlist img[src*='zoo']", "div>a:not(.answered)"];
+      let sele = [".o-content__boxlist img[src*='zoo']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
@@ -904,7 +904,7 @@ class CmJapan extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
-      let sele = [".o-content__boxlist img[src*='japan']", "div>a:not(.answered)"];
+      let sele = [".o-content__boxlist img[src*='japan']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
@@ -951,7 +951,7 @@ class CmCook extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
-      let sele = [".o-content__boxlist img[src*='food']", "div>a:not(.answered)"];
+      let sele = [".o-content__boxlist img[src*='food']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
