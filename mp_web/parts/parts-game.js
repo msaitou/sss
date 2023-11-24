@@ -37,6 +37,7 @@ class PartsGame extends BaseWebDriverWrapper {
       gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
       for (let j = 0; j < limit; j++) {
         logger.info(`${j}/${limit}回目-----------`);
+        await this.hideOverlay();
         for (let i = 0; i < 2; i++) {
           if (await this.isExistEle(se[0], true, 2000)) {
             let el = await this.getEle(se[0], 3000);
@@ -101,6 +102,7 @@ class PartsGame extends BaseWebDriverWrapper {
       gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
       for (let j = 0; j < limit; j++) {
         logger.info(`${j}/${limit}回目-----------`);
+        await this.hideOverlay();
         for (let i = 0; i < 2; i++) {
           if (await this.isExistEle(se[0], true, 2000)) {
             let el = await this.getEle(se[0], 3000);
@@ -603,7 +605,7 @@ class PartsGame extends BaseWebDriverWrapper {
   async hideOverlay() {
     let seleOver = [
       "div.overlay-item a.button-close",
-      // "#pfx_interstitial_close",
+      "#pfx_interstitial_close",
       // "#inter-close",
       "a.gmoam_close_button",
     ];
@@ -623,8 +625,8 @@ class PartsGame extends BaseWebDriverWrapper {
         }
       } else if (await this.isExistEle(s, true, 3000)) {
         let ele = await this.getEle(s, 2000);
-        if (await ele.isDisplayed()) {
-          if (s == seleOver[0]) {
+        if ((await ele.isDisplayed()) || (this.isMob && s == "#pfx_interstitial_close")) {
+          if (["div.overlay-item a.button-close", "#pfx_interstitial_close"].indexOf(seleOver[0]) > -1) {
             await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
           } else await this.clickEle(ele, 2000);
         } else this.logger.debug("オーバーレイは表示されてないです");

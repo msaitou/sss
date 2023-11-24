@@ -36,7 +36,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         if (await this.isExistEle(sele[0], true, 2000)) {
           let winList = await driver.getAllWindowHandles();
           let ele = await this.getEles(sele[0], 3000);
-          await this.clickEle(ele[0], 2000);
+          await this.clickEle(ele[0], 4000);
           if (await this.isExistEle(sele[1], true, 2000)) {
             let ele = await this.getEle(sele[1], 3000);
             let rect = await ele.getRect();
