@@ -111,6 +111,7 @@ class PstCommon extends PstMissonSupper {
     await driver.get(siteInfo.entry_url); // エントリーページ表示
     let seleIsLoggedIn = "p.point>strong";
     logger.debug(11100);
+    await this.hideOverlay2();
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);

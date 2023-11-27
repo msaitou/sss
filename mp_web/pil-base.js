@@ -110,6 +110,7 @@ class PilCommon extends PilMissonSupper {
     await driver.get(siteInfo.entry_url); // エントリーページ表示
     let seleIsLoggedIn = "table.memberinfo strong";
     logger.debug(11100);
+    await this.hideOverlay2();
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
