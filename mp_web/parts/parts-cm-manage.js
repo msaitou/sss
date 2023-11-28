@@ -724,12 +724,12 @@ class CmColum extends CmSuper {
         await this.changeWindow(wid); // 別タブに移動する
         let AnkPark = new PartsAnkPark(this.para);
         try {
-          await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 3000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i != 0 && (await this.isExistEle(sele[1], true, 3000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               await this.clickEle(eles[eles.length - 1], 2000);
               res = await AnkPark.doMobColum();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
@@ -772,12 +772,12 @@ class CmPhoto extends CmSuper {
         await this.changeWindow(wid); // 別タブに移動する
         let AnkPark = new PartsAnkPark(this.para);
         try {
-          await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 3000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i != 0 && (await this.isExistEle(sele[1], true, 3000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               await this.clickEle(eles[eles.length - 1], 2000);
               res = await AnkPark.doMobPhoto();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
@@ -820,12 +820,12 @@ class CmSite extends CmSuper {
         await this.changeWindow(wid); // 別タブに移動する
         let AnkPark = new PartsAnkPark(this.para);
         try {
-          await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 3000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i != 0 && (await this.isExistEle(sele[1], true, 3000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               await this.clickEle(eles[eles.length - 1], 2000);
               res = await AnkPark.doMobSite();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
@@ -868,12 +868,12 @@ class CmZukan extends CmSuper {
         await this.changeWindow(wid); // 別タブに移動する
         let AnkPark = new PartsAnkPark(this.para);
         try {
-          await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 3000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i != 0 && (await this.isExistEle(sele[1], true, 3000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               await this.clickEle(eles[eles.length - 1], 2000);
               res = await AnkPark.doMobZukan();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
@@ -916,12 +916,12 @@ class CmJapan extends CmSuper {
         await this.changeWindow(wid); // 別タブに移動する
         let AnkPark = new PartsAnkPark(this.para);
         try {
-          await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 3000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i != 0 && (await this.isExistEle(sele[1], true, 3000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               await this.clickEle(eles[eles.length - 1], 2000);
               res = await AnkPark.doMobJapan();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
@@ -964,12 +964,12 @@ class CmCook extends CmSuper {
         await this.changeWindow(wid); // 別タブに移動する
         let AnkPark = new PartsAnkPark(this.para);
         try {
-          await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 3000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i != 0 && (await this.isExistEle(sele[1], true, 3000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               await this.clickEle(eles[eles.length - 1], 2000);
               res = await AnkPark.doMobCook();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
