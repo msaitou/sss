@@ -41,8 +41,9 @@ class PartsGame extends BaseWebDriverWrapper {
         for (let i = 0; i < 2; i++) {
           if (await this.isExistEle(se[0], true, 2000)) {
             let el = await this.getEle(se[0], 3000);
-            await this.clickEle(el, 2000);
+            await this.clickEle(el, 1000);
             await this.backNowMissionPage(gameUrlHost);
+            await this.hideOverlay();
           }
         }
         if (await this.isExistEle(se[1], true, 2000)) {

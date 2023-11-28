@@ -164,8 +164,8 @@ class CmSuper extends BaseWebDriverWrapper {
         }
       } else if (await this.isExistEle(s, true, 3000)) {
         let ele = await this.getEle(s, 2000);
-        if (await ele.isDisplayed()) {
-          if (s == seleOver[0]) {
+        if ((await ele.isDisplayed()) || (this.isMob && s == "#pfx_interstitial_close")) {
+          if (["div.overlay-item a.button-close", "#pfx_interstitial_close"].indexOf(seleOver[0]) > -1) {
             await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
           } else await this.clickEle(ele, 2000);
         } else this.logger.debug("オーバーレイは表示されてないです");
@@ -204,7 +204,7 @@ class CmDotti extends CmSuper {
       if (this.isMob) sele[0] = "img[src*='dotti2_sp']";
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        await this.clickEle(ele, 2000, this.isMob ? (siteInfo.code == D.CODE.PTO ? 500 : 100) : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         await this.hideOverlay();
@@ -336,7 +336,7 @@ class CmKentei extends CmSuper {
       if (this.isMob) sele[0] = "img[src*='gotochi_sp']";
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        await this.clickEle(ele, 2000, this.isMob ? (siteInfo.code == D.CODE.PTO ? 500 : 100) : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         await this.hideOverlay();
@@ -508,7 +508,7 @@ class CmPochi extends CmSuper {
       if (this.isMob) (sele[0] = "img[src*='pochitto_sp']"), (sele[1] = "#question>dd>a"), (sele[5] = sele[2]);
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        await this.clickEle(ele, 2000, this.isMob ? (siteInfo.code == D.CODE.PTO ? 500 : 100) : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         await this.hideOverlay();
@@ -719,11 +719,12 @@ class CmColum extends CmSuper {
       let sele = [".o-content__boxlist img[src*='colum']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        await this.clickEle(ele, 2000, this.isMob ? (siteInfo.code == D.CODE.PTO ? 500 : 100) : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         let AnkPark = new PartsAnkPark(this.para);
         try {
+          await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 3000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
@@ -766,11 +767,12 @@ class CmPhoto extends CmSuper {
       let sele = [".o-content__boxlist img[src*='photo']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        await this.clickEle(ele, 2000, this.isMob ? (siteInfo.code == D.CODE.PTO ? 500 : 100) : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         let AnkPark = new PartsAnkPark(this.para);
         try {
+          await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 3000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
@@ -813,11 +815,12 @@ class CmSite extends CmSuper {
       let sele = [".o-content__boxlist img[src*='observation']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        await this.clickEle(ele, 2000, this.isMob ? (siteInfo.code == D.CODE.PTO ? 500 : 100) : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         let AnkPark = new PartsAnkPark(this.para);
         try {
+          await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 3000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
@@ -860,11 +863,12 @@ class CmZukan extends CmSuper {
       let sele = [".o-content__boxlist img[src*='zoo']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        await this.clickEle(ele, 2000, this.isMob ? (siteInfo.code == D.CODE.PTO ? 500 : 100) : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         let AnkPark = new PartsAnkPark(this.para);
         try {
+          await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 3000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
@@ -907,11 +911,12 @@ class CmJapan extends CmSuper {
       let sele = [".o-content__boxlist img[src*='japan']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        await this.clickEle(ele, 2000, this.isMob ? (siteInfo.code == D.CODE.PTO ? 500 : 100) : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         let AnkPark = new PartsAnkPark(this.para);
         try {
+          await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 3000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
@@ -954,11 +959,12 @@ class CmCook extends CmSuper {
       let sele = [".o-content__boxlist img[src*='food']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000, this.isMob ? 100 : 0);
+        await this.clickEle(ele, 2000, this.isMob ? (siteInfo.code == D.CODE.PTO ? 500 : 100) : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         let AnkPark = new PartsAnkPark(this.para);
         try {
+          await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 3000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;

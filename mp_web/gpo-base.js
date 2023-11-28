@@ -695,6 +695,11 @@ class GpoPointMoll extends GpoMissonSupper {
                 // ピタットトレイン
                 res = await Game.doTrain();
               } else if (cSele.indexOf("img_yusha") > -1) {
+                cSele = "form[action='index.php'] input[type='submit']";
+                if (await this.isExistEle(cSele, true, 2000)) {
+                  ele = await this.getEle(cSele, 3000);
+                  await this.clickEle(ele, 3000);
+                }
                 // 誰でも勇者
                 res = await Game.doYuusya();
               } else if (cSele.indexOf("egg_choice") > -1) {
