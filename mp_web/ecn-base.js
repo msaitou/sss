@@ -38,7 +38,11 @@ class EcnBase extends BaseExecuter {
           this.logger.info(`${mission.main} 開始--`);
           let res = await execCls.do();
           this.logger.info(`${mission.main} 終了--`);
-          await this.updateMissionQue(mission, res, `${this.isMob ? "m_" : ""}${this.code}`);
+          await this.updateMissionQue(
+            mission,
+            res,
+            `${this.isMob ? "m_" : ""}${this.code}`
+          );
         }
       }
       // ポイント数取得し保持
@@ -74,6 +78,29 @@ class EcnMissonSupper extends BaseWebDriverWrapper {
       let ele = await this.getEle(sele0[0], 3000);
       if (await ele.isDisplayed()) {
         await this.clickEle(ele, 3000);
+      }
+    }
+  }
+  async hideOverlay2() {
+    let sele = [
+      "div.fc-dialog button.fc-rewarded-ad-button",
+      "ins iframe[title^='3rd']",
+      "#dismiss-button",
+    ];
+    if (await this.isExistEle(sele[0], true, 4000)) {
+      let ele = await this.getEle(sele[0], 1000);
+      await this.clickEle(ele, 1000);
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let iframe = await this.getEles(sele[1], 1000);
+        await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+        let inputEle = await this.getEle(sele[2], 1000);
+        await this.sleep(5000);
+        // if (await inputEle.isDisplayed()) {
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+          // await this.clickEle(inputEle, 2000, 0, true);
+        // } else this.logger.debug("オーバーレイは表示されてないです");
+        // もとのフレームに戻す
+        await this.driver.switchTo().defaultContent();
       }
     }
   }
@@ -133,7 +160,9 @@ class EcnCommon extends EcnMissonSupper {
         // もとのフレームに戻す
         await driver.switchTo().defaultContent();
         if (await this.isExistEle(seleRecap.panel_iframe, true, 2000)) {
-          let res = await this.driver.findElement(By.css(seleRecap.panel_iframe)).isDisplayed();
+          let res = await this.driver
+            .findElement(By.css(seleRecap.panel_iframe))
+            .isDisplayed();
           if (res) {
             // 画層識別が表示されたらログインを諦めて、メールを飛ばす
             logger.info("RECAPTCHA発生　手動でログインして！");
@@ -185,7 +214,10 @@ class EcnChirashi extends EcnMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.firstUrl); // 操作ページ表示
-    let sele = ["li.type-daily>button.global-menu__link", "a[href*='chirashi']"];
+    let sele = [
+      "li.type-daily>button.global-menu__link",
+      "a[href*='chirashi']",
+    ];
     // ポップアップから動線をクリックして遷移
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
@@ -212,7 +244,11 @@ class EcnChinju extends EcnMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.firstUrl); // 操作ページ表示
-    let sele = ["li.type-daily>button.global-menu__link", "a[href*='chinju_lesson']", "a.chinju-lesson-question__link"];
+    let sele = [
+      "li.type-daily>button.global-menu__link",
+      "a[href*='chinju_lesson']",
+      "a.chinju-lesson-question__link",
+    ];
     if (this.isMob)
       sele = [
         "li span.c_icon-contents-game",
@@ -253,13 +289,21 @@ class EcnNewsWatch extends EcnMissonSupper {
     let res = D.STATUS.FAIL;
     try {
       await this.openUrl(this.firstUrl); // 操作ページ表示
-      let sele0 = ["li.type-daily>button.global-menu__link", "a[href*='mainichi_news']"];
+      let sele0 = [
+        "li.type-daily>button.global-menu__link",
+        "a[href*='mainichi_news']",
+      ];
       if (this.isMob)
-        sele0 = ["li span.c_icon-contents-game", "li.daily-contents-window__item>a[href*='mainichi_news']"];
+        sele0 = [
+          "li span.c_icon-contents-game",
+          "li.daily-contents-window__item>a[href*='mainichi_news']",
+        ];
+      await this.hideOverlay2();
       // ポップアップから動線をクリックして遷移
       if (await this.isExistEle(sele0[0], true, 2000)) {
         let ele = await this.getEle(sele0[0], 2000);
         await this.clickEle(ele, 2000); // ポップアップオープン
+        await this.hideOverlay2();
         if (await this.isExistEle(sele0[1], true, 2000)) {
           ele = await this.getEle(sele0[1], 2000);
           await this.clickEle(ele, 2000);
@@ -283,6 +327,7 @@ class EcnNewsWatch extends EcnMissonSupper {
             for (let i = 0; i < repeatNum; i++) {
               eles = await this.getEles(sele[0], 2000);
               for (let j = eles.length - 1; j >= 0; j--) {
+                await this.hideOverlay2();
                 // なんか既読じゃなかったらみたいな条件ない
                 await this.clickEle(eles[j - i], 2000); // 同一ページを切り替えてます
                 await this.ignoreKoukoku();
@@ -304,7 +349,7 @@ class EcnNewsWatch extends EcnMissonSupper {
             if (repeatNum === cnt) {
               res = D.STATUS.DONE;
             }
-          } else logger.info("今日はもう獲得済み"), res = D.STATUS.DONE;
+          } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
         }
       }
     } catch (e) {
@@ -389,7 +434,10 @@ class EcnClick extends EcnMissonSupper {
                     let eles = await this.getEles(eachSele[0], 2000);
                     let limit = eles.length;
                     for (let j = 0; j < limit; j++) {
-                      if (j != 0 && (await this.isExistEle(eachSele[0], true, 2000))) {
+                      if (
+                        j != 0 &&
+                        (await this.isExistEle(eachSele[0], true, 2000))
+                      ) {
                         eles = await this.getEles(eachSele[0], 2000);
                       }
                       await this.clickEle(eles[j], 2000);
@@ -478,7 +526,10 @@ class EcnClick extends EcnMissonSupper {
                     let eles = await this.getEles(eachSele[0], 2000);
                     let limit = eles.length;
                     for (let j = 0; j < limit; j++) {
-                      if (j != 0 && (await this.isExistEle(eachSele[0], true, 2000))) {
+                      if (
+                        j != 0 &&
+                        (await this.isExistEle(eachSele[0], true, 2000))
+                      ) {
                         eles = await this.getEles(eachSele[0], 2000);
                       }
                       await this.clickEle(eles[j], 2000);
