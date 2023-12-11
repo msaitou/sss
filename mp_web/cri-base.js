@@ -114,7 +114,7 @@ class CriCommon extends CriMissonSupper {
   async login() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
 
-    await driver.get(siteInfo.entry_url); // エントリーページ表示
+    await driver.get(siteInfo.entry_url?siteInfo.entry_url:"https://www.chobirich.com/"); // エントリーページ表示
     let sele = ["#interstitialSpecialAd"];
     if (await this.isExistEle(sele[0], true, 1000)) {
       await this.driver.executeScript(`document.querySelector('${sele[0]}').setAttribute('style', 'display:none;');`);
@@ -731,7 +731,7 @@ class CriAnqHappy extends CriMissonSupper {
       try {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let eles = await this.getEles(sele[1], 3000);
-          let limit = eles.length < 50 ? eles.length : 50;
+          let limit = eles.length < 750 ? eles.length : 50;
           for (let j = 0; j < limit; j++) {
             let wid2 = await driver.getWindowHandle();
             if (await this.isExistEle(sele[8], true, 2000)) {
