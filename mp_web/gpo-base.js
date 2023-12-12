@@ -1303,7 +1303,7 @@ class GpoAnqKenkou extends GpoMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["img[alt='さらさら健康コラム']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
+    let sele = ["img[alt*='さらさら健康コラム']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
     await this.openUrl(this.targetUrl); // 操作ページ表示
     await this.hideOverlay();
     if (await this.isExistEle(sele[0], true, 2000)) {

@@ -689,6 +689,10 @@ class Uranai extends CmSuper {
                   }
                 }
               }
+              else if (await this.isExistEle(sele[11], true, 3000)) {
+                ele = await this.getEle(sele[11], 3000);
+                await this.clickEle(ele, 2000);
+              }
             }
           }
         }

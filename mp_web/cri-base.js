@@ -626,7 +626,7 @@ class CriAnqPark extends CriMissonSupper {
     ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele0, 3000);
+      await this.clickEle(ele0, 3000, 100);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       try {
