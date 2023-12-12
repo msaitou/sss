@@ -76,7 +76,7 @@ class PointWebCls {
               new Date() < line.valid_term.const_h_to
           );
           if (key.indexOf("m_") === 0) (key = key.replace("m_", "")), (isMob = true);
-          await this.execOperator(key, line, aca, siteInfos.filter((i) => i.code == key)[0], isMob);
+          await this.execOperator(key, line, aca, siteInfos.length ? siteInfos.filter((i) => i.code == key)[0]: {}, isMob);
         }
       }
     } else this.logger.info("ミッションは登録されていません");

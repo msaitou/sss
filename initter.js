@@ -3,6 +3,7 @@ const { Builder, By, until, Capabilities } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const fs = require("fs");
 exports.db = async function (coll, method, cond = {}, doc) {
+  if (conf.db.no) return true;  // DBなし
   let log = getLogInstance();
   // log.info(0);
   const mdb = require("mongodb");
