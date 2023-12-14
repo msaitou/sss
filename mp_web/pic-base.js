@@ -72,6 +72,7 @@ class PicBase extends BaseExecuter {
         }
         if (execCls) {
           this.writeLogMissionStart(mission.main);
+          await this.updateMissionQueStart(mission);
           let res = await execCls.do();
           this.writeLogMissionEnd(mission.main, res);
           if (mission.main != D.MISSION.CM) {

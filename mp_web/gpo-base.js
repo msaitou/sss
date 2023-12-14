@@ -95,6 +95,7 @@ class GpoBase extends BaseExecuter {
         }
         if (execCls) {
           this.writeLogMissionStart(mission.main);
+          await this.updateMissionQueStart(mission);
           let res = await execCls.do();
           this.writeLogMissionEnd(mission.main, res);
           if (mission.main != D.MISSION.CM) {
@@ -401,7 +402,7 @@ class GpoAnq extends GpoMissonSupper {
       let limit = eles.length;
       for (let j = 0; j < limit; j++) {
         if (j !== 0 && (await this.isExistEle(sele[0], true, 2000))) eles = await this.getEles(sele[0], 3000);
-        if (!eles.length) break;
+        if (!eles.length) break;limit = eles.length;
         await this.clickEle(eles[0], 4000); //
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
