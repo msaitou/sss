@@ -178,7 +178,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
     if (mission["mission_date"]) {
       // ミッションの状況更新
       mission.mod_date = new Date();
-      if (mission.tryCnt) {
+      if (!mission.tryCnt) {
         mission.tryCnt = 0;
       }
       mission.tryCnt++;
