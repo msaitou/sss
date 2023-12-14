@@ -203,7 +203,7 @@ const { PartsCmManage, Uranai } = require("./parts/parts-cm-manage.js");
 // CM系のクッション
 class GpoCm extends GpoMissonSupper {
   firstUrl = "https://www.gpoint.co.jp/";
-  targetUrl = "https://www.gpoint.co.jp/sitemap/";
+  targetUrl = "https://www.gpoint.co.jp/gpark/";
   cmMissionList;
   constructor(para, cmMissionList) {
     super(para);
