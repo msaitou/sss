@@ -199,13 +199,14 @@ class BaseExecuter extends BaseWebDriverWrapper {
   writeLogMissionStart(m) {
     this.logger.info(`${this.getSiteCode()} ${m} 開始--`, this.timeInit());
   }
-  writeLogMissionEnd(m) {
-    this.logger.info(`${this.getSiteCode()} ${m} 終了--`, this.timeStop());
+  writeLogMissionEnd(m, res) {
+    this.logger.info(`${this.getSiteCode()} ${m} 終了--`, res, this.timeStop());
   }
   timeInit() {
     this.time.end = 0;
     this.time.record = 0;
     this.time.start = performance.now();
+    return "";
   }
   timeStop() {
     this.time.end = performance.now();

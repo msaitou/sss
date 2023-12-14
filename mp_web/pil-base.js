@@ -37,7 +37,7 @@ class PilBase extends BaseExecuter {
         if (execCls) {
           this.writeLogMissionStart(mission.main);
           let res = await execCls.do();
-          this.writeLogMissionEnd(mission.main);
+          this.writeLogMissionEnd(mission.main, res);
           if (mission.main != D.MISSION.CM) {
             await this.updateMissionQue(mission, res, this.code);
           }
