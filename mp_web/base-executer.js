@@ -23,7 +23,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
     this.logger.info(`${this.constructor.name} ${this.isMob ? "mobile Version" : ""} constructor`);
   }
   async main() {
-    this.logger.info("BaseExecuter", "start");
+    this.logger.debug("BaseExecuter", "start");
     let para = {
       retryCnt: this.retryMax,
       account: this.account,
@@ -149,6 +149,11 @@ class BaseExecuter extends BaseWebDriverWrapper {
       // ミッションの状況更新
       mission.mod_date = new Date();
       mission.status = res;
+      let currentMission = await db(D.DB_COL.MISSION_QUE, "findOne", { _id: mission._id });
+      mission.tryCnt = 1;
+      if (currentMission && currentMission.tryCnt) {
+        mission.tryCnt+=currentMission.tryCnt;
+      }
       await db(D.DB_COL.MISSION_QUE, "update", { _id: mission._id }, mission);
       // サブミッションの場合、次のサブミッション開始日を更新
       if (mission.sub && mission.valid_term && mission.valid_term.current_m_from) {

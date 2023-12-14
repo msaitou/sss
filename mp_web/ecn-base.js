@@ -35,9 +35,9 @@ class EcnBase extends BaseExecuter {
             break;
         }
         if (execCls) {
-          this.logger.info(`${mission.main} 開始--`);
+          this.logger.info(`${this.isMob ? "m_":""}${this.code}${mission.main} 開始--`);
           let res = await execCls.do();
-          this.logger.info(`${mission.main} 終了--`);
+          this.logger.info(`${this.isMob ? "m_":""}${this.code}${mission.main} 終了--`);
           await this.updateMissionQue(
             mission,
             res,

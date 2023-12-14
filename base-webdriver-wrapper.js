@@ -9,7 +9,7 @@ class BaseWebDriverWrapper {
   constructor(isMob) {
     this.logger = global.log;
     this.isMob = isMob;
-    this.logger.info("base constructor");
+    this.logger.debug("base constructor");
   }
   async webDriver(isMob, headless = false) {
     return await initBrowserDriver(isMob, headless);
