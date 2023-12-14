@@ -136,13 +136,18 @@ class BaseWebDriverWrapper {
       if (isEnter) await ele.sendKeys(Key.ENTER);
       else await ele.click();
     } catch (e) {
-      if (e.name != "TimeoutError") {
-        throw e;
-      } else {
+      if (e.name != "TimeoutError") throw e;
+      else {
         try {
           await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
         } catch (e) {
-          this.logger.warn(e);
+          if (e.name != "TimeoutError") throw e;
+          try {
+            await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
+          } catch (e) {
+            if (e.name != "TimeoutError") throw e;
+            this.logger.warn(e.name);
+          }
         }
       }
     } finally {
