@@ -78,9 +78,9 @@ class MopBase extends BaseExecuter {
             break;
         }
         if (execCls) {
-          this.logger.info(`${this.isMob ? "m_":""}${this.code}${mission.main} 開始--`);
+          this.writeLogMissionStart(mission.main);
           let res = await execCls.do();
-          this.logger.info(`${this.isMob ? "m_":""}${this.code}${mission.main} 終了--`);
+          this.writeLogMissionEnd(mission.main);
           if (mission.main != D.MISSION.CM) {
             await this.updateMissionQue(mission, res, this.isMob ? "m_" + this.code : this.code);
           }

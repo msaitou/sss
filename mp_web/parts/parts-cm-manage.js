@@ -77,9 +77,9 @@ class PartsCmManage extends BaseExecuter {
         //   break;
       }
       if (execCls) {
-        this.logger.info(`${this.isMob ? "m_":""}${this.code}${mission.main} 開始--`);
+        this.writeLogMissionStart(mission.main);
         let res = await execCls.do();
-        this.logger.info(`${this.isMob ? "m_":""}${this.code}${mission.main} 終了--`);
+        this.writeLogMissionEnd(mission.main);
         await this.updateMissionQue(mission, res, this.code);
       }
     }

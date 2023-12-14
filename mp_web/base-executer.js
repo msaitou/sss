@@ -12,6 +12,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
   account;
   isMob;
   isHeadless;
+  time = { start: 0, end: 0, record: 0 };
   constructor(retryCnt, siteInfo, aca, isMob = false, isHeadless = false) {
     super(isMob);
     this.logger = global.log;
@@ -152,7 +153,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
       let currentMission = await db(D.DB_COL.MISSION_QUE, "findOne", { _id: mission._id });
       mission.tryCnt = 1;
       if (currentMission && currentMission.tryCnt) {
-        mission.tryCnt+=currentMission.tryCnt;
+        mission.tryCnt += currentMission.tryCnt;
       }
       await db(D.DB_COL.MISSION_QUE, "update", { _id: mission._id }, mission);
       // サブミッションの場合、次のサブミッション開始日を更新
@@ -191,6 +192,25 @@ class BaseExecuter extends BaseWebDriverWrapper {
       }
     });
     return Number(num.trim());
+  }
+  getSiteCode() {
+    return `${this.isMob ? "m_" : ""}${this.code}`;
+  }
+  writeLogMissionStart(m) {
+    this.logger.info(`${this.getSiteCode()} ${m} 開始--`, this.timeInit());
+  }
+  writeLogMissionEnd(m) {
+    this.logger.info(`${this.getSiteCode()} ${m} 終了--`, this.timeStop());
+  }
+  timeInit() {
+    this.time.end = 0;
+    this.time.record = 0;
+    this.time.start = performance.now();
+  }
+  timeStop() {
+    this.time.end = performance.now();
+    this.time.record = (this.time.end - this.time.start) / 1000; // 秒
+    return this.time.record;
   }
 }
 exports.BaseExecuter = BaseExecuter;
