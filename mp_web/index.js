@@ -60,7 +60,7 @@ class PointWebCls {
       }
       let limitList = Object.keys(tmpMap);
       limitList.sort(function (a, b) {
-        return a < b ? 1 : -1;
+        return a > b ? 1 : -1;
       });
       let ascLimitList = [];
       for (let limit of limitList) {

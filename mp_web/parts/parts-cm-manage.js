@@ -78,6 +78,7 @@ class PartsCmManage extends BaseExecuter {
       }
       if (execCls) {
         this.writeLogMissionStart(mission.main);
+        await this.updateMissionQueStart(mission);
         let res = await execCls.do();
         this.writeLogMissionEnd(mission.main, res);
         await this.updateMissionQue(mission, res, this.code);

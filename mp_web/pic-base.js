@@ -471,13 +471,13 @@ class PicPointMoll extends PicMissonSupper {
           [D.MISSION.MOLL_EGG]: "div>img[src*='egg_choice']",
           [D.MISSION.MOLL_HIGHLOW]: "div>img[src*='high_and_low']",
           [D.MISSION.MOLL_TENKI]: "div>img[src*='tenkiate']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_1]: "img[src*='img_quiz01']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_2]: "img[src*='img_quiz02']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_3]: "img[src*='img_quiz03']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_4]: "img[src*='img_quiz04']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_5]: "img[src*='img_quiz05']",
         };
         let cSeleList = [
-          "img[src*='img_quiz01']",
-          "img[src*='img_quiz02']",
-          "img[src*='img_quiz03']",
-          "img[src*='img_quiz04']",
-          "img[src*='img_quiz05']",
           // "img[src*='img_seiza']",　// なんか0しか稼げないので
           // ...Object.values(mainSeleMap), // 値を配列で列挙して展開
         ];
