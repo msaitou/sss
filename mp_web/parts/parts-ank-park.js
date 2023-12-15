@@ -627,11 +627,27 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       ];
       await this.hideOverlay();
       if (siteInfo.code == D.CODE.PIC) sele[6] = sele[1];
-      if (await this.isExistEle(sele[0], true, 10000)) {
-        let ele = await this.getEle(sele[0], 8000);
-        await this.clickEle(ele, 2000, 0, siteInfo.code == D.CODE.LFM);
-      } else if (await this.isExistEle(sele[1], true, 5000)) {
-        let ele = await this.getEle(sele[1], 5000);
+      await this.sleep(5000);
+      if (await this.isExistEle(sele[0], true, 5000)) {
+        // if (siteInfo.code == D.CODE.LFM && await this.isExistEle(sele[1], true, 5000)) {
+        //   let ele = await this.getEle(sele[1], 5000);
+        //   await this.clickEle(ele, 2000, 0, siteInfo.code == D.CODE.LFM);
+        // }
+        // else {
+          let ele = await this.getEle(sele[0], 4000);
+          try{
+            await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
+          }
+          catch(e) {
+            if (await this.isExistEle(sele[1], true, 3000)) {
+              let ele = await this.getEle(sele[1], 2000);
+              await this.sleep(5000);
+              await this.clickEle(ele, 2000, 0, siteInfo.code == D.CODE.LFM);
+            }
+          }
+        // }
+      } else if (await this.isExistEle(sele[1], true, 3000)) {
+        let ele = await this.getEle(sele[1], 2000);
         await this.clickEle(ele, 2000, 0, siteInfo.code == D.CODE.LFM);
       }
       if (await this.isExistEle(sele[1], true, 2000)) {
@@ -674,7 +690,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "input[src*='next']",
       ];
       await this.hideOverlay();
-      if (await this.isExistEle(sele[0], true, 10000)) {
+      if (await this.isExistEle(sele[0], true, 5000)) {
         let ele = await this.getEle(sele[0], 8000);
         await this.clickEle(ele, 2000);
       } else if (await this.isExistEle(sele[1], true, 5000)) {
@@ -684,7 +700,8 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       for (let i = 0; i < 6; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 3000);
+          await this.hideOverlay();
+          await this.clickEle(ele, 1000);
         }
       }
       try {
@@ -713,17 +730,18 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "input[src*='next']",
       ];
       await this.hideOverlay();
-      if (await this.isExistEle(sele[0], true, 10000)) {
-        let ele = await this.getEle(sele[0], 8000);
-        await this.clickEle(ele, 2000);
-      } else if (await this.isExistEle(sele[1], true, 5000)) {
-        let ele = await this.getEle(sele[1], 5000);
-        await this.clickEle(ele, 2000);
+      if (await this.isExistEle(sele[0], true, 5000)) {
+        let ele = await this.getEle(sele[0], 5000);
+        await this.clickEle(ele, 1000);
+      } else if (await this.isExistEle(sele[1], true, 3000)) {
+        let ele = await this.getEle(sele[1], 2000);
+        await this.clickEle(ele, 1000);
       }
       for (let i = 0; i < 6; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 3000);
+          await this.hideOverlay();
+          await this.clickEle(ele, 1000);
         }
       }
       try {
@@ -752,17 +770,18 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "input[src*='next']",
       ];
       await this.hideOverlay();
-      if (await this.isExistEle(sele[0], true, 10000)) {
+      if (await this.isExistEle(sele[0], true, 5000)) {
         let ele = await this.getEle(sele[0], 8000);
-        await this.clickEle(ele, 2000);
-      } else if (await this.isExistEle(sele[1], true, 5000)) {
-        let ele = await this.getEle(sele[1], 5000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
+      } else if (await this.isExistEle(sele[1], true, 3000)) {
+        let ele = await this.getEle(sele[1], 2000);
+        await this.clickEle(ele, 1000);
       }
       for (let i = 0; i < 6; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
+          await this.hideOverlay();
           let ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 3000);
+          await this.clickEle(ele, 1000);
         }
       }
       try {
@@ -792,18 +811,19 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       ];
       if (siteInfo.code == D.CODE.PIC) sele[6] = "img[src*='btn_next']";
       await this.hideOverlay();
-      if (await this.isExistEle(sele[0], true, 10000)) {
+      if (await this.isExistEle(sele[0], true, 5000)) {
         let ele = await this.getEle(sele[0], 8000);
-        await this.clickEle(ele, 2000);
-      } else if (await this.isExistEle(sele[1], true, 5000)) {
-        let ele = await this.getEle(sele[1], 5000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
+      } else if (await this.isExistEle(sele[1], true, 3000)) {
+        let ele = await this.getEle(sele[1], 3000);
+        await this.clickEle(ele, 1000);
       }
       for (let i = 0; i < 6; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
-          let ele = await this.getEle(sele[1], 3000);
+          let ele = await this.getEle(sele[1], 1000);
+          await this.hideOverlay();
           await driver.wait(until.elementIsVisible(ele), 5000);
-          await this.clickEle(ele, 3000);
+          await this.clickEle(ele, 1000);
         }
       }
       try {
@@ -955,12 +975,12 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "input[src*='next']",
       ];
       await this.hideOverlay();
-      if (await this.isExistEle(sele[0], true, 10000)) {
-        let ele = await this.getEle(sele[0], 8000);
-        await this.clickEle(ele, 2000, 250);
-      } else if (await this.isExistEle(sele[1], true, 5000)) {
-        let ele = await this.getEle(sele[1], 5000);
-        await this.clickEle(ele, 2000, 250);
+      if (await this.isExistEle(sele[0], true, 5000)) {
+        let ele = await this.getEle(sele[0], 3000);
+        await this.clickEle(ele, 1000, 250);
+      } else if (await this.isExistEle(sele[1], true, 3000)) {
+        let ele = await this.getEle(sele[1], 2000);
+        await this.clickEle(ele, 1000, 250);
       }
       for (let i = 0; i < 5; i++) {
         if (i === 3) {
@@ -972,8 +992,9 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         }
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
-          await driver.wait(until.elementIsVisible(ele), 5000);
-          await this.clickEle(ele, 3000, 250);
+          await this.hideOverlay();
+          await driver.wait(until.elementIsVisible(ele), 3000);
+          await this.clickEle(ele, 1000, 250);
         }
       }
       try {
@@ -1002,17 +1023,18 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "input[src*='btn_next']",
       ];
       await this.hideOverlay();
-      if (await this.isExistEle(sele[0], true, 10000)) {
-        let ele = await this.getEle(sele[0], 8000);
-        await this.clickEle(ele, 2000, 250);
-      } else if (await this.isExistEle(sele[1], true, 5000)) {
-        let ele = await this.getEle(sele[1], 5000);
-        await this.clickEle(ele, 2000, 250);
+      if (await this.isExistEle(sele[0], true, 5000)) {
+        let ele = await this.getEle(sele[0], 5000);
+        await this.clickEle(ele, 1000, 250);
+      } else if (await this.isExistEle(sele[1], true, 3000)) {
+        let ele = await this.getEle(sele[1], 2000);
+        await this.clickEle(ele, 1000, 250);
       }
       for (let i = 0; i < 5; i++) {
         if (await this.isExistEle(sele[7], true, 2000)) {
           let ele = await this.getEle(sele[7], 3000);
-          await this.clickEle(ele, 3000, 250);
+          await this.hideOverlay();
+          await this.clickEle(ele, 1000, 250);
         }
       }
       await this.hideOverlay();
@@ -1112,7 +1134,15 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       if (await this.isExistEle(sele[5], true, 2000)) {
         let ele = await this.getEle(sele[5], 3000);
         await this.hideOverlay();
-        await this.clickEle(ele, 2000, 250, siteInfo.code == D.CODE.LFM);
+        try {
+          await this.clickEle(ele, 2000, 250, siteInfo.code == D.CODE.LFM);
+        }
+        catch(e) {
+          if (await this.isExistEle("input.enquete_nextbt", true, 4000)) {
+            let ele = await this.getEle("input.enquete_nextbt", 1000);
+            await this.clickEle(ele, 1000, 250, siteInfo.code == D.CODE.LFM);
+          }    
+        }
       }
       //   }
     } else {

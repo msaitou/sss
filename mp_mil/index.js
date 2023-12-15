@@ -19,6 +19,26 @@ class PointMailClass extends BaseWebDriverWrapper {
     this.logger = global.log;
     this.logger.info("PointMailClass constractor", "target:", targetList);
   }
+  async hideOverlay2() {
+    let sele = [
+      "div.fc-dialog button.fc-user-interests-button",
+      "div.fc-dialog-content button.fc-chip",
+      "button.fc-user-interests-save-button",
+    ];
+    if (await this.isExistEle(sele[0], true, 4000)) {
+      let ele = await this.getEle(sele[0], 1000);
+      await this.clickEle(ele, 1000);
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let eles = await this.getEles(sele[1], 1000);
+        await this.clickEle(eles[libUtil.getRandomInt(0, eles.length)], 1000);
+        if (await this.isExistEle(sele[2], true, 2000)) {
+          let ele = await this.getEle(sele[2], 1000);
+          await this.clickEle(ele, 1000);
+        }
+      }
+    }
+  }
+
   async main(missionList) {
     this.logger.info("PointMailClass main");
     // リアルタイムで受信をrecieve https://liginc.co.jp/web/service/facebook/153850/2
@@ -92,6 +112,7 @@ class PointMailClass extends BaseWebDriverWrapper {
             } else if ([D.CODE.PST, D.CODE.PIL]) {
               // ポイント獲得ボタンをクリック
               let sele = ["[name='getpoint']"];
+              await this.hideOverlay2();
               if (site === D.CODE.PIL) {
                 if (await this.isExistEle(sele[0], true, 2000)) {
                   let ele = await this.getEle(sele[0], 0,2000);
