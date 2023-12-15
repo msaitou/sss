@@ -538,10 +538,10 @@ class MopAnzan extends MopMissonSupper {
                     break;
                   }
                 }
-                await this.clickEle(eles[selectIndex], 2000);
+                await this.clickEle(eles[selectIndex], 2000, 600);
                 if (await this.isExistEle(sele[3], true, 3000)) {
                   ele = await this.getEle(sele[3], 3000);
-                  await this.clickEle(ele, 2000, 0, this.isMob); // 回答する
+                  await this.clickEle(ele, 2000, 600, this.isMob); // 回答する
                   await this.hideOverlay(); // オーバレイあり。消す
                   // 回答結果
                   if (await this.isExistEle(sele[4], true, 3000)) {
@@ -810,7 +810,7 @@ class MopAnqHappy extends MopMissonSupper {
       try {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let eles = await this.getEles(sele[1], 3000);
-          let limit = eles.length < 200 ? eles.length : 200;
+          let limit = eles.length < 20 ? eles.length : 20;
           for (let j = 0; j < limit; j++) {
             let wid2 = await driver.getWindowHandle();
             if (await this.isExistEle(sele[8], true, 2000)) {
