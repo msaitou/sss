@@ -226,7 +226,7 @@ class MopClick extends MopMissonSupper {
     logger.info(`${this.constructor.name} START`);
     await this.openUrl(this.targetUrl); // 操作ページ表示
 
-    let sele = ["div.gamecontents__wrapper li.gamecontents__box>a>div", "#modal_detail"];
+    let sele = ["#cc-item li.gamecontents__box>a", "#modal_detail a[href*='jp/cc/']"];
     if (this.isMob) sele[1] = "div[style*='display: block;']>#modal_detail div.m-btn>a";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);

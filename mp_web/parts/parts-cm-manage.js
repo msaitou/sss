@@ -219,7 +219,7 @@ class CmDotti extends CmSuper {
                 eles = await this.getEles(sele[1], 3000);
               }
               await this.hideOverlay();
-              await this.clickEle(eles[j], 2000); // ゆるめ、かため、究極のいずれかから進む
+              await this.clickEle(eles[j], 2000, 200, true); // ゆるめ、かため、究極のいずれかから進む
               let currentUrl = await this.ignoreKoukoku(); // 広告が画面いっぱいに入る時がある
               if (currentUrl.substr(-2) == "/n") {
                 // 獲得してないシールがある場合
@@ -232,10 +232,14 @@ class CmDotti extends CmSuper {
                   }
                 }
               }
+              // await this.clickEle(eles[j], 2000); // ゆるめ、かため、究極のいずれかから進む
               for (let i = 0; i < 10; i++) {
                 await this.hideOverlay();
+                await this.driver.executeScript(
+                  `document.querySelector('body').setAttribute('style', 'position: initial;');`
+                );
                 if (await this.isExistEle(sele[3], true, 3000)) {
-                  eles = await this.getEles(sele[3], 3000);
+                  eles = await this.getEles(sele[3], 1000);
                   // clickして質問を選び、次へ　10問ある
                   await driver.wait(until.elementIsVisible(eles[0]), 15000);
                   await this.clickEle(eles[0], 2000); // 一番上を選択
@@ -255,11 +259,13 @@ class CmDotti extends CmSuper {
                         if (await this.isExistEle(sele[7], true, 3000)) {
                           ele = await this.getEle(sele[7], 4000);
                           await driver.wait(until.elementIsEnabled(ele), 15000);
-                          await this.clickEle(ele, 4000); // シールを獲得
+                          await this.clickEle(ele, 2000); // シールを獲得
+                          await this.ignoreKoukoku();
                           if (await this.isExistEle(sele[2], true, 3000)) {
                             ele = await this.getEle(sele[2], 3000);
                             await this.clickEle(ele, 2000); // topへ（この質問種類の一覧へ）
                             await this.exchangeDotti(sele);
+                            await driver.navigate().refresh();  // スクロールできないので
                           }
                         }
                       }
@@ -269,7 +275,7 @@ class CmDotti extends CmSuper {
                   await this.hideOverlay();
                   if (await this.isExistEle(sele[9], true, 3000)) {
                     ele = await this.getEle(sele[9], 1000);
-                    await this.clickEle(ele, 2000); // 大元に戻る
+                    await this.clickEle(ele, 2000, 200, true); // 大元に戻る
                   }
                   break;
                 }
@@ -298,14 +304,16 @@ class CmDotti extends CmSuper {
       // 獲得してないシールがある場合
       if (await this.isExistEle(sele[8], true, 3000)) {
         let ele = await this.getEle(sele[8], 3000);
-        await this.clickEle(ele, 2000); // 獲得
+        await this.clickEle(ele, 1000); // 獲得
+        await this.hideOverlay();
         if (await this.isExistEle(sele[2], true, 3000)) {
           ele = await this.getEle(sele[2], 3000);
-          await this.clickEle(ele, 2000); // topへ（この質問種類の一覧へ）
+          await this.clickEle(ele, 1000); // topへ（この質問種類の一覧へ）
         }
+        await this.hideOverlay();
         if (await this.isExistEle(sele[9], true, 3000)) {
           ele = await this.getEle(sele[9], 3000);
-          await this.clickEle(ele, 2000); // topへ（この質問種類の一覧へ）
+          await this.clickEle(ele, 1000); // topへ（この質問種類の一覧へ）
         }
       }
     }

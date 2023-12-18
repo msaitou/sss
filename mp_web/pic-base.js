@@ -63,6 +63,11 @@ class PicBase extends BaseExecuter {
           case D.MISSION.MOLL_EGG:
           case D.MISSION.MOLL_TENKI:
           case D.MISSION.MOLL_HIGHLOW:
+          case D.MISSION.MOLL_QUIZ_KENTEI_1:
+          case D.MISSION.MOLL_QUIZ_KENTEI_2:
+          case D.MISSION.MOLL_QUIZ_KENTEI_3:
+          case D.MISSION.MOLL_QUIZ_KENTEI_4:
+          case D.MISSION.MOLL_QUIZ_KENTEI_5:
           case D.MISSION.POINT_MOLL:
             execCls = new PicPointMoll(para, mission.main);
             break;
