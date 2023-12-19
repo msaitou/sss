@@ -748,6 +748,7 @@ class CriAnqHappy extends CriMissonSupper {
                   "あなたのペットに対する考えとイメージに関するアンケート",
                   "家事に関するアンケート",
                   "バッグについてのアンケート",
+                  "二次創作に関するアンケート"
                 ].indexOf(title) > -1
               ) {
                 skip++;
@@ -755,15 +756,16 @@ class CriAnqHappy extends CriMissonSupper {
               }
             }
             if (await this.isExistEle(sele[1], true, 2000)) {
-              // for (let i = 0; i < 9; i++) {
-              //   // 隠れてるので全部オープン
-              //   if (await this.isExistEle(sele[5], true, 2000)) {
-              //     let ele = await this.getEle(sele[5], 3000);
-              //     await this.clickEle(ele, 3000);
-              //   } else break;
-              // }
+              for (let i = 0; i < 1; i++) {
+                // 隠れてるので全部オープン
+                if (await this.isExistEle(sele[5], true, 2000)) {
+                  let ele = await this.getEle(sele[5], 3000);
+                  await this.clickEle(ele, 3000);
+                } else break;
+              }
               // eles = await this.getEles(sele[1], 10000);
               // await this.clickEle(eles[eles.length -1], 3000);
+
               eles = await this.getEles(sele[1], 3000);
               await this.clickEle(eles[skip], 3000);
               if (await this.isExistEle(sele[2], true, 2000)) {
