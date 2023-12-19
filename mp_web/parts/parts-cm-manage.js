@@ -341,9 +341,9 @@ class CmKentei extends CmSuper {
       let sele = [
         "img[src*='gotochi_pc']",
         "div>a[name='start button']",
-        "span.answer-select",
+        "span.answer-select", // 2
         "div.li_jyouhou img",
-        "img#answer-button",
+        "img#answer-button",  // 4
         "img.change-image",
       ];
       if (this.isMob) sele[0] = "img[src*='gotochi_sp']";
@@ -420,10 +420,11 @@ class CmKentei extends CmSuper {
                   await this.clickEle(choiceEle, 2000); // 選択
                   if (await this.isExistEle(sele[4], true, 3000)) {
                     ele = await this.getEle(sele[4], 3000);
-                    await this.clickEle(ele, 2000);
+                    await this.clickEle(ele, 1000);
+                    await this.hideOverlay();
                     if (await this.isExistEle(sele[5], true, 3000)) {
                       ele = await this.getEle(sele[5], 3000);
-                      await this.clickEle(ele, 2000);
+                      await this.clickEle(ele, 1000);
                     }
                   }
                 }
