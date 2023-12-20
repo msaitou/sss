@@ -177,7 +177,7 @@ class PartsReadPic extends BaseWebDriverWrapper {
         "a.go_btn[href='./#tabs_3']",
         "p.less_stamp>span", // 4
         "p.all_stamp",
-        "#move_page", // 6
+        "a.go_btn[onclick*='movePage']", // 6
         "",
         "",
       ];
@@ -232,7 +232,7 @@ class PartsReadPic extends BaseWebDriverWrapper {
               // if (await this.isExistEle(sele[3], true, 3000)) {
               //   let ele = await this.getEle(sele[3], 2000);
               //   await this.clickEle(ele, 2000);
-              //   // triedFlag = false;
+              //   // triedFlaqg = false;
               // }
             }
           } catch (e) {
