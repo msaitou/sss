@@ -321,7 +321,7 @@ class PicClick extends PicMissonSupper {
           await this.clickEle(ele, 1000);
         }
       }
-      sele = ["div.daily_btn", "li.send_ok_btn>a", "li.send_cancel_btn"];
+      sele = ["div.go_btn", "li.send_ok_btn>a", "li.send_cancel_btn"];
       await this.openUrl("https://sp.pointi.jp/daily/"); // 操作ページ表示
     } else await this.openUrl(this.targetUrl); // 操作ページ表示
 

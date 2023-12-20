@@ -205,7 +205,7 @@ class CmDotti extends CmSuper {
       if (this.isMob) sele[0] = "img[src*='dotti2_sp']";
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000, this.isMob ? (siteInfo.code == D.CODE.PTO ? 500 : 100) : 0);
+        await this.clickEle(ele, 2000, this.isMob ? (siteInfo.code == D.CODE.PTO ? 500 : 400) : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         await this.hideOverlay();
