@@ -37,6 +37,15 @@ exports.Def = {
     GAME_EGG: "game_egg",
     GAME_TENKI: "game_tenki",
     GAME_HIGHLOW: "game_highlow",
+
+    GAME_OTSUKAI: "game_otsukai",
+    GAME_COOK: "game_cook",
+    GAME_FASHION: "game_fashion",
+    GAME_MEISHO: "game_meisho",
+    GAME_OTE: "game_ote",
+    GAME_DARUMA: "game_daruma",
+ 
+
     MOLL_HIGHLOW: "moll_highlow",
     MOLL_TENKI: "moll_tenki",
     MOLL_EGG: "moll_egg",

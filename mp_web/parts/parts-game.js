@@ -6,10 +6,18 @@ const mailOpe = require("../../mp_mil/mail_operate");
 
 class PartsGame extends BaseWebDriverWrapper {
   para;
-  constructor(para) {
+  doMethod;
+  constructor(para, mType = null) {
     super(para.isMob);
     this.para = para;
+    this.doMethod = null;
     this.setDriver(this.para.driver);
+    if (mType == D.MISSION.GAME_OTSUKAI) this.doMethod = this.doOtsukai;
+    else if (mType == D.MISSION.GAME_COOK) this.doMethod = this.doCook;
+    else if (mType == D.MISSION.GAME_FASHION) this.doMethod = this.doFashion;
+    else if (mType == D.MISSION.GAME_MEISHO) this.doMethod = this.doMeisho;
+    else if (mType == D.MISSION.GAME_OTE) this.doMethod = this.doOte;
+    else if (mType == D.MISSION.GAME_DARUMA) this.doMethod = this.doDaruma;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async doKokuhaku(wid) {
@@ -325,10 +333,7 @@ class PartsGame extends BaseWebDriverWrapper {
               }
             }
             try {
-              await driver.wait(
-                until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null,
-                10000
-              );
+              await driver.wait(until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null, 10000);
             } catch (e) {
               this.logger.info("表示待ちのタイムアウト");
             }
@@ -402,10 +407,7 @@ class PartsGame extends BaseWebDriverWrapper {
               }
             }
             try {
-              await driver.wait(
-                until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null,
-                10000
-              );
+              await driver.wait(until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null, 10000);
             } catch (e) {
               this.logger.info("表示待ちのタイムアウト");
             }
@@ -480,10 +482,7 @@ class PartsGame extends BaseWebDriverWrapper {
                 }
               }
               try {
-                await driver.wait(
-                  until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null,
-                  10000
-                );
+                await driver.wait(until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null, 10000);
               } catch (e) {
                 this.logger.info("表示待ちのタイムアウト");
               }
@@ -602,6 +601,473 @@ class PartsGame extends BaseWebDriverWrapper {
         } else break;
       }
     }
+  }
+  async doOtsukai(wid) {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let se = [
+        "a>img[alt='次へ']",
+        "img[src*='btn_start']",
+        "a>img[alt='トップへ戻る']", // 2
+        "#statustime_1>span",
+        "div[id^=chara]>a>img", // 4
+      ];
+      // if (this.isMob) (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
+      // await this.ignoreKoukoku();
+      let limit = 20; // なんか結構30多いので、基本は20
+      if (await this.isExistEle(se[3], true, 2000)) {
+        let el = await this.getEle(se[3], 3000);
+        let text = await el.getText();
+        let regex = "あと(\\d+)回*";
+        let matches = text.match(regex);
+        if (matches[1]) limit = Number(matches[1]);
+      }
+      let gameUrlHost = await driver.getCurrentUrl();
+      gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
+      for (let j = 0; j < limit; j++) {
+        logger.info(`${j}/${limit}回目-----------`);
+        await this.hideOverlay();
+        if (await this.isExistEle(se[0], true, 2000)) {
+          let el = await this.getEle(se[0], 3000);
+          await this.clickEle(el, 100, 400);
+          await this.backNowMissionPage(gameUrlHost);
+          await this.hideOverlay();
+          if (await this.isExistEle(se[4], true, 2000)) {
+            let els = await this.getEles(se[4], 3000);
+            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 100, 400);
+            await this.backNowMissionPage(gameUrlHost);
+            await this.hideOverlay();
+            if (await this.isExistEle(se[1], true, 2000)) {
+              let el = await this.getEle(se[1], 3000);
+              await this.clickEle(el, 100, 400);
+              await this.backNowMissionPage(gameUrlHost);
+              // 勝手に動く
+              await this.sleep(10000);
+              await this.hideOverlay();
+              if (await this.isExistEle(se[2], true, 3000)) {
+                let el = await this.getEle(se[2], 3000);
+                await this.clickEle(el, 100, 400); // トップへ
+                await this.backNowMissionPage(gameUrlHost);
+              }
+            }
+          }
+        }
+      }
+      if (await this.isExistEle(se[3], true, 2000)) {
+        let el = await this.getEle(se[3], 3000);
+        let text = await el.getText();
+        let regex = "あと(\\d+)回*";
+        let matches = text.match(regex);
+        if (matches[1] && matches[1] == "0") res = D.STATUS.DONE;
+      }
+    } catch (e) {
+      logger.warn(e);
+    } finally {
+      if (wid) {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+  async doCook(wid) {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let se = [
+        "a>img[alt='次へ']",
+        "img[src*='btn_start']",
+        "a>img[alt='トップへ戻る']", // 2
+        "#status_1>span",
+        "[id^=chara]>a>img", // 4
+      ];
+      // if (this.isMob) (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
+      // await this.ignoreKoukoku();
+      let limit = 20; // なんか結構30多いので、基本は20
+      if (await this.isExistEle(se[3], true, 2000)) {
+        let el = await this.getEle(se[3], 3000);
+        let text = await el.getText();
+        let regex = "あと(\\d+)回*";
+        let matches = text.match(regex);
+        if (matches[1]) limit = Number(matches[1]);
+      }
+      let gameUrlHost = await driver.getCurrentUrl();
+      gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
+      for (let j = 0; j < limit; j++) {
+        logger.info(`${j}/${limit}回目-----------`);
+        await this.hideOverlay();
+        if (await this.isExistEle(se[0], true, 2000)) {
+          let el = await this.getEle(se[0], 3000);
+          await this.clickEle(el, 100, 400);
+          await this.backNowMissionPage(gameUrlHost);
+          await this.hideOverlay();
+          for (let j = 0; j < 2; j++) {
+            if (await this.isExistEle(se[4], true, 2000)) {
+              let els = await this.getEles(se[4], 3000);
+              await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 100, 400);
+              await this.backNowMissionPage(gameUrlHost);
+              await this.hideOverlay();
+              if (await this.isExistEle(se[1], true, 2000)) {
+                let el = await this.getEle(se[1], 3000);
+                await this.clickEle(el, 100, 400);
+                await this.backNowMissionPage(gameUrlHost);
+                // 勝手に動く
+                await this.sleep(10000);
+                await this.hideOverlay();
+              }
+            }
+          }
+          if (await this.isExistEle(se[2], true, 3000)) {
+            let el = await this.getEle(se[2], 3000);
+            await this.clickEle(el, 100, 400); // トップへ
+            await this.backNowMissionPage(gameUrlHost);
+          }
+        }
+      }
+      if (await this.isExistEle(se[3], true, 2000)) {
+        let el = await this.getEle(se[3], 3000);
+        let text = await el.getText();
+        let regex = "あと(\\d+)回*";
+        let matches = text.match(regex);
+        if (matches[1] && matches[1] == "0") res = D.STATUS.DONE;
+      }
+    } catch (e) {
+      logger.warn(e);
+    } finally {
+      if (wid) {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+  async doFashion(wid) {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let se = [
+        "a>img[alt='次へ']",
+        "img[src*='btn_start']",
+        "a>img[alt='トップへ戻る']", // 2
+        "#status_1>span",
+        "[id^=chara]>a>img", // 4
+      ];
+      // if (this.isMob) (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
+      // await this.ignoreKoukoku();
+      let limit = 20; // なんか結構30多いので、基本は20
+      if (await this.isExistEle(se[3], true, 2000)) {
+        let el = await this.getEle(se[3], 3000);
+        let text = await el.getText();
+        let regex = "あと(\\d+)回*";
+        let matches = text.match(regex);
+        if (matches[1]) limit = Number(matches[1]);
+      }
+      let gameUrlHost = await driver.getCurrentUrl();
+      gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
+      for (let j = 0; j < limit; j++) {
+        logger.info(`${j}/${limit}回目-----------`);
+        await this.hideOverlay();
+        if (await this.isExistEle(se[0], true, 2000)) {
+          let el = await this.getEle(se[0], 3000);
+          await this.clickEle(el, 100, 400);
+          await this.backNowMissionPage(gameUrlHost);
+          await this.hideOverlay();
+          for (let j = 0; j < 2; j++) {
+            if (await this.isExistEle(se[4], true, 2000)) {
+              let els = await this.getEles(se[4], 3000);
+              await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 100, 400);
+              await this.backNowMissionPage(gameUrlHost);
+              await this.hideOverlay();
+            }
+          }
+          if (await this.isExistEle(se[1], true, 2000)) {
+            let el = await this.getEle(se[1], 3000);
+            await this.clickEle(el, 100, 400);
+            await this.backNowMissionPage(gameUrlHost);
+            // 勝手に動く
+            await this.sleep(10000);
+            await this.hideOverlay();
+            if (await this.isExistEle(se[2], true, 3000)) {
+              let el = await this.getEle(se[2], 3000);
+              await this.clickEle(el, 100, 400); // トップへ
+              await this.backNowMissionPage(gameUrlHost);
+            }
+          }
+        }
+      }
+      if (await this.isExistEle(se[3], true, 2000)) {
+        let el = await this.getEle(se[3], 3000);
+        let text = await el.getText();
+        let regex = "あと(\\d+)回*";
+        let matches = text.match(regex);
+        if (matches[1] && matches[1] == "0") res = D.STATUS.DONE;
+      }
+    } catch (e) {
+      logger.warn(e);
+    } finally {
+      if (wid) {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+  async doMeisho(wid) {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let se = [
+        "a>img[alt='次へ']",
+        "#startWrap img",
+        "a>img[alt='トップへ戻る']", // 2
+        "div.point>div>span",
+        "[id^=chara]>a>img", // 4
+        "input[alt='進む']",
+        "#map", // 6
+        "div[id^='button']",
+        "a[href='finish.php']>img", // 8
+      ];
+      // if (this.isMob) (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
+      // await this.ignoreKoukoku();
+      let limit = 20; // なんか結構30多いので、基本は20
+      if (await this.isExistEle(se[3], true, 2000)) {
+        let el = await this.getEle(se[3], 3000);
+        let text = await el.getText();
+        let regex = "(\\d+)回*";
+        let matches = text.match(regex);
+        if (matches[1]) limit = Number(matches[1]);
+      }
+      let gameUrlHost = await driver.getCurrentUrl();
+      gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
+      for (let j = 0; j < limit; j++) {
+        logger.info(`${j}/${limit}回目-----------`);
+        await this.hideOverlay();
+        for (let j = 0; j < 3; j++) {
+          if (await this.isExistEle(se[5], true, 2000)) {
+            let el = await this.getEle(se[5], 3000);
+            await this.clickEle(el, 100, 400);
+            await this.backNowMissionPage(gameUrlHost);
+            await this.hideOverlay();
+          }
+        }
+        if (await this.isExistEle(se[1], true, 2000)) {
+          let el = await this.getEle(se[1], 3000);
+          await this.clickEle(el, 100, 400);
+          await this.backNowMissionPage(gameUrlHost);
+          await this.hideOverlay();
+        }
+        await this.exeScriptNoTimeOut(`document.querySelector("${se[6]}").remove();`);
+        for (let j = 0; j < 1; j++) {
+          if (await this.isExistEle(se[7], true, 2000)) {
+            let els = await this.getEles(se[7], 3000);
+            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 100, 400);
+            await this.backNowMissionPage(gameUrlHost);
+            await this.hideOverlay();
+            if (await this.isExistEle(se[8], true, 2000)) {
+              let el = await this.getEle(se[8], 3000);
+              await this.exeScriptNoTimeOut(`document.querySelector("${se[8]}").click();`);
+              await this.backNowMissionPage(gameUrlHost);
+              await this.hideOverlay();
+              for (let k = 0; k < 2; k++) {
+                if (await this.isExistEle(se[5], true, 2000)) {
+                  let el = await this.getEle(se[5], 3000);
+                  await this.clickEle(el, 100, 400);
+                  await this.backNowMissionPage(gameUrlHost);
+                  await this.hideOverlay();
+                }
+              }
+            }
+          }
+        }
+      }
+
+      if (await this.isExistEle(se[3], true, 2000)) {
+        let el = await this.getEle(se[3], 3000);
+        let text = await el.getText();
+        let regex = "(\\d+)回*";
+        let matches = text.match(regex);
+        if (matches[1] && matches[1] == "0") res = D.STATUS.DONE;
+      }
+    } catch (e) {
+      logger.warn(e);
+    } finally {
+      if (wid) {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+  async doOte(wid) {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let se = [
+        "a>img[alt='次へ']",
+        "img[src*='btn_start']",
+        "a>img[alt='トップへ戻る']", // 2
+        "#statustime_1>span",
+        "[id^=chara]>a>img", // 4
+      ];
+      // if (this.isMob) (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
+      // await this.ignoreKoukoku();
+      let limit = 20; // なんか結構30多いので、基本は20
+      if (await this.isExistEle(se[3], true, 2000)) {
+        let el = await this.getEle(se[3], 3000);
+        let text = await el.getText();
+        let regex = "あと(\\d+)回*";
+        let matches = text.match(regex);
+        if (matches[1]) limit = Number(matches[1]);
+      }
+      let gameUrlHost = await driver.getCurrentUrl();
+      gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
+      for (let j = 0; j < limit; j++) {
+        logger.info(`${j}/${limit}回目-----------`);
+        await this.hideOverlay();
+        for (let k = 0; k < 2; k++) {
+          if (await this.isExistEle(se[0], true, 2000)) {
+            let el = await this.getEle(se[0], 3000);
+            await this.clickEle(el, 100, 400);
+            await this.backNowMissionPage(gameUrlHost);
+            await this.hideOverlay();
+          }
+        }
+        if (await this.isExistEle(se[1], true, 2000)) {
+          let el = await this.getEle(se[1], 3000);
+          await this.clickEle(el, 100, 400);
+          await this.backNowMissionPage(gameUrlHost);
+          // 勝手に動く
+          await this.sleep(10000);
+          await this.hideOverlay();
+          if (await this.isExistEle(se[0], true, 2000)) {
+            let el = await this.getEle(se[0], 3000);
+            await this.clickEle(el, 100, 400);
+            await this.backNowMissionPage(gameUrlHost);
+            await this.hideOverlay();
+          }
+        }
+      }
+      if (await this.isExistEle(se[3], true, 2000)) {
+        let el = await this.getEle(se[3], 3000);
+        let text = await el.getText();
+        let regex = "あと(\\d+)回*";
+        let matches = text.match(regex);
+        if (matches[1] && matches[1] == "0") res = D.STATUS.DONE;
+      }
+    } catch (e) {
+      logger.warn(e);
+    } finally {
+      if (wid) {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
+  }
+  async doDaruma(wid) {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let se = [
+        "input[alt='進む']",
+        "#startWrap img",
+        "a>img[alt='トップへ戻る']", // 2
+        "div.point>div>span",
+        "[id^=chara]>a>img", // 4
+        "#buttonRed",
+        "#buttonBlue", // 6
+        "div.blockBox",
+        "a[href='finish.php']>img", // 8
+
+        // "a>img[alt='次へ']",
+        // "#startWrap img",
+        // "a>img[alt='トップへ戻る']", // 2
+        // "div.point>div>span",
+        // "[id^=chara]>a>img", // 4
+        // "input[alt='進む']",
+        // "#map", // 6
+        // "div[id^='button']",
+        // "a[href='finish.php']>img", // 8
+      ];
+      // if (this.isMob) (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
+      // await this.ignoreKoukoku();
+      let limit = 20; // なんか結構30多いので、基本は20
+      if (await this.isExistEle(se[3], true, 2000)) {
+        let el = await this.getEle(se[3], 3000);
+        let text = await el.getText();
+        let regex = "(\\d+)回*";
+        let matches = text.match(regex);
+        if (matches[1]) limit = Number(matches[1]);
+      }
+      let gameUrlHost = await driver.getCurrentUrl();
+      gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
+      for (let j = 0; j < limit; j++) {
+        logger.info(`${j}/${limit}回目-----------`);
+        await this.hideOverlay();
+        for (let k = 0; k < 3; k++) {
+          if (await this.isExistEle(se[0], true, 2000)) {
+            let el = await this.getEle(se[0], 3000);
+            await this.clickEle(el, 100, 400);
+            // await this.backNowMissionPage(gameUrlHost);
+            await this.hideOverlay();
+          }
+        }
+        if (await this.isExistEle(se[1], true, 2000)) {
+          let el = await this.getEle(se[1], 3000);
+          await this.clickEle(el, 100, 400);
+          await this.backNowMissionPage(gameUrlHost);
+          await this.hideOverlay();
+          // await this.exeScriptNoTimeOut(`document.querySelector("${se[6]}").remove();`);
+          let els = await this.getEles(se[7], 2000);
+          for (let i = els.length - 1; i >= 0; i--) {
+            let classTmp = await els[i].getAttribute("class");
+            let regex = "blockBox box(\\d+)";
+            let matches = classTmp.match(regex);
+            let s = se[5];
+            if (matches[1] == "2") {
+              s = se[6];
+            }
+            if (await this.isExistEle(s, true, 2000)) {
+              let el = await this.getEle(s, 3000);
+              await this.clickEle(el, 100, 400);
+              // await this.backNowMissionPage(gameUrlHost);
+              // await this.hideOverlay();
+            }
+          }
+          if (await this.isExistEle(se[8], true, 2000)) {
+            let el = await this.getEle(se[8], 3000);
+            await this.sleep(5000);
+            await this.clickEle(el, 100, 400);
+            await this.backNowMissionPage(gameUrlHost);
+            await this.hideOverlay();
+            for (let i = 0; i < 2; i++) {
+              if (await this.isExistEle(se[0], true, 2000)) {
+                let el = await this.getEle(se[0], 3000);
+                await this.clickEle(el, 100, 400);
+                await this.backNowMissionPage(gameUrlHost);
+                await this.hideOverlay();
+              }
+            }
+          }
+        }
+      }
+      if (await this.isExistEle(se[3], true, 2000)) {
+        let el = await this.getEle(se[3], 3000);
+        let text = await el.getText();
+        let regex = "(\\d+)回*";
+        let matches = text.match(regex);
+        if (matches[1] && matches[1] == "0") res = D.STATUS.DONE;
+      }
+    } catch (e) {
+      logger.warn(e);
+    } finally {
+      if (wid) {
+        await driver.close(); // このタブを閉じて
+        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      }
+    }
+    return res;
   }
 
   async hideOverlay() {

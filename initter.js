@@ -171,7 +171,7 @@ exports.initBrowserDriver = async function (isMob = false, headless = false) {
       chromeOptions.setMobileEmulation({
         deviceName: conf.chrome.mobile ? conf.chrome.mobile : "Pixel 5",
       });
-      chromeOptions.addArguments("--window-size=960,1080");
+      chromeOptions.addArguments("--window-size=450,1080");
     }
     else {
       chromeOptions.addArguments("--window-size=1920,2160");  // ほんとは1080だけど以下の拡大率のため倍にする
