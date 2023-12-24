@@ -73,7 +73,7 @@ class PartsResearch1 extends BaseWebDriverWrapper {
           if (j !== 0 && (await this.isExistEle(sele[0], true, 3000))) {
             eles = await this.getEles(sele[0], 3000);
           }
-          await this.clickEle(eles[0], 2000); // 常に一番上で
+          await this.clickEle(eles[0], 2000, 100, true); // 常に一番上で
           let wid2 = await driver.getWindowHandle();
           await this.changeWindow(wid2); // 別タブに移動する
           try {
