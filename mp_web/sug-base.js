@@ -398,6 +398,7 @@ class SugAnq extends SugMissonSupper {
     if (await this.isExistEle(sele[1], true, 2000)) {
       let eles = await this.getEles(sele[1], 3000);
       let limit = eles.length;
+      let isErr = false;
       for (let i = 0; i < limit; i++) {
         if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
         let text = await eles[i].getText();
@@ -420,6 +421,7 @@ class SugAnq extends SugMissonSupper {
             }
           } catch (e) {
             logger.warn(e);
+            isErr = true;
           } finally {
             await driver.close(); // このタブを閉じて
             await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -427,6 +429,7 @@ class SugAnq extends SugMissonSupper {
           }
         }
       }
+      isErr ? (res = D.STATUS.DONE) : null;
     } else {
       res = D.STATUS.DONE;
     }

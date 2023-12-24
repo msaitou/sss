@@ -269,6 +269,7 @@ class CmDotti extends CmSuper {
                             if (i == 9 && await this.isExistEle(sele[9], true, 3000)) {
                               ele = await this.getEle(sele[9], 1000);
                               await this.clickEle(ele, 2000, 200, true); // 大元に戻る
+                              await this.ignoreKoukoku();
                             }
                           }
                         }
@@ -280,6 +281,7 @@ class CmDotti extends CmSuper {
                   if (await this.isExistEle(sele[9], true, 3000)) {
                     ele = await this.getEle(sele[9], 1000);
                     await this.clickEle(ele, 2000, 200, true); // 大元に戻る
+                    await this.ignoreKoukoku();
                   }
                   break;
                 }
