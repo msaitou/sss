@@ -1132,7 +1132,8 @@ class PartsGame extends BaseWebDriverWrapper {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
         if (await this.isExistEle(iSele[0], true, 3000)) {
-          await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").remove();`);
+          await this.exeScriptNoTimeOut(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
+          await this.exeScriptNoTimeOut(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
           // let iframe = await this.getEles(iSele[0], 1000);
           // await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
           // let inputEle = await this.getEle(s, 1000);
