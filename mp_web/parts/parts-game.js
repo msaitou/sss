@@ -12,12 +12,52 @@ class PartsGame extends BaseWebDriverWrapper {
     this.para = para;
     this.doMethod = null;
     this.setDriver(this.para.driver);
-    if (mType == D.MISSION.GAME_OTSUKAI) this.doMethod = this.doOtsukai;
-    else if (mType == D.MISSION.GAME_COOK) this.doMethod = this.doCook;
-    else if (mType == D.MISSION.GAME_FASHION) this.doMethod = this.doFashion;
-    else if (mType == D.MISSION.GAME_MEISHO) this.doMethod = this.doMeisho;
-    else if (mType == D.MISSION.GAME_OTE) this.doMethod = this.doOte;
-    else if (mType == D.MISSION.GAME_DARUMA) this.doMethod = this.doDaruma;
+    switch (mType) {
+      case D.MISSION.MOLL_OTSUKAI:
+      case D.MISSION.GAME_OTSUKAI:
+        this.doMethod = this.doOtsukai;
+        break;
+      case D.MISSION.MOLL_COOK:
+      case D.MISSION.GAME_COOK:
+        this.doMethod = this.doCook;
+        break;
+      case D.MISSION.MOLL_FASHION:
+      case D.MISSION.GAME_FASHION:
+        this.doMethod = this.doFashion;
+        break;
+      case D.MISSION.GAME_MEISHO:
+        this.doMethod = this.doMeisho;
+        break;
+      case D.MISSION.MOLL_OTE:
+      case D.MISSION.GAME_OTE:
+        this.doMethod = this.doOte;
+        break;
+      case D.MISSION.MOLL_DARUMA:
+      case D.MISSION.GAME_DARUMA:
+        this.doMethod = this.doDaruma;
+        break;
+      case D.MISSION.MOLL_KOKUHAKU:
+        this.doMethod = this.doKokuhaku;
+        break;
+      case D.MISSION.MOLL_YUUSYA:
+        this.doMethod = this.doYuusya;
+        break;
+      case D.MISSION.MOLL_TRAIN:
+        this.doMethod = this.doTrain;
+        break;
+      case D.MISSION.MOLL_EGG:
+        this.doMethod = this.doEgg;
+        break;
+      case D.MISSION.MOLL_HIGHLOW:
+        this.doMethod = this.doHighLow;
+        break;
+      case D.MISSION.MOLL_TENKI:
+        this.doMethod = this.doTenki;
+        break;
+      case D.MISSION.MOLL_DOKOMADE:
+        this.doMethod = this.doDokomade;
+        break;
+    }
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async doKokuhaku(wid) {
@@ -333,7 +373,10 @@ class PartsGame extends BaseWebDriverWrapper {
               }
             }
             try {
-              await driver.wait(until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null, 10000);
+              await driver.wait(
+                until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null,
+                10000
+              );
             } catch (e) {
               this.logger.info("表示待ちのタイムアウト");
             }
@@ -407,7 +450,10 @@ class PartsGame extends BaseWebDriverWrapper {
               }
             }
             try {
-              await driver.wait(until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null, 10000);
+              await driver.wait(
+                until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null,
+                10000
+              );
             } catch (e) {
               this.logger.info("表示待ちのタイムアウト");
             }
@@ -482,7 +528,10 @@ class PartsGame extends BaseWebDriverWrapper {
                 }
               }
               try {
-                await driver.wait(until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null, 10000);
+                await driver.wait(
+                  until.elementIsVisible(waitEls[0]) || waitEls[1] ? until.elementIsVisible(waitEls[1]) : null,
+                  10000
+                );
               } catch (e) {
                 this.logger.info("表示待ちのタイムアウト");
               }
@@ -702,7 +751,9 @@ class PartsGame extends BaseWebDriverWrapper {
           await this.clickEle(el, 100, 400);
           await this.backNowMissionPage(gameUrlHost);
           await this.hideOverlay();
-          for (let j = 0; j < 2; j++) {
+          for (let k = 0; k < 2; k++) {
+            if (!this.isMob && k == 1) se[4] = "#btn>a>img";
+            else if (!this.isMob && k == 0) se[4] = "[id^=chara]>a>img";
             if (await this.isExistEle(se[4], true, 2000)) {
               let els = await this.getEles(se[4], 3000);
               await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 100, 400);

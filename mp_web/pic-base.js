@@ -68,7 +68,15 @@ class PicBase extends BaseExecuter {
           case D.MISSION.MOLL_QUIZ_KENTEI_3:
           case D.MISSION.MOLL_QUIZ_KENTEI_4:
           case D.MISSION.MOLL_QUIZ_KENTEI_5:
-          case D.MISSION.POINT_MOLL:
+          // case D.MISSION.POINT_MOLL:
+          case D.MISSION.MOLL_OTSUKAI:
+          case D.MISSION.MOLL_COOK:
+          case D.MISSION.MOLL_FASHION:
+          case D.MISSION.MOLL_OTE:
+          case D.MISSION.MOLL_BUS:
+          case D.MISSION.MOLL_SUPPA:
+          case D.MISSION.MOLL_KOTAE:
+          case D.MISSION.MOLL_GEKIKARA:
             execCls = new PicPointMoll(para, mission.main);
             break;
           case D.MISSION.PIC_VARIABLE:
@@ -234,11 +242,7 @@ class PicCm extends PicMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(
-        this.para,
-        this.cmMissionList,
-        "https://pointi.cmnw.jp/game/"
-      );
+      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://pointi.cmnw.jp/game/");
       await cmManage.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -264,8 +268,7 @@ class PicOtano extends PicMissonSupper {
       let eles0 = await this.getEles(sele[0], 3000),
         limit = eles0.length;
       for (let i = 0; i < limit; i++) {
-        if (i !== 0 && (await this.isExistEle(sele[0], true, 2000)))
-          eles0 = await this.getEles(sele[0], 3000);
+        if (i !== 0 && (await this.isExistEle(sele[0], true, 2000))) eles0 = await this.getEles(sele[0], 3000);
         let limit2 = eles0.length;
         for (let j = 0; j < limit2; j++) {
           let index = limit2 - 1 - j;
@@ -469,6 +472,13 @@ class PicPointMoll extends PicMissonSupper {
         let anqSeleList = Object.values(anqSeleMap);
         let mainSeleMap = {
           ...anqSeleMap,
+          [D.MISSION.MOLL_QUIZ_KENTEI_1]: "img[src*='img_quiz01']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_2]: "img[src*='img_quiz02']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_3]: "img[src*='img_quiz03']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_4]: "img[src*='img_quiz04']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_5]: "img[src*='img_quiz05']",
+        };
+        let gameSeleMap = {
           [D.MISSION.MOLL_KOKUHAKU]: "div>img[src*='img_kokuhaku']",
           [D.MISSION.MOLL_DOKOMADE]: "div>img[src*='nobi']",
           [D.MISSION.MOLL_TRAIN]: "div>img[src*='train']",
@@ -476,12 +486,16 @@ class PicPointMoll extends PicMissonSupper {
           [D.MISSION.MOLL_EGG]: "div>img[src*='egg_choice']",
           [D.MISSION.MOLL_HIGHLOW]: "div>img[src*='high_and_low']",
           [D.MISSION.MOLL_TENKI]: "div>img[src*='tenkiate']",
-          [D.MISSION.MOLL_QUIZ_KENTEI_1]: "img[src*='img_quiz01']",
-          [D.MISSION.MOLL_QUIZ_KENTEI_2]: "img[src*='img_quiz02']",
-          [D.MISSION.MOLL_QUIZ_KENTEI_3]: "img[src*='img_quiz03']",
-          [D.MISSION.MOLL_QUIZ_KENTEI_4]: "img[src*='img_quiz04']",
-          [D.MISSION.MOLL_QUIZ_KENTEI_5]: "img[src*='img_quiz05']",
+          [D.MISSION.MOLL_OTSUKAI]: "img[src*='img_otsukai']",
+          [D.MISSION.MOLL_COOK]: "img[src*='img_cooking']",
+          [D.MISSION.MOLL_FASHION]: "img[src*='img_fashion']",
+          [D.MISSION.MOLL_OTE]: "img[src*='img_ote']",
+          [D.MISSION.MOLL_BUS]: "img[src*='img_bus']",
+          [D.MISSION.MOLL_SUPPA]: "img[src*='img_sour']",
+          [D.MISSION.MOLL_KOTAE]: "img[src*='img_kotae']",
+          [D.MISSION.MOLL_GEKIKARA]: "img[src*='img_ramen']",
         };
+        mainSeleMap = Object.assign(mainSeleMap, gameSeleMap);
         let cSeleList = [
           // "img[src*='img_seiza']",　// なんか0しか稼げないので
           // ...Object.values(mainSeleMap), // 値を配列で列挙して展開
@@ -491,7 +505,7 @@ class PicPointMoll extends PicMissonSupper {
         } else {
           if (this.isMob) cSeleList = Object.values(anqSeleMap);
         }
-        let Game = new PartsGame(this.para);
+        let Game = new PartsGame(this.para, this.main);
         let AnkPark = new PartsAnkPark(this.para);
         let QuizKentei = new PartsQuizKentei(this.para);
         for (let cSele of cSeleList) {
@@ -507,27 +521,8 @@ class PicPointMoll extends PicMissonSupper {
               // 占い
               let execCls = new Uranai(this.para);
               res = await execCls.do();
-            } else if (cSele.indexOf("img_kokuhaku") > -1) {
-              // 告白
-              res = await Game.doKokuhaku();
-            } else if (cSele.indexOf("train") > -1) {
-              // ピタットトレイン
-              res = await Game.doTrain();
-            } else if (cSele.indexOf("img_yusha") > -1) {
-              // 誰でも勇者
-              res = await Game.doYuusya();
-            } else if (cSele.indexOf("egg_choice") > -1) {
-              // エッグチョイス
-              res = await Game.doEgg();
-            } else if (cSele.indexOf("high_and_low") > -1) {
-              // ハイアンドロー
-              res = await Game.doHighLow();
-            } else if (cSele.indexOf("tenkiate") > -1) {
-              // 天気当て
-              res = await Game.doTenki();
-            } else if (cSele.indexOf("nobi") > -1) {
-              // どこまで
-              res = await Game.doDokomade();
+            } else if (Object.values(gameSeleMap).indexOf(cSele) > -1) {
+              res = await Game.doMethod();
             } else if (anqSeleList.indexOf(cSele) > -1) {
               try {
                 let se = ["div>a:not(.answered)"];
@@ -535,8 +530,7 @@ class PicPointMoll extends PicMissonSupper {
                   let eles = await this.getEles(se[0], 3000);
                   let limit = eles.length;
                   for (let i = 0; i < limit; i++) {
-                    if (i != 0 && (await this.isExistEle(se[0], true, 3000)))
-                      eles = await this.getEles(se[0], 3000);
+                    if (i != 0 && (await this.isExistEle(se[0], true, 3000))) eles = await this.getEles(se[0], 3000);
                     let wid3 = await driver.getWindowHandle();
                     await this.hideOverlay();
                     if (cSele == mainSeleMap[D.MISSION.MOLL_HIRAMEKI]) {
@@ -605,8 +599,10 @@ class PicPointMoll extends PicMissonSupper {
       } catch (e) {
         logger.warn(e);
       } finally {
-        await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
-        await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+        try {
+          await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
+          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+        } catch (e) {}
       }
     }
     logger.info(`${this.constructor.name} END`);

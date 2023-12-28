@@ -58,6 +58,20 @@ exports.Def = {
     MOLL_QUIZ_KENTEI_3: "moll_quiz_kentei_3",
     MOLL_QUIZ_KENTEI_4: "moll_quiz_kentei_4",
     MOLL_QUIZ_KENTEI_5: "moll_quiz_kentei_5",
+    MOLL_OTSUKAI: "moll_otsukai",
+    MOLL_COOK: "moll_cook",
+    MOLL_FASHION: "moll_fashion",
+    MOLL_OTE: "moll_ote",
+    // MOLL_MEISHO: "moll_meisho",
+    // MOLL_DARUMA: "moll_daruma",
+    MOLL_BUS: "moll_bus",
+    MOLL_SUPPA: "moll_suppa",
+    MOLL_KOTAE: "moll_kotae",
+    MOLL_GEKIKARA: "moll_gekikara",
+
+
+    MOLL_DARUMA: "moll_daruma",
+ 
     PIC_VARIABLE: "pic_variable",
     GAME_KOKUHAKU: "game_kokuhaku",
     CM_GAME_FURUFURU_SEARCH: "cm_game_furufuru_search",
