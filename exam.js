@@ -49,7 +49,8 @@ if (!(global.manual || global.mobile)) {
   } else {
     // // 認証コードの取得
     // Replace with the code you received from Google
-    const code = "4/0AWtgzh7q1Sbsh4rNZYpKJonH710FkqGTJqDQ4RgzaNEeF3gttjMT5QZMMY_x1PvnMDLX-Q";
+//     const code = "4/0AWtgzh7q1Sbsh4rNZYpKJonH710FkqGTJqDQ4RgzaNEeF3gttjMT5QZMMY_x1PvnMDLX-Q";
+    const code = "4/0AfJohXmzDYSLlqDZHueGDN-AvXzBxVJJpDiEuFfxyTA1XodwGWZAT0vcCymHp5fPb6z5LA"; // win11
 
     oAuth2Client.getToken(code).then(({ tokens }) => {
       const tokenPath = path.join(__dirname, "token.json");

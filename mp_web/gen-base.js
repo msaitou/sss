@@ -58,7 +58,10 @@ class GenBase extends BaseExecuter {
             execCls = new GenQuizKentei(para);
             break;
           case D.MISSION.GAME_DOKOMADE:
-            execCls = new GenGameDokomade(para);
+          case D.MISSION.GAME_OTE:
+          case D.MISSION.GAME_EGG:
+          case D.MISSION.GAME_DARUMA:
+            execCls = new GenGameContents(para, mission.main);
             break;
         }
         if (execCls) {
@@ -227,7 +230,7 @@ class GenCm extends GenMissonSupper {
     } else await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
-      await this.clickEle(eles[0], 2000, this.isMob?155:0);
+      await this.clickEle(eles[0], 2000, this.isMob ? 155 : 0);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://gendama.cmnw.jp/game/");
@@ -851,7 +854,7 @@ class GenAnqKenkou extends GenMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele0, 3000, this.isMob?155:0);
+      await this.clickEle(ele0, 3000, this.isMob ? 155 : 0);
       await this.ignoreKoukoku();
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
@@ -949,22 +952,34 @@ class GenQuizKentei extends GenMissonSupper {
 }
 const { PartsGame } = require("./parts/parts-game.js");
 // どこまでのびるか
-class GenGameDokomade extends GenMissonSupper {
+class GenGameContents extends GenMissonSupper {
   firstUrl = "https://www.gendama.jp/";
   targetUrl = "https://www.gendama.jp/sp/";
-  constructor(para) {
+  mission = "";
+  constructor(para, mType) {
     super(para);
+    this.mission = mType;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
-    let PGame = new PartsGame(this.para);
+    // "img[alt='だるま落とし']", "img[alt='お手できるかな']","img[alt='エッグチョイス']",
     let sele = ["a.btn_game", "img[alt='どこまでのびるかな？']", "#fluct-ad-overlay"];
+
+    let PGame = new PartsGame(this.para, this.mission);
+    let se;
+    if (this.mission == D.MISSION.GAME_DARUMA) se = ["#menu_game img[alt='だるま落とし']"];
+    else if (this.mission == D.MISSION.GAME_OTE) se = ["#menu_game img[alt='お手できるかな']"];
+    // else if (this.mission == D.MISSION.GAME_TENKI) se = ["#menu_game img[alt='てるてるの天気当てゲーム']"];
+    else if (this.mission == D.MISSION.GAME_EGG) se = ["#menu_game img[alt='エッグチョイス']"];
+    else if (this.mission == D.MISSION.GAME_DOKOMADE) se = ["#menu_game img[alt='どこまでのびるかな？']"];
+    sele[1] = se[0];
+
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele0, 3000);
+      await this.clickEle(ele0, 100);
       if (await this.isExistEle(sele[2], true, 2000)) {
         await this.driver.executeScript(
           `document.querySelector('#fluct-ad-overlay').setAttribute('style', 'display:none;');`
@@ -972,11 +987,11 @@ class GenGameDokomade extends GenMissonSupper {
       }
       if (await this.isExistEle(sele[1], true, 2000)) {
         ele0 = await this.getEle(sele[1], 3000);
-        await this.clickEle(ele0, 3000);
+        await this.clickEle(ele0, 100);
         await this.ignoreKoukoku();
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
-        res = await PGame.doDokomade(wid);
+        res = await PGame.doMethod(wid);
       }
     }
     return res;
