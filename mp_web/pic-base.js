@@ -486,14 +486,14 @@ class PicPointMoll extends PicMissonSupper {
           [D.MISSION.MOLL_EGG]: "div>img[src*='egg_choice']",
           [D.MISSION.MOLL_HIGHLOW]: "div>img[src*='high_and_low']",
           [D.MISSION.MOLL_TENKI]: "div>img[src*='tenkiate']",
-          [D.MISSION.MOLL_OTSUKAI]: "img[src*='img_otsukai']",
-          [D.MISSION.MOLL_COOK]: "img[src*='img_cooking']",
-          [D.MISSION.MOLL_FASHION]: "img[src*='img_fashion']",
-          [D.MISSION.MOLL_OTE]: "img[src*='img_ote']",
-          [D.MISSION.MOLL_BUS]: "img[src*='img_bus']",
-          [D.MISSION.MOLL_SUPPA]: "img[src*='img_sour']",
-          [D.MISSION.MOLL_KOTAE]: "img[src*='img_kotae']",
-          [D.MISSION.MOLL_GEKIKARA]: "img[src*='img_ramen']",
+          [D.MISSION.MOLL_OTSUKAI]: "#enq img[src*='img_otsukai']",
+          [D.MISSION.MOLL_COOK]: "#enq img[src*='img_cooking']",
+          [D.MISSION.MOLL_FASHION]: "#enq img[src*='img_fashion']",
+          [D.MISSION.MOLL_OTE]: "#enq img[src*='img_ote']",
+          [D.MISSION.MOLL_BUS]: "#enq img[src*='img_bus']",
+          [D.MISSION.MOLL_SUPPA]: "#enq img[src*='img_sour']",
+          [D.MISSION.MOLL_KOTAE]: "#enq img[src*='img_kotae']",
+          [D.MISSION.MOLL_GEKIKARA]: "#enq img[src*='img_ramen']",
         };
         mainSeleMap = Object.assign(mainSeleMap, gameSeleMap);
         let cSeleList = [
@@ -511,7 +511,7 @@ class PicPointMoll extends PicMissonSupper {
         for (let cSele of cSeleList) {
           if (await this.isExistEle(cSele, true, 2000)) {
             ele = await this.getEle(cSele, 3000);
-            await this.clickEle(ele, 3000);
+            await this.clickEle(ele, 300);
             let wid2 = await driver.getWindowHandle();
             await this.changeWindow(wid2); // 別タブに移動する
             if (cSele.indexOf("img_quiz0") > -1) {
