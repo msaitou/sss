@@ -525,11 +525,11 @@ class PartsAnkPark extends BaseWebDriverWrapper {
             await select.selectByValue(choiceNum.toString());
           } else {
             if (eles.length <= choiceNum) choiceNum = eles.length - 1;
-            await this.clickEle(eles[choiceNum], 2000);
+            await this.clickEle(eles[choiceNum], 100);
           }
           if (await this.isExistEle(sele[4], true, 2000)) {
             ele = await this.getEle(sele[4], 3000);
-            await this.clickEle(ele, 2000); // 次のページ
+            await this.clickEle(ele, 200); // 次のページ
           }
         }
       }

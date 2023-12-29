@@ -143,7 +143,8 @@ class BaseWebDriverWrapper {
         } catch (e) {
           if (e.name != "TimeoutError") throw e;
           try {
-            await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
+            await this.driver.navigate().back(); // 戻って
+            await this.driver.navigate().forward(); // 行く
           } catch (e) {
             if (e.name != "TimeoutError") throw e;
             this.logger.warn(e.name);
