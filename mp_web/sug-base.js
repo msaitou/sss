@@ -49,10 +49,10 @@ class SugBase extends BaseExecuter {
             execCls = new SugGameFurufuruSearch(para);
             break;
           case D.MISSION.GAME_KOKUHAKU:
-            execCls = new SugGameKokuhaku(para);
-            break;
           case D.MISSION.GAME_TRAIN:
-            execCls = new SugGameTrain(para);
+          case D.MISSION.GAME_DARUMA:
+          case D.MISSION.GAME_TENKI:
+            execCls = new SugGameContents(para, mission.main);
             break;
         }
         if (execCls) {
@@ -496,19 +496,26 @@ class SugGameFurufuruSearch extends SugMissonSupper {
   }
 }
 const { PartsGame } = require("./parts/parts-game.js");
-// 告白 mobile
-class SugGameKokuhaku extends SugMissonSupper {
+// 告白,ピタットトレインmobile
+class SugGameContents extends SugMissonSupper {
   firstUrl = "https://www.netmile.co.jp/sugutama/";
   targetUrl = "https://www.netmile.co.jp/sugutama/game?lo=124";
-  constructor(para) {
+  mission = "";
+  constructor(para, mType) {
     super(para);
+    this.mission = mType;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
-    let PGame = new PartsGame(this.para);
-    let se = ["img[src*='f0a4790d8fbd0d045c2498fe25fa3fa8']"];
+    let PGame = new PartsGame(this.para, this.mission);
+    let se;
+    if (this.mission == D.MISSION.GAME_KOKUHAKU) se = ["img[src*='f0a4790d8fbd0d045c2498fe25fa3fa8']"];
+    else if (this.mission == D.MISSION.GAME_TRAIN) se = ["img[src*='1a6ddc77ac3971bbbe7e0baee7a2271c']"]; // train
+    else if (this.mission == D.MISSION.GAME_TENKI) se = ["img[src*='7180e9d499f17389deca4cc215bd27d7']"];
+    else if (this.mission == D.MISSION.GAME_DARUMA) se = ["img[src*='f091c6cb4870b08d78584a4a32b6d826']"];
+
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(se[0], true, 2000)) {
       let el = await this.getEle(se[0], 3000);
@@ -516,32 +523,7 @@ class SugGameKokuhaku extends SugMissonSupper {
       await this.ignoreKoukoku();
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      res = await PGame.doKokuhaku(wid);
-    }
-    return res;
-  }
-}
-// ピタットトレイン mobile
-class SugGameTrain extends SugMissonSupper {
-  firstUrl = "https://www.netmile.co.jp/sugutama/";
-  targetUrl = "https://www.netmile.co.jp/sugutama/game?lo=124";
-  constructor(para) {
-    super(para);
-    this.logger.debug(`${this.constructor.name} constructor`);
-  }
-  async do() {
-    let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    let res = D.STATUS.FAIL;
-    let PGame = new PartsGame(this.para);
-    let se = ["img[src*='1a6ddc77ac3971bbbe7e0baee7a2271c']"];
-    await this.openUrl(this.targetUrl); // 操作ページ表示
-    if (await this.isExistEle(se[0], true, 2000)) {
-      let el = await this.getEle(se[0], 3000);
-      await this.clickEleScrollWeak(el, 2000, 100);
-      await this.ignoreKoukoku();
-      let wid = await driver.getWindowHandle();
-      await this.changeWindow(wid); // 別タブに移動する
-      res = await PGame.doTrain(wid);
+      res = await PGame.doMethod(wid);
     }
     return res;
   }

@@ -37,24 +37,30 @@ class PartsGame extends BaseWebDriverWrapper {
         this.doMethod = this.doDaruma;
         break;
       case D.MISSION.MOLL_KOKUHAKU:
+      case D.MISSION.GAME_KOKUHAKU:
         this.doMethod = this.doKokuhaku;
         break;
       case D.MISSION.MOLL_YUUSYA:
+      case D.MISSION.GAME_YUUSYA:
         this.doMethod = this.doYuusya;
         break;
       case D.MISSION.MOLL_TRAIN:
+      case D.MISSION.GAME_TRAIN:
         this.doMethod = this.doTrain;
         break;
       case D.MISSION.MOLL_EGG:
+      case D.MISSION.GAME_EGG:
         this.doMethod = this.doEgg;
         break;
       case D.MISSION.MOLL_HIGHLOW:
         this.doMethod = this.doHighLow;
         break;
       case D.MISSION.MOLL_TENKI:
+      case D.MISSION.GAME_TENKI:
         this.doMethod = this.doTenki;
         break;
       case D.MISSION.MOLL_DOKOMADE:
+      case D.MISSION.GAME_DOKOMADE:
         this.doMethod = this.doDokomade;
         break;
     }
@@ -357,12 +363,13 @@ class PartsGame extends BaseWebDriverWrapper {
         if (await this.isExistEle(se[0], true, 2000)) {
           let el = await this.getEle(se[0], 3000);
           await driver.wait(until.elementIsVisible(el), 5000);
-          await this.clickEle(el, 2000);
+          await this.hideOverlay();
+          await this.clickEle(el, 200);
           await this.backNowMissionPage(gameUrlHost);
           if (await this.isExistEle(se[1], true, 2000)) {
             let els = await this.getEles(se[1], 3000);
             await driver.wait(until.elementIsVisible(els[0]), 5000);
-            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 3000);
+            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 300);
             await this.backNowMissionPage(gameUrlHost);
             await this.sleep(10000);
             let waitEls = [];
@@ -382,7 +389,7 @@ class PartsGame extends BaseWebDriverWrapper {
             }
             for (let button of waitEls) {
               if (await button.isDisplayed()) {
-                await this.clickEle(button, 3000);
+                await this.clickEle(button, 300);
                 await this.backNowMissionPage(gameUrlHost);
                 break;
               }
@@ -391,7 +398,7 @@ class PartsGame extends BaseWebDriverWrapper {
             if (await this.isExistEle(se[0], true, 2000)) {
               let el = await this.getEle(se[0], 3000);
               await driver.wait(until.elementIsVisible(el), 10000);
-              await this.clickEle(el, 3000);
+              await this.clickEle(el, 300);
               await this.backNowMissionPage(gameUrlHost);
             }
           } else break;
@@ -435,12 +442,13 @@ class PartsGame extends BaseWebDriverWrapper {
         if (await this.isExistEle(se[0], true, 2000)) {
           let el = await this.getEle(se[0], 3000);
           await driver.wait(until.elementIsVisible(el), 5000);
-          await this.clickEle(el, 2000);
+          await this.hideOverlay();
+          await this.clickEle(el, 100);
           await this.backNowMissionPage(gameUrlHost);
           if (await this.isExistEle(se[1], true, 2000)) {
             let els = await this.getEles(se[1], 3000);
             await driver.wait(until.elementIsVisible(els[0]), 5000);
-            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 3000);
+            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 300);
             await this.backNowMissionPage(gameUrlHost);
             let waitEls = [];
             for (let seButton of [se[2], se[4]]) {
@@ -459,7 +467,7 @@ class PartsGame extends BaseWebDriverWrapper {
             }
             for (let button of waitEls) {
               if (await button.isDisplayed()) {
-                await this.clickEle(button, 3000);
+                await this.clickEle(button, 300);
                 await this.backNowMissionPage(gameUrlHost);
                 break;
               }
@@ -468,7 +476,7 @@ class PartsGame extends BaseWebDriverWrapper {
             if (await this.isExistEle(se[0], true, 2000)) {
               let el = await this.getEle(se[0], 3000);
               await driver.wait(until.elementIsVisible(el), 10000);
-              await this.clickEle(el, 3000);
+              await this.clickEle(el, 300);
               await this.backNowMissionPage(gameUrlHost);
             }
           } else break;
