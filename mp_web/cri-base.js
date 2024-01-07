@@ -57,12 +57,6 @@ class CriBase extends BaseExecuter {
           case D.MISSION.GAME_FURUFURU_SEARCH:
             execCls = new CriGameFurufuruSearch(para);
             break;
-          case D.MISSION.GAME_COOK:
-          case D.MISSION.GAME_EGG:
-          case D.MISSION.GAME_TENKI:
-          case D.MISSION.GAME_OTE:
-            execCls = new CriGameContents(para, mission.main);
-            break;
         }
         if (execCls) {
           this.writeLogMissionStart(mission.main);
@@ -121,7 +115,7 @@ class CriCommon extends CriMissonSupper {
   async login() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
 
-    await driver.get(siteInfo.entry_url ? siteInfo.entry_url : "https://www.chobirich.com/"); // エントリーページ表示
+    await driver.get(siteInfo.entry_url?siteInfo.entry_url:"https://www.chobirich.com/"); // エントリーページ表示
     let sele = ["#interstitialSpecialAd"];
     if (await this.isExistEle(sele[0], true, 1000)) {
       await this.driver.executeScript(`document.querySelector('${sele[0]}').setAttribute('style', 'display:none;');`);
@@ -235,7 +229,11 @@ class CriCm extends CriMissonSupper {
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://dietnavi.cmnw.jp/game/");
+      let cmManage = new PartsCmManage(
+        this.para,
+        this.cmMissionList,
+        "https://dietnavi.cmnw.jp/game/"
+      );
       await cmManage.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -255,7 +253,11 @@ class CriClick extends CriMissonSupper {
     logger.info(`${this.constructor.name} START`);
 
     let sele = ["div.tokusen_bnr a img", ".clickstamp_list a img", ".clickstamp_list a img"];
-    let urlList = [this.firstUrl, "https://www.chobirich.com/shopping/", "https://www.chobirich.com/earn/"];
+    let urlList = [
+      this.firstUrl,
+      "https://www.chobirich.com/shopping/",
+      "https://www.chobirich.com/earn/",
+    ];
     for (let j = 0; j < sele.length; j++) {
       await this.openUrl(urlList[j]); // 操作ページ表示
       if (await this.isExistEle(sele[j], true, 2000)) {
@@ -506,7 +508,8 @@ class CriAnq extends CriMissonSupper {
       let eles = await this.getEles(sele[0], 3000);
       let limit = eles.length;
       for (let i = 0; i < limit; i++) {
-        if (i !== 0 && (await this.isExistEle(sele[0], true, 2000))) eles = await this.getEles(sele[0], 3000);
+        if (i !== 0 && (await this.isExistEle(sele[0], true, 2000)))
+          eles = await this.getEles(sele[0], 3000);
         let ele = eles[eles.length - 1]; // 下から
         await this.clickEleScrollWeak(ele, 4000, 70);
         let wid = await driver.getWindowHandle();
@@ -632,7 +635,8 @@ class CriAnqPark extends CriMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+              eles = await this.getEles(sele[1], 3000);
             let text = await eles[eles.length - 1].getText();
             text = text.split("\n").join("").split("\n").join("");
             if (await this.isExistEle(sele[2], true, 2000)) {
@@ -728,7 +732,7 @@ class CriAnqHappy extends CriMissonSupper {
       try {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let eles = await this.getEles(sele[1], 3000);
-          let limit = eles.length < 10 ? eles.length : 10;
+          let limit = eles.length < 750 ? eles.length : 50;
           for (let j = 0; j < limit; j++) {
             let wid2 = await driver.getWindowHandle();
             if (await this.isExistEle(sele[8], true, 2000)) {
@@ -744,7 +748,7 @@ class CriAnqHappy extends CriMissonSupper {
                   "あなたのペットに対する考えとイメージに関するアンケート",
                   "家事に関するアンケート",
                   "バッグについてのアンケート",
-                  "二次創作に関するアンケート",
+                  "二次創作に関するアンケート"
                 ].indexOf(title) > -1
               ) {
                 skip++;
@@ -763,7 +767,7 @@ class CriAnqHappy extends CriMissonSupper {
               // await this.clickEle(eles[eles.length -1], 3000);
 
               eles = await this.getEles(sele[1], 3000);
-              await this.clickEle(eles[skip], 3000);
+              await this.clickEle(eles[skip], 3000, 300);
               if (await this.isExistEle(sele[2], true, 2000)) {
                 ele = await this.getEle(sele[2], 3000);
                 // await this.clickEle(ele, 3000, 500, this.isMob);
@@ -791,7 +795,9 @@ class CriAnqHappy extends CriMissonSupper {
                           await driver.navigate().back(); // 一覧からやり直す
                           await this.sleep(2000);
                           iBreak = true;
-                        } else if (currentUrl.indexOf("https://chobirich.enquete.vip/question") === 0) {
+                        } else if (
+                          currentUrl.indexOf("https://chobirich.enquete.vip/question") === 0
+                        ) {
                           // ナニモシナイ
                         } else if (isStartPage) iBreak = true;
                         break;
@@ -871,7 +877,7 @@ class CriAnqHappy extends CriMissonSupper {
                   await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
                   if (await this.isExistEle(sele[6], true, 2000)) {
                     ele = await this.getEle(sele[6], 3000);
-                    await this.clickEle(ele, 3000);
+                    await this.clickEle(ele, 3000, 300);
                     await this.changeWindow(wid); // 別タブに移動する
                   }
                 }
@@ -940,43 +946,6 @@ class CriGameFurufuruSearch extends CriMissonSupper {
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       res = await Furufuru.doSearch(gameUrlHost, wid);
-    }
-    return res;
-  }
-}
-const { PartsGame } = require("./parts/parts-game.js");
-// クッキング おて  mobile
-class CriGameContents extends CriMissonSupper {
-  firstUrl = "https://www.chobirich.com/";
-  targetUrl = "https://www.chobirich.com/game/";
-  mission = "";
-  constructor(para, mType) {
-    super(para);
-    this.mission = mType;
-    this.logger.debug(`${this.constructor.name} constructor`);
-  }
-  async do() {
-    let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    let res = D.STATUS.FAIL;
-    let PGame = new PartsGame(this.para, this.mission);
-    let se;
-    // if (this.mission == D.MISSION.GAME_OTSUKAI) se = ["img[alt='おつかい大冒険']"];
-    // else
-    if (this.mission == D.MISSION.GAME_COOK) se = ["img[alt='えらんでクッキング']"];
-    // else if (this.mission == D.MISSION.GAME_FASHION) se = ["img[alt='きまぐれファッションチェック']"];
-    // else if (this.mission == D.MISSION.GAME_MEISHO) se = ["img[alt='観光名所クイズ']"];
-    else if (this.mission == D.MISSION.GAME_OTE) se = ["img[alt='お手できるかな']"];
-    else if (this.mission == D.MISSION.GAME_TENKI) se = ["img[alt='てるてるの天気当てゲーム']"];
-    else if (this.mission == D.MISSION.GAME_EGG) se = ["img[alt='エッグチョイス']"];
-    // else if (this.mission == D.MISSION.GAME_DARUMA) se = ["img[alt='だるま落としゲーム']"];
-    await this.openUrl(this.targetUrl); // 操作ページ表示
-    if (await this.isExistEle(se[0], true, 2000)) {
-      let el = await this.getEle(se[0], 3000);
-      await this.clickEleScrollWeak(el, 2000, 100);
-      await this.ignoreKoukoku();
-      let wid = await driver.getWindowHandle();
-      await this.changeWindow(wid); // 別タブに移動する
-      res = await PGame.doMethod(wid);
     }
     return res;
   }
