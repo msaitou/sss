@@ -69,6 +69,13 @@ exports.Def = {
     MOLL_KOTAE: "moll_kotae",
     MOLL_GEKIKARA: "moll_gekikara",
 
+    MOLL_BAKETSU: "moll_baketsu",
+    MOLL_KARIMONO: "moll_karimono",
+    MOLL_MADOFUKI: "moll_madofuki",
+    MOLL_UFO: "moll_ufo",
+    MOLL_AB: "moll_ab",
+
+
 
     MOLL_DARUMA: "moll_daruma",
  

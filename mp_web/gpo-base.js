@@ -89,10 +89,18 @@ class GpoBase extends BaseExecuter {
           case D.MISSION.MOLL_COOK:
           case D.MISSION.MOLL_FASHION:
           case D.MISSION.MOLL_OTE:
+
           case D.MISSION.MOLL_BUS:
           case D.MISSION.MOLL_SUPPA:
           case D.MISSION.MOLL_KOTAE:
           case D.MISSION.MOLL_GEKIKARA:
+
+          case D.MISSION.MOLL_BAKETSU:
+          case D.MISSION.MOLL_KARIMONO:
+          case D.MISSION.MOLL_MADOFUKI:
+          case D.MISSION.MOLL_UFO:
+          case D.MISSION.MOLL_AB:
+  
           case D.MISSION.POINT_MOLL:
             execCls = new GpoPointMoll(para, mission.main);
             // TODO 2回やモバイルできそうなやつは、別のMISSIONとして、このクラスを利用するように
@@ -686,10 +694,17 @@ class GpoPointMoll extends GpoMissonSupper {
             [D.MISSION.MOLL_COOK]: "img[src*='img_cooking']",
             [D.MISSION.MOLL_FASHION]: "img[src*='img_fashion']",
             [D.MISSION.MOLL_OTE]: "img[src*='img_ote']",
-            [D.MISSION.MOLL_BUS]: "img[src*='img_bus']",
-            [D.MISSION.MOLL_SUPPA]: "img[src*='img_sour']",
-            [D.MISSION.MOLL_KOTAE]: "img[src*='img_kotae']",
-            [D.MISSION.MOLL_GEKIKARA]: "img[src*='img_ramen']",
+
+            [D.MISSION.MOLL_BUS]: "#enter img[src*='img_bus']",
+            [D.MISSION.MOLL_SUPPA]: "#enter img[src*='img_sour']",
+            [D.MISSION.MOLL_KOTAE]: "#enter img[src*='img_kotae']",
+            [D.MISSION.MOLL_GEKIKARA]: "#enter img[src*='img_ramen']",
+    
+            [D.MISSION.MOLL_BAKETSU]: "img[src*='img_baketsu']",
+            [D.MISSION.MOLL_KARIMONO]: "img[src*='img_karimono']",
+            [D.MISSION.MOLL_MADOFUKI]: "#game img[src*='img_madofuki']",
+            [D.MISSION.MOLL_UFO]: "img[src*='img_ufo']",
+            [D.MISSION.MOLL_AB]: "img[src*='img_ab']",
           };
           mainSeleMap = Object.assign(mainSeleMap, gameSeleMap);
           let cSeleList = [
