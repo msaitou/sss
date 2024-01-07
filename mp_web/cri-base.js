@@ -728,7 +728,7 @@ class CriAnqHappy extends CriMissonSupper {
       try {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let eles = await this.getEles(sele[1], 3000);
-          let limit = eles.length < 750 ? eles.length : 50;
+          let limit = eles.length < 10 ? eles.length : 10;
           for (let j = 0; j < limit; j++) {
             let wid2 = await driver.getWindowHandle();
             if (await this.isExistEle(sele[8], true, 2000)) {
@@ -756,7 +756,7 @@ class CriAnqHappy extends CriMissonSupper {
                 // 隠れてるので全部オープン
                 if (await this.isExistEle(sele[5], true, 2000)) {
                   let ele = await this.getEle(sele[5], 3000);
-                  await this.clickEle(ele, 3000);
+                  await this.clickEle(ele, 3000, 300);
                 } else break;
               }
               // eles = await this.getEles(sele[1], 10000);
