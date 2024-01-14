@@ -1134,6 +1134,11 @@ class PartsGame extends BaseWebDriverWrapper {
         "div.rule-bus-count>p>span",
         "#btn_breaktime", // 4
       ];
+      if (!this.isMob) {
+        se[2] = "#getPtip img[alt='次へ']";
+        se[3] = "div.rule-remain-count>p>span";
+        se[4] = "#coinGetSpecial>button>img";
+      }
       let limit = 30; // 基本は
       if (await this.isExistEle(se[3], true, 2000)) {
         let el = await this.getEle(se[3], 3000);
@@ -1215,6 +1220,10 @@ class PartsGame extends BaseWebDriverWrapper {
         "#btn_breaktime", // 4
         "a[href*='rule']>img[alt='ボタン']",
       ];
+      if (!this.isMob) {
+        se[2] = "#getPtip img[alt='次へ']";
+        se[4] = "#coinGetSpecial>button>img";
+      }
       let limit = 30; // 基本は
       if (await this.isExistEle(se[3], true, 2000)) {
         let el = await this.getEle(se[3], 3000);
@@ -1295,6 +1304,10 @@ class PartsGame extends BaseWebDriverWrapper {
         "#btn_breaktime", // 4
         "img[alt='トップへ戻る']",
       ];
+      if (!this.isMob) {
+        se[2] = "#getPtip img[alt='次へ']";
+        se[4] = "#coinGetSpecial>button>img";
+      }
       let limit = 30; // 基本は
       if (await this.isExistEle(se[3], true, 2000)) {
         let el = await this.getEle(se[3], 3000);
@@ -1335,8 +1348,8 @@ class PartsGame extends BaseWebDriverWrapper {
             let el = await this.getEle(se[1], 3000);
             await this.clickEle(el, 5000, 200);
             await this.backNowMissionPage(gameUrlHost);
-            await this.hideOverlay();
             await this.sleep(5000);
+            await this.hideOverlay();
             if (await this.isExistEle(se[5], true, 2000)) {
               let el = await this.getEle(se[5], 3000);
               await driver.wait(until.elementIsVisible(el), 10000);
@@ -1375,6 +1388,10 @@ class PartsGame extends BaseWebDriverWrapper {
         "#btn_okawari", // 4
         "a[href*='rule']>img[alt='ボタン']",
       ];
+      if (!this.isMob) {
+        se[2] = "#getPtip img[alt='次へ']";
+        se[4] = "#coinGetSpecial>button>img";
+      }
       let limit = 30; // 基本は
       if (await this.isExistEle(se[3], true, 2000)) {
         let el = await this.getEle(se[3], 3000);
@@ -1952,13 +1969,13 @@ class PartsGame extends BaseWebDriverWrapper {
           if (!els.length) break;
           limit = els.length;
           await this.hideOverlay();
-          await this.clickEle(els[0], 3000);
+          await this.clickEle(els[0], 5000);
           for (let i = 0; i < 2; i++) {
             if (await this.isExistEle(se[2], true, 2000)) {
               let el = await this.getEle(se[2], 3000);
               await this.hideOverlay();
               await this.driver.executeScript(`window.scrollTo(0, 600);`);
-              await this.sleep(2000);
+              await this.sleep(1000);
               await this.clickEle(el, 2000, 200);
             }
           }
@@ -2008,6 +2025,7 @@ class PartsGame extends BaseWebDriverWrapper {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
         if (await this.isExistEle(iSele[0], true, 3000)) {
+          if (!this.isMob) await this.sleep(2000);
           await this.exeScriptNoTimeOut(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
           await this.exeScriptNoTimeOut(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
           // let iframe = await this.getEles(iSele[0], 1000);
@@ -2031,6 +2049,10 @@ class PartsGame extends BaseWebDriverWrapper {
   }
   async adver() {
     let seleOver = ["[src*='close-circle']", "#dismiss-button-element"];
+    if (!this.isMob) {
+      seleOver = ["#close_button", "#dismiss-button-element", "[src*='close-circle']"];
+      await this.ignoreKoukoku();
+    }
     let iSele = ["ins [aria-label*='Advertisement']", "div.rewardResumebutton"];
     if (await this.isExistEle(iSele[0], true, 3000)) {
       // await this.exeScriptNoTimeOut(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
@@ -2038,7 +2060,7 @@ class PartsGame extends BaseWebDriverWrapper {
       let iframe = await this.getEles(iSele[0], 1000);
       await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
       for (let s of seleOver) {
-        if (s === "[src*='close-circle']" && (await this.isExistEle(s, true, 3000))) {
+        if ((s === seleOver[0] || s === seleOver[2]) && (await this.isExistEle(s, true, 3000))) {
           if (await this.isExistEle(iSele[1], true, 3000)) {
             let els = await this.getEles(iSele[1], 2000);
             if (await els[els.length - 1].isDisplayed()) {
@@ -2054,7 +2076,7 @@ class PartsGame extends BaseWebDriverWrapper {
             } else this.logger.debug("オーバーレイは表示されてないです");
           }
           break;
-        } else if (s === "#dismiss-button-element" && (await this.isExistEle(s, true, 3000))) {
+        } else if (s === seleOver[1] && (await this.isExistEle(s, true, 3000))) {
           let ele = await this.getEle(s, 2000);
           await this.sleep(10000);
           await this.clickEle(ele, 200);

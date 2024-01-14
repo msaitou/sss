@@ -84,7 +84,7 @@ class PartsRead extends BaseWebDriverWrapper {
             await this.movePrevPage();
             isReaded = false;
             i--; // ノーカン
-            if (superBreakCnt++ > 100) throw("無限ループしてるので失敗にします");
+            if (superBreakCnt++ > 100) throw "無限ループしてるので失敗にします";
           }
         }
         res = D.STATUS.DONE;
@@ -138,11 +138,7 @@ class PartsRead extends BaseWebDriverWrapper {
     }
   }
   async exchange() {
-    let exSele = [
-      "a.stamp__btn[href*='exchange']",
-      "input.exchange__btn",
-      "a.stamp__btn.stamp__btn-return",
-    ];
+    let exSele = ["a.stamp__btn[href*='exchange']", "input.exchange__btn", "a.stamp__btn.stamp__btn-return"];
     await this.hideOverlay();
     if (await this.isExistEle(exSele[0], true, 2000)) {
       let ele = await this.getEle(exSele[0], 3000);
@@ -184,6 +180,7 @@ class PartsReadPic extends BaseWebDriverWrapper {
       let limit = 190;
       let triedFlag = false,
         readedPage = 0;
+      let superBreakCnt = 0;
       for (let i = 0; i < limit; i++) {
         if (!triedFlag) await this.moveLastPage(), (triedFlag = true); // 最後のページに移動
         if (await this.isExistEle(sele[0], true, 2000)) {
@@ -248,6 +245,7 @@ class PartsReadPic extends BaseWebDriverWrapper {
           await this.movePrevPage();
           // readedPage = true;
           i--; // ノーカン
+          if (superBreakCnt++ > 100) throw "無限ループしてるので失敗にします";
         }
       }
       res = D.STATUS.DONE;
@@ -258,11 +256,7 @@ class PartsReadPic extends BaseWebDriverWrapper {
   }
   async moveLastPage() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    let sele = [
-      "div.pager>a:not(.hide)",
-      "div.pager>a.next:not(.hide)",
-      "div.pager>a.prev:not(.hide)",
-    ];
+    let sele = ["div.pager>a:not(.hide)", "div.pager>a.next:not(.hide)", "div.pager>a.prev:not(.hide)"];
     // 最初のページで呼ばれること前提　これはほんとに最後のページだけど、それだと読んだものしかないので、もう少し手前を最後と家仮定
     // if (await this.isExistEle(sele[0], true, 2000)) {
     //   let eles = await this.getEles(sele[0], 2000);
@@ -289,11 +283,7 @@ class PartsReadPic extends BaseWebDriverWrapper {
   }
   async movePrevPage() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    let sele = [
-      "div.pager>a:not(.hide)",
-      "div.pager>a.next:not(.hide)",
-      "div.pager>a.prev:not(.hide)",
-    ];
+    let sele = ["div.pager>a:not(.hide)", "div.pager>a.next:not(.hide)", "div.pager>a.prev:not(.hide)"];
     // 途中のページで呼ばれること前提　1つ前に遷移できるようにする
     if (await this.isExistEle(sele[2], true, 2000)) {
       let ele = await this.getEle(sele[2], 2000);
@@ -311,11 +301,7 @@ class PartsReadPic extends BaseWebDriverWrapper {
     }
   }
   async exchange() {
-    let exSele = [
-      "a.stamp__btn[href*='exchange']",
-      "input.exchange__btn",
-      "a.stamp__btn.stamp__btn-return",
-    ];
+    let exSele = ["a.stamp__btn[href*='exchange']", "input.exchange__btn", "a.stamp__btn.stamp__btn-return"];
     await this.hideOverlay();
     if (await this.isExistEle(exSele[0], true, 2000)) {
       let ele = await this.getEle(exSele[0], 3000);
