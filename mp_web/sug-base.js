@@ -232,11 +232,12 @@ class SugAnqPark extends SugMissonSupper {
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
             if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
-            let text = await eles[eles.length - 1].getText();
+            let selectIndex = eles.length - 1 - i;
+            let text = await eles[selectIndex].getText();
             if (await this.isExistEle(sele[2], true, 2000)) {
               let eles2 = await this.getEles(sele[2], 3000);
               await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
-              let ele = eles2[eles.length - 1];
+              let ele = eles2[selectIndex];
               let ele2;
               try {
                 ele2 = await ele.findElements(By.xpath("ancestor::tr"));
@@ -248,6 +249,11 @@ class SugAnqPark extends SugMissonSupper {
                 ele = ele2[0];
               }
               await this.clickEle(ele, 3000);
+              let gameUrl = await driver.getCurrentUrl();
+              if (gameUrl.indexOf("403") > -1) {
+                await this.driver.navigate().back();
+                continue;
+              }
               switch (text.trim()) {
                 case "漫画":
                   res = await AnkPark.doManga();
