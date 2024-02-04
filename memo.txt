@@ -1,15 +1,23 @@
-https://googlechromelabs.github.io/chrome-for-testing/#stable
+★・当日の完了タスク一覧（実行中時間も）
+★・過去の完了タスク一覧（実行中時間も）
+★・その当日でqueが登録されてるのmachineを列挙
+・今実行中のmainとそのmachineとsite_codeと実行中時間（開始も）
+→実行中ボタン
 
+・killコマンドをsigintシグナルに変えて、終了時に実行中のタスクの実行中時間とステータスの更新
+
+
+
+↓過去メモ
+https://googlechromelabs.github.io/chrome-for-testing/#stable
 mongodbドライバーは最初4.11だったけど、mongodb3.2系に接続できないため、4.1に固定
 ブレスト：：
 今動いてるマシン（saitonote,saitonote2,saitonote4）と、共存ができない。
 　→firefoxとsereniumのバージョンが
-
 となると、エラーのときのアラート方法、修正が楽になるようなログ出力や、
 タスク実行ロジックを見直したい。
 
 見直すのは置いといて、
-
 単発のタスク実行関数だけ作るのでもよい
 
 ・タスクの未実行・実行済み・完了を登録できる
@@ -23,9 +31,7 @@ https://github.com/nodesource/distributions/blob/master/README.md
 // プロセスに名前をつけて、チェック可能にし、終了するまで。もしくは、終了させてから実行するような仕組みにしたい。
 →windowsでも使える概念、考え方で実現したい
 プロセルに名前つけるのは、linuxはできるが、winでできる。
-
 →もし見つかったら、待つ。
-
 
 // log書くやつとdriverとDBの読み書きは独立クラス
 // logを表示するwebアプリを作る。
@@ -67,105 +73,6 @@ zooml = zooml*100;
 なんかのエラーになったら、driverを生成しなおす
 6分ログに更新がない場合、プロセスを切るする
 →nodeに名前をつけて、それを見つけて殺す。立ち上げもする。からこいつで起動が必要
-■モバイルでのログイン対応していないの
-・gmy
-・clt
-・sug?
-・pto?
-・gpo
-・gen
-・pic
-■時間系
-キツめ
-・ハイアンドロー
-m_cit
-m_pst
-m_mop
-・エッグチョイス
-m_pst
-・天気
-m_mop
-・どこまでのびる　★m_pic★m_cit
-・ビンゴ
-m_lfm
-・モグラ
-m_cit
-m_gpo
-・スクラッチ
-m_gpo
-・てるてる
-m_cit
-m_pst
-・ルーレット
-m_cit
-m_pst
-・スロット
-m_cri
-m_sug
-m_cit
-m_cms_cm
-m_lfm_cm
-m_pst
-m_mop
-・ナンバー
-m_gen
-m_pic
-m_cri
-m_sug
-m_cit
-m_cms_cm
-m_lfm
-m_lfm_cm
-m_gpo
-・ダービー
-m_gen
-m_pic
-m_cri
-m_sug
-m_cit
-m_gpo
-・アニマル10
-m_gpo
-・告白
-m_pto
-・チャンネル
-m_cri
-m_cit
-・だるま
-m_sug
-m_pto
-m_cit
-m_mop
-・ペンギン
-m_sug
-m_pto
-m_pic
-m_cit
-m_gpo_moll
-m_mop
-・ロシアン
-m_pto
-m_cit
-m_gpo
-m_mop
-・アニマルポーカー
-m_pto
-m_cit
-m_gpo
-m_mop
-・都道府県
-m_sug
-・勇者
-gpo_moll
-m_mop
-・お手
-m_mop
-■メール
-楽天銀行の 1円
-pilとpstのメール
-
-＊・トレイン ★m_gpo_moll ★gpo_moll　★m_sug
-m_mop
 ##############################
 for (let doc of document.querySelectorAll("a[target='_blank'], iframe")) {doc.setAttribute('target','');}
 ##############################

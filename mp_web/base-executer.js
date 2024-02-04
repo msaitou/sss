@@ -40,6 +40,16 @@ class BaseExecuter extends BaseWebDriverWrapper {
         await this.exec(para);
       } catch (e) {
         this.logger.info(e);
+        let missionDate = libUtil.getYYMMDDStr(new Date());
+        let missionList = await db(D.DB_COL.MISSION_QUE, "find", {
+          mission_date: missionDate, // 今日
+          status: D.STATUS.NOW,
+        });
+        if (missionList.length === 1) {
+          this.updateMissionQue(missionList[0], D.STATUS.FAIL, missionList[0].site_code);
+        } else {
+          this.logger.info(JSON.stringify(missionList, null, 2));
+        }
         await this.quitDriver();
       } finally {
         await this.quitDriver();
@@ -149,6 +159,9 @@ class BaseExecuter extends BaseWebDriverWrapper {
     if (mission["mission_date"]) {
       // ミッションの状況更新
       mission.mod_date = new Date();
+      if (!mission.exec_time) mission.exec_time = 0;
+      mission.exec_time += mission.mod_date - new Date(mission.exec_time_start);
+
       mission.status = res;
       await db(D.DB_COL.MISSION_QUE, "update", { _id: mission._id }, mission);
       // サブミッションの場合、次のサブミッション開始日を更新
@@ -182,6 +195,8 @@ class BaseExecuter extends BaseWebDriverWrapper {
         mission.tryCnt = 0;
       }
       mission.tryCnt++;
+      mission.status = D.STATUS.NOW; // 上書き
+      mission.exec_time_start = mission.mod_date; // 上書き
       await db(D.DB_COL.MISSION_QUE, "update", { _id: mission._id }, mission);
     }
   }

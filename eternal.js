@@ -2,6 +2,8 @@
 const { execSync, exec, spawn } = require("child_process");
 const fs = require("fs");
 const { Def: D } = require("./com_cls/define");
+const { db } = require("./initter.js");
+const { libUtil } = require("./lib/util.js");
 const IS_WIN = process.platform === "win32";
 const IS_LINUX = process.platform === "linux";
 const LOG_FILE = "./log/a.log";
@@ -12,7 +14,7 @@ const PS = {
       NAME: "node-sss",
       CHECK_CMD: "Get-Process -name ",
       KILL_CMD: "Stop-Process -Name ",
-      KILL_OTHER: "chrome",
+      KILL_OTHER: "chrome, chromedriver",
     },
   },
   LINUX: {
@@ -26,9 +28,11 @@ const PS = {
 };
 async function mainLinux() {
   let count = 0;
+  let prePid = "";
   let lastLogTime = undefined;
   const PS_CHECK_CMD = `${PS.LINUX.PS.CHECK_CMD}${PS.LINUX.PS.NAME}`;
-  const PS_KILL_CMD = `${PS.LINUX.PS.KILL_CMD}${PS.LINUX.PS.NAME}${PS.LINUX.PS.KILL_OTHER}`;
+  // const PS_KILL_CMD = `${PS.LINUX.PS.KILL_CMD}${PS.LINUX.PS.NAME}${PS.LINUX.PS.KILL_OTHER}`;
+  const PS_KILL_CMD = `${PS.LINUX.PS.KILL_CMD}${PS.LINUX.PS.KILL_OTHER}`;
   const EXEC_P_WEB_H_CMD = `${PS.LINUX.PS.NAME}${EXEC_P_WEB_H}`;
   const monitoring = async () => {
     console.log(count++);
@@ -85,6 +89,8 @@ async function mainLinux() {
         detached: true, // メインプロセスから切り離す設定
         env: process.env, // NODE_ENV を tick.js へ与えるため
       });
+      child.on('exit', callbackExitProcess);
+      prePid = child.pid; // プロセスIDゲット
       child.unref(); // メインプロセスから切り離す
     }
   };
@@ -94,12 +100,14 @@ async function mainLinux() {
 }
 async function mainWin() {
   let count = 0;
+  let prePid = "";
   let lastLogTime = undefined;
   const PS_CHECK_CMD = `${PS.WIN.PS.CHECK_CMD}${PS.WIN.PS.NAME}`;
-  const PS_KILL_CMD = `${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.NAME},${PS.WIN.PS.KILL_OTHER}`;
+  // const PS_KILL_CMD = `${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.NAME},${PS.WIN.PS.KILL_OTHER}`;
+  const PS_KILL_CMD = `${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.KILL_OTHER}`;
   const EXEC_P_WEB_H_CMD = `${PS.WIN.PS.NAME}${EXEC_P_WEB_H}`;
-  const Encoding = require("encoding-japanese");
   const toString = (bytes) => {
+  const Encoding = require("encoding-japanese");
     return Encoding.convert(bytes, {
       from: "SJIS",
       to: "utf8",
@@ -172,8 +180,18 @@ async function mainWin() {
       await child.stdin.write(PS_KILL_CMD + "\n");
       child.stdin.end();
       await ok();
-      // console.log("ok:  ", self.stout);
-      console.log("node-sss is killed!!");
+      const pid = String(prePid).trim();
+      if (pid) {
+        try {
+          // SIGINT シグナルを送信
+          process.kill(pid, 'SIGINT');
+          console.log(`node-sss is killed!! with PID: ${pid}`);
+        } catch (err) {
+          console.error(`Error while sending SIGINT: ${err}`);
+        }
+      } else {
+        console.log(`No process found with the name: ${PS.WIN.PS.NAME}`);
+      }
       console.log("しんだよ");
       let cmds = EXEC_P_WEB_H_CMD.split(" ");
       // 起動(非同期)
@@ -182,6 +200,8 @@ async function mainWin() {
         detached: true, // メインプロセスから切り離す設定
         env: process.env, // NODE_ENV を tick.js へ与えるため
       });
+      child.on('exit', callbackExitProcess);
+      prePid = child.pid; // プロセスIDゲット
       child.unref(); // メインプロセスから切り離す
     }
   };
@@ -193,4 +213,22 @@ if (IS_LINUX) {
   mainLinux();
 } else {
   mainWin();
+}
+async function callbackExitProcess(_, signal) {
+  if (signal === 'SIGINT') {
+    // 強制終了時
+    console.log('Child process was killed with a SIGINT signal');
+    // ここでSIGINT成功時の処理を実行します
+    let missionDate = libUtil.getYYMMDDStr(new Date());
+    let missionList = await db(D.DB_COL.MISSION_QUE, "find", {
+      mission_date: missionDate, // 今日
+      status: D.STATUS.NOW,
+    });
+    if (missionList.length === 1) {
+      this.updateMissionQue(missionList[0], D.STATUS.FAIL, missionList[0].site_code);
+      console.log("実行時間書き込み");
+    } else {
+      console.log(JSON.stringify(missionList, null, 2));
+    }
+  }
 }

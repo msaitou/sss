@@ -4,7 +4,7 @@ exports.Def = {
     MISSION_QUE: "mission_que",
     MISSION_QUE_HIS: "mission_que_history",
   },
-  STATUS: { DONE: "done", FAIL: "fail", RUN: "run", BEFO: "befo" },
+  STATUS: { DONE: "done", FAIL: "fail", RUN: "run", BEFO: "befo" , NOW: "now"},
   CODE: {
     MOBA: "moba",
     WIMA: "wima",
