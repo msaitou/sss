@@ -226,11 +226,9 @@ async function callbackExitProcess(_, signal) {
       status: D.STATUS.NOW,
       machine: conf.machine
     });
-    if (missionList.length === 1) {
-      this.updateMissionQue(missionList[0], D.STATUS.FAIL, missionList[0].site_code);
+    for (let m of missionList) {
+      this.updateMissionQue(m, D.STATUS.FAIL, m.site_code);
       console.log("実行時間書き込み");
-    } else {
-      console.log(JSON.stringify(missionList, null, 2));
     }
   }
 }
