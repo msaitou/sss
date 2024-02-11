@@ -4,6 +4,7 @@ const fs = require("fs");
 const { Def: D } = require("./com_cls/define");
 const { db } = require("./initter.js");
 const { libUtil } = require("./lib/util.js");
+const conf = require("config");
 const IS_WIN = process.platform === "win32";
 const IS_LINUX = process.platform === "linux";
 const LOG_FILE = "./log/a.log";
@@ -223,6 +224,7 @@ async function callbackExitProcess(_, signal) {
     let missionList = await db(D.DB_COL.MISSION_QUE, "find", {
       mission_date: missionDate, // 今日
       status: D.STATUS.NOW,
+      machine: conf.machine
     });
     if (missionList.length === 1) {
       this.updateMissionQue(missionList[0], D.STATUS.FAIL, missionList[0].site_code);
