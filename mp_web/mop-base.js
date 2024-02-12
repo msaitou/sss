@@ -133,16 +133,20 @@ class MopMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
-      let ele = await this.getEle(seleOver[0], 2000);
-      if (await ele.isDisplayed()) {
-        if (!this.isMob) {
-          await this.clickEle(ele, 2000);
-        } else {
-          await ele.sendKeys(Key.ENTER);
-        }
-      } else this.logger.debug("オーバーレイは表示されてないです");
+    let seleOver = ["#pfx_interstitial_close", "div.overlay-item a.button-close"];
+    for (let s of seleOver) {
+      if (await this.isExistEle(s, true, 3000)) {
+        let ele = await this.getEle(s, 2000);
+        if (s == seleOver[0]) {
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        } else if (await ele.isDisplayed()) {
+          if (!this.isMob) {
+            await this.clickEle(ele, 2000);
+          } else {
+            await ele.sendKeys(Key.ENTER);
+          }
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
     }
   }
   async exchange(minExcNum) {
@@ -303,15 +307,19 @@ class MopGacha extends MopMissonSupper {
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       if (await this.isExistEle(sele[1], true, 2000)) {
+        await this.hideOverlay();
         ele = await this.getEle(sele[1], 2000);
         await this.clickEle(ele, 2000);
         if (await this.isExistEle(sele[2], true, 2000)) {
+          await this.hideOverlay();
           ele = await this.getEle(sele[2], 2000);
           await this.clickEle(ele, 2000);
           if (await this.isExistEle(sele[3], true, 2000)) {
+            await this.hideOverlay();
             ele = await this.getEle(sele[3], 2000);
             await this.clickEle(ele, 2000);
             if (await this.isExistEle(sele[4], true, 2000)) {
+              await this.hideOverlay();
               ele = await this.getEle(sele[4], 2000);
               await this.clickEle(ele, 2000);
               await this.closeOtherWindow(driver);

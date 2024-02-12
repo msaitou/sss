@@ -215,6 +215,7 @@ class PexNewsWatch extends PexMissonSupper {
             break;
           }
         }
+        await this.hideOverlay2();
         let cnt = 0;
         for (let i = 0; i < repeatNum; i++) {
           eles = await this.getEles(sele[1], 2000);
@@ -222,9 +223,9 @@ class PexNewsWatch extends PexMissonSupper {
           for (let j = eles.length - 1; j >= 0; j--) {
             // なんか既読じゃなかったらみたいな条件あり
             if (await this.isExistElesFromEle(eles[j], selePart[0], false, 2000)) {
-              let ele0 = await this.getElesFromEle(eles[j], selePart[1], 2000);
               await this.clickEle(eles[j], 2000, this.isMob ? 70 : 0); // 同一ページを切り替えてます
               await this.ignoreKoukoku();
+              await this.hideOverlay2();
               if (await this.isExistEle(sele[2], true, 3000)) {
                 // リアクションを選ぶ
                 let eles1 = await this.getEles(sele[2], 5000);
@@ -233,10 +234,12 @@ class PexNewsWatch extends PexMissonSupper {
                 // クリック場所へスクロールが必要（画面に表示しないとだめぽい）
                 await this.clickEle(eles1[choiceNum], 5000, this.isMob ? 120 : 0, this.isMob); // 同一ページを切り替えてます
                 cnt++;
+                await this.hideOverlay2();
                 if (await this.isExistEle(sele[3], true, 2000)) {
                   let ele = await this.getEle(sele[3], 2000);
                   await this.clickEle(ele, 2000, this.isMob ? 120 : 0); // newsのトップページへ戻る
                   await this.ignoreKoukoku();
+                  await this.hideOverlay2();
                   break;
                 }
               }
@@ -251,6 +254,25 @@ class PexNewsWatch extends PexMissonSupper {
       logger.warn(e);
     }
     return res;
+  }
+  async hideOverlay2() {
+    let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']", "#dismiss-button"];
+    if (await this.isExistEle(sele[0], true, 4000)) {
+      let ele = await this.getEle(sele[0], 1000);
+      await this.clickEle(ele, 1000);
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let iframe = await this.getEles(sele[1], 1000);
+        await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+        let inputEle = await this.getEle(sele[2], 1000);
+        await this.sleep(5000);
+        // if (await inputEle.isDisplayed()) {
+        await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+        // await this.clickEle(inputEle, 2000, 0, true);
+        // } else this.logger.debug("オーバーレイは表示されてないです");
+        // もとのフレームに戻す
+        await this.driver.switchTo().defaultContent();
+      }
+    }
   }
 }
 class PexCm extends PexMissonSupper {
