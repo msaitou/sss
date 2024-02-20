@@ -22,7 +22,8 @@ const PS = {
     PS: {
       NAME: "node-sss",
       CHECK_CMD: "ps -ae | grep ",
-      KILL_CMD: "killall ",
+      KILLALL_CMD: "killall ",
+      KILLSIGINT_CMD: "kill -2 ",
       KILL_OTHER: " chrome chromedriver",
     },
   },
@@ -33,7 +34,7 @@ async function mainLinux() {
   let lastLogTime = undefined;
   const PS_CHECK_CMD = `${PS.LINUX.PS.CHECK_CMD}${PS.LINUX.PS.NAME}`;
   // const PS_KILL_CMD = `${PS.LINUX.PS.KILL_CMD}${PS.LINUX.PS.NAME}${PS.LINUX.PS.KILL_OTHER}`;
-  const PS_KILL_CMD = `${PS.LINUX.PS.KILL_CMD}${PS.LINUX.PS.KILL_OTHER}`;
+  const PS_KILLALL_CMD = `${PS.LINUX.PS.KILLALL_CMD}${PS.LINUX.PS.KILL_OTHER}`;
   const EXEC_P_WEB_H_CMD = `${PS.LINUX.PS.NAME}${EXEC_P_WEB_H}`;
   const monitoring = async () => {
     console.log(count++);
@@ -52,7 +53,7 @@ async function mainLinux() {
       isLive = true;
     } catch (e) {
       // 生きてない
-      console.log(e.toString());
+      console.warn(e.toString());
     }
     if (isLive) {
       console.log("lived");
@@ -76,12 +77,21 @@ async function mainLinux() {
       lastLogTime = fileStatus.mtime;
     }
     if (!isLive) {
-      try{
-        const stdout = execSync(PS_KILL_CMD);
-        console.log(stdout.toString(), "node-sss is killed!!");
+      const pid = String(prePid).trim();
+      try {
+        const stdout = execSync(PS_KILLALL_CMD);
+        console.log(stdout.toString(), "chrome is killed!!");
+      } catch (e) {
+        console.warn(e.toString());
       }
-      catch(e) {
-        console.log(e.toString());
+      if (pid) {
+        try {
+          const KILL_SIGINT_CMD = `${PS.LINUX.PS.KILLSIGINT_CMD}${pid}`;
+          const stdout = execSync(KILL_SIGINT_CMD);
+          console.log(stdout.toString(), "node-sss is killed!!");
+        } catch (e) {
+          console.warn(e.toString());
+        }
       }
       let cmds = EXEC_P_WEB_H_CMD.split(" ");
       // 起動(非同期)
@@ -90,7 +100,7 @@ async function mainLinux() {
         detached: true, // メインプロセスから切り離す設定
         env: process.env, // NODE_ENV を tick.js へ与えるため
       });
-      child.on('exit', callbackExitProcess);
+      child.on("exit", callbackExitProcess); // sigint終了時のリスナー
       prePid = child.pid; // プロセスIDゲット
       child.unref(); // メインプロセスから切り離す
     }
@@ -108,7 +118,7 @@ async function mainWin() {
   const PS_KILL_CMD = `${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.KILL_OTHER}`;
   const EXEC_P_WEB_H_CMD = `${PS.WIN.PS.NAME}${EXEC_P_WEB_H}`;
   const toString = (bytes) => {
-  const Encoding = require("encoding-japanese");
+    const Encoding = require("encoding-japanese");
     return Encoding.convert(bytes, {
       from: "SJIS",
       to: "utf8",
@@ -149,8 +159,7 @@ async function mainWin() {
       // isLive = true;
     } catch (e) {
       console.log("errrrrr");
-      console.log(e);
-      // 生きてない
+      console.log(e); // 生きてない
     }
     if (self.stout) isLive = true;
     self = { stout: "", sterr: "" };
@@ -170,8 +179,7 @@ async function mainWin() {
           // const stdout = execSync(PS_KILL_CMD);
           // console.log('dededede');
           isLive = false;
-        }
-        // 変化があれば何もしない
+        } // else 変化があれば何もしない
       }
       console.log(fileStatus.mtime);
       lastLogTime = fileStatus.mtime;
@@ -185,7 +193,7 @@ async function mainWin() {
       if (pid) {
         try {
           // SIGINT シグナルを送信
-          process.kill(pid, 'SIGINT');
+          process.kill(pid, "SIGINT");
           console.log(`node-sss is killed!! with PID: ${pid}`);
         } catch (err) {
           console.error(`Error while sending SIGINT: ${err}`);
@@ -201,7 +209,7 @@ async function mainWin() {
         detached: true, // メインプロセスから切り離す設定
         env: process.env, // NODE_ENV を tick.js へ与えるため
       });
-      child.on('exit', callbackExitProcess);
+      child.on("exit", callbackExitProcess); // sigint終了時のリスナー
       prePid = child.pid; // プロセスIDゲット
       child.unref(); // メインプロセスから切り離す
     }
@@ -216,15 +224,15 @@ if (IS_LINUX) {
   mainWin();
 }
 async function callbackExitProcess(_, signal) {
-  if (signal === 'SIGINT') {
+  if (signal === "SIGINT") {
     // 強制終了時
-    console.log('Child process was killed with a SIGINT signal');
+    console.log("Child process was killed with a SIGINT signal");
     // ここでSIGINT成功時の処理を実行します
     let missionDate = libUtil.getYYMMDDStr(new Date());
     let missionList = await db(D.DB_COL.MISSION_QUE, "find", {
       mission_date: missionDate, // 今日
       status: D.STATUS.NOW,
-      machine: conf.machine
+      machine: conf.machine,
     });
     for (let m of missionList) {
       this.updateMissionQue(m, D.STATUS.FAIL, m.site_code);
