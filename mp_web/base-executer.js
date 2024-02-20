@@ -156,30 +156,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
    * @param {*} siteCode
    */
   async updateMissionQue(mission, res, siteCode) {
-    if (mission["mission_date"]) {
-      // ミッションの状況更新
-      mission.mod_date = new Date();
-      if (!mission.exec_time) mission.exec_time = 0;
-      mission.exec_time += mission.mod_date - new Date(mission.exec_time_start);
-
-      mission.status = res;
-      await db(D.DB_COL.MISSION_QUE, "update", { _id: mission._id }, mission);
-      // サブミッションの場合、次のサブミッション開始日を更新
-      if (mission.sub && mission.valid_term && mission.valid_term.current_m_from) {
-        // 続けるミッションのドキュメントを予め確保しておくか、否か
-        let nextMission = await db(D.DB_COL.MISSION_QUE, "findOne", {
-          site_code: siteCode,
-          main: mission.main,
-          sub: (++mission.sub).toString(), // 次のやつ。数字で定義
-        });
-        if (nextMission) {
-          let nextDate = new Date();
-          nextDate.setMinutes(nextDate.getMinutes() + mission.valid_term.current_m_from);
-          nextMission.valid_time = { from: nextDate };
-          await db(D.DB_COL.MISSION_QUE, "update", { _id: nextMission._id }, nextMission);
-        }
-      }
-    }
+    await libUtil.updateMissionQueUtil(db, mission, res, siteCode)     
   }
   /**
    * 1つのmission開始時のキューテーブルへの更新

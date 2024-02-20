@@ -235,8 +235,9 @@ async function callbackExitProcess(_, signal) {
       machine: conf.machine,
     });
     for (let m of missionList) {
-      this.updateMissionQue(m, D.STATUS.FAIL, m.site_code);
+      await libUtil.updateMissionQueUtil(db, m, D.STATUS.FAIL, m.site_code);
       console.log("実行時間書き込み");
     }
   }
 }
+
