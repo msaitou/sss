@@ -4,6 +4,7 @@ const { Builder, By, until } = require("selenium-webdriver");
 const { BaseWebDriverWrapper } = require("../base-webdriver-wrapper");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
+const conf = require("config");
 
 class BaseExecuter extends BaseWebDriverWrapper {
   logger;
@@ -44,6 +45,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
         let missionList = await db(D.DB_COL.MISSION_QUE, "find", {
           mission_date: missionDate, // 今日
           status: D.STATUS.NOW,
+          machine: conf.machine,
         });
         if (missionList.length === 1) {
           this.updateMissionQue(missionList[0], D.STATUS.FAIL, missionList[0].site_code);

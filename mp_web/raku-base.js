@@ -4,6 +4,7 @@ const { libUtil } = require("../lib/util.js");
 const { Builder, By, until, Select } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
+const { log } = require("../initter.js");
 
 class RakuBase extends BaseExecuter {
   code = D.CODE.RAKU;
@@ -71,12 +72,14 @@ class RakuMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
-      let ele = await this.getEle(seleOver[0], 2000);
-      if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 2000);
-      } else this.logger.debug("オーバーレイは表示されてないです");
+    let seleOver = ["div.overlay-item a.button-close", "img[src*='close-interstitial']"];
+    for (var sele of seleOver) {
+      if (await this.isExistEle(sele, true, 3000)) {
+        let ele = await this.getEle(sele, 2000);
+        if (await ele.isDisplayed()) {
+          await this.clickEle(ele, 2000);
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
     }
   }
 }
@@ -289,44 +292,62 @@ class RakuNews extends RakuMissonSupper {
       "#topics-category-all",
     ];
     await this.openUrl(this.firstUrl); // 操作ページ表示
-    for (let cSele of cSeleList) {
-      while (true) {
-        let scSele = `a[href='${cSele}']`;
-        if (await this.isExistEle(scSele, true, 2000)) {
-          ele = await this.getEle(scSele, 2000);
-          await this.clickEle(ele, 1000); // タブの切り替え
-          let acSele = `${cSele} div.main-topics-body a`;
-          if (await this.isExistEle(acSele, true, 2000)) {
-            eles = await this.getEles(acSele, 2000);
-            let unReadEle = null;
-            for (let j = eles.length - 1; j > -1; j--) {
-              let tmpUrl = await eles[j].getAttribute("href");
-              if (readedList.indexOf(tmpUrl) === -1) {
-                readedList.push(tmpUrl);
-                unReadEle = eles[j];
+    try {
+      var cnt = 0;
+      for (let cSele of cSeleList) {
+        while (true) {
+          let scSele = `a[href='${cSele}']`;
+          if (await this.isExistEle(scSele, true, 2000)) {
+            ele = await this.getEle(scSele, 2000);
+            await this.clickEle(ele, 1000); // タブの切り替え
+            let acSele = `${cSele} div.main-topics-body a`;
+            if (await this.isExistEle(acSele, true, 2000)) {
+              eles = await this.getEles(acSele, 2000);
+              let unReadEle = null;
+              for (let j = eles.length - 1; j > -1; j--) {
+                let tmpUrl = await eles[j].getAttribute("href");
+                if (readedList.indexOf(tmpUrl) === -1) {
+                  readedList.push(tmpUrl);
+                  unReadEle = eles[j];
+                  break;
+                }
+              }
+              if (unReadEle) {
+                await this.clickEle(unReadEle, 2000);
+                if (await this.isExistEle(sele[1], true, 2000)) {
+                  ele = await this.getEle(sele[1], 2000);
+                  let reactionSele = ["#reaction-icon-container li>button", "#reaction-icon-container li>button.is-disabled",".pager>li>ul>li"];
+                  if (await this.isExistEle(reactionSele[2], true, 1000)) {
+                    eles = await this.getEles(reactionSele[2], 1000);
+                    await this.clickEle(eles[eles.length-1], 3000); // 最後のページに移動
+                  }
+                  // 1記事を10秒待機。その後ページの最下部へ移動して、2秒待機？TOPページを表示
+                  await this.hideOverlay();
+                  await this.clickEle(ele, 10000); // 10秒待機
+                  if (await this.isExistEle(reactionSele[1], false, 1000) // リアクション済みでない
+                    && await this.isExistEle(reactionSele[0], true, 1000)) {
+                    eles = await this.getEles(reactionSele[0], 1000);
+                    let choiceNum = libUtil.getRandomInt(0, eles.length);
+                    await this.clickEle(eles[choiceNum], 1000); // リアクションする
+                    cnt++;
+                  }
+                  await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+                  await this.sleep(2000);
+                }
+                await this.openUrl(this.firstUrl); // 操作ページ表示
+              } else {
+                logger.debug("このタブは全部読んだので次のタブを見る");
                 break;
               }
             }
-            if (unReadEle) {
-              await this.clickEle(unReadEle, 2000);
-              if (await this.isExistEle(sele[1], true, 2000)) {
-                ele = await this.getEle(sele[1], 2000);
-                // 1記事を10秒待機。その後ページの最下部へ移動して、2秒待機？TOPページを表示
-                await this.clickEle(ele, 10000); // 10秒待機
-                await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
-                await this.sleep(2000);
-              }
-              await this.openUrl(this.firstUrl); // 操作ページ表示
-            } else {
-              logger.debug("このタブは全部読んだので次のタブを見る");
-              break;
-            }
-          }
+          } else break;
+          if (readedList.length > 25 && cnt > 25) break;
         }
-        else break;
-        if (readedList.length > 25) break;
+        if (readedList.length > 25 && cnt > 25) break;
       }
-      if (readedList.length > 25) break;
+    }
+    catch(e) {
+      this.logger.warn(e);
     }
     // if (await this.isExistEle(sele[0], true, 2000)) {
     //   ele = await this.getEle(sele[0], 2000);
