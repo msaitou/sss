@@ -100,8 +100,8 @@ class LfmCommon extends LfmMissonSupper {
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
       // リンクが存在することを確認
-      let seleLoginLink = "div.item__column a[href='https://ssl.lifemedia.jp/login']";
-      if (this.isMob) seleLoginLink = "li.item__column a[href='https://ssl.lifemedia.jp/login']";
+      let seleLoginLink = "div.item__column a[href='https://lifemedia.jp/login']";
+      if (this.isMob) seleLoginLink = "li.item__column a[href='https://lifemedia.jp/login']";
       if (await this.isExistEle(seleLoginLink, true, 2000)) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
