@@ -164,7 +164,7 @@ class PicCommon extends PicMissonSupper {
     };
     if (this.isMob)
       (seleIsLoggedIn = "span.pt_count"),
-        (seleLoginLink = "img[alt='ログイン']"),
+        (seleLoginLink = "a.login_btn>div.nav_img"),
         (seleInput.login = "input[name='subject']");
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
