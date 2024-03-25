@@ -35,6 +35,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         // スコアボード後、ここに戻る　２時間毎に３回チャレンジ可
         if (await this.isExistEle(sele[0], true, 2000)) {
           let winList = await driver.getAllWindowHandles();
+          await this.hideOverlay();
           let ele = await this.getEles(sele[0], 3000);
           await this.clickEle(ele[0], 4000);
           if (await this.isExistEle(sele[1], true, 2000)) {
@@ -190,13 +191,44 @@ class PartsFurufuru extends BaseWebDriverWrapper {
     return res;
   }
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
-      let ele = await this.getEle(seleOver[0], 2000);
+    let seleOver = ["div.overlay-item a.button-close", "#svg_close"];
+    if (await this.isExistEle(seleOver[0], true, 1000)) {
+      let ele = await this.getEle(seleOver[0], 1000);
       if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
       } else this.logger.debug("オーバーレイは表示されてないです");
     }
+    // let seleOver = [
+    //   "div.overlay-item a.button-close",
+    //   "#pfx_interstitial_close",
+    //   // "#inter-close",
+    //   "a.gmoam_close_button",
+    // ];
+    // for (let s of seleOver) {
+    //   if (["a.gmoam_close_button"].indexOf(s) > -1) {
+    //     let iSele = ["iframe[title='GMOSSP iframe']"];
+    //     if (await this.isExistEle(iSele[0], true, 3000)) {
+    //       if (!this.isMob) await this.sleep(2000);
+    //       await this.exeScriptNoTimeOut(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
+    //       await this.exeScriptNoTimeOut(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
+    //       // let iframe = await this.getEles(iSele[0], 1000);
+    //       // await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+    //       // let inputEle = await this.getEle(s, 1000);
+    //       // if (await inputEle.isDisplayed()) {
+    //       //   await this.clickEle(inputEle, 2000, 0, true);
+    //       // } else this.logger.debug("オーバーレイは表示されてないです");
+    //       // // もとのフレームに戻す
+    //       // await this.driver.switchTo().defaultContent();
+    //     }
+    //   } else if (await this.isExistEle(s, true, 2000)) {
+    //     let ele = await this.getEle(s, 2000);
+    //     if ((await ele.isDisplayed()) || (this.isMob && s == "#pfx_interstitial_close")) {
+    //       if (["div.overlay-item a.button-close", "#pfx_interstitial_close"].indexOf(seleOver[0]) > -1) {
+    //         await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+    //       } else await this.clickEle(ele, 200);
+    //     } else this.logger.debug("オーバーレイは表示されてないです");
+    //   }
+    // }
   }
 }
 exports.PartsFurufuru = PartsFurufuru;

@@ -143,13 +143,17 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay(seleStr) {
-    let sele0 = ["#modal20th .btn_close>img"];
-    if (seleStr) sele0 = [seleStr];
-    if (await this.isExistEle(sele0[0], true, 2000)) {
-      let ele = await this.getEle(sele0[0], 3000);
-      if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 3000);
-      }
+    let sele0 = ["#modal20th .btn_close>img", "#pfx_interstitial_close"];
+    if (seleStr) sele0 = [seleStr, ""];
+    for (let s of sele0) {
+      if (await this.isExistEle(s, true, 2000)) {
+        let ele = await this.getEle(s, 1000);
+        if (s == sele0[1]) {
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        } else if (await ele.isDisplayed()) {
+          await this.clickEle(ele, 1000);
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }    
     }
   }
 }
@@ -582,11 +586,11 @@ class GpoGameFurufuru extends GpoMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
     let Furufuru = new PartsFurufuru(this.para);
-    let sele = ["img[alt='ふるふるパニック']", "input[alt='OK']"];
+    let sele = ["div.bnr img[alt='ふるふるパニック']", "input[alt='OK']"];
     await this.openUrl(this.targetUrl); // 操作ページ表示
     await this.hideOverlay();
     let gameUrlHost = "https://gpoint.dropgame.jp/";
-    if (this.isMob) (gameUrlHost = "https://gpoint-sp.dropgame.jp/"), (sele[1] = "input[value='OK']");
+    if (this.isMob) (gameUrlHost = "https://gpoint-sp.dropgame.jp/"), (sele = ["li.bnr img[alt='ふるふるパニック']", "input[value='OK']"]);
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
@@ -853,6 +857,7 @@ class GpoAnqColum extends GpoMissonSupper {
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -915,6 +920,7 @@ class GpoAnqPhoto extends GpoMissonSupper {
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -977,6 +983,7 @@ class GpoAnqZukan extends GpoMissonSupper {
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -1039,6 +1046,7 @@ class GpoAnqIjin extends GpoMissonSupper {
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -1101,6 +1109,7 @@ class GpoAnqHirameki extends GpoMissonSupper {
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -1163,6 +1172,7 @@ class GpoAnqJapan extends GpoMissonSupper {
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -1225,6 +1235,7 @@ class GpoAnqSite extends GpoMissonSupper {
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -1287,6 +1298,7 @@ class GpoAnqCook extends GpoMissonSupper {
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
               let ele = eles[eles.length - 1];
               let rect = await ele.getRect();
               await driver.executeScript(`window.scrollTo(0, ${rect.y});`);
@@ -1351,6 +1363,7 @@ class GpoAnqKenkou extends GpoMissonSupper {
             for (let i = 0; i < limit; i++) {
               if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
               await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+              await this.hideOverlay();
               await this.clickEle(eles[eles.length - 1], 6000, 250);
               res = await AnkPark.doMobKenkou();
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる

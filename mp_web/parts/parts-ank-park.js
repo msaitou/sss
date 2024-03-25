@@ -634,6 +634,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         //   await this.clickEle(ele, 2000, 0, siteInfo.code == D.CODE.LFM);
         // }
         // else {
+          await this.hideOverlay();
           let ele = await this.getEle(sele[0], 4000);
           try{
             await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
@@ -650,6 +651,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         let ele = await this.getEle(sele[1], 2000);
         await this.clickEle(ele, 2000, 0, siteInfo.code == D.CODE.LFM);
       }
+      await this.hideOverlay();
       if (await this.isExistEle(sele[1], true, 2000)) {
         let ele = await this.getEle(sele[1], 3000);
         await this.clickEle(ele, 3000, 0, siteInfo.code == D.CODE.LFM);
@@ -1169,22 +1171,22 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
-        if (await this.isExistEle(iSele[0], true, 3000)) {
+        if (await this.isExistEle(iSele[0], true, 1000)) {
           let iframe = await this.getEles(iSele[0], 1000);
           await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
           let inputEle = await this.getEle(s, 1000);
           if (await inputEle.isDisplayed()) {
-            await this.clickEle(inputEle, 2000);
+            await this.clickEle(inputEle, 1000);
           } else this.logger.debug("オーバーレイは表示されてないです");
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
         }
-      } else if (await this.isExistEle(s, true, 3000)) {
-        let ele = await this.getEle(s, 2000);
+      } else if (await this.isExistEle(s, true, 1000)) {
+        let ele = await this.getEle(s, 1000);
         if (s == seleOver[0]) {
           await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
         } else if (await ele.isDisplayed()) {
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
