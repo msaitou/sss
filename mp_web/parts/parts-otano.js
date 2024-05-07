@@ -22,7 +22,7 @@ class PartsOtano extends BaseWebDriverWrapper {
         "li.list-group-item.active>strong",
         "div>label", // 2
         "select.form-select",
-        "", // 4
+        "textarea", // 4
         "",
         "",
       ];
@@ -33,6 +33,7 @@ class PartsOtano extends BaseWebDriverWrapper {
       //   sele[4] = "p.lessStamp>span";
       //   sele[5] = "p.allStamp";
       // }
+      await this.hideOverlay2();
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000),
           isKensyoFlag = false;
@@ -61,9 +62,16 @@ class PartsOtano extends BaseWebDriverWrapper {
               default: // ランダムで。 Q5~Q10
                 choiceNum = -1; // 仮値
             }
-            if (ansSele === sele[2] && !(await this.isExistEle(ansSele, true, 2000))) {
+            if (await this.isExistEle(sele[4], true, 2000)) {
+              ele = await this.getEle(sele[4], 3000);
+              await ele.clear();
+              await ele.sendKeys(["とくにない","わからない","覚えていない","知らない"][libUtil.getRandomInt(0, 4)]);
+              ansSele = sele[4];
+            }
+            else if (ansSele === sele[2] && !(await this.isExistEle(ansSele, true, 2000))) {
               ansSele = sele[3];
             }
+             
 
             if (await this.isExistEle(ansSele, true, 2000)) {
               let eles = await this.getEles(ansSele, 3000);
@@ -74,11 +82,12 @@ class PartsOtano extends BaseWebDriverWrapper {
                 let select = new Select(eles[0]);
                 if (!choiceNum) choiceNum++;
                 await select.selectByValue(choiceNum.toString());
-              } else {
+              } else if (ansSele !== sele[4]) {
                 if (qNo === "Q1" && eles.length === 3) isKensyoFlag = true;
                 if (isKensyoFlag) choiceNum = libUtil.getRandomInt(1, eles.length);
                 await this.clickEle(eles[choiceNum], 2000);
               }
+              await this.hideOverlay2();
               if (await this.isExistEle(sele[0], true, 2000)) {
                 ele = await this.getEle(sele[0], 3000);
                 await this.clickEle(ele, 2000); // 次のページ
@@ -136,6 +145,25 @@ class PartsOtano extends BaseWebDriverWrapper {
       if (await ele.isDisplayed()) {
         await this.clickEle(ele, 2000);
       } else this.logger.debug("オーバーレイは表示されてないです");
+    }
+  }
+  async hideOverlay2() {
+    let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']", "#dismiss-button"];
+    if (await this.isExistEle(sele[0], true, 4000)) {
+      let ele = await this.getEle(sele[0], 1000);
+      await this.clickEle(ele, 1000);
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let iframe = await this.getEles(sele[1], 1000);
+        await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+        let inputEle = await this.getEle(sele[2], 1000);
+        await this.sleep(5000);
+        // if (await inputEle.isDisplayed()) {
+        await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+        // await this.clickEle(inputEle, 2000, 0, true);
+        // } else this.logger.debug("オーバーレイは表示されてないです");
+        // もとのフレームに戻す
+        await this.driver.switchTo().defaultContent();
+      }
     }
   }
   async exchange() {

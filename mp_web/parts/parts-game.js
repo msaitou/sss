@@ -1960,6 +1960,7 @@ class PartsGame extends BaseWebDriverWrapper {
         "a.ui-btn-a",
         "a[id^='ans']",
         "input[alt='進む']", // 2
+        "a[href^='title.php']>img",
       ];
       if (await this.isExistEle(se[0], true, 2000)) {
         let els = await this.getEles(se[0], 2000);
@@ -1971,8 +1972,13 @@ class PartsGame extends BaseWebDriverWrapper {
           await this.hideOverlay();
           await this.clickEle(els[0], 5000);
           for (let i = 0; i < 2; i++) {
-            if (await this.isExistEle(se[2], true, 2000)) {
-              let el = await this.getEle(se[2], 3000);
+            let el = null;
+            if (await this.isExistEle(se[3], true, 2000)) {
+              el = await this.getEle(se[3], 3000);
+            } else if (await this.isExistEle(se[2], true, 2000)) {
+              el = await this.getEle(se[2], 3000);
+            }
+            if (el) {
               await this.hideOverlay();
               await this.driver.executeScript(`window.scrollTo(0, 600);`);
               await this.sleep(1000);
