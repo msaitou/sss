@@ -310,8 +310,9 @@ class PstClick extends PstMissonSupper {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
       for (let i = 0; i < eles.length; i++) {
+        await this.ignoreKoukoku()
         await this.hideOverlay2();
-        await this.clickEle(eles[i], 4000);
+        await this.clickEle(eles[i], 2000);
         await this.closeOtherWindow(driver);
       }
     }
@@ -320,14 +321,16 @@ class PstClick extends PstMissonSupper {
       if (await this.isExistEle(sele[1], true, 2000)) {
         let eles = await this.getEles(sele[1], 2000);
         for (let i = 0; i < eles.length && i < 6; i++) {
+          await this.ignoreKoukoku()
           await this.hideOverlay2();
-          await this.clickEle(eles[i], 4000);
+          await this.clickEle(eles[i], 2000);
           await this.closeOtherWindow(driver);
         }
         if (await this.isExistEle(sele[2], true, 2000)) {
+          await this.ignoreKoukoku()
           await this.hideOverlay2();
           let ele = await this.getEle(sele[2], 2000);
-          await this.clickEle(ele, 4000);
+          await this.clickEle(ele, 2000);
         }
       }
     }

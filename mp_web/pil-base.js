@@ -300,7 +300,8 @@ class PilClick extends PilMissonSupper {
       let eles = await this.getEles(sele[0], 2000);
       for (let i = 0; i < eles.length; i++) {
         await this.hideOverlay2();
-        await this.clickEle(eles[i], 4000);
+        await this.ignoreKoukoku();
+        await this.clickEle(eles[i], 2000);
         await this.closeOtherWindow(driver);
       }
     }
@@ -310,13 +311,15 @@ class PilClick extends PilMissonSupper {
         let eles = await this.getEles(sele[1], 2000);
         for (let i = 0; i < eles.length && i < 6; i++) {
           await this.hideOverlay2();
-          await this.clickEle(eles[i], 4000);
+          await this.ignoreKoukoku();
+          await this.clickEle(eles[i], 2000);
           await this.closeOtherWindow(driver);
         }
         await this.hideOverlay2();
+        await this.ignoreKoukoku();
         if (await this.isExistEle(sele[2], true, 2000)) {
           let ele = await this.getEle(sele[2], 2000);
-          await this.clickEle(ele, 4000);
+          await this.clickEle(ele, 2000);
         }
       }
     }
