@@ -36,6 +36,7 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
         await this.clickEle(ele, 2000, this.isMob ? 120 : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
+        await this.hideOverlay();
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
@@ -84,19 +85,55 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
     }
     return res;
   }
+  // async hideOverlay() {
+  //   let seleOver = ["div.overlay-item a.button-close"];
+  //   if (await this.isExistEle(seleOver[0], true, 3000)) {
+  //     let ele = await this.getEle(seleOver[0], 2000);
+  //     if (await ele.isDisplayed()) {
+  //       if (!this.isMob) {
+  //         await this.clickEle(ele, 2000);
+  //       } else {
+  //         await ele.sendKeys(Key.ENTER);
+  //       }
+  //     } else this.logger.debug("オーバーレイは表示されてないです");
+  //   }
+  // }
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
-      let ele = await this.getEle(seleOver[0], 2000);
-      if (await ele.isDisplayed()) {
-        if (!this.isMob) {
-          await this.clickEle(ele, 2000);
-        } else {
-          await ele.sendKeys(Key.ENTER);
+    let seleOver = [
+      "#pfx_interstitial_close",
+      // "#inter-close",
+      "a.gmoam_close_button",
+      "div.overlay-item a.button-close",
+    ];
+    for (let s of seleOver) {
+      if (["a.gmoam_close_button"].indexOf(s) > -1) {
+        let iSele = ["iframe[title='GMOSSP iframe'][style*='z-index']"];
+        if (await this.isExistEle(iSele[0], true, 3000)) {
+          let iframe = await this.getEles(iSele[0], 1000);
+          await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+          if (await this.isExistEle(s, true, 3000)) {
+            let inputEle = await this.getEle(s, 1000);
+            // await this.clickEle(inputEle, 2000);
+            await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+          } else this.logger.debug("オーバーレイは表示されてないです");
+          // もとのフレームに戻す
+          await this.driver.switchTo().defaultContent();
         }
-      } else this.logger.debug("オーバーレイは表示されてないです");
+      } else if (await this.isExistEle(s, true, 3000)) {
+        let ele = await this.getEle(s, 2000);
+        if (s == seleOver[0]) {
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        } else if (await ele.isDisplayed()) {
+          if (!this.isMob) {
+            await this.clickEle(ele, 2000);
+          } else {
+            await ele.sendKeys(Key.ENTER);
+          }
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
     }
   }
+
   async exchange(minExcNum) {
     let exSele = [
       "a.stamp__btn[href*='exchange']",
