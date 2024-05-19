@@ -82,7 +82,25 @@ class RakuMissonSupper extends BaseWebDriverWrapper {
       }
     }
   }
-}
+  async hideOverlay2() {
+    let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']", "#dismiss-button"];
+    if (await this.isExistEle(sele[0], true, 4000)) {
+      let ele = await this.getEle(sele[0], 1000);
+      await this.clickEle(ele, 1000);
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let iframe = await this.getEles(sele[1], 1000);
+        await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+        let inputEle = await this.getEle(sele[2], 1000);
+        await this.sleep(15000);
+        // if (await inputEle.isDisplayed()) {
+        await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+        // await this.clickEle(inputEle, 2000, 0, true);
+        // } else this.logger.debug("オーバーレイは表示されてないです");
+        // もとのフレームに戻す
+        await this.driver.switchTo().defaultContent();
+      }
+    }
+  }}
 // このサイトの共通処理クラス
 class RakuCommon extends RakuMissonSupper {
   constructor(para) {
@@ -265,6 +283,7 @@ class RakuNews extends RakuMissonSupper {
     await this.driver.navigate().back(); // 戻って
     await this.driver.navigate().forward(); // 行く
     if (await this.isExistEle(sele[5], true, 2000)) {
+      await this.hideOverlay2();
       ele = await this.getEle(sele[5], 2000);
       await this.clickEle(ele, 2000); // タブの切り替え
     }
@@ -325,7 +344,8 @@ class RakuNews extends RakuMissonSupper {
                   await this.hideOverlay();
                   await this.clickEle(ele, 10000); // 10秒待機
                   if (await this.isExistEle(reactionSele[1], false, 1000) // リアクション済みでない
-                    && await this.isExistEle(reactionSele[0], true, 1000)) {
+                  && await this.isExistEle(reactionSele[0], true, 1000)) {
+                      await this.hideOverlay2();
                     eles = await this.getEles(reactionSele[0], 1000);
                     let choiceNum = libUtil.getRandomInt(0, eles.length);
                     await this.clickEle(eles[choiceNum], 1000); // リアクションする
