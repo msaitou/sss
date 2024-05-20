@@ -96,6 +96,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
               await this.clickEle(ele, 2000, this.isMob ? 150 : 0);
               await this.ignoreKoukoku();
             }
+            await this.hideOverlay();
             if (await this.isExistEle(sele[4], true, 2000)) {
               let ele = await this.getEle(sele[4], 3000);
               await this.clickEle(ele, 2000, this.isMob ? 150 : 0);
