@@ -1167,7 +1167,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
   }
 
   async hideOverlay() {
-    let seleOver = ["#pfx_interstitial_close", "div.close", "#close", "#interClose"];
+    let seleOver = ["#gn_ydn_interstitial_btn", "#pfx_interstitial_close", "div.close", "#close", "#interClose"];
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
