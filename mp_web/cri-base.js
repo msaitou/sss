@@ -97,15 +97,31 @@ class CriMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
-      let ele = await this.getEle(seleOver[0], 2000);
-      if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 2000);
-      } else this.logger.debug("オーバーレイは表示されてないです");
+    let seleOver = ["#pfx_interstitial_close", "div.overlay-item a.button-close", "#gn_ydn_interstitial_btn", "div.close", "#close", "#interClose"];
+    for (let s of seleOver) {
+      if (["a.gmoam_close_button"].indexOf(s) > -1) {
+        let iSele = ["iframe[title='GMOSSP iframe']"];
+        if (await this.isExistEle(iSele[0], true, 1000)) {
+          let iframe = await this.getEles(iSele[0], 1000);
+          await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+          let inputEle = await this.getEle(s, 1000);
+          if (await inputEle.isDisplayed()) {
+            await this.clickEle(inputEle, 1000);
+          } else this.logger.debug("オーバーレイは表示されてないです");
+          // もとのフレームに戻す
+          await this.driver.switchTo().defaultContent();
+        }
+      } else if (await this.isExistEle(s, true, 1000)) {
+        let ele = await this.getEle(s, 1000);
+        // if (s == seleOver[0]) {
+        //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        // } else 
+        if (await ele.isDisplayed()) {
+          await this.clickEle(ele, 1000);
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
     }
-  }
-}
+  }}
 // このサイトの共通処理クラス
 class CriCommon extends CriMissonSupper {
   constructor(para) {
@@ -630,6 +646,7 @@ class CriAnqPark extends CriMissonSupper {
       await this.clickEle(ele0, 3000, 100);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
+      await this.hideOverlay();
       try {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let eles = await this.getEles(sele[1], 3000);

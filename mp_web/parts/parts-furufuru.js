@@ -192,11 +192,13 @@ class PartsFurufuru extends BaseWebDriverWrapper {
   }
   async hideOverlay() {
     let seleOver = ["div.overlay-item a.button-close", "#svg_close"];
-    if (await this.isExistEle(seleOver[0], true, 1000)) {
-      let ele = await this.getEle(seleOver[0], 1000);
-      if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 1000);
-      } else this.logger.debug("オーバーレイは表示されてないです");
+    for (let s of seleOver) {
+      if (await this.isExistEle(s, true, 1000)) {
+        let ele = await this.getEle(s, 1000);
+        if (await ele.isDisplayed()) {
+          await this.clickEle(ele, 1000);
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
     }
     // let seleOver = [
     //   "div.overlay-item a.button-close",
