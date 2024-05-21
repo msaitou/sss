@@ -468,8 +468,8 @@ class PtoAnqPark extends PtoMissonSupper {
     ];
     let mobH = this.isMob ? 50 : 0;
     if (this.isMob) {
-      this.sleep(3000);
-      await driver.executeScript("window.scrollTo(0, 2800);");
+      await driver.executeScript("window.scrollTo(0, 3800);");
+      this.sleep(2000);
     }
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
