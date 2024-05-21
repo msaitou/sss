@@ -79,16 +79,41 @@ class PtoMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["button.js-dialog__close-btn", "div.qg-inweb-close"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
-      let ele = await this.getEle(seleOver[0], 2000);
-      if (await ele.isDisplayed()) {
-        if (!this.isMob) {
-          await this.clickEle(ele, 2000);
-        } else {
-          await ele.sendKeys(Key.ENTER);
+    // let seleOver = ["button.js-dialog__close-btn", "div.qg-inweb-close"];
+    // if (await this.isExistEle(seleOver[0], true, 3000)) {
+    //   let ele = await this.getEle(seleOver[0], 2000);
+    //   if (await ele.isDisplayed()) {
+    //     if (!this.isMob) {
+    //       await this.clickEle(ele, 2000);
+    //     } else {
+    //       await ele.sendKeys(Key.ENTER);
+    //     }
+    //   } else this.logger.debug("オーバーレイは表示されてないです");
+    // }
+    let seleOver = ["#pfx_interstitial_close", "button.js-dialog__close-btn", "#gn_ydn_interstitial_btn", "div.close", "#close", "#interClose"];
+    for (let s of seleOver) {
+      if (["a.gmoam_close_button"].indexOf(s) > -1) {
+        let iSele = ["iframe[title='GMOSSP iframe']"];
+        if (await this.isExistEle(iSele[0], true, 1000)) {
+          let iframe = await this.getEles(iSele[0], 1000);
+          await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+          let inputEle = await this.getEle(s, 1000);
+          if (await inputEle.isDisplayed()) {
+            await this.clickEle(inputEle, 1000);
+          } else this.logger.debug("オーバーレイは表示されてないです");
+          // もとのフレームに戻す
+          await this.driver.switchTo().defaultContent();
         }
-      } else this.logger.debug("オーバーレイは表示されてないです");
+      } else if (await this.isExistEle(s, true, 1000)) {
+        let ele = await this.getEle(s, 1000);
+        if (await ele.isDisplayed()) {
+          if (!this.isMob) {
+            await this.clickEle(ele, 1000);
+          } else {
+            await ele.sendKeys(Key.ENTER);
+          }
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
     }
   }
 }
@@ -452,6 +477,7 @@ class PtoAnqPark extends PtoMissonSupper {
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       try {
+        await this.hideOverlay();
         if (await this.isExistEle(sele[2], true, 2000)) {
           let eles = await this.getEles(sele[2], 3000);
           let limit = eles.length;
