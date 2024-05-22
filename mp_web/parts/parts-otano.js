@@ -23,7 +23,7 @@ class PartsOtano extends BaseWebDriverWrapper {
         "div>label", // 2
         "select.form-select",
         "textarea", // 4
-        "",
+        "a.btn-success",
         "",
       ];
       // if (siteInfo.code == D.CODE.GMY) {
@@ -37,7 +37,7 @@ class PartsOtano extends BaseWebDriverWrapper {
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000),
           isKensyoFlag = false;
-        await this.clickEle(ele, 2000); // 次のページ
+        await this.clickEle(ele, 1000); // 次のページ
         for (let i = 0; i < 10; i++) {
           if (await this.isExistEle(sele[1], true, 2000)) {
             ele = await this.getEle(sele[1], 3000);
@@ -85,19 +85,24 @@ class PartsOtano extends BaseWebDriverWrapper {
               } else if (ansSele !== sele[4]) {
                 if (qNo === "Q1" && eles.length === 3) isKensyoFlag = true;
                 if (isKensyoFlag) choiceNum = libUtil.getRandomInt(1, eles.length);
-                await this.clickEle(eles[choiceNum], 2000);
+                await this.clickEle(eles[choiceNum], 1000);
               }
               await this.hideOverlay2();
               if (await this.isExistEle(sele[0], true, 2000)) {
                 ele = await this.getEle(sele[0], 3000);
-                await this.clickEle(ele, 2000); // 次のページ
+                await this.clickEle(ele, 1000); // 次のページ
               }
             }
           }
         }
         if (await this.isExistEle(sele[0], true, 2000)) {
           ele = await this.getEle(sele[0], 3000);
-          await this.clickEle(ele, 2000); // このページが閉じる？　picは少なくとも　gmyは閉じない
+          await this.clickEle(ele, 1000); // このページが閉じる？　picは少なくとも　gmyは閉じない
+          res = D.STATUS.DONE;
+        }
+        else if (await this.isExistEle(sele[5], true, 2000)) {
+          ele = await this.getEle(sele[5], 3000);
+          await this.clickEle(ele, 1000); // このページが閉じる？　picは少なくとも　gmyは閉じない
           res = D.STATUS.DONE;
         }
       }

@@ -322,7 +322,7 @@ class GmyOtano extends GmyMissonSupper {
     let res = D.STATUS.FAIL;
     let Otano = new PartsOtano(this.para);
     let sele = [
-      "button.btn-danger",
+      "a.btn-danger",
       "",
       "img[src*='img_kantan_survey.gif']", // 2
     ];
@@ -332,6 +332,7 @@ class GmyOtano extends GmyMissonSupper {
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       try {
+        await this.hideOverlay();
         if (await this.isExistEle(sele[0], true, 2000)) {
           let eles0 = await this.getEles(sele[0], 3000),
             limit = eles0.length;
