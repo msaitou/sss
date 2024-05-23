@@ -102,19 +102,24 @@ class GmyMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["#pfx_interstitial_close", "div.overlay-item a.button-close", "#gn_ydn_interstitial_btn", "div.close", "#close", "#interClose"];
+    let seleOver = ["#pfx_interstitial_close", "div.overlay-item a.button-close", 
+    "#gn_ydn_interstitial_btn", "div.close", "#close", "#interClose"
+      ,"div.close-button","a.gmoam_close_button"
+    ];
+    let iSele = {"a.gmoam_close_button":"iframe[title='GMOSSP iframe']","div.close-button":"ins iframe[title='3rd party ad content']"};
     for (let s of seleOver) {
-      if (["a.gmoam_close_button"].indexOf(s) > -1) {
-        let iSele = ["iframe[title='GMOSSP iframe']"];
-        if (await this.isExistEle(iSele[0], true, 1000)) {
-          let iframe = await this.getEles(iSele[0], 1000);
-          await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
-          let inputEle = await this.getEle(s, 1000);
-          if (await inputEle.isDisplayed()) {
-            await this.clickEle(inputEle, 1000);
-          } else this.logger.debug("オーバーレイは表示されてないです");
-          // もとのフレームに戻す
-          await this.driver.switchTo().defaultContent();
+      if (iSele[s]) {
+        if (await this.isExistEle(iSele[s], true, 1000)) {
+          let iframe = await this.getEles(iSele[s], 1000);
+          if (await iframe[0].isDisplayed()) {
+            await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+            let inputEle = await this.getEle(s, 1000);
+            if (await inputEle.isDisplayed()) {
+              await this.clickEle(inputEle, 1000);
+            } else this.logger.debug("オーバーレイは表示されてないです");
+            // もとのフレームに戻す
+            await this.driver.switchTo().defaultContent();
+          }
         }
       } else if (await this.isExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
@@ -126,7 +131,32 @@ class GmyMissonSupper extends BaseWebDriverWrapper {
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
+    await this.hideOverlay22();
   }
+  async hideOverlay22() {
+    let sele = [
+      "div.fc-dialog button.fc-list-item-button",
+      "ins iframe[title='3rd party ad content']",
+      "#dismiss-button-element",
+    ];
+    if (await this.isExistEle(sele[0], true, 4000)) {
+      let ele = await this.getEle(sele[0], 1000);
+      await this.clickEle(ele, 1000);
+      if (await this.isExistEle(sele[1], true, 4000)) {
+        let iframe = await this.getEles(sele[1], 1000);
+        if (await iframe[0].isDisplayed()) {
+          await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+          let inputEle = await this.getEle(sele[2], 1000);
+          if (await inputEle.isDisplayed()) {
+            await this.clickEle(inputEle, 1000);
+          } else this.logger.debug("オーバーレイは表示されてないです");
+          // もとのフレームに戻す
+          await this.driver.switchTo().defaultContent();
+        }
+      }
+    }
+  }
+
 }
 // このサイトの共通処理クラス
 class GmyCommon extends GmyMissonSupper {
@@ -332,11 +362,11 @@ class GmyOtano extends GmyMissonSupper {
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       try {
-        await this.hideOverlay();
         if (await this.isExistEle(sele[0], true, 2000)) {
           let eles0 = await this.getEles(sele[0], 3000),
-            limit = eles0.length;
+          limit = eles0.length;
           for (let i = 0; i < limit; i++) {
+            await this.hideOverlay();
             if (i !== 0 && (await this.isExistEle(sele[0], true, 2000)))
               eles0 = await this.getEles(sele[0], 3000);
             await this.clickEle(eles0[0], 3000);
