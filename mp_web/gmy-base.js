@@ -113,7 +113,7 @@ class GmyMissonSupper extends BaseWebDriverWrapper {
           let iframe = await this.getEles(iSele[s], 1000);
           if (await iframe[0].isDisplayed()) {
             await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
-            let inputEle = await this.getEle(s, 1000);
+            let inputEle = await this.getEle(s, 10000);
             if (await inputEle.isDisplayed()) {
               await this.clickEle(inputEle, 1000);
             } else this.logger.debug("オーバーレイは表示されてないです");
