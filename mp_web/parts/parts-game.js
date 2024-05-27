@@ -257,6 +257,7 @@ class PartsGame extends BaseWebDriverWrapper {
         logger.info(`${j}/${limit}回目-----------`);
         if (await this.isExistEle(se[0], true, 2000)) {
           let el = await this.getEle(se[0], 3000);
+          await this.hideOverlay();
           await driver.wait(until.elementIsVisible(el), 5000);
           await this.clickEle(el, 2000);
           await this.backNowMissionPage(gameUrlHost);
@@ -2019,6 +2020,38 @@ class PartsGame extends BaseWebDriverWrapper {
     }
     return res;
   }
+  async hideOverlay() {
+    let seleOver = ["#pfx_interstitial_close", "div.overlay-item a.button-close", 
+    "#gn_ydn_interstitial_btn", 
+    // "div.close", "#close", "#interClose"
+      ,"div.close-button","a.gmoam_close_button"
+    ];
+    let iSele = {"a.gmoam_close_button":"iframe[title='GMOSSP iframe']","div.close-button":"ins iframe[title='3rd party ad content']"};
+    for (let s of seleOver) {
+      if (iSele[s]) {
+        if (await this.isExistEle(iSele[s], true, 1000)) {
+          let iframe = await this.getEles(iSele[s], 1000);
+          if (await iframe[0].isDisplayed()) {
+            await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+            let inputEle = await this.getEle(s, 10000);
+            if (await inputEle.isDisplayed()) {
+              await this.clickEle(inputEle, 1000);
+            } else this.logger.debug("オーバーレイは表示されてないです");
+            // もとのフレームに戻す
+            await this.driver.switchTo().defaultContent();
+          }
+        }
+      } else if (await this.isExistEle(s, true, 1000)) {
+        let ele = await this.getEle(s, 1000);
+        // if (s == seleOver[0]) {
+        //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        // } else 
+        if (await ele.isDisplayed()) {
+          await this.clickEle(ele, 1000);
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
+    }
+  }
 
   async hideOverlay() {
     let seleOver = [
@@ -2026,6 +2059,7 @@ class PartsGame extends BaseWebDriverWrapper {
       "#pfx_interstitial_close",
       // "#inter-close",
       "a.gmoam_close_button",
+      "#gn_ydn_interstitial_btn", 
     ];
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {

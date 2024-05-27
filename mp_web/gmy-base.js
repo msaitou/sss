@@ -162,7 +162,6 @@ class GmyMissonSupper extends BaseWebDriverWrapper {
       }
     }
   }
-
 }
 // このサイトの共通処理クラス
 class GmyCommon extends GmyMissonSupper {
