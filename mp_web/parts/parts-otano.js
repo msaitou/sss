@@ -34,6 +34,7 @@ class PartsOtano extends BaseWebDriverWrapper {
       //   sele[5] = "p.allStamp";
       // }
       await this.hideOverlay2();
+      await this.hideOverlay22();
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000),
           isKensyoFlag = false;
@@ -168,6 +169,30 @@ class PartsOtano extends BaseWebDriverWrapper {
         // } else this.logger.debug("オーバーレイは表示されてないです");
         // もとのフレームに戻す
         await this.driver.switchTo().defaultContent();
+      }
+    }
+  }
+  async hideOverlay22() {
+    let sele = [
+      "",
+      "ins iframe[title='3rd party ad content']",
+      "#dismiss-button",
+    ];
+    if (await this.isExistEle(sele[1], true, 4000)) {
+      let iframes = await this.getEles(sele[1], 1000);
+      for (let iframe of iframes) {
+        if (await iframe.isDisplayed()) {
+          await this.driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
+          await this.sleep(10000);
+          if (await this.isExistEle(sele[2], true, 1000)) {
+            let inputEle = await this.getEle(sele[2], 1000);
+            if (await inputEle.isDisplayed()) {
+              await this.clickEle(inputEle, 1000);
+            } else this.logger.debug("オーバーレイは表示されてないです");
+          }
+          // もとのフレームに戻す
+          await this.driver.switchTo().defaultContent();
+        }
       }
     }
   }
