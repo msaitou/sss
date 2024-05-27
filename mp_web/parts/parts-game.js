@@ -2026,6 +2026,7 @@ class PartsGame extends BaseWebDriverWrapper {
       "#pfx_interstitial_close",
       // "#inter-close",
       "a.gmoam_close_button",
+      "#gn_ydn_interstitial_btn", 
     ];
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
