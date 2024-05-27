@@ -57,6 +57,12 @@ class CriBase extends BaseExecuter {
           case D.MISSION.GAME_FURUFURU_SEARCH:
             execCls = new CriGameFurufuruSearch(para);
             break;
+          case D.MISSION.GAME_COOK:
+          case D.MISSION.GAME_EGG:
+          case D.MISSION.GAME_TENKI:
+          case D.MISSION.GAME_OTE:
+            execCls = new CriGameContents(para, mission.main);
+            break;
         }
         if (execCls) {
           this.writeLogMissionStart(mission.main);
@@ -967,5 +973,43 @@ class CriGameFurufuruSearch extends CriMissonSupper {
     return res;
   }
 }
+const { PartsGame } = require("./parts/parts-game.js");
+// クッキング おて 天気 卵 mobile
+class CriGameContents extends CriMissonSupper {
+  firstUrl = "https://www.chobirich.com/";
+  targetUrl = "https://www.chobirich.com/game/";
+  mission = "";
+  constructor(para, mType) {
+    super(para);
+    this.mission = mType;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    let PGame = new PartsGame(this.para, this.mission);
+    let se;
+    // case D.MISSION.GAME_COOK:
+    //   case D.MISSION.GAME_EGG:
+    //   case D.MISSION.GAME_TENKI:
+    //   case D.MISSION.GAME_OTE:
+
+    if (this.mission == D.MISSION.GAME_COOK) se = ["img[src*='cooking_90_90']"];
+    else if (this.mission == D.MISSION.GAME_EGG) se = ["img[src*='eggchoice_90_90']"];
+    else if (this.mission == D.MISSION.GAME_TENKI) se = ["img[src*='otenki_90_90']"];
+    else if (this.mission == D.MISSION.GAME_OTE) se = ["img[src*='ote_90_90']"];
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    if (await this.isExistEle(se[0], true, 2000)) {
+      let el = await this.getEle(se[0], 3000);
+      await this.clickEleScrollWeak(el, 2000, 100);
+      await this.ignoreKoukoku();
+      let wid = await driver.getWindowHandle();
+      await this.changeWindow(wid); // 別タブに移動する
+      res = await PGame.doMethod(wid);
+    }
+    return res;
+  }
+}
+
 exports.CriCommon = CriCommon;
 exports.Cri = CriBase;
