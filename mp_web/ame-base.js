@@ -193,7 +193,7 @@ class AmeAnqColum extends AmeMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["img[alt='コラムとアンケート']", ".enquete-list td.status>a[href]"];
+    let sele = ["img[alt='コラムとアンケート']", ".enquete-list div.status>a[href]"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000);
@@ -209,7 +209,7 @@ class AmeAnqColum extends AmeMissonSupper {
 
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
             await this.clickEle(eles[eles.length - 1], 5000);
-            res = await AnkPark.doColum();
+            res = await AnkPark.doMobColum();
             await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             await this.sleep(2000);
           }
