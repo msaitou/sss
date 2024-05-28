@@ -396,7 +396,7 @@ class MopEitango extends MopMissonSupper {
               eles = await this.getEles(sele[2], 2000);
               // ランダムで。
               let choiceNum = libUtil.getRandomInt(0, eles.length);
-              await this.clickEle(eles[choiceNum], 2000);
+              await this.clickEle(eles[choiceNum], 2000, this.isMob? 250:0);
               if (await this.isExistEle(sele[3], true, 3000)) {
                 ele = await this.getEle(sele[3], 3000);
                 await this.clickEle(ele, 2000, 0, this.isMob); // 回答する
