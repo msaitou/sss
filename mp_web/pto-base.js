@@ -592,7 +592,7 @@ class PtoGameKokuhaku extends PtoMissonSupper {
     let mobH = this.isMob ? 50 : 0;
     if (this.isMob) {
       this.sleep(3000);
-      await driver.executeScript("window.scrollTo(0, 3300);");
+      await driver.executeScript("window.scrollTo(0, 4300);");
     }
     await this.hideOverlay();
     if (await this.isExistEle(se[0], true, 2000)) {
