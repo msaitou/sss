@@ -589,15 +589,16 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         let ele = await this.getEle(sele[0], 8000);
         if (siteInfo.code == D.CODE.LFM) {
           await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
-        } else await this.clickEle(ele, 2000);
+        } else await this.clickEle(ele, 1000);
       } else if (await this.isExistEle(sele[1], true, 5000)) {
         let ele = await this.getEle(sele[1], 5000);
-        await this.clickEle(ele, 2000, 0, siteInfo.code == D.CODE.LFM);
+        await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
       }
+      await this.hideOverlay();
       for (let i = 0; i < 7; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 2000, 0, siteInfo.code == D.CODE.LFM);
+          await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
         }
       }
       try {

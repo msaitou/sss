@@ -230,7 +230,7 @@ class GpoCm extends GpoMissonSupper {
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    let sele = ["a[href*='www.gpoint.co.jp/LoginGate/gw/entry.do']"];
+    let sele = ["a[href*='www.gpoint.co.jp/LoginGate/gw/entry.do']>img[alt='CMくじ']"];
     if (this.isMob) {
       await this.openUrl("https://www.gpoint.co.jp/gpark/"); // 操作ページ表示
       sele[0] = "a[onclick*='kuji']";
