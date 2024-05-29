@@ -536,7 +536,7 @@ class GenAnqPark extends GenMissonSupper {
                 if (j !== 0 && (await this.isExistEle(seleGen[1], true, 3000))) {
                   eles = await this.getEles(seleGen[1], 3000);
                 }
-                ele = eles[eles.length - 1]; // 常に一番↓で
+                ele = eles[eles.length - 1-j]; // 常に一番↓で(消えないので1つ上にする)
                 let href = await ele.getAttribute("href");
                 let keyIndex = -1;
                 [
