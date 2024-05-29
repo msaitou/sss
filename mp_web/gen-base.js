@@ -104,14 +104,46 @@ class GenMissonSupper extends BaseWebDriverWrapper {
     this.setDriver(this.para.driver);
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
+  // async hideOverlay() {
+  //   let seleOver = ["#close_btn>span"];
+  //   if (await this.isExistEle(seleOver[0], true, 3000)) {
+  //     let ele = await this.getEle(seleOver[0], 2000);
+  //     if (await ele.isDisplayed()) {
+  //       await this.clickEle(ele, 2000);
+  //     } else this.logger.debug("オーバーレイは表示されてないです");
+  //   }
+  // }
   async hideOverlay() {
-    let seleOver = ["#close_btn>span"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
-      let ele = await this.getEle(seleOver[0], 2000);
-      if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 2000);
-      } else this.logger.debug("オーバーレイは表示されてないです");
+    let seleOver = ["#pfx_interstitial_close", "#close_btn>span", 
+    "#gn_ydn_interstitial_btn", 
+      ,"div.close-button","a.gmoam_close_button"
+    ];
+    let iSele = {"a.gmoam_close_button":"iframe[title='GMOSSP iframe']","div.close-button":"ins iframe[title='3rd party ad content']"};
+    for (let s of seleOver) {
+      if (iSele[s]) {
+        if (await this.isExistEle(iSele[s], true, 1000)) {
+          let iframe = await this.getEles(iSele[s], 1000);
+          if (await iframe[0].isDisplayed()) {
+            await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+            let inputEle = await this.getEle(s, 10000);
+            if (await inputEle.isDisplayed()) {
+              await this.clickEle(inputEle, 1000);
+            } else this.logger.debug("オーバーレイは表示されてないです");
+            // もとのフレームに戻す
+            await this.driver.switchTo().defaultContent();
+          }
+        }
+      } else if (await this.isExistEle(s, true, 1000)) {
+        let ele = await this.getEle(s, 1000);
+        // if (s == seleOver[0]) {
+        //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        // } else 
+        if (await ele.isDisplayed()) {
+          await this.clickEle(ele, 1000);
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
     }
+    // await this.hideOverlay22();
   }
 }
 // このサイトの共通処理クラス
@@ -915,6 +947,7 @@ class GenQuizKentei extends GenMissonSupper {
             let eles = await this.getEles(sele[2], 3000);
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
+              await this.hideOverlay();
               if (i !== 0 && (await this.isExistEle(sele[2], true, 2000))) eles = await this.getEles(sele[2], 3000);
               let text = await eles[eles.length - 1].getText();
               if (await this.isExistEle(sele[3], true, 2000)) {
