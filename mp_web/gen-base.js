@@ -114,11 +114,18 @@ class GenMissonSupper extends BaseWebDriverWrapper {
   //   }
   // }
   async hideOverlay() {
-    let seleOver = ["#pfx_interstitial_close", "#close_btn>span", 
-    "#gn_ydn_interstitial_btn", 
-      ,"div.close-button","a.gmoam_close_button"
+    let seleOver = [
+      "#pfx_interstitial_close",
+      "#close_btn>span",
+      "#gn_ydn_interstitial_btn",
+      ,
+      "div.close-button",
+      "a.gmoam_close_button",
     ];
-    let iSele = {"a.gmoam_close_button":"iframe[title='GMOSSP iframe']","div.close-button":"ins iframe[title='3rd party ad content']"};
+    let iSele = {
+      "a.gmoam_close_button": "iframe[title='GMOSSP iframe']",
+      "div.close-button": "ins iframe[title='3rd party ad content']",
+    };
     for (let s of seleOver) {
       if (iSele[s]) {
         if (await this.isExistEle(iSele[s], true, 1000)) {
@@ -137,7 +144,7 @@ class GenMissonSupper extends BaseWebDriverWrapper {
         let ele = await this.getEle(s, 1000);
         // if (s == seleOver[0]) {
         //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
-        // } else 
+        // } else
         if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
         } else this.logger.debug("オーバーレイは表示されてないです");
@@ -265,7 +272,11 @@ class GenCm extends GenMissonSupper {
       await this.clickEle(eles[0], 2000, this.isMob ? 155 : 0);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://gendama.cmnw.jp/game/");
+      let cmManage = new PartsCmManage(
+        this.para,
+        this.cmMissionList,
+        "https://gendama.cmnw.jp/game/"
+      );
       await cmManage.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -377,7 +388,13 @@ class GenAnq extends GenMissonSupper {
               if (await this.isExistEle(sele[8], true, 2000)) {
                 eles = await this.getEles(sele[8], 3000);
                 let title = await eles[skip].getText();
-                if (["書店について", "好きな飲み物に関して", "キャラクターに関するアンケート"].indexOf(title) > -1) {
+                if (
+                  [
+                    "書店について",
+                    "好きな飲み物に関して",
+                    "キャラクターに関するアンケート",
+                  ].indexOf(title) > -1
+                ) {
                   skip++;
                   continue;
                 }
@@ -568,7 +585,7 @@ class GenAnqPark extends GenMissonSupper {
                 if (j !== 0 && (await this.isExistEle(seleGen[1], true, 3000))) {
                   eles = await this.getEles(seleGen[1], 3000);
                 }
-                ele = eles[eles.length - 1-j]; // 常に一番↓で(消えないので1つ上にする)
+                ele = eles[eles.length - 1 - j]; // 常に一番↓で(消えないので1つ上にする)
                 let href = await ele.getAttribute("href");
                 let keyIndex = -1;
                 [
@@ -592,45 +609,51 @@ class GenAnqPark extends GenMissonSupper {
                 let wid = await driver.getWindowHandle();
                 await this.changeWindow(wid); // 別タブに移動する
                 try {
-                  switch (keyIndex) {
-                    case 0: // リサーチ
-                      res = await Research1.commonResearch1([
-                        "table.ui-table a.ui-button",
-                        "a.ui-button",
-                        "input.ui-button",
-                        "div.ui-item-no",
-                        "li>label",
-                        "select.ui-select",
-                      ]);
-                      break;
-                    case 1: // 観察力
-                      res = await AnkPark.doMobSite();
-                      break;
-                    case 2: // ひらめき
-                      res = await AnkPark.doMobHirameki();
-                      break;
-                    case 3: // MIX
-                      res = await AnkPark.doMobMix();
-                      break;
-                    case 4: // 偉人
-                      res = await AnkPark.doMobIjin();
-                      break;
-                    case 5: // 写真
-                      res = await AnkPark.doMobPhoto();
-                      break;
-                    case 6: // 料理
-                      res = await AnkPark.doMobCook();
-                      break;
-                    case 7: // 動物図鑑
-                      res = await AnkPark.doMobZukan();
-                      break;
-                    case 8: // 日本百景
-                      res = await AnkPark.doMobJapan();
-                      break;
-                    case 9: // コラム
-                      res = await AnkPark.doMobColum();
-                      break;
-                  }
+                  let currentUrl = await this.driver.getCurrentUrl();
+                  if (
+                    currentUrl.indexOf("already_read") > -1 ||
+                    currentUrl.indexOf("403.html") > -1 ||
+                    currentUrl.indexOf("err.html") > -1
+                  ) keyIndex = -99;
+                    switch (keyIndex) {
+                      case 0: // リサーチ
+                        res = await Research1.commonResearch1([
+                          "table.ui-table a.ui-button",
+                          "a.ui-button",
+                          "input.ui-button",
+                          "div.ui-item-no",
+                          "li>label",
+                          "select.ui-select",
+                        ]);
+                        break;
+                      case 1: // 観察力
+                        res = await AnkPark.doMobSite();
+                        break;
+                      case 2: // ひらめき
+                        res = await AnkPark.doMobHirameki();
+                        break;
+                      case 3: // MIX
+                        res = await AnkPark.doMobMix();
+                        break;
+                      case 4: // 偉人
+                        res = await AnkPark.doMobIjin();
+                        break;
+                      case 5: // 写真
+                        res = await AnkPark.doMobPhoto();
+                        break;
+                      case 6: // 料理
+                        res = await AnkPark.doMobCook();
+                        break;
+                      case 7: // 動物図鑑
+                        res = await AnkPark.doMobZukan();
+                        break;
+                      case 8: // 日本百景
+                        res = await AnkPark.doMobJapan();
+                        break;
+                      case 9: // コラム
+                        res = await AnkPark.doMobColum();
+                        break;
+                    }
                 } catch (e) {
                   logger.warn(e);
                 }
@@ -758,7 +781,9 @@ class GenAnqMob extends GenMissonSupper {
                                 await driver.navigate().back(); // 一覧からやり直す
                                 await this.sleep(2000);
                                 iBreak = true;
-                              } else if (currentUrl.indexOf("https://gendama.enquete.vip/question") === 0) {
+                              } else if (
+                                currentUrl.indexOf("https://gendama.enquete.vip/question") === 0
+                              ) {
                                 // ナニモシナイ
                               } else if (isStartPage) iBreak = true;
                               break;
@@ -855,7 +880,8 @@ class GenAnqMob extends GenMissonSupper {
                 }
               }
               if (await this.isExistEle(sele[1], true, 3000))
-                (eles = await this.getEles(sele[1], 3000)), (res = eles.length < 10 ? D.STATUS.DONE : res);
+                (eles = await this.getEles(sele[1], 3000)),
+                  (res = eles.length < 10 ? D.STATUS.DONE : res);
             } catch (e) {
               logger.warn(e);
             } finally {
@@ -895,7 +921,8 @@ class GenAnqKenkou extends GenMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+              eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
             await this.clickEle(eles[eles.length - 1], 6000, 250);
             res = await AnkPark.doMobKenkou();
@@ -948,7 +975,8 @@ class GenQuizKentei extends GenMissonSupper {
             let limit = eles.length;
             for (let i = 0; i < limit; i++) {
               await this.hideOverlay();
-              if (i !== 0 && (await this.isExistEle(sele[2], true, 2000))) eles = await this.getEles(sele[2], 3000);
+              if (i !== 0 && (await this.isExistEle(sele[2], true, 2000)))
+                eles = await this.getEles(sele[2], 3000);
               let text = await eles[eles.length - 1].getText();
               if (await this.isExistEle(sele[3], true, 2000)) {
                 let eles2 = await this.getEles(sele[3], 3000);
@@ -1006,7 +1034,8 @@ class GenGameContents extends GenMissonSupper {
     else if (this.mission == D.MISSION.GAME_OTE) se = ["#menu_game img[alt='お手できるかな']"];
     // else if (this.mission == D.MISSION.GAME_TENKI) se = ["#menu_game img[alt='てるてるの天気当てゲーム']"];
     else if (this.mission == D.MISSION.GAME_EGG) se = ["#menu_game img[alt='エッグチョイス']"];
-    else if (this.mission == D.MISSION.GAME_DOKOMADE) se = ["#menu_game img[alt='どこまでのびるかな？']"];
+    else if (this.mission == D.MISSION.GAME_DOKOMADE)
+      se = ["#menu_game img[alt='どこまでのびるかな？']"];
     sele[1] = se[0];
 
     await this.openUrl(this.targetUrl); // 操作ページ表示
