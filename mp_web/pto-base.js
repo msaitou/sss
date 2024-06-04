@@ -198,7 +198,7 @@ class PtoCm extends PtoMissonSupper {
     if (this.isMob) {
       sele[0] = "img[src*='cm-jk.png']";
       this.sleep(3000);
-      await driver.executeScript("window.scrollTo(0, 2800);");
+      await driver.executeScript("window.scrollTo(0, 3500);");
     }
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
