@@ -77,25 +77,30 @@ class RakuMissonSupper extends BaseWebDriverWrapper {
       if (await this.isExistEle(sele, true, 3000)) {
         let ele = await this.getEle(sele, 2000);
         if (await ele.isDisplayed()) {
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
   }
   async hideOverlay2() {
-    let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']", "#dismiss-button"];
+    let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']", "#dismiss-button", "[aria-label='Close ad']>img"];
     if (await this.isExistEle(sele[0], true, 4000)) {
       let ele = await this.getEle(sele[0], 1000);
       await this.clickEle(ele, 1000);
       if (await this.isExistEle(sele[1], true, 2000)) {
+        await this.sleep(15000);
         let iframe = await this.getEles(sele[1], 1000);
         await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
-        let inputEle = await this.getEle(sele[2], 1000);
-        await this.sleep(15000);
-        // if (await inputEle.isDisplayed()) {
-        await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
-        // await this.clickEle(inputEle, 2000, 0, true);
-        // } else this.logger.debug("オーバーレイは表示されてないです");
+        for (let sele2 of [sele[2], sele[3]]) {
+          if (await this.isExistEle(sele2, true, 2000)) {
+            let inputEle = await this.getEle(sele2, 1000);
+            // if (await inputEle.isDisplayed()) {
+            await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+            // await this.clickEle(inputEle, 2000, 0, true);
+            // } else this.logger.debug("オーバーレイは表示されてないです");
+            break;
+          }
+        }
         // もとのフレームに戻す
         await this.driver.switchTo().defaultContent();
       }
@@ -335,17 +340,19 @@ class RakuNews extends RakuMissonSupper {
                 await this.clickEle(unReadEle, 2000);
                 if (await this.isExistEle(sele[1], true, 2000)) {
                   ele = await this.getEle(sele[1], 2000);
+                  // 1記事を10秒待機。その後ページの最下部へ移動して、2秒待機？TOPページを表示
+                  await this.hideOverlay();
+                  await this.clickEle(ele, 1000); // 10秒待機
                   let reactionSele = ["#reaction-icon-container li>button", "#reaction-icon-container li>button.is-disabled",".pager>li>ul>li"];
                   if (await this.isExistEle(reactionSele[2], true, 1000)) {
                     eles = await this.getEles(reactionSele[2], 1000);
                     await this.clickEle(eles[eles.length-1], 3000); // 最後のページに移動
                   }
-                  // 1記事を10秒待機。その後ページの最下部へ移動して、2秒待機？TOPページを表示
-                  await this.hideOverlay();
-                  await this.clickEle(ele, 10000); // 10秒待機
                   if (await this.isExistEle(reactionSele[1], false, 1000) // リアクション済みでない
                   && await this.isExistEle(reactionSele[0], true, 1000)) {
-                      await this.hideOverlay2();
+                    await this.hideOverlay();
+                    await this.hideOverlay2();
+                    await this.sleep(5000); // 10秒待機
                     eles = await this.getEles(reactionSele[0], 1000);
                     let choiceNum = libUtil.getRandomInt(0, eles.length);
                     await this.clickEle(eles[choiceNum], 1000); // リアクションする
