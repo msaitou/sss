@@ -644,12 +644,12 @@ class PartsGame extends BaseWebDriverWrapper {
     let currentUrl = await this.driver.getCurrentUrl();
     if (currentUrl.indexOf(gameUrlHost) === -1) {
       await this.driver.navigate().back();
-      await this.sleep(1000);
+      await this.sleep(500);
       for (let k = 0; k < 8; k++) {
         currentUrl = await this.driver.getCurrentUrl();
         if (currentUrl.indexOf(gameUrlHost) === -1) {
           await this.driver.navigate().back(); // 広告をクリックしたぽいので戻る
-          await this.sleep(2000);
+          await this.sleep(1000);
           this.logger.info("広告をクリックさせられたのでbackします");
         } else break;
       }
@@ -977,6 +977,8 @@ class PartsGame extends BaseWebDriverWrapper {
       }
       let gameUrlHost = await driver.getCurrentUrl();
       gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
+      if ("https://chobirich4.contents-group.work/sp/sp-dog/err.php".indexOf(gameUrlHost) > -1) 
+        return D.STATUS.DONE;
       for (let j = 0; j < limit; j++) {
         logger.info(`${j}/${limit}回目-----------`);
         await this.hideOverlay();
