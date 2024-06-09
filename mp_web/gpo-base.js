@@ -657,13 +657,14 @@ class GpoPointMoll extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     await this.hideOverlay();
     if (await this.isExistEle(sele[0], true, 2000)) {
-      let ele = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele, 3000);
+      let ele = await this.getEles(sele[0], 3000);
+      await this.clickEle(ele[ele.length -1], 3000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       if (await this.isExistEle(sele[1], true, 2000)) {
         let ele0 = await this.getEle(sele[1], 3000);
-        await this.clickEle(ele0, 3000);
+        // await this.clickEle(ele0, 3000);
+        await this.exeScriptNoTimeOut(`arguments[0].click()`, ele0);
         try {
           let anqSeleMap = {
             // [D.MISSION.MOLL_IJIN]: "div>img[src*='img_ijin']",
