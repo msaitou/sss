@@ -59,13 +59,25 @@ class PtoBase extends BaseExecuter {
     let startPage = "https://www.pointtown.com/";
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
+    const getUsePointFunc = async () => {
+      let exchangePage = "https://www.pointtown.com/mypage/exchange-history";
+      let p = "0";
+      await this.driver.get(exchangePage);
+      let sele = ["p.c-history-list__incentive"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let els = await this.getEles(sele[0], 2000);
+        p = await els[0].getText();
+        p = p.split("\t").join("").split("\n").join("").split("000").join("00");  // 交換先のポイントが表示されて、このサイトのpoint価値ではないので強引に
+      }
+      return p;
+    };
     let sele = ["li.c-header-youser-status-list__item>a.c-point-label"];
     if (this.isMob) sele[0] = "dd.c-header-user__l-point>a.c-point-mid-label";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
       this.logger.info("now point total:" + nakedNum);
-      await this.pointSummary(this.code, nakedNum);
+      await this.pointSummary(this.code, nakedNum, getUsePointFunc);
     }
   }
 }
@@ -90,10 +102,10 @@ class PtoMissonSupper extends BaseWebDriverWrapper {
     //     }
     //   } else this.logger.debug("オーバーレイは表示されてないです");
     // }
-    let seleOver = ["#pfx_interstitial_close", "button.js-dialog__close-btn", "#gn_ydn_interstitial_btn", "div.close", "#close", "#interClose"];
+    let seleOver = ["#dismiss-button","#pfx_interstitial_close", "button.js-dialog__close-btn", "#gn_ydn_interstitial_btn", "div.close", "#close", "#interClose"];
     for (let s of seleOver) {
-      if (["a.gmoam_close_button"].indexOf(s) > -1) {
-        let iSele = ["iframe[title='GMOSSP iframe']"];
+      if (["#dismiss-button"].indexOf(s) > -1) {
+        let iSele = ["iframe[title='Advertisement']"];
         if (await this.isExistEle(iSele[0], true, 1000)) {
           let iframe = await this.getEles(iSele[0], 1000);
           await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
@@ -382,10 +394,11 @@ class PtoPointQ extends PtoMissonSupper {
     let sele = [
       "img[alt='ポイントQ']",
       ".pointq-sec a",
-      "#js-quiz-form label",
+      "#js-quiz-form label",  // 2
       "#js-pointq-submit",
       "a[href='/pointq/input']",
       "button.js-watch-reward-ad-btn",
+      "iframe"  // 6
     ];
     try {
       await this.openUrl(this.targetUrl);
@@ -398,7 +411,16 @@ class PtoPointQ extends PtoMissonSupper {
             await this.lookDouga(sele);
           } else {
             ele = await this.getEle(sele[1], 2000);
-            if (await ele.isEnabled()) await this.clickEle(ele, 3000);
+            if (await ele.isEnabled()) await this.clickEle(ele, 1000);
+            // 邪魔なもの消す
+            await this.exeScriptNoTimeOut(
+              `for (let t of document.querySelectorAll("${sele[6]}, ins")){t.remove();}`
+            );
+            await this.exeScriptNoTimeOut(
+              `document.querySelector("body").setAttribute("aria-hidden", false);`
+            );
+            ele = await this.getEle(sele[1], 2000);
+            if (await ele.isEnabled()) await this.clickEle(ele, 1000, 200);
           }
           for (let i = 0; i < 3; i++) {
             if (await this.isExistEle(sele[2], true, 2000)) {
@@ -407,16 +429,23 @@ class PtoPointQ extends PtoMissonSupper {
               await this.clickEle(eles[choiceNum], 3000);
               if (await this.isExistEle(sele[3], true, 2000)) {
                 ele = await this.getEle(sele[3], 2000);
-                await this.clickEle(ele, 3000);
+                await this.clickEle(ele, 1000);
                 if (await this.isExistEle(sele[4], true, 2000)) {
                   ele = await this.getEle(sele[4], 2000);
-                  await this.clickEle(ele, 3000); // 次の質問へ
+                  await this.clickEle(ele, 1000); // 次の質問へ
                 } else if (await this.isExistEle(sele[5], true, 2000)) {
                   i = await this.lookDouga(sele);
                 }
                 res = D.STATUS.DONE;
               }
             } else break;
+            // 邪魔なもの消す
+            await this.exeScriptNoTimeOut(
+              `for (let t of document.querySelectorAll("${sele[6]}, ins")){t.remove();}`
+            );
+            await this.exeScriptNoTimeOut(
+              `document.querySelector("body").setAttribute("aria-hidden", false);`
+            );
           }
         }
       }

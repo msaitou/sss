@@ -102,7 +102,20 @@ class MopBase extends BaseExecuter {
   async saveNowPoint() {
     let pointPage = "https://pc.moppy.jp/mypage/";
     await this.openUrl(pointPage); // 操作ページ表示
-    await this.driver.sleep(3000);
+    await this.driver.sleep(2000);
+    const getUsePointFunc = async () => {
+      // let exchangePage = "https://dietnavi.com/pc/mypage/passbook/cashback";
+      // await this.driver.get(exchangePage);
+      let p = "0";
+      let sele = ["#exchange_history", "span.a-table__cell__point"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let el = await this.getEle(sele[0], 2000);
+        await this.clickEle(el, 2000, 0);
+        let el2 = await this.getEles(sele[1]);
+        p = await el2[0].getText();
+      }
+      return p;
+    };
     let sele = ["p.a-point__point"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.driver.findElement(By.css(sele[0]));
@@ -111,7 +124,7 @@ class MopBase extends BaseExecuter {
       nakedNum = nakedNum.split("\n").join("");
       nakedNum = nakedNum.split("ポイントGET!!").join("");
       this.logger.info("now point total:" + nakedNum);
-      await this.pointSummary(this.code, nakedNum);
+      await this.pointSummary(this.code, nakedNum, getUsePointFunc);
     }
   }
 }
@@ -298,10 +311,11 @@ class MopGacha extends MopMissonSupper {
     let sele = [
       "a[data-ga-label='モッピーガチャ']",
       "a[data-ga-label*='まわす']",
-      "a[data-ga-label*='結果を見る']",
+      "a[data-ga-label*='結果を見る（ボタン）']",
       "span.popup-block__delete",
       "img[alt='バナー']",
     ];
+    let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       await this.clickEle(ele, 2000);
@@ -315,22 +329,23 @@ class MopGacha extends MopMissonSupper {
           await this.hideOverlay();
           ele = await this.getEle(sele[2], 2000);
           await this.clickEle(ele, 2000);
-          if (await this.isExistEle(sele[3], true, 2000)) {
+          if (await this.isExistEle(sele[4], true, 2000)) {
             await this.hideOverlay();
-            ele = await this.getEle(sele[3], 2000);
+            ele = await this.getEle(sele[4], 2000);
             await this.clickEle(ele, 2000);
-            if (await this.isExistEle(sele[4], true, 2000)) {
-              await this.hideOverlay();
-              ele = await this.getEle(sele[4], 2000);
-              await this.clickEle(ele, 2000);
-              await this.closeOtherWindow(driver);
-            }
+            await this.closeOtherWindow(driver);
+            D.STATUS.DONE;
           }
+          // if (await this.isExistEle(sele[3], true, 2000)) {
+          //   await this.hideOverlay();
+          //   ele = await this.getEle(sele[3], 2000);
+          //   await this.clickEle(ele, 2000);
+          // }
         }
       }
     }
     logger.info(`${this.constructor.name} END`);
-    return D.STATUS.DONE;
+    return res;
     // return await this.ChirashiCls.do(this.targetUrl);
   }
 }

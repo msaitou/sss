@@ -55,13 +55,24 @@ class LfmBase extends BaseExecuter {
     let startPage = "https://lifemedia.jp/";
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
+    const getUsePointFunc = async () => {
+      let exchangePage = "https://lifemedia.jp/mypage/points";
+      let p = "0";
+      await this.driver.get(exchangePage);
+      let sele = ["#pointExchange span.f-point"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let els = await this.getEles(sele[0], 2000);
+        p = await els[0].getText();
+      }
+      return p;
+    };
     let sele = ["div.f-number>span.head__mymenu__icon"];
     if (this.isMob) sele[0] = "#js-mypointPoint";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
       this.logger.info("now point total:" + nakedNum);
-      await this.pointSummary(this.code, nakedNum);
+      await this.pointSummary(this.code, nakedNum, getUsePointFunc);
     }
   }
 }

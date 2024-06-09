@@ -88,7 +88,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
    * @param {*} siteCode
    * @param {*} nakedPoint
    */
-  async pointSummary(siteCode, nakedPoint) {
+  async pointSummary(siteCode, nakedPoint, getUsePointFunc, anotherP) {
     let d = new Date();
     d.setDate(d.getDate() - 1); // 前日のデータ用
     let oldIdStr = this.createPointSummaryId(d);
@@ -100,6 +100,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
     // そのままのポイント表示を整数に変換
     let p = this.convertNumber(nakedPoint);
     p = p * this.siteInfo.rate; // そのサイトのポイント倍率を円に換算
+    if (anotherP) p += anotherP * this.siteInfo.rate; // そのサイトのポイント倍率を円に換算
     let exch = 0,
       diff = 0;
     if (!oldDoc) {
@@ -111,13 +112,23 @@ class BaseExecuter extends BaseWebDriverWrapper {
         diff = p - oldDoc[siteCode].p;
         diff = Math.round(diff * 100) / 100; // 小数点の誤差をなくす
         if (diff < 0) {
+          let calcDiff2 = ()=>{
+            let tmpP = Math.round((p + exch) * 100) / 100; // 小数点の誤差をなくす
+            diff = tmpP - oldDoc[siteCode].p;
+            return Math.round(diff * 100) / 100; // 小数点の誤差をなくす
+          };
           if (nowDoc && nowDoc[siteCode] && nowDoc[siteCode].exch) {
             exch = nowDoc[siteCode].exch;
             // 手動で入力されたexchと今のポイント（円換算）を加算し、diffを再計算
-            let tmpP = Math.round((p + exch) * 100) / 100; // 小数点の誤差をなくす
-            diff = tmpP - oldDoc[siteCode].p;
-            diff = Math.round(diff * 100) / 100; // 小数点の誤差をなくす
-          } else {
+            diff = calcDiff2();
+          } else if ("function" == typeof getUsePointFunc) {
+            let useP = await getUsePointFunc();
+            useP = this.convertNumber(useP);
+            exch = useP * this.siteInfo.rate; // そのサイトのポイント倍率を円に換算
+            if (exch< -1) exch *=-1;
+            diff = calcDiff2();
+          }
+          else {
             // TODO ちゃんと作るまではメール飛ばす
             await mailOpe.send(this.logger, {
               subject: `換金した疑い[${siteCode}]`,

@@ -82,13 +82,25 @@ class GmyBase extends BaseExecuter {
     let startPage = "https://dietnavi.com/pc/";
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
+    const getUsePointFunc = async () => {
+      let exchangePage = "https://dietnavi.com/pc/mypage/passbook/cashback";
+      let p = "0";
+      await this.driver.get(exchangePage);
+      let sele = ["#cashback tr", "td"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let els = await this.getEles(sele[0], 2000);
+        let el2 = await this.getElesFromEle(els[1], sele[1]);
+        p = await el2[2].getText();
+      }
+      return p;
+    };
     let sele = ["li.user_point>a"];
     if (this.isMob) sele[0] = "div>p.user_point";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
       this.logger.info("now point total:" + nakedNum);
-      await this.pointSummary(this.code, nakedNum);
+      await this.pointSummary(this.code, nakedNum, getUsePointFunc);
     }
   }
 }

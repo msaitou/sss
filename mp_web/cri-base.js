@@ -82,6 +82,18 @@ class CriBase extends BaseExecuter {
     let startPage = "https://www.chobirich.com/";
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
+    const getUsePointFunc = async () => {
+      let exchangePage = "https://www.chobirich.com/mypage/point_details/koukan";
+      let p = "0";
+      await this.driver.get(exchangePage);
+      let sele = ["div.PointDetailsItem__pt.PointDetailsItem__pt--minus"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let els = await this.getEles(sele[0], 2000);
+        p = await els[0].getText();
+        p = p.split("\n").join("").trim();
+      }
+      return p;
+    };
     let sele = ["p.g-navi__user__pt"];
     if (this.isMob) sele[0] = "p.HeaderNav__userPt";
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -89,7 +101,7 @@ class CriBase extends BaseExecuter {
       let nakedNum = await ele.getText();
       nakedNum.split("\n").join("");
       this.logger.info("now point total:" + nakedNum);
-      await this.pointSummary(this.code, nakedNum.trim());
+      await this.pointSummary(this.code, nakedNum.trim(), getUsePointFunc);
     }
   }
 }

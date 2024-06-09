@@ -52,12 +52,24 @@ class PilBase extends BaseExecuter {
     let startPage = "https://www.point-island.com/service.asp";
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
+    const getUsePointFunc = async () => {
+      let exchangePage = "https://www.point-island.com/m_pointexch.asp";
+      let p = "0";
+      await this.driver.get(exchangePage);
+      let sele = ["span.font12w>table table tr", "td"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let els = await this.getEles(sele[0], 2000);
+        let el2 = await this.getElesFromEle(els[1], sele[1]);
+        p = await el2[1].getText();
+      }
+      return p;
+    };
     let sele = ["table.memberinfo strong"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
       let nakedNum = await eles[1].getText();
       this.logger.info("now point total:" + nakedNum);
-      await this.pointSummary(this.code, nakedNum);
+      await this.pointSummary(this.code, nakedNum, getUsePointFunc);
     }
   }
 }

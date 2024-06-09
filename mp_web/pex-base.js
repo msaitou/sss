@@ -48,13 +48,25 @@ class PexBase extends BaseExecuter {
     let pointPage = "https://pex.jp/user/point_passbook/all";
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.get(pointPage);
-    await this.driver.sleep(3000);
-    let sele = ["dl.point_area>dd>span"];
+    await this.driver.sleep(1000);
+    let sele = ["dl.point_area>dd>span", "span.spend_p:not(.return-p)"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.driver.findElement(By.css(sele[0]));
       let nakedNum = await ele.getText();
       this.logger.info("now point total:" + nakedNum);
-      await this.pointSummary(this.code, nakedNum);
+
+      // 投資中分
+      let toshiPage = "https://pex.jp/investments/portfolio"
+      await this.driver.get(toshiPage);
+      let anotherP = 0;
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let eles = await this.getEles(sele[1], 2000);
+        for (let el of eles) {
+          let p = await el.getText();
+          anotherP += Number(this.convertNumber(p));
+        }
+      }
+      await this.pointSummary(this.code, nakedNum, null, anotherP);
     }
   }
 }
