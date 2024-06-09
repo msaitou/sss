@@ -129,7 +129,7 @@ class PartsGame extends BaseWebDriverWrapper {
         }
         if (await this.isExistEle(se[1], true, 2000)) {
           let el = await this.getEle(se[1], 3000);
-          await this.clickEle(el, 2000);
+          await this.clickEle(el, 1000);
           await this.backNowMissionPage(gameUrlHost);
           // 勝手に動く
           await this.sleep(10000);
@@ -137,7 +137,7 @@ class PartsGame extends BaseWebDriverWrapper {
           await this.sleep(5000);
           if (await this.isExistEle(se[2], true, 3000)) {
             let el = await this.getEle(se[2], 3000);
-            await this.clickEle(el, 2000); // トップへ
+            await this.clickEle(el, 2100); // トップへ
             await this.backNowMissionPage(gameUrlHost);
           }
         }
@@ -188,20 +188,20 @@ class PartsGame extends BaseWebDriverWrapper {
         for (let i = 0; i < 2; i++) {
           if (await this.isExistEle(se[0], true, 2000)) {
             let el = await this.getEle(se[0], 3000);
-            await this.clickEle(el, 2000);
+            await this.clickEle(el, 1000);
             await this.backNowMissionPage(gameUrlHost);
           }
         }
         if (await this.isExistEle(se[1], true, 2000)) {
           let el = await this.getEle(se[1], 3000);
-          await this.clickEle(el, 2000);
+          await this.clickEle(el, 1000);
           await this.backNowMissionPage(gameUrlHost);
           // 勝手に動く
           await this.sleep(20000);
           await this.hideOverlay();
           if (await this.isExistEle(se[2], true, 3000)) {
             let el = await this.getEle(se[2], 3000);
-            await this.clickEle(el, 2000); // トップへ
+            await this.clickEle(el, 1000); // トップへ
             await this.backNowMissionPage(gameUrlHost);
           }
         }
@@ -263,18 +263,18 @@ class PartsGame extends BaseWebDriverWrapper {
           await this.backNowMissionPage(gameUrlHost);
           if (await this.isExistEle(se[1], true, 2000)) {
             let els = await this.getEles(se[1], 3000);
-            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 7000);
+            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 5000);
             await this.backNowMissionPage(gameUrlHost);
             if (await this.isExistEle(se[2], true, 2000)) {
               let el = await this.getEle(se[2], 3000);
               await driver.wait(until.elementIsVisible(el), 10000);
-              await this.clickEle(el, 3000);
+              await this.clickEle(el, 1000);
               await this.backNowMissionPage(gameUrlHost);
               if (await this.isExistEle(se[0], true, 2000)) {
                 await this.hideOverlay();
                 let el = await this.getEle(se[0], 3000);
                 await driver.wait(until.elementIsVisible(el), 5000);
-                await this.clickEle(el, 2000);
+                await this.clickEle(el, 1000);
                 await this.backNowMissionPage(gameUrlHost);
               }
             }
@@ -319,18 +319,18 @@ class PartsGame extends BaseWebDriverWrapper {
           let el = await this.getEle(se[0], 3000);
           await driver.wait(until.elementIsVisible(el), 5000);
           await this.hideOverlay();
-          await this.clickEle(el, 2000, 200);
+          await this.clickEle(el, 1000, 200);
           await this.backNowMissionPage(gameUrlHost);
           if (await this.isExistEle(se[1], true, 2000)) {
             let els = await this.getEles(se[1], 3000);
-            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 7000, 200);
+            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 5000, 200);
             await this.backNowMissionPage(gameUrlHost);
             await this.hideOverlay();
             await this.sleep(5000);
             if (await this.isExistEle(se[0], true, 2000)) {
               let el = await this.getEle(se[0], 3000);
               await driver.wait(until.elementIsVisible(el), 10000);
-              await this.clickEle(el, 3000, 200);
+              await this.clickEle(el, 1000, 200);
               await this.backNowMissionPage(gameUrlHost);
             }
           } else break;
@@ -516,13 +516,13 @@ class PartsGame extends BaseWebDriverWrapper {
         if (await this.isExistEle(se[0], true, 2000)) {
           let el = await this.getEle(se[0], 3000);
           await driver.wait(until.elementIsVisible(el), 5000);
-          await this.clickEle(el, 2000);
+          await this.clickEle(el, 1000);
           await this.backNowMissionPage(gameUrlHost);
           for (let k = 0; k < 5; k++) {
             if (await this.isExistEle(se[1], true, 2000)) {
               let els = await this.getEles(se[1], 3000);
               await driver.wait(until.elementIsVisible(els[0]), 5000);
-              await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 3000);
+              await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 2000);
               await this.backNowMissionPage(gameUrlHost);
               let waitEls = [];
               for (let seButton of [se[2], se[4]]) {
@@ -541,7 +541,7 @@ class PartsGame extends BaseWebDriverWrapper {
               }
               for (let button of waitEls) {
                 if (await button.isDisplayed()) {
-                  await this.clickEle(button, 3000);
+                  await this.clickEle(button, 1000);
                   await this.backNowMissionPage(gameUrlHost);
                   break;
                 }
@@ -552,7 +552,7 @@ class PartsGame extends BaseWebDriverWrapper {
           if (await this.isExistEle(se[0], true, 2000)) {
             let el = await this.getEle(se[0], 3000);
             await driver.wait(until.elementIsVisible(el), 10000);
-            await this.clickEle(el, 3000);
+            await this.clickEle(el, 1000);
             await this.backNowMissionPage(gameUrlHost);
           }
         } else break;
@@ -603,7 +603,7 @@ class PartsGame extends BaseWebDriverWrapper {
       }
       if (await this.isExistEle(sele[5], true, 2000)) {
         let ele = await this.getEle(sele[5], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
         await this.ignoreKoukoku();
       }
       for (let i = 0; i < 3; i++) {
@@ -611,7 +611,7 @@ class PartsGame extends BaseWebDriverWrapper {
         if (await this.isExistEle(sele[0], true, 2000)) {
           let wid2 = await driver.getWindowHandle();
           let ele = await this.getEle(sele[0], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
           if (await this.isExistEle(sele[1], true, 2000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length * 2; // 最大でも
@@ -621,10 +621,10 @@ class PartsGame extends BaseWebDriverWrapper {
                   eles = await this.getEles(sele[1], 3000);
                 } else break;
               await this.ignoreKoukoku();
-              await this.clickEle(eles[0], 2000);
+              await this.clickEle(eles[0], 1000);
               if (await this.isExistEle(sele[2], true, 2000)) {
                 ele = await this.getEle(sele[2], 3000);
-                await this.clickEle(ele, 2000);
+                await this.clickEle(ele, 1000);
               }
             }
           }
@@ -1265,7 +1265,7 @@ class PartsGame extends BaseWebDriverWrapper {
           }
           if (await this.isExistEle(se[1], true, 2000)) {
             let el = await this.getEle(se[1], 3000);
-            await this.clickEle(el, 2000, 200);
+            await this.clickEle(el, 1000, 200);
             await this.backNowMissionPage(gameUrlHost);
             await this.hideOverlay();
             await this.sleep(5000);
@@ -1349,7 +1349,7 @@ class PartsGame extends BaseWebDriverWrapper {
           }
           if (await this.isExistEle(se[1], true, 2000)) {
             let el = await this.getEle(se[1], 3000);
-            await this.clickEle(el, 5000, 200);
+            await this.clickEle(el, 3000, 200);
             await this.backNowMissionPage(gameUrlHost);
             await this.sleep(5000);
             await this.hideOverlay();
@@ -1433,7 +1433,7 @@ class PartsGame extends BaseWebDriverWrapper {
           }
           if (await this.isExistEle(se[1], true, 2000)) {
             let el = await this.getEle(se[1], 3000);
-            await this.clickEle(el, 2000, 200);
+            await this.clickEle(el, 1000, 200);
             await this.backNowMissionPage(gameUrlHost);
             await this.hideOverlay();
             await this.sleep(5000);
@@ -1910,7 +1910,7 @@ class PartsGame extends BaseWebDriverWrapper {
                 let ufoSele = `#answerWrap div[style*='display: block'] img[src$='${ufoSrc}']`;
                 if (await this.isExistEle(ufoSele, true, 2000)) {
                   let el = await this.getEle(ufoSele, 3000);
-                  await this.clickEle(el, 2000, 200);
+                  await this.clickEle(el, 1000, 200);
                 }
               }
               if (await this.isExistEle(se[6], true, 2000)) {
@@ -1973,7 +1973,7 @@ class PartsGame extends BaseWebDriverWrapper {
           if (!els.length) break;
           limit = els.length;
           await this.hideOverlay();
-          await this.clickEle(els[0], 5000);
+          await this.clickEle(els[0], 4000);
           for (let i = 0; i < 2; i++) {
             let el = null;
             if (await this.isExistEle(se[3], true, 2000)) {
@@ -1985,7 +1985,7 @@ class PartsGame extends BaseWebDriverWrapper {
               await this.hideOverlay();
               await this.driver.executeScript(`window.scrollTo(0, 600);`);
               await this.sleep(1000);
-              await this.clickEle(el, 2000, 200);
+              await this.clickEle(el, 1000, 200);
             }
           }
           await this.hideOverlay();
@@ -1994,12 +1994,12 @@ class PartsGame extends BaseWebDriverWrapper {
               let els = await this.getEles(se[1], 3000);
               await this.driver.executeScript(`window.scrollTo(0, 600);`);
               await this.sleep(1000);
-              await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 2000);
+              await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 1000);
               if (await this.isExistEle(se[2], true, 2000)) {
                 let el = await this.getEle(se[2], 3000);
                 await this.hideOverlay();
                 await this.driver.executeScript(`window.scrollTo(0, 600);`);
-                await this.clickEle(el, 3000, 200);
+                await this.clickEle(el, 1000, 200);
               }
             }
           }
@@ -2007,7 +2007,7 @@ class PartsGame extends BaseWebDriverWrapper {
             let el = await this.getEle(se[2], 3000);
             await this.hideOverlay();
             await this.driver.executeScript(`window.scrollTo(0, 400);`);
-            await this.clickEle(el, 2000, 200);
+            await this.clickEle(el, 1000, 200);
           }
         }
       }

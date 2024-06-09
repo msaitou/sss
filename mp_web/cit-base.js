@@ -327,7 +327,7 @@ class CitReadDog extends CitMissonSupper {
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
-      await this.clickEle(eles[0], 2000);
+      await this.clickEle(eles[0], 1000);
       // let wid = await driver.getWindowHandle();
       // await this.changeWindow(wid); // 別タブに移動する
       let PartsReadDogCls = new PartsRead(this.para);
@@ -355,7 +355,7 @@ class CitReadCat extends CitMissonSupper {
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
-      await this.clickEle(eles[0], 2000);
+      await this.clickEle(eles[0], 1000);
       // let wid = await driver.getWindowHandle();
       // await this.changeWindow(wid); // 別タブに移動する
       let PartsReadDogCls = new PartsRead(this.para);
@@ -383,7 +383,7 @@ class CitReadThank extends CitMissonSupper {
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
-      await this.clickEle(eles[0], 2000);
+      await this.clickEle(eles[0], 1000);
       // let wid = await driver.getWindowHandle();
       // await this.changeWindow(wid); // 別タブに移動する
       let PartsReadDogCls = new PartsRead(this.para);
@@ -411,7 +411,7 @@ class CitReadIchi extends CitMissonSupper {
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
-      await this.clickEle(eles[0], 2000);
+      await this.clickEle(eles[0], 1000);
       // let wid = await driver.getWindowHandle();
       // await this.changeWindow(wid); // 別タブに移動する
       let PartsReadDogCls = new PartsRead(this.para);
@@ -455,7 +455,7 @@ class CitOtano extends CitMissonSupper {
           for (let i = 0; i < limit; i++) {
             await this.hideOverlay();
             if (i !== 0 && (await this.isExistEle(sele[0], true, 2000))) eles0 = await this.getEles(sele[0], 3000);
-            await this.clickEle(eles0[0], 3000);
+            await this.clickEle(eles0[0], 1000);
             res = await Otano.do();
           }
         } else {
@@ -498,7 +498,7 @@ class CitClick extends CitMissonSupper {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let eles = await this.getEles(sele[1], 2000);
           for (let i = 0; i < eles.length; i++) {
-            await this.clickEle(eles[i], 3000, 40);
+            await this.clickEle(eles[i], 2000, 40);
             await this.closeOtherWindow(driver);
           }
         }
@@ -506,11 +506,11 @@ class CitClick extends CitMissonSupper {
       await this.openUrl(this.targetUrl); // 操作ページ表示
       if (await this.isExistEle(sele[2], true, 2000)) {
         let ele = await this.getEle(sele[2], 2000);
-        await this.clickEle(ele, 3000);
+        await this.clickEle(ele, 2000);
         if (await this.isExistEle(sele[3], true, 2000)) {
           let eles = await this.getEles(sele[3], 2000);
           for (let i = 0; i < eles.length; i++) {
-            await this.clickEle(eles[i], 3000, 40);
+            await this.clickEle(eles[i], 2000, 40);
             await this.closeOtherWindow(driver);
           }
         }
@@ -521,7 +521,7 @@ class CitClick extends CitMissonSupper {
       if (await this.isExistEle(sele[0], true, 2000)) {
         let eles = await this.getEles(sele[0], 2000);
         for (let i = 0; i < eles.length; i++) {
-          await this.clickEle(eles[i], 3000, 40);
+          await this.clickEle(eles[i], 2000, 40);
           await this.closeOtherWindow(driver);
         }
       }
@@ -529,7 +529,7 @@ class CitClick extends CitMissonSupper {
       if (await this.isExistEle(sele[1], true, 2000)) {
         let eles = await this.getEles(sele[1], 2000);
         for (let i = 0; i < eles.length; i++) {
-          await this.clickEle(eles[i], 3000, 40);
+          await this.clickEle(eles[i], 2000, 40);
           await this.closeOtherWindow(driver);
         }
       }
@@ -619,7 +619,7 @@ class CitGameKokuhaku extends CitMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(se[0], true, 2000)) {
       let el = await this.getEle(se[0], 3000);
-      await this.clickEleScrollWeak(el, 2000);
+      await this.clickEleScrollWeak(el, 1000);
       await this.ignoreKoukoku();
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
@@ -647,7 +647,7 @@ class CitGameDokomade extends CitMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(se[0], true, 2000)) {
       let el = await this.getEle(se[0], 3000);
-      await this.clickEleScrollWeak(el, 2000, 100);
+      await this.clickEleScrollWeak(el, 1000, 100);
       await this.ignoreKoukoku();
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
@@ -673,7 +673,7 @@ class CitAnqManga extends CitMissonSupper {
     let sele = ["img[alt='漫画でアンケート']", ".enquete-list div>a"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele0, 3000);
+      await this.clickEle(ele0, 1000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       try {
@@ -684,7 +684,7 @@ class CitAnqManga extends CitMissonSupper {
             await this.hideOverlay();
             if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
-            await this.clickEle(eles[eles.length - 1], 6000, 250);
+            await this.clickEle(eles[eles.length - 1], 4000, 250);
             res = await AnkPark.doMobManga();
             await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             await this.sleep(2000);
@@ -718,7 +718,7 @@ class CitAnqKenkou extends CitMissonSupper {
     let sele = ["img[alt='さらさら健康コラム']", ".enquete-list div>a"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele0, 3000);
+      await this.clickEle(ele0, 1000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       try {
@@ -729,7 +729,7 @@ class CitAnqKenkou extends CitMissonSupper {
             await this.hideOverlay();
             if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
-            await this.clickEle(eles[eles.length - 1], 6000, 250);
+            await this.clickEle(eles[eles.length - 1], 4000, 250);
             res = await AnkPark.doMobKenkou();
             await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             await this.sleep(2000);
@@ -763,7 +763,7 @@ class CitAnqCook extends CitMissonSupper {
     let sele = ["img[alt='料理とアンケート']", ".enquete-list div>a:not(.answered)"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele0, 3000);
+      await this.clickEle(ele0, 1000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       try {
@@ -774,7 +774,7 @@ class CitAnqCook extends CitMissonSupper {
             await this.hideOverlay();
             if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
-            await this.clickEle(eles[eles.length - 1], 6000, 250);
+            await this.clickEle(eles[eles.length - 1], 4000, 250);
             res = await AnkPark.doMobCook();
             await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             await this.sleep(2000);
@@ -813,7 +813,7 @@ class CitAnqPark extends CitMissonSupper {
     ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele0, 3000);
+      await this.clickEle(ele0, 1000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       try {
@@ -837,7 +837,7 @@ class CitAnqPark extends CitMissonSupper {
                 logger.debug(e);
               }
               if (ele2 && ele2.length) ele = ele2[0]; // 回答ボタンが実際別の場合が半分くらいあるので置き換え
-              await this.clickEle(ele, 3000);
+              await this.clickEle(ele, 1000);
               switch (text.trim()) {
                 case "MIX":
                   res = await AnkPark.doMobMix();
