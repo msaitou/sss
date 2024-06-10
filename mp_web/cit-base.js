@@ -494,7 +494,7 @@ class CitClick extends CitMissonSupper {
       await this.openUrl(this.targetUrl); // 操作ページ表示
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 2000);
-        await this.clickEle(ele, 3000);
+        await this.clickEle(ele, 1000);
         if (await this.isExistEle(sele[1], true, 2000)) {
           let eles = await this.getEles(sele[1], 2000);
           for (let i = 0; i < eles.length; i++) {
@@ -684,7 +684,7 @@ class CitAnqManga extends CitMissonSupper {
             await this.hideOverlay();
             if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
-            await this.clickEle(eles[eles.length - 1], 4000, 250);
+            await this.clickEle(eles[eles.length - 1], 2000, 250);
             res = await AnkPark.doMobManga();
             await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             await this.sleep(2000);
@@ -729,7 +729,7 @@ class CitAnqKenkou extends CitMissonSupper {
             await this.hideOverlay();
             if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
-            await this.clickEle(eles[eles.length - 1], 4000, 250);
+            await this.clickEle(eles[eles.length - 1], 2000, 250);
             res = await AnkPark.doMobKenkou();
             await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             await this.sleep(2000);
@@ -774,7 +774,7 @@ class CitAnqCook extends CitMissonSupper {
             await this.hideOverlay();
             if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
-            await this.clickEle(eles[eles.length - 1], 4000, 250);
+            await this.clickEle(eles[eles.length - 1], 2000, 250);
             res = await AnkPark.doMobCook();
             await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
             await this.sleep(2000);

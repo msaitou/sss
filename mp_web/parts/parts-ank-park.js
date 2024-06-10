@@ -34,18 +34,18 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       for (let i = 0; i < 3; i++) {
         if (await this.isExistEle(sele[0], true, 2000)) {
           let ele = await this.getEle(sele[0], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         }
       }
       for (let i = 0; i < 4; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         }
       }
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
       }
       try {
         await this.commonAnk(sele);
@@ -80,7 +80,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       for (let i = 0; i < 8; i++) {
         if (await this.isExistEle(sele[0], true, 2000)) {
           let ele = await this.getEle(sele[0], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         }
       }
       try {
@@ -115,27 +115,27 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       await this.hideOverlay();
       if (await this.isExistEle(sele[9], true, 10000)) {
         let ele = await this.getEle(sele[9], 8000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
       } else if (await this.isExistEle(sele[0], true, 10000)) {
         let ele = await this.getEle(sele[0], 8000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
       }
       if (await this.isExistEle(sele[5], true, 2000)) {
         let ele = await this.getEle(sele[5], 3000);
-        await this.clickEle(ele, 4000);
+        await this.clickEle(ele, 1000);
         if (await this.isExistEle(sele[6], true, 2000)) {
           ele = await this.getEle(sele[6], 3000);
-          await this.clickEle(ele, 4000);
+          await this.clickEle(ele, 1000);
           for (let i = 0; i < 6; i++) {
             if (await this.isExistEle(sele[7], true, 2000)) {
               ele = await this.getEle(sele[7], 3000);
-              await this.clickEle(ele, 3000);
+              await this.clickEle(ele, 1000);
             }
           }
 
           if (await this.isExistEle(sele[1], true, 2000)) {
             ele = await this.getEle(sele[1], 3000);
-            await this.clickEle(ele, 3000);
+            await this.clickEle(ele, 1000);
             try {
               await this.commonAnk(sele, "doColum");
               res = D.STATUS.DONE;
@@ -179,21 +179,21 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       for (let i = 0; i < 2; i++) {
         if (await this.isExistEle(sele[9], true, 10000)) {
           let ele = await this.getEle(sele[9], 8000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         } else if (await this.isExistEle(sele[0], true, 10000)) {
           let ele = await this.getEle(sele[0], 8000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         }
       }
       for (let i = 0; i < 5; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         }
       }
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
       }
       try {
         await this.commonAnk(sele, "doPhoto");
@@ -234,26 +234,26 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       await this.hideOverlay();
       if (await this.isExistEle(sele[9], true, 10000)) {
         let ele = await this.getEle(sele[9], 8000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
       } else if (await this.isExistEle(sele[0], true, 10000)) {
         let ele = await this.getEle(sele[0], 8000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
       }
       if (await this.isExistEle(sele[5], true, 2000)) {
         let ele = await this.getEle(sele[5], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
         if (await this.isExistEle(sele[6], true, 2000)) {
           ele = await this.getEle(sele[6], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
           for (let i = 0; i < 4; i++) {
             if (await this.isExistEle(sele[7], true, 2000)) {
               ele = await this.getEle(sele[7], 3000);
-              await this.clickEle(ele, 2000);
+              await this.clickEle(ele, 1000);
             }
           }
           if (await this.isExistEle(sele[8], true, 2000)) {
             ele = await this.getEle(sele[8], 3000);
-            await this.clickEle(ele, 2000);
+            await this.clickEle(ele, 1000);
             try {
               await this.commonAnk(sele, "doManga");
               res = D.STATUS.DONE;
@@ -290,18 +290,18 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       for (let i = 0; i < 3; i++) {
         if (await this.isExistEle(sele[0], true, 2000)) {
           let ele = await this.getEle(sele[0], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         }
       }
       for (let i = 0; i < 4; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         }
       }
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
       }
       try {
         await this.commonAnk(sele);
@@ -336,18 +336,18 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       for (let i = 0; i < 3; i++) {
         if (await this.isExistEle(sele[0], true, 2000)) {
           let ele = await this.getEle(sele[0], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         }
       }
       for (let i = 0; i < 4; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         }
       }
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
       }
       try {
         await this.commonAnk(sele);
@@ -382,7 +382,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       for (let i = 0; i < 3; i++) {
         if (await this.isExistEle(sele[0], true, 2000)) {
           let ele = await this.getEle(sele[0], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         }
       }
       for (let i = 0; i < 4; i++) {
@@ -395,12 +395,12 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         // }
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         }
       }
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
       }
       try {
         await this.commonAnk(sele, "doCook");
@@ -435,7 +435,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       for (let i = 0; i < 3; i++) {
         if (await this.isExistEle(sele[0], true, 2000)) {
           let ele = await this.getEle(sele[0], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000);
         }
       }
       for (let i = 0; i < 3; i++) {
@@ -449,12 +449,12 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
           await driver.wait(until.elementIsVisible(ele), 5000);
-          await this.clickEle(ele, 3000);
+          await this.clickEle(ele, 1000);
         }
       }
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
       }
       try {
         await this.commonAnk(sele);
@@ -537,20 +537,20 @@ class PartsAnkPark extends BaseWebDriverWrapper {
     if (ref == "doManga") {
       if (await this.isExistEle(sele[5], true, 2000)) {
         let ele = await this.getEle(sele[5], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
         if (await this.isExistEle(sele[6], true, 2000)) {
           let ele = await this.getEle(sele[6], 3000);
-          await this.clickEle(ele, 2000); // sugでは一覧に戻る
+          await this.clickEle(ele, 1000); // sugでは一覧に戻る
         }
       }
     } else {
       for (let i = 0; i < 2; i++) {
         if (await this.isExistEle(sele[0], true, 4000)) {
           let ele = await this.getEle(sele[0], 3000);
-          await this.clickEle(ele, 2000); // 2回目　sugでは一覧に戻る
+          await this.clickEle(ele, 1000); // 2回目　sugでは一覧に戻る
         } else if (await this.isExistEle("#endlink", true, 4000)) {
           let ele = await this.getEle("#endlink", 3000);
-          await this.clickEle(ele, 2000); // 2回目　sugでは一覧に戻る
+          await this.clickEle(ele, 1000); // 2回目　sugでは一覧に戻る
         }
       }
     }
@@ -644,23 +644,23 @@ class PartsAnkPark extends BaseWebDriverWrapper {
             if (await this.isExistEle(sele[1], true, 3000)) {
               let ele = await this.getEle(sele[1], 2000);
               await this.sleep(5000);
-              await this.clickEle(ele, 2000, 0, siteInfo.code == D.CODE.LFM);
+              await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
             }
           }
         // }
       } else if (await this.isExistEle(sele[1], true, 3000)) {
         let ele = await this.getEle(sele[1], 2000);
-        await this.clickEle(ele, 2000, 0, siteInfo.code == D.CODE.LFM);
+        await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
       }
       await this.hideOverlay();
       if (await this.isExistEle(sele[1], true, 2000)) {
         let ele = await this.getEle(sele[1], 3000);
-        await this.clickEle(ele, 3000, 0, siteInfo.code == D.CODE.LFM);
+        await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
         for (let i = 0; i < 6; i++) {
           if (await this.isExistEle(sele[7], true, 2000)) {
             let ele = await this.getEle(sele[7], 3000);
             await this.hideOverlay();
-            await this.clickEle(ele, 3000, 0, siteInfo.code == D.CODE.LFM);
+            await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
           }
         }
         try {
@@ -695,10 +695,10 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       await this.hideOverlay();
       if (await this.isExistEle(sele[0], true, 5000)) {
         let ele = await this.getEle(sele[0], 8000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
       } else if (await this.isExistEle(sele[1], true, 5000)) {
         let ele = await this.getEle(sele[1], 5000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000);
       }
       for (let i = 0; i < 6; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
@@ -856,27 +856,27 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       await this.hideOverlay();
       if (await this.isExistEle(sele[0], true, 10000)) {
         let ele = await this.getEle(sele[0], 8000);
-        await this.clickEle(ele, 2000, 250);
+        await this.clickEle(ele, 1000, 250);
       } else if (await this.isExistEle(sele[1], true, 5000)) {
         let ele = await this.getEle(sele[1], 5000);
-        await this.clickEle(ele, 2000, 250);
+        await this.clickEle(ele, 1000, 250);
       }
       for (let i = 0; i < 10; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 3000, 250);
+          await this.clickEle(ele, 1000, 250);
         }
       }
       await this.hideOverlay();
       await this.hideOverlay();
       if (await this.isExistEle(sele[1], true, 2000)) {
         let ele = await this.getEle(sele[1], 3000);
-        await this.clickEle(ele, 3000, 250);
+        await this.clickEle(ele, 1000, 250);
         await this.hideOverlay();
         await this.hideOverlay();
         if (await this.isExistEle(sele[5], true, 2000)) {
           let ele = await this.getEle(sele[5], 3000);
-          await this.clickEle(ele, 3000, 250);
+          await this.clickEle(ele, 1000, 250);
           res = D.STATUS.DONE;
         }
       }
@@ -908,7 +908,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       }
       if (ele) {
         await this.hideOverlay();
-        await this.clickEle(ele, 2000, 250);
+        await this.clickEle(ele, 1000, 250);
         try {
           await this.commonMobAnk(sele, "doMix");
           res = D.STATUS.DONE;
@@ -941,15 +941,15 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       await this.hideOverlay();
       if (await this.isExistEle(sele[0], true, 10000)) {
         let ele = await this.getEle(sele[0], 8000);
-        await this.clickEle(ele, 2000, 250);
+        await this.clickEle(ele, 1000, 250);
       } else if (await this.isExistEle(sele[1], true, 5000)) {
         let ele = await this.getEle(sele[1], 5000);
-        await this.clickEle(ele, 2000, 250);
+        await this.clickEle(ele, 1000, 250);
       }
       for (let i = 0; i < 7; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 3000, 250);
+          await this.clickEle(ele, 1000, 250);
         }
       }
       try {
@@ -1138,7 +1138,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         let ele = await this.getEle(sele[5], 3000);
         await this.hideOverlay();
         try {
-          await this.clickEle(ele, 2000, 250, siteInfo.code == D.CODE.LFM);
+          await this.clickEle(ele, 1000, 250, siteInfo.code == D.CODE.LFM);
         }
         catch(e) {
           if (await this.isExistEle("input.enquete_nextbt", true, 4000)) {
@@ -1157,11 +1157,11 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       if (await this.isExistEle(sele[6], true, 4000)) {
         let ele = await this.getEle(sele[6], 3000);
         await this.hideOverlay();
-        await this.clickEle(ele, 2000, 250, siteInfo.code == D.CODE.LFM);
+        await this.clickEle(ele, 1000, 250, siteInfo.code == D.CODE.LFM);
         if (await this.isExistEle(sele[5], true, 4000)) {
           let ele = await this.getEle(sele[5], 3000);
           await this.hideOverlay();
-          await this.clickEle(ele, 2000, 250, siteInfo.code == D.CODE.LFM);
+          await this.clickEle(ele, 1000, 250, siteInfo.code == D.CODE.LFM);
         }
       }
     }
