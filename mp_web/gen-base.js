@@ -921,6 +921,7 @@ class GenAnqKenkou extends GenMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
+            await this.hideOverlay();
             if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
               eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
