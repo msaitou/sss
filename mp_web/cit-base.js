@@ -560,7 +560,7 @@ class CitGameFurufuru extends CitMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
-      await this.clickEleScrollWeak(eles[0], 2000, 100);
+      await this.clickEle(eles[0], 2000, 100);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       res = await Furufuru.doFuru(gameUrlHost, wid);
@@ -589,7 +589,7 @@ class CitGameFurufuruSearch extends CitMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
-      await this.clickEleScrollWeak(eles[0], 2000, 100);
+      await this.clickEle(eles[0], 2000, 100);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       res = await Furufuru.doSearch(gameUrlHost, wid);
@@ -619,7 +619,10 @@ class CitGameKokuhaku extends CitMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(se[0], true, 2000)) {
       let el = await this.getEle(se[0], 3000);
-      await this.clickEleScrollWeak(el, 1000);
+      await this.exeScriptNoTimeOut(
+        `for (let t of document.querySelectorAll("ins")){t.remove();}`
+      );
+      await this.clickEle(el, 2000, 100);
       await this.ignoreKoukoku();
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
@@ -647,7 +650,7 @@ class CitGameDokomade extends CitMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(se[0], true, 2000)) {
       let el = await this.getEle(se[0], 3000);
-      await this.clickEleScrollWeak(el, 1000, 100);
+      await this.clickEle(el, 1000, 100);
       await this.ignoreKoukoku();
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
