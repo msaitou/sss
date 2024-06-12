@@ -251,132 +251,138 @@ class PtoClick extends PtoMissonSupper {
       "https://www.pointtown.com/soudatsu",
       "https://www.pointtown.com/news/infoseek",
     ];
-    await this.openUrl(this.firstUrl); // バナー
-    await this.hideOverlay();
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      let eles = await this.getEles(sele[0], 2000);
-      for (let i = 0; i < eles.length; i++) {
-        try {
-          await this.clickEle(eles[i], 4000);
-        } catch (e) {
-          logger.warn(e);
+    let res = D.STATUS.FAIL;
+    try {
+      await this.openUrl(this.firstUrl); // バナー
+      await this.hideOverlay();
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let eles = await this.getEles(sele[0], 2000);
+        for (let i = 0; i < eles.length; i++) {
+          try {
+            await this.clickEle(eles[i], 4000);
+          } catch (e) {
+            logger.warn(e);
+          }
+          await this.closeOtherWindow(driver);
         }
-        await this.closeOtherWindow(driver);
       }
-    }
-    await this.openUrl(this.targetUrl); // バナー
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      let eles = await this.getEles(sele[0], 2000);
-      for (let i = 0; i < eles.length; i++) {
-        await this.clickEle(eles[i], 4000);
-        await this.closeOtherWindow(driver);
+      await this.openUrl(this.targetUrl); // バナー
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let eles = await this.getEles(sele[0], 2000);
+        for (let i = 0; i < eles.length; i++) {
+          await this.clickEle(eles[i], 4000);
+          await this.closeOtherWindow(driver);
+        }
       }
-    }
-    await this.openUrl(urls[0]); // 10コインを探せ
-    if (await this.isExistEle(sele[1], true, 2000)) {
-      let eles = await this.getEles(sele[1], 2000);
-      for (let i = 0; i < eles.length; i++) {
-        await this.clickEle(eles[i], 4000);
-        await this.closeOtherWindow(driver);
+      await this.openUrl(urls[0]); // 10コインを探せ
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let eles = await this.getEles(sele[1], 2000);
+        for (let i = 0; i < eles.length; i++) {
+          await this.clickEle(eles[i], 4000);
+          await this.closeOtherWindow(driver);
+        }
       }
-    }
-    await this.openUrl(urls[1]); // コイン争奪戦
-    if (await this.isExistEle(sele[2], true, 2000)) {
-      let ele = await this.getEle(sele[2], 2000);
-      await this.clickEle(ele, 4000);
-    }
-    await this.openUrl(urls[2]); // ニュース
-    if (await this.isExistEle(sele[3], true, 2000)) {
-      let eles = await this.getEles(sele[3], 2000);
-      // 最初のページを全部クリック。そのあと、報酬を受けとる。
-      for (let i = 0; i < eles.length; i++) {
-        await this.clickEle(eles[i], 4000);
-        await this.closeOtherWindow(driver);
+      await this.openUrl(urls[1]); // コイン争奪戦
+      if (await this.isExistEle(sele[2], true, 2000)) {
+        let ele = await this.getEle(sele[2], 2000);
+        await this.clickEle(ele, 4000);
       }
-      let rewordCnt = 0; // 報酬を受けとる
-      if (await this.isExistEle(sele[4], true, 2000)) {
-        eles = await this.getEles(sele[4], 2000);
-        rewordCnt = eles.length;
-        for (let i = 0; i < rewordCnt; i++) {
-          if (await this.isExistEle(sele[4], true, 2000)) {
-            if (i != 0) eles = await this.getEles(sele[4], 2000);
-            await this.clickEle(eles[0], 4000);
+      await this.openUrl(urls[2]); // ニュース
+      if (await this.isExistEle(sele[3], true, 2000)) {
+        let eles = await this.getEles(sele[3], 2000);
+        // 最初のページを全部クリック。そのあと、報酬を受けとる。
+        for (let i = 0; i < eles.length; i++) {
+          await this.clickEle(eles[i], 4000);
+          await this.closeOtherWindow(driver);
+        }
+        let rewordCnt = 0; // 報酬を受けとる
+        if (await this.isExistEle(sele[4], true, 2000)) {
+          eles = await this.getEles(sele[4], 2000);
+          rewordCnt = eles.length;
+          for (let i = 0; i < rewordCnt; i++) {
+            if (await this.isExistEle(sele[4], true, 2000)) {
+              if (i != 0) eles = await this.getEles(sele[4], 2000);
+              await this.clickEle(eles[0], 4000);
+            }
           }
         }
-      }
-      if (rewordCnt < 20) {
-        // その数が20だったら終わり。足りなかったら次のページで足りない分だけクリック。報酬を受け取る
-        let sele2 = ["li[aria-controls='poli-soci']"];
-        if (await this.isExistEle(sele2[0], true, 2000)) {
-          let ele = await this.getEle(sele2[0], 2000);
-          await this.clickEle(ele, 4000);
-          if (await this.isExistEle(sele[3], true, 2000)) {
-            let eles = await this.getEles(sele[3], 2000);
-            // 最初のページを全部クリック。そのあと、報酬を受けとる。その数が20だったら終わり。足りなかったら次のページで足りない分だけクリック。報酬を受け取る
-            for (let i = 0; i < 20 - rewordCnt || i < eles.length; i++) {
-              await this.clickEle(eles[i], 4000);
-              await this.closeOtherWindow(driver);
-            }
-            // let rewordCnt = 0;
-            if (await this.isExistEle(sele[4], true, 2000)) {
-              eles = await this.getEles(sele[4], 2000);
-              for (let i = 0; i < eles.length; i++) {
-                if (await this.isExistEle(sele[4], true, 2000)) {
-                  if (i != 0) eles = await this.getEles(sele[4], 2000);
-                  await this.clickEle(eles[0], 4000);
-                  // TODO 総合タブに戻されるので、社会タブに移動しないと報酬がないことになる
+        if (rewordCnt < 20) {
+          // その数が20だったら終わり。足りなかったら次のページで足りない分だけクリック。報酬を受け取る
+          let sele2 = ["li[aria-controls='poli-soci']"];
+          if (await this.isExistEle(sele2[0], true, 2000)) {
+            let ele = await this.getEle(sele2[0], 2000);
+            await this.clickEle(ele, 4000);
+            if (await this.isExistEle(sele[3], true, 2000)) {
+              let eles = await this.getEles(sele[3], 2000);
+              // 最初のページを全部クリック。そのあと、報酬を受けとる。その数が20だったら終わり。足りなかったら次のページで足りない分だけクリック。報酬を受け取る
+              for (let i = 0; i < 20 - rewordCnt || i < eles.length; i++) {
+                await this.clickEle(eles[i], 4000);
+                await this.closeOtherWindow(driver);
+              }
+              // let rewordCnt = 0;
+              if (await this.isExistEle(sele[4], true, 2000)) {
+                eles = await this.getEles(sele[4], 2000);
+                for (let i = 0; i < eles.length; i++) {
+                  if (await this.isExistEle(sele[4], true, 2000)) {
+                    if (i != 0) eles = await this.getEles(sele[4], 2000);
+                    await this.clickEle(eles[0], 4000);
+                    // TODO 総合タブに戻されるので、社会タブに移動しないと報酬がないことになる
+                  }
                 }
               }
             }
           }
         }
       }
-    }
-    // 三角くじを探せ
-    let seleKujis = [
-      "img[src*='kuji-red']",
-      "img[src*='kuji-yellow']",
-      "img[src*='kuji-purple']", // 2
-      "img[src*='kuji-pink']",
-      "img[src*='kuji-blue']", // 4
-      "img[src*='kuji-green']",
-    ];
-    for (let i in seleKujis) {
-      let seleKuji = seleKujis[i];
-      await this.openUrl(this.targetUrl);
-      if (await this.isExistEle(seleKuji, true, 2000)) {
-        let ele = await this.getEle(seleKuji, 2000);
-        await this.clickEle(ele, 4000);
-        let sele3 = [
-          "#js-click-banner",
-          "form[action='/click/banner'] button",
-          "img[src*='kuji-w']",
-        ];
+      // 三角くじを探せ
+      let seleKujis = [
+        "img[src*='kuji-red']",
+        "img[src*='kuji-yellow']",
+        "img[src*='kuji-purple']", // 2
+        "img[src*='kuji-pink']",
+        "img[src*='kuji-blue']", // 4
+        "img[src*='kuji-green']",
+      ];
+      for (let i in seleKujis) {
+        let seleKuji = seleKujis[i];
+        await this.openUrl(this.targetUrl);
         if (await this.isExistEle(seleKuji, true, 2000)) {
-          ele = await this.getEle(seleKuji, 2000);
+          let ele = await this.getEle(seleKuji, 2000);
           await this.clickEle(ele, 4000);
-          if (await this.isExistEle(sele3[0], true, 2000)) {
-            ele = await this.getEle(sele3[0], 2000);
+          let sele3 = [
+            "#js-click-banner",
+            "form[action='/click/banner'] button",
+            "img[src*='kuji-w']",
+          ];
+          if (await this.isExistEle(seleKuji, true, 2000)) {
+            ele = await this.getEle(seleKuji, 2000);
             await this.clickEle(ele, 4000);
-            let wid = await driver.getWindowHandle();
-            await this.changeWindow(wid); // 別タブに移動する
-            if (await this.isExistEle(sele3[1], true, 2000)) {
-              ele = await this.getEle(sele3[1], 2000);
+            if (await this.isExistEle(sele3[0], true, 2000)) {
+              ele = await this.getEle(sele3[0], 2000);
               await this.clickEle(ele, 4000);
-            }
-            await driver.close(); // このタブを閉じて
-            await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
-            if (await this.isExistEle(sele3[2], true, 2000)) {
-              ele = await this.getEle(sele3[2], 2000); // wくじ
-              await this.clickEle(ele, 4000);
+              let wid = await driver.getWindowHandle();
+              await this.changeWindow(wid); // 別タブに移動する
+              if (await this.isExistEle(sele3[1], true, 2000)) {
+                ele = await this.getEle(sele3[1], 2000);
+                await this.clickEle(ele, 4000);
+              }
+              await driver.close(); // このタブを閉じて
+              await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+              if (await this.isExistEle(sele3[2], true, 2000)) {
+                ele = await this.getEle(sele3[2], 2000); // wくじ
+                await this.clickEle(ele, 4000);
+              }
             }
           }
         }
       }
+      res = D.STATUS.DONE;
     }
-
+    catch(e) {
+      logger.warn(e);
+    }
     logger.info(`${this.constructor.name} END`);
-    return D.STATUS.DONE;
+    return res;
   }
 }
 // ポイントｑ
@@ -398,7 +404,8 @@ class PtoPointQ extends PtoMissonSupper {
       "#js-pointq-submit",
       "a[href='/pointq/input']",
       "button.js-watch-reward-ad-btn",
-      "iframe"  // 6
+      "iframe",  // 6
+      ".pointq-sec a.btn-disabled",
     ];
     try {
       await this.openUrl(this.targetUrl);
@@ -410,43 +417,45 @@ class PtoPointQ extends PtoMissonSupper {
             // 前回動画見なかったら
             await this.lookDouga(sele);
           } else {
-            ele = await this.getEle(sele[1], 2000);
-            if (await ele.isEnabled()) await this.clickEle(ele, 1000);
-            // 邪魔なもの消す
-            await this.exeScriptNoTimeOut(
-              `for (let t of document.querySelectorAll("${sele[6]}, ins")){t.remove();}`
-            );
-            await this.exeScriptNoTimeOut(
-              `document.querySelector("body").setAttribute("aria-hidden", false);`
-            );
-            ele = await this.getEle(sele[1], 2000);
-            if (await ele.isEnabled()) await this.clickEle(ele, 1000, 200);
+            if (await this.isExistEle(sele[7], true, 2000)) {
+              res = D.STATUS.DONE;
+            }
+            else {
+              ele = await this.getEle(sele[1], 2000);
+              if (await ele.isEnabled()) await this.clickEle(ele, 1000);
+              // 邪魔なもの消す
+              await this.exeScriptNoTimeOut(`for (let t of document.querySelectorAll("${sele[6]}, ins")){t.remove();}`);
+              await this.exeScriptNoTimeOut(`document.querySelector("body").setAttribute("aria-hidden", false);`);
+              ele = await this.getEle(sele[1], 2000);
+              if (await ele.isEnabled()) await this.clickEle(ele, 1000, 200);
+            }
           }
-          for (let i = 0; i < 3; i++) {
-            if (await this.isExistEle(sele[2], true, 2000)) {
-              let eles = await this.getEles(sele[2], 2000);
-              let choiceNum = libUtil.getRandomInt(0, eles.length); // 最後は否定的な選択肢なので選ばないのがいいと思ったが、問題なさそう
-              await this.clickEle(eles[choiceNum], 3000);
-              if (await this.isExistEle(sele[3], true, 2000)) {
-                ele = await this.getEle(sele[3], 2000);
-                await this.clickEle(ele, 1000);
-                if (await this.isExistEle(sele[4], true, 2000)) {
-                  ele = await this.getEle(sele[4], 2000);
-                  await this.clickEle(ele, 1000); // 次の質問へ
-                } else if (await this.isExistEle(sele[5], true, 2000)) {
-                  i = await this.lookDouga(sele);
+          if (res != D.STATUS.DONE)
+            for (let i = 0; i < 3; i++) {
+              if (await this.isExistEle(sele[2], true, 2000)) {
+                let eles = await this.getEles(sele[2], 2000);
+                let choiceNum = libUtil.getRandomInt(0, eles.length); // 最後は否定的な選択肢なので選ばないのがいいと思ったが、問題なさそう
+                await this.clickEle(eles[choiceNum], 3000);
+                if (await this.isExistEle(sele[3], true, 2000)) {
+                  ele = await this.getEle(sele[3], 2000);
+                  await this.clickEle(ele, 1000);
+                  if (await this.isExistEle(sele[4], true, 2000)) {
+                    ele = await this.getEle(sele[4], 2000);
+                    await this.clickEle(ele, 1000); // 次の質問へ
+                  } else if (await this.isExistEle(sele[5], true, 2000)) {
+                    i = await this.lookDouga(sele);
+                  }
+                  res = D.STATUS.DONE;
                 }
-                res = D.STATUS.DONE;
-              }
-            } else break;
-            // 邪魔なもの消す
-            await this.exeScriptNoTimeOut(
-              `for (let t of document.querySelectorAll("${sele[6]}, ins")){t.remove();}`
-            );
-            await this.exeScriptNoTimeOut(
-              `document.querySelector("body").setAttribute("aria-hidden", false);`
-            );
-          }
+              } else break;
+              // 邪魔なもの消す
+              await this.exeScriptNoTimeOut(
+                `for (let t of document.querySelectorAll("${sele[6]}, ins")){t.remove();}`
+              );
+              await this.exeScriptNoTimeOut(
+                `document.querySelector("body").setAttribute("aria-hidden", false);`
+              );
+            }
         }
       }
     } catch (e) {
