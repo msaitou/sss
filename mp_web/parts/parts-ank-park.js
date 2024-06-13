@@ -480,7 +480,8 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "div.enquete label",
         "input.enquete_nextbt", // 4
         "#endlink",
-        "img[src*='again_bt.png']",
+        "img[src*='again_bt.png']", // 6
+        "#again_bt",
       ];
     if (["doColum"].indexOf(ref) > -1) (sele[2] = "p.text03"), (roopLimit = 6);
 
@@ -542,7 +543,10 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           let ele = await this.getEle(sele[6], 3000);
           await this.clickEle(ele, 1000); // sugでは一覧に戻る
         }
-      }
+        }else if (await this.isExistEle(sele[7], true, 2000)) {
+            let ele = await this.getEle(sele[7], 3000);
+            await this.clickEle(ele, 1000); // sugでは一覧に戻る
+          }
     } else {
       for (let i = 0; i < 2; i++) {
         if (await this.isExistEle(sele[0], true, 4000)) {
