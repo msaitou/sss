@@ -334,7 +334,7 @@ class MopGacha extends MopMissonSupper {
             ele = await this.getEle(sele[4], 2000);
             await this.clickEle(ele, 2000);
             await this.closeOtherWindow(driver);
-            D.STATUS.DONE;
+            res = D.STATUS.DONE;
           }
           // if (await this.isExistEle(sele[3], true, 2000)) {
           //   await this.hideOverlay();
@@ -342,7 +342,7 @@ class MopGacha extends MopMissonSupper {
           //   await this.clickEle(ele, 2000);
           // }
         }
-      }
+      } else res = D.STATUS.DONE;
     }
     logger.info(`${this.constructor.name} END`);
     return res;
