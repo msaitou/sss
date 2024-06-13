@@ -259,7 +259,7 @@ class PtoClick extends PtoMissonSupper {
         let eles = await this.getEles(sele[0], 2000);
         for (let i = 0; i < eles.length; i++) {
           try {
-            await this.clickEle(eles[i], 4000);
+            await this.clickEle(eles[i], 2000);
           } catch (e) {
             logger.warn(e);
           }
@@ -270,18 +270,45 @@ class PtoClick extends PtoMissonSupper {
       if (await this.isExistEle(sele[0], true, 2000)) {
         let eles = await this.getEles(sele[0], 2000);
         for (let i = 0; i < eles.length; i++) {
-          await this.clickEle(eles[i], 4000);
+          await this.clickEle(eles[i], 2000);
           await this.closeOtherWindow(driver);
         }
       }
-      await this.openUrl(urls[0]); // 10コインを探せ
-      if (await this.isExistEle(sele[1], true, 2000)) {
-        let eles = await this.getEles(sele[1], 2000);
-        for (let i = 0; i < eles.length; i++) {
-          await this.clickEle(eles[i], 4000);
-          await this.closeOtherWindow(driver);
-        }
-      }
+      // await this.openUrl(urls[0]); // 10コインを探せ
+      // if (await this.isExistEle(sele[1], true, 2000)) {
+      //   let eles = await this.getEles(sele[1], 2000);
+      //   let wid = await driver.getWindowHandle();
+      //   for (let i = 0; i < eles.length; i++) {
+      //     await this.clickEle(eles[i], 2000);
+
+      //     try {
+      //       await this.driver.manage().setTimeouts({ pageLoad: 10000 });
+      //       await this.changeWindow();
+      //       await this.closeAlert();
+      //     } catch (e) {
+      //       if (e.name != "TimeoutError") throw e;
+      //       else {
+      //         try {
+      //           await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
+      //         } catch (e) {
+      //           if (e.name != "TimeoutError") throw e;
+      //           try {
+      //             await this.exeScriptNoTimeOut(`window.stop();`);
+      //             // await this.driver.navigate().back(); // 戻って
+      //             // await this.driver.navigate().forward(); // 行く
+      //           } catch (e) {
+      //             if (e.name != "TimeoutError") throw e;
+      //             this.logger.warn(e.name);
+      //           }
+      //         }
+      //       }
+      //     } finally {
+      //       await this.driver.manage().setTimeouts({ pageLoad: 180000 });
+      //       await driver.close(); // このタブを閉じて
+      //       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+      //     }
+      //   }
+      // }
       await this.openUrl(urls[1]); // コイン争奪戦
       if (await this.isExistEle(sele[2], true, 2000)) {
         let ele = await this.getEle(sele[2], 2000);
@@ -422,12 +449,12 @@ class PtoPointQ extends PtoMissonSupper {
             }
             else {
               ele = await this.getEle(sele[1], 2000);
-              if (await ele.isEnabled()) await this.clickEle(ele, 1000);
+              if (await ele.isEnabled()) await this.exeScriptNoTimeOut(`arguments[0].click();`, ele);
               // 邪魔なもの消す
               await this.exeScriptNoTimeOut(`for (let t of document.querySelectorAll("${sele[6]}, ins")){t.remove();}`);
               await this.exeScriptNoTimeOut(`document.querySelector("body").setAttribute("aria-hidden", false);`);
               ele = await this.getEle(sele[1], 2000);
-              if (await ele.isEnabled()) await this.clickEle(ele, 1000, 200);
+              if (await ele.isEnabled()) await this.exeScriptNoTimeOut(`arguments[0].click();`, ele);
             }
           }
           if (res != D.STATUS.DONE)
