@@ -541,10 +541,11 @@ class CriAnq extends CriMissonSupper {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       let limit = eles.length;
+      let skip = 0;
       for (let i = 0; i < limit; i++) {
         if (i !== 0 && (await this.isExistEle(sele[0], true, 2000)))
           eles = await this.getEles(sele[0], 3000);
-        let ele = eles[eles.length - 1]; // 下から
+        let ele = eles[eles.length - 1-skip]; // 下から
         await this.clickEleScrollWeak(ele, 4000, 70);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
@@ -616,7 +617,7 @@ class CriAnq extends CriMissonSupper {
                 // await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
               }
             }
-          }
+          } else skip++;
         } catch (e) {
           logger.warn(e);
         } finally {
