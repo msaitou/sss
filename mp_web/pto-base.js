@@ -465,10 +465,12 @@ class PtoPointQ extends PtoMissonSupper {
                 await this.clickEle(eles[choiceNum], 3000);
                 if (await this.isExistEle(sele[3], true, 2000)) {
                   ele = await this.getEle(sele[3], 2000);
-                  await this.clickEle(ele, 1000);
+                  // await this.clickEle(ele, 1000);
+                  await this.exeScriptNoTimeOut(`arguments[0].click();`, ele);
                   if (await this.isExistEle(sele[4], true, 2000)) {
                     ele = await this.getEle(sele[4], 2000);
-                    await this.clickEle(ele, 1000); // 次の質問へ
+                    // await this.clickEle(ele, 1000); // 次の質問へ
+                    await this.exeScriptNoTimeOut(`arguments[0].click();`, ele);
                   } else if (await this.isExistEle(sele[5], true, 2000)) {
                     i = await this.lookDouga(sele);
                   }
