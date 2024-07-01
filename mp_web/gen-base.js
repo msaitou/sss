@@ -966,7 +966,9 @@ class GenQuizKentei extends GenMissonSupper {
       await this.clickEle(ele0, 3000);
       if (await this.isExistEle(sele[1], true, 2000)) {
         ele0 = await this.getEle(sele[1], 3000);
-        await this.clickEle(ele0, 3000);
+        // await this.clickEle(ele0, 3000);
+        await this.exeScriptNoTimeOut(`arguments[0].click()`, ele0);  // pcの画面縦幅が短いと表示されてないので
+
         await this.ignoreKoukoku();
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
