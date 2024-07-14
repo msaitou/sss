@@ -53,12 +53,23 @@ class PstBase extends BaseExecuter {
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     await this.driver.executeScript(`window.scrollTo(document.body.scrollWidth, 0);`);
+    const getUsePointFunc = async () => {
+      let exchangePage = "https://www.point-stadium.com/ppay.asp";
+      let p = "0";
+      await this.driver.get(exchangePage);
+      let sele = ["div.box_blue.clearfix div.fr>p:not(.bl)"];
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let els = await this.getEles(sele[0], 2000);
+        p = await els[0].getText();
+      }
+      return p;
+    };
     let sele = ["p.point>strong"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
       this.logger.info("now point total:" + nakedNum);
-      await this.pointSummary(this.code, nakedNum);
+      await this.pointSummary(this.code, nakedNum, getUsePointFunc);
     }
   }
 }

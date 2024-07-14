@@ -73,6 +73,21 @@ class SugBase extends BaseExecuter {
     let startPage = "https://www.netmile.co.jp/sugutama/";
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
+    const getUsePointFunc = async () => {
+      // let exchangePage = "https://www.netmile.co.jp/ctrl/user/passbook/index.do";
+      // let p = "0";
+      // await this.driver.get(exchangePage);
+      // let sele = ["table.passbook-table tr", "td.passbook-mile.w15>span"];
+      // if (await this.isExistEle(sele[0], true, 2000)) {
+      //   let els = await this.getEles(sele[0], 2000);
+      //   for (let el of els) {
+      //     let el2 = await this.getElesFromEle(el, sele[1]);
+      //     p = await el2[1].getText();
+      //     if (p) break;
+      //   }
+      // }
+      return "1000";  // 多分これしかない
+    };
     let sele = ["div.mile.add_mile.js-user_point", ".js-search-switch button"];
     if (this.isMob && (await this.isExistEle(sele[1], true, 2000))) {
       let ele = await this.getEle(sele[1], 2000);
@@ -82,7 +97,7 @@ class SugBase extends BaseExecuter {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
       this.logger.info("now point total:" + nakedNum);
-      await this.pointSummary(this.code, nakedNum);
+      await this.pointSummary(this.code, nakedNum, getUsePointFunc);
     }
   }
 }
