@@ -73,7 +73,7 @@ class PartsOtano extends BaseWebDriverWrapper {
               ansSele = sele[3];
             }
              
-
+            await this.hideOverlay22();
             if (await this.isExistEle(ansSele, true, 2000)) {
               let eles = await this.getEles(ansSele, 3000);
               if (choiceNum === -1) {

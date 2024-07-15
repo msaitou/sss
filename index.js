@@ -4,7 +4,7 @@
 const MODE = {
   P_WEB_S: "P_WEB_S",
   P_WEB_H: "P_WEB_H",
-  P_MOB: "P_MOB",
+  DEBUG: "debug",
   P_MIL: "P_MIL",
   L_UTL: "L_UTL",
   manual: "manual",
@@ -19,7 +19,8 @@ const db = require("./initter.js").db;
 async function start(mode) {
   return new Promise(async (resolve, reject) => {
     logger.info(33);
-    // await db();
+    let Web = null;
+    let PWeb = null;
     switch (mode) {
       case "mobile":
         global.mobile = true;
@@ -30,15 +31,28 @@ async function start(mode) {
         break;
       case MODE.P_WEB_S: // 単発（開発用）
       case MODE.P_WEB_H: // 定期実行用
-        const Web = require("./mp_web/index.js").PointWebCls;
-        const PWeb = new Web(mode);
+        Web = require("./mp_web/index.js").PointWebCls;
+        PWeb = new Web(mode);
         if (mode === MODE.P_WEB_S) {
           await PWeb.once();
         } else {
           await PWeb.endless();
         }
         break;
-      case MODE.P_MOB:
+      case MODE.DEBUG:
+        Web = require("./mp_web/index.js").PointWebCls;
+        PWeb = new Web(mode);
+        if (process.argv.length > 4)
+          await PWeb.once({[process.argv[3]]:[{
+            main: process.argv[4],
+            sub: "",
+            type: "chain",
+            is_valid_cond: true,
+            valid_time: "",
+            valid_term: {
+              const_h_from: 0,
+            },
+          }]});
         break;
       case MODE.P_MIL:
         // ここにメールボックス作って、未受信のメールを受信する方法にしたい
@@ -68,7 +82,7 @@ async function start(mode) {
       }
     });
 }
-if (process.argv[2] && MODE[process.argv[2]]) {
+if (process.argv[2] && MODE[process.argv[2].toUpperCase()]) {
   start(process.argv[2]);
 } else {
   console.log(`引数は、${Object.keys(MODE)} のどれかです！`);

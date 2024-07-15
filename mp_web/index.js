@@ -84,8 +84,9 @@ class PointWebCls {
   /**
    * 単体実行の入口（デバック実行含む）
    */
-  async once() {
-    let missionMap = config[this.exeKind][""];
+  async once(debugMission = null) {
+    let missionMap = debugMission;
+    if (!missionMap)  config[this.exeKind][""];
     await this.main(missionMap);
   }
 
