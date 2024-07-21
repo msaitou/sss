@@ -86,7 +86,7 @@ class PointWebCls {
    */
   async once(debugMission = null) {
     let missionMap = debugMission;
-    if (!missionMap)  config[this.exeKind][""];
+    if (!missionMap) missionMap = config[this.exeKind][""];
     await this.main(missionMap);
   }
 
