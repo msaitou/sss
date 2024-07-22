@@ -115,7 +115,7 @@ class GmyMissonSupper extends BaseWebDriverWrapper {
   }
   async hideOverlay() {
     let seleOver = ["#pfx_interstitial_close", "div.overlay-item a.button-close", 
-    "#gn_ydn_interstitial_btn", 
+    "#gn_ydn_interstitial_btn"
     // "div.close", "#close", "#interClose"
       ,"div.close-button","a.gmoam_close_button"
     ];

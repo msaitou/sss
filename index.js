@@ -7,8 +7,8 @@ const MODE = {
   DEBUG: "debug",
   P_MIL: "P_MIL",
   L_UTL: "L_UTL",
-  manual: "manual",
-  mobile: "mobile",
+  MANUAL: "manual",
+  MOBILE: "mobile",
 };
 const logger = require("./initter.js").log();
 global.log = logger;

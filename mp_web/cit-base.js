@@ -121,8 +121,7 @@ class CitMissonSupper extends BaseWebDriverWrapper {
   // }
   async hideOverlay() {
     let seleOver = ["#pfx_interstitial_close", "div.overlay-item a.button-close", 
-    "#gn_ydn_interstitial_btn", 
-    // "div.close", "#close", "#interClose"
+    "#gn_ydn_interstitial_btn"
       ,"div.close-button","a.gmoam_close_button"
     ];
     let iSele = {"a.gmoam_close_button":"iframe[title='GMOSSP iframe']","div.close-button":"ins iframe[title='3rd party ad content']"};
