@@ -23,9 +23,26 @@ class SugBase extends BaseExecuter {
       if (cmMissionList.length) {
         this.missionList.push({ main: D.MISSION.CM });
       }
+      let originDriver = null;
       for (let i in this.missionList) {
         let mission = this.missionList[i];
         let execCls = null;
+        if (this.isHeadless) {
+          if (mission.main != D.MISSION.QUIZ_KENTEI && originDriver) {
+            originDriver = null;
+            await this.quitDriver();
+            this.setDriver(await this.webDriver(this.isMob, this.isHeadless));
+            para.driver = this.driver;sugCom = new SugCommon(para);
+            await sugCom.login();
+          }
+          else if (mission.main == D.MISSION.QUIZ_KENTEI) {
+            originDriver = true;
+            await this.quitDriver();
+            this.setDriver(await this.webDriver(this.isMob, false));
+            para.driver = this.driver;sugCom = new SugCommon(para);
+            await sugCom.login();
+          }
+        }
         switch (mission.main) {
           case D.MISSION.CM:
             execCls = new SugCm(para, cmMissionList);
