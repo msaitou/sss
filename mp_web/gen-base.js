@@ -728,6 +728,7 @@ class GenAnqMob extends GenMissonSupper {
                   let wid2 = await driver.getWindowHandle();
                   if (await this.isExistEle(sele[8], true, 2000)) {
                     eles = await this.getEles(sele[8], 3000);
+                    if (eles.length === skip) break;
                     let title = await eles[skip].getText();
                     if (
                       [
@@ -881,7 +882,7 @@ class GenAnqMob extends GenMissonSupper {
               }
               if (await this.isExistEle(sele[1], true, 3000))
                 (eles = await this.getEles(sele[1], 3000)),
-                  (res = eles.length < 10 ? D.STATUS.DONE : res);
+                  (res = (eles.length < 10 || eles.length -1 < skip) ? D.STATUS.DONE : res);
             } catch (e) {
               logger.warn(e);
             } finally {
