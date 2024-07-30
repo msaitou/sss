@@ -2050,8 +2050,10 @@ class PartsGame extends BaseWebDriverWrapper {
         //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
         // } else 
         if (await ele.isDisplayed()) {
-          let isEnter = this.para.machine == "saitowin11";
-          await this.clickEle(ele, 1000, 0, isEnter);
+          if (this.para.machine == "saitowin11")
+            await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+          else await this.clickEle(ele, 1000);
+
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
