@@ -22,6 +22,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
     this.account = aca;
     this.isMob = isMob;
     this.isHeadless = isHeadless;
+    this.machine = conf.machine;
     this.logger.info(`${this.constructor.name} ${this.isMob ? "mobile Version" : ""} constructor`);
   }
   async main() {
@@ -33,6 +34,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
       siteInfo: this.siteInfo,
       isMob: this.isMob,
       isHeadless: this.isHeadless,
+      machine: this.machine,
     };
     for (let i = 0; i < this.retryMax; i++) {
       try {
