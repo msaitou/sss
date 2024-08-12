@@ -1192,7 +1192,8 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
         } else if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
-        } else this.logger.debug("オーバーレイは表示されてないです");
+        } else await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        //  else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
   }

@@ -546,7 +546,8 @@ class PicPointMoll extends PicMissonSupper {
                       await this.sleep(2000);
                       await this.changeWindow(wid3); // 別タブに移動する
                     } else {
-                      await this.clickEle(eles[eles.length - 1], 2000);
+                      await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[eles.length - 1]);
+                      // await this.clickEle(eles[eles.length - 1], 2000);
                     }
                     // アンケート系
                     switch (cSele) {
