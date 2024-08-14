@@ -117,7 +117,7 @@ exports.Def = {
     MOLL_MANGA: "moll_manga",
     MOLL_COLUM: "moll_colum",
     MOLL_PHOTO: "moll_photo",
-    MOLL_COOK: "moll_cook",
+    MOLL_FOOD: "moll_food",
     MOLL_HIRAMEKI: "moll_hirameki",
     MOLL_IJIN: "moll_ijin",
     MOLL_JAPAN: "moll_japan",
