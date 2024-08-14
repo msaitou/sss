@@ -102,7 +102,9 @@ class PtoMissonSupper extends BaseWebDriverWrapper {
     //     }
     //   } else this.logger.debug("オーバーレイは表示されてないです");
     // }
-    let seleOver = ["#dismiss-button","#pfx_interstitial_close", "button.js-dialog__close-btn", "#gn_ydn_interstitial_btn", "div.close", "#close", "#interClose"];
+    let seleOver = ["#dismiss-button","#pfx_interstitial_close", "button.js-dialog__close-btn", "#gn_ydn_interstitial_btn", "div.close", "#close", "#interClose"
+      ,"#js-modal-dialog-promotion .c-modal-dialog-btn-dismiss"
+    ];
     for (let s of seleOver) {
       if (["#dismiss-button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='Advertisement']"];
@@ -126,6 +128,43 @@ class PtoMissonSupper extends BaseWebDriverWrapper {
           }
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
+    }
+  }
+  async hideOverlay2() {
+    let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']"];
+    let closeSe = ["[aria-label='Close ad']", "#dismiss-button"]
+    if (await this.isExistEle(sele[0], true, 4000)) {
+      let ele = await this.getEle(sele[0], 1000);
+      await this.clickEle(ele, 1000);
+      if (await this.isExistEle(sele[1], true, 2000)) {
+        let iframe = await this.getEles(sele[1], 1000);
+        await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+        for (let cSe of closeSe) {
+          if (await this.isExistEle(cSe, true, 2000)) {
+            let inputEle = await this.getEle(cSe, 10000);
+            await this.sleep(5000);
+            // await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+            await this.clickEle(inputEle, 1000);
+          }
+        }
+        // もとのフレームに戻す
+        await this.driver.switchTo().defaultContent();
+      }
+    }
+  }
+  async hideOverlay3() {
+    let sele = ["body>div>iframe[title='GMOSSP iframe']"];
+    let closeSe = ["a.gmoyda.gmoam_close_button"];
+    if (await this.isExistEle(sele[0], true, 4000)) {
+      let iframe = await this.getEles(sele[0], 1000);
+      await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+      if (await this.isExistEle(closeSe[0], true, 2000)) {
+        let el = await this.getEle(closeSe[0], 1000);
+        // await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+        await this.clickEle(el, 1000);
+        // もとのフレームに戻す
+      }
+      await this.driver.switchTo().defaultContent();
     }
   }
 }
@@ -242,7 +281,7 @@ class PtoClick extends PtoMissonSupper {
     let sele = [
       "[data-area*='top-click-corner'] button",
       "#link-coin-chance button",
-      "form[action='/soudatsu/complete'] button", // 2
+      "form[action='/soudatsu/complete'] a.btn-default", // 2
       "ul[aria-hidden='false'] li[data-read-status='false'] a:not([style*='display:none;'])",
       "ul[aria-hidden='false'] li[data-read-status='false'] button:not([style*='display:none;'])",
     ];
@@ -259,21 +298,21 @@ class PtoClick extends PtoMissonSupper {
         let eles = await this.getEles(sele[0], 2000);
         for (let i = 0; i < eles.length; i++) {
           try {
-            await this.clickEle(eles[i], 2000);
+            await this.clickEle(eles[i], 2000, 100);
           } catch (e) {
             logger.warn(e);
           }
           await this.closeOtherWindow(driver);
         }
       }
-      await this.openUrl(this.targetUrl); // バナー
-      if (await this.isExistEle(sele[0], true, 2000)) {
-        let eles = await this.getEles(sele[0], 2000);
-        for (let i = 0; i < eles.length; i++) {
-          await this.clickEle(eles[i], 2000);
-          await this.closeOtherWindow(driver);
-        }
-      }
+      // await this.openUrl(this.targetUrl); // バナー
+      // if (await this.isExistEle(sele[0], true, 2000)) {
+      //   let eles = await this.getEles(sele[0], 2000);
+      //   for (let i = 0; i < eles.length; i++) {
+      //     await this.clickEle(eles[i], 2000);
+      //     await this.closeOtherWindow(driver);
+      //   }
+      // }
       // await this.openUrl(urls[0]); // 10コインを探せ
       // if (await this.isExistEle(sele[1], true, 2000)) {
       //   let eles = await this.getEles(sele[1], 2000);
@@ -309,58 +348,61 @@ class PtoClick extends PtoMissonSupper {
       //     }
       //   }
       // }
-      await this.openUrl(urls[1]); // コイン争奪戦
-      if (await this.isExistEle(sele[2], true, 2000)) {
-        let ele = await this.getEle(sele[2], 2000);
-        await this.clickEle(ele, 4000);
-      }
-      await this.openUrl(urls[2]); // ニュース
-      if (await this.isExistEle(sele[3], true, 2000)) {
-        let eles = await this.getEles(sele[3], 2000);
-        // 最初のページを全部クリック。そのあと、報酬を受けとる。
-        for (let i = 0; i < eles.length; i++) {
-          await this.clickEle(eles[i], 4000);
-          await this.closeOtherWindow(driver);
-        }
-        let rewordCnt = 0; // 報酬を受けとる
-        if (await this.isExistEle(sele[4], true, 2000)) {
-          eles = await this.getEles(sele[4], 2000);
-          rewordCnt = eles.length;
-          for (let i = 0; i < rewordCnt; i++) {
-            if (await this.isExistEle(sele[4], true, 2000)) {
-              if (i != 0) eles = await this.getEles(sele[4], 2000);
-              await this.clickEle(eles[0], 4000);
-            }
-          }
-        }
-        if (rewordCnt < 20) {
-          // その数が20だったら終わり。足りなかったら次のページで足りない分だけクリック。報酬を受け取る
-          let sele2 = ["li[aria-controls='poli-soci']"];
-          if (await this.isExistEle(sele2[0], true, 2000)) {
-            let ele = await this.getEle(sele2[0], 2000);
-            await this.clickEle(ele, 4000);
-            if (await this.isExistEle(sele[3], true, 2000)) {
-              let eles = await this.getEles(sele[3], 2000);
-              // 最初のページを全部クリック。そのあと、報酬を受けとる。その数が20だったら終わり。足りなかったら次のページで足りない分だけクリック。報酬を受け取る
-              for (let i = 0; i < 20 - rewordCnt || i < eles.length; i++) {
-                await this.clickEle(eles[i], 4000);
-                await this.closeOtherWindow(driver);
-              }
-              // let rewordCnt = 0;
-              if (await this.isExistEle(sele[4], true, 2000)) {
-                eles = await this.getEles(sele[4], 2000);
-                for (let i = 0; i < eles.length; i++) {
-                  if (await this.isExistEle(sele[4], true, 2000)) {
-                    if (i != 0) eles = await this.getEles(sele[4], 2000);
-                    await this.clickEle(eles[0], 4000);
-                    // TODO 総合タブに戻されるので、社会タブに移動しないと報酬がないことになる
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+
+      // await this.openUrl(urls[1]); // コイン争奪戦
+      // await this.hideOverlay2();
+      // if (await this.isExistEle(sele[2], true, 2000)) {
+      //   let ele = await this.getEle(sele[2], 2000);
+      //   await this.clickEle(ele, 4000);
+      // }
+      // await this.openUrl(urls[2]); // ニュース
+      // if (await this.isExistEle(sele[3], true, 2000)) {
+      //   let eles = await this.getEles(sele[3], 2000);
+      //   // 最初のページを全部クリック。そのあと、報酬を受けとる。
+      //   for (let i = 0; i < eles.length; i++) {
+      //     await this.clickEle(eles[i], 2000, 100);
+      //     await this.closeOtherWindow(driver);
+      //   }
+      //   let rewordCnt = 0; // 報酬を受けとる
+      //   if (await this.isExistEle(sele[4], true, 2000)) {
+      //     eles = await this.getEles(sele[4], 2000, 100);
+      //     rewordCnt = eles.length;
+      //     for (let i = 0; i < rewordCnt; i++) {
+      //       if (await this.isExistEle(sele[4], true, 2000)) {
+      //         if (i != 0) eles = await this.getEles(sele[4], 2000);
+      //         await this.clickEle(eles[0], 4000, 100);
+      //       }
+      //     }
+      //   }
+      //   if (rewordCnt < 20) {
+      //     // その数が20だったら終わり。足りなかったら次のページで足りない分だけクリック。報酬を受け取る
+      //     let sele2 = ["li[aria-controls='poli-soci']"];
+      //     if (await this.isExistEle(sele2[0], true, 2000)) {
+      //       let ele = await this.getEle(sele2[0], 2000);
+      //       await this.clickEle(ele, 2000, 100);
+      //       if (await this.isExistEle(sele[3], true, 2000)) {
+      //         let eles = await this.getEles(sele[3], 2000);
+      //         // 最初のページを全部クリック。そのあと、報酬を受けとる。その数が20だったら終わり。足りなかったら次のページで足りない分だけクリック。報酬を受け取る
+      //         for (let i = 0; i < 20 - rewordCnt || i < eles.length; i++) {
+      //           await this.clickEle(eles[i], 2000, 100);
+      //           await this.closeOtherWindow(driver);
+      //         }
+      //         // let rewordCnt = 0;
+      //         if (await this.isExistEle(sele[4], true, 2000)) {
+      //           eles = await this.getEles(sele[4], 2000);
+      //           for (let i = 0; i < eles.length; i++) {
+      //             if (await this.isExistEle(sele[4], true, 2000)) {
+      //               if (i != 0) eles = await this.getEles(sele[4], 2000);
+      //               await this.clickEle(eles[0], 2000, 100);
+      //               // TODO 総合タブに戻されるので、社会タブに移動しないと報酬がないことになる
+      //             }
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
+
       // 三角くじを探せ
       let seleKujis = [
         "img[src*='kuji-red']",
@@ -375,7 +417,7 @@ class PtoClick extends PtoMissonSupper {
         await this.openUrl(this.targetUrl);
         if (await this.isExistEle(seleKuji, true, 2000)) {
           let ele = await this.getEle(seleKuji, 2000);
-          await this.clickEle(ele, 4000);
+          await this.clickEle(ele, 1000, 100);
           let sele3 = [
             "#js-click-banner",
             "form[action='/click/banner'] button",
@@ -383,21 +425,22 @@ class PtoClick extends PtoMissonSupper {
           ];
           if (await this.isExistEle(seleKuji, true, 2000)) {
             ele = await this.getEle(seleKuji, 2000);
-            await this.clickEle(ele, 4000);
+            await this.clickEle(ele, 1000, 100);
             if (await this.isExistEle(sele3[0], true, 2000)) {
               ele = await this.getEle(sele3[0], 2000);
-              await this.clickEle(ele, 4000);
+              await this.clickEle(ele, 1000, 100);
               let wid = await driver.getWindowHandle();
               await this.changeWindow(wid); // 別タブに移動する
               if (await this.isExistEle(sele3[1], true, 2000)) {
                 ele = await this.getEle(sele3[1], 2000);
-                await this.clickEle(ele, 4000);
+                await this.clickEle(ele, 1000, 100);
               }
               await driver.close(); // このタブを閉じて
               await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
               if (await this.isExistEle(sele3[2], true, 2000)) {
                 ele = await this.getEle(sele3[2], 2000); // wくじ
-                await this.clickEle(ele, 4000);
+                await this.clickEle(ele, 1000, 100);
+                await this.hideOverlay3();
               }
             }
           }
@@ -453,8 +496,10 @@ class PtoPointQ extends PtoMissonSupper {
               // 邪魔なもの消す
               await this.exeScriptNoTimeOut(`for (let t of document.querySelectorAll("${sele[6]}, ins")){t.remove();}`);
               await this.exeScriptNoTimeOut(`document.querySelector("body").setAttribute("aria-hidden", false);`);
-              ele = await this.getEle(sele[1], 2000);
-              if (await ele.isEnabled()) await this.exeScriptNoTimeOut(`arguments[0].click();`, ele);
+              if (await this.isExistEle(sele[1], true, 2000)) {
+                ele = await this.getEle(sele[1], 2000);
+                if (await ele.isEnabled()) await this.exeScriptNoTimeOut(`arguments[0].click();`, ele);
+              }
             }
           }
           if (res != D.STATUS.DONE)
