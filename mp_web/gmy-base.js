@@ -662,13 +662,13 @@ class GmyAnqPark extends GmyMissonSupper {
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       try {
-        await this.hideOverlay();
         if (await this.isExistEle(sele[1], true, 2000)) {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
             if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
               eles = await this.getEles(sele[1], 3000);
+            await this.hideOverlay();
             let text = await eles[eles.length - 1].getText();
             text = text.split("\n").join("").split("\n").join("");
             if (await this.isExistEle(sele[2], true, 2000)) {
