@@ -53,7 +53,7 @@ class PicBase extends BaseExecuter {
           case D.MISSION.MOLL_MANGA:
           case D.MISSION.MOLL_COLUM:
           case D.MISSION.MOLL_PHOTO:
-          case D.MISSION.MOLL_COOK:
+          case D.MISSION.MOLL_FOOD:
           case D.MISSION.MOLL_HIRAMEKI:
           case D.MISSION.MOLL_IJIN:
           case D.MISSION.MOLL_JAPAN:
@@ -462,7 +462,7 @@ class PicPointMoll extends PicMissonSupper {
         let anqSeleMap = {
           [D.MISSION.MOLL_IJIN]: "div>img[src*='img_ijin.']",
           [D.MISSION.MOLL_HIRAMEKI]: "div>img[src*='img_hirameki.']",
-          [D.MISSION.MOLL_COOK]: "div>img[src*='img_food.']",
+          [D.MISSION.MOLL_FOOD]: "div>img[src*='img_food.']",
           [D.MISSION.MOLL_JAPAN]: "div>img[src*='img_hyakkei.']",
           [D.MISSION.MOLL_SITE]: "div>img[src*='img_kansatsu.']",
           [D.MISSION.MOLL_MANGA]: "div>img[src*='img_manga.']",
@@ -571,7 +571,7 @@ class PicPointMoll extends PicMissonSupper {
                       case mainSeleMap[D.MISSION.MOLL_SITE]: //"観察力":
                         res = await AnkPark.doMobSite();
                         break;
-                      case mainSeleMap[D.MISSION.MOLL_COOK]: //"料理":
+                      case mainSeleMap[D.MISSION.MOLL_FOOD]: //"料理":
                         res = await AnkPark.doMobCook();
                         break;
                       case mainSeleMap[D.MISSION.MOLL_PHOTO]: // "写真":
