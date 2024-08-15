@@ -825,7 +825,7 @@ class PartsGame extends BaseWebDriverWrapper {
         await this.hideOverlay();
         if (await this.isExistEle(se[0], true, 2000)) {
           let el = await this.getEle(se[0], 3000);
-          await this.clickEle(el, 100, 400);
+          await this.clickEle(el, 100, 200);
           await this.backNowMissionPage(gameUrlHost);
           await this.hideOverlay();
           for (let j = 0; j < 2; j++) {
@@ -838,14 +838,14 @@ class PartsGame extends BaseWebDriverWrapper {
           }
           if (await this.isExistEle(se[1], true, 2000)) {
             let el = await this.getEle(se[1], 3000);
-            await this.clickEle(el, 100, 400);
+            await this.clickEle(el, 100, 200);
             await this.backNowMissionPage(gameUrlHost);
             // 勝手に動く
             await this.sleep(10000);
             await this.hideOverlay();
             if (await this.isExistEle(se[2], true, 3000)) {
               let el = await this.getEle(se[2], 3000);
-              await this.clickEle(el, 100, 400); // トップへ
+              await this.clickEle(el, 100, 200); // トップへ
               await this.backNowMissionPage(gameUrlHost);
             }
           }
