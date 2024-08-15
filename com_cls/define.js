@@ -107,6 +107,12 @@ exports.Def = {
     READ_CAT: "read_cat",
     READ_THANK: "read_thank",
     READ_ICHI: "read_ichi",
+
+    READ_ENTAME: "read_entame",
+    READ_GEINOU: "read_geinou",
+    READ_LIFE: "read_life",
+    READ_RENSOU: "read_rensou",
+    
     OTANO: "otano",
     QUIZ_KENTEI: "quiz_kentei",
     ANQ_SUG: "anq_sug",

@@ -42,6 +42,12 @@ class CitBase extends BaseExecuter {
           case D.MISSION.READ_ICHI:
             execCls = new CitReadIchi(para, cmMissionList);
             break;
+          case D.MISSION.READ_ENTAME:
+          case D.MISSION.READ_GEINOU:
+          case D.MISSION.READ_LIFE:
+          case D.MISSION.READ_RENSOU:
+            execCls = new CitReadEGLR(para, mission.main);
+            break;
           case D.MISSION.OTANO:
             execCls = new CitOtano(para);
             break;
@@ -120,11 +126,17 @@ class CitMissonSupper extends BaseWebDriverWrapper {
   //   }
   // }
   async hideOverlay() {
-    let seleOver = ["#pfx_interstitial_close", "div.overlay-item a.button-close", 
-    "#gn_ydn_interstitial_btn"
-      ,"div.close-button","a.gmoam_close_button"
+    let seleOver = [
+      "#pfx_interstitial_close",
+      "div.overlay-item a.button-close",
+      "#gn_ydn_interstitial_btn",
+      "div.close-button",
+      "a.gmoam_close_button",
     ];
-    let iSele = {"a.gmoam_close_button":"iframe[title='GMOSSP iframe']","div.close-button":"ins iframe[title='3rd party ad content']"};
+    let iSele = {
+      "a.gmoam_close_button": "iframe[title='GMOSSP iframe']",
+      "div.close-button": "ins iframe[title='3rd party ad content']",
+    };
     for (let s of seleOver) {
       if (iSele[s]) {
         if (await this.isExistEle(iSele[s], true, 1000)) {
@@ -143,7 +155,7 @@ class CitMissonSupper extends BaseWebDriverWrapper {
         let ele = await this.getEle(s, 1000);
         // if (s == seleOver[0]) {
         //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
-        // } else 
+        // } else
         if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
         } else this.logger.debug("オーバーレイは表示されてないです");
@@ -308,7 +320,7 @@ class CitCm extends CitMissonSupper {
     }
   }
 }
-const { PartsRead } = require("./parts/parts-read.js");
+const { PartsRead, PartsReadEGLR } = require("./parts/parts-read.js");
 // 犬の気持ち
 class CitReadDog extends CitMissonSupper {
   firstUrl = "https://www.chance.com/";
@@ -421,6 +433,36 @@ class CitReadIchi extends CitMissonSupper {
     return res;
   }
 }
+// エンタメ,芸能,ライフ,人物連想
+class CitReadEGLR extends CitMissonSupper {
+  firstUrl = "https://www.chance.com/sp/";
+  targetUrl = "https://www.chance.com/sp/mypage/tasklist.jsp";
+  main = "";
+  constructor(para, main) {
+    super(para);
+    this.main = main;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let se = {
+      [D.MISSION.READ_ENTAME]: "img[src*='entame_ranking.png']",
+      [D.MISSION.READ_GEINOU]: "img[src*='entertainer_ranking.png']",
+      [D.MISSION.READ_LIFE]: "img[src*='lifestyle_ranking.png']",
+      [D.MISSION.READ_RENSOU]: "img[src*='aiquiz.png']",
+    };
+    let res = D.STATUS.FAIL;
+    if (await this.isExistEle(se[this.main], true, 2000)) {
+      let eles = await this.getEles(se[this.main], 3000);
+      await this.clickEle(eles[0], 1000, 100);
+      let ReadCls = new PartsReadEGLR(this.para, this.main);
+      res = await ReadCls.do();
+    }
+    return res;
+  }
+}
+
 const { PartsOtano } = require("./parts/parts-otano.js");
 // お楽しみアンケート
 class CitOtano extends CitMissonSupper {
@@ -618,9 +660,7 @@ class CitGameKokuhaku extends CitMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(se[0], true, 2000)) {
       let el = await this.getEle(se[0], 3000);
-      await this.exeScriptNoTimeOut(
-        `for (let t of document.querySelectorAll("ins")){t.remove();}`
-      );
+      await this.exeScriptNoTimeOut(`for (let t of document.querySelectorAll("ins")){t.remove();}`);
       await this.clickEle(el, 2000, 100);
       await this.ignoreKoukoku();
       let wid = await driver.getWindowHandle();

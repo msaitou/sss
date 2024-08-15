@@ -36,6 +36,11 @@ class GmyBase extends BaseExecuter {
           case D.MISSION.READ_ICHI:
             execCls = new GmyReadIchi(para, cmMissionList);
             break;
+          case D.MISSION.READ_ENTAME:
+          case D.MISSION.READ_LIFE:
+          case D.MISSION.READ_GEINOU:
+            execCls = new GmyReadEGLR(para, mission.main);
+            break;
           case D.MISSION.OTANO:
             execCls = new GmyOtano(para);
             break;
@@ -114,12 +119,18 @@ class GmyMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["#pfx_interstitial_close", "div.overlay-item a.button-close", 
-    "#gn_ydn_interstitial_btn"
-    // "div.close", "#close", "#interClose"
-      ,"div.close-button","a.gmoam_close_button"
+    let seleOver = [
+      "#pfx_interstitial_close",
+      "div.overlay-item a.button-close",
+      "#gn_ydn_interstitial_btn",
+      // "div.close", "#close", "#interClose"
+      "div.close-button",
+      "a.gmoam_close_button",
     ];
-    let iSele = {"a.gmoam_close_button":"iframe[title='GMOSSP iframe']","div.close-button":"ins iframe[title='3rd party ad content']"};
+    let iSele = {
+      "a.gmoam_close_button": "iframe[title='GMOSSP iframe']",
+      "div.close-button": "ins iframe[title='3rd party ad content']",
+    };
     for (let s of seleOver) {
       if (iSele[s]) {
         if (await this.isExistEle(iSele[s], true, 1000)) {
@@ -138,7 +149,7 @@ class GmyMissonSupper extends BaseWebDriverWrapper {
         let ele = await this.getEle(s, 1000);
         // if (s == seleOver[0]) {
         //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
-        // } else 
+        // } else
         if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
         } else this.logger.debug("オーバーレイは表示されてないです");
@@ -295,7 +306,7 @@ class GmyCm extends GmyMissonSupper {
     }
   }
 }
-const { PartsRead } = require("./parts/parts-read.js");
+const { PartsRead, PartsReadEGLR } = require("./parts/parts-read.js");
 // 犬の気持ち
 class GmyReadDog extends GmyMissonSupper {
   firstUrl = "https://www.chance.com/";
@@ -352,6 +363,34 @@ class GmyReadIchi extends GmyMissonSupper {
     return res;
   }
 }
+// エンタメ,芸能,ライフ,人物連想
+class GmyReadEGLR extends GmyMissonSupper {
+  firstUrl = "https://dietnavi.com/sp/";
+  targetUrl = "https://dietnavi.com/sp/tasklist/";
+  main = "";
+  constructor(para, main) {
+    super(para);
+    this.main = main;
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let se = {
+      [D.MISSION.READ_ENTAME]: "img[src*='entame_ranking.png']",
+      [D.MISSION.READ_GEINOU]: "img[src*='entertainer_ranking.png']",
+      [D.MISSION.READ_LIFE]: "img[src*='lifestyle_ranking.png']",
+    };
+    let res = D.STATUS.FAIL;
+    if (await this.isExistEle(se[this.main], true, 2000)) {
+      let eles = await this.getEles(se[this.main], 3000);
+      await this.clickEle(eles[0], 1000, 100);
+      let ReadCls = new PartsReadEGLR(this.para, this.main);
+      res = await ReadCls.do();
+    }
+    return res;
+  }
+}
 const { PartsOtano } = require("./parts/parts-otano.js");
 // お楽しみアンケート
 class GmyOtano extends GmyMissonSupper {
@@ -381,11 +420,10 @@ class GmyOtano extends GmyMissonSupper {
       try {
         if (await this.isExistEle(sele[0], true, 2000)) {
           let eles0 = await this.getEles(sele[0], 3000),
-          limit = eles0.length;
+            limit = eles0.length;
           for (let i = 0; i < limit; i++) {
             await this.hideOverlay();
-            if (i !== 0 && (await this.isExistEle(sele[0], true, 2000)))
-              eles0 = await this.getEles(sele[0], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[0], true, 2000))) eles0 = await this.getEles(sele[0], 3000);
             await this.clickEle(eles0[0], 3000);
             res = await Otano.do();
           }
@@ -570,8 +608,7 @@ class GmyAnqKenkou extends GmyMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
             await this.clickEle(eles[eles.length - 1], 6000, 250);
             res = await AnkPark.doMobKenkou();
@@ -616,8 +653,7 @@ class GmyAnqManga extends GmyMissonSupper {
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
             await this.hideOverlay();
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
             await this.clickEle(eles[eles.length - 1], 6000, 250);
             res = await AnkPark.doMobManga();
@@ -666,8 +702,7 @@ class GmyAnqPark extends GmyMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
-              eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
             await this.hideOverlay();
             let text = await eles[eles.length - 1].getText();
             text = text.split("\n").join("").split("\n").join("");

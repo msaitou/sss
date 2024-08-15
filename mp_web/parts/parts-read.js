@@ -317,5 +317,164 @@ class PartsReadPic extends BaseWebDriverWrapper {
     }
   }
 }
+class PartsReadEGLR extends BaseWebDriverWrapper {
+  para;
+  main;
+  constructor(para, main) {
+    super();
+    this.para = para;
+    this.main = main;
+    this.setDriver(this.para.driver);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      let sele = [
+        "ul.articleList>li:not(.read)>a>img",
+        "div.list-btn>button",
+        "div.list-btn:visible>button",  // 使わない
+        "form>input.get_stamp",
+        "p.less_stamp", // 4
+        "a.read_more.btn",
+        "li.stampGet", // 6
+        "p.all_stamp",
+      ];
+      if (this.main == D.MISSION.READ_RENSOU) sele[1] = "div.read_more.btn";
+      if (siteInfo.code == D.CODE.GMY) {
+        // sele[1] = "input.getStamp.btn";
+        // sele[2] = "div.stampCard li.stampGet";
+        // sele[3] = "a.readMore.btn";
+        sele[4] = "p.lessStamp";
+        sele[5] = "a.readMore.btn";
+        sele[7] = "p.allStamp";
+      }
+      if (await this.isExistEle(sele[4], true, 2000)) {
+        let eles = await this.getEles(sele[4], 3000);
+        let text = await eles[0].getText();
+        let regex = "(\\d+)個";
+        let matches = text.match(regex);
+        logger.info(`あと ${matches[1]} 個`);
+        let limit = matches[1];
+        let preCnt = 0;
+        let superBreakCnt = 0;
+        for (let i = 0; i < limit; i++) {
+          await this.hideOverlay();
+          await this.moveLastPage(preCnt); // 最後のページに移動
+          if (await this.isExistEle(sele[0], true, 2000)) {
+            eles = await this.getEles(sele[0], 3000);
+            await this.clickEle(eles[eles.length - 1], 1000);
+            if (await this.isExistEle(sele[1], true, 3000)) {
+              eles = await this.getEles(sele[1], 3000);
+              for (let i = 0, max = eles.length; i < max; i++) {
+                // 次へボタンの分
+                if (await eles[i].isDisplayed()) {
+                  // let el = await this.getEle(sele[2], 3000); // 見えてるボタン
+                  // await this.clickEle(eles[i], 1000);
+                  await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[i]);
+                  eles = await this.getEles(sele[1], 3000);
+                }
+              }
+              if (await this.isExistEle(sele[3], true, 3000)) {
+                let el = await this.getEle(sele[3], 3000); // stampGET
+                await this.exeScriptNoTimeOut(`arguments[0].click()`, el);
+                // await this.clickEle(el, 1000);
+                if (await this.isExistEle(sele[6], true, 3000)) {
+                  eles = await this.getEles(sele[6], 3000);
+                  logger.info(`スタンプ ${eles.length} め！`);
+                }
+                if (await this.isExistEle(sele[5], true, 3000)) {
+                  el = await this.getEle(sele[5], 3000); // stampGET
+                  // await this.clickEle(el, 1000);
+                  await this.exeScriptNoTimeOut(`arguments[0].click()`, el);
+                }
+              }
+            }
+          } else {
+            // このページに読むものがないので前のページに移動
+            await this.movePrevPage();
+            preCnt++;
+            i--; // ノーカン
+            if (superBreakCnt++ > 50) throw "無限ループしてるので失敗にします";
+          }
+        }
+        res = D.STATUS.DONE;
+      } else if (await this.isExistEle(sele[7], true, 2000)) res = D.STATUS.DONE;
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+  async moveLastPage(preCnt) {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let sele = ["ol.page-number>li>a"];
+    if (siteInfo.code == D.CODE.GMY) sele = ["ul.pageNav>li>a"];
+    // 最初のページで呼ばれること前提
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      // await this.clickEle(eles[eles.length - 2 - preCnt], 2000, 100);
+      await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[eles.length - 2 - preCnt]);
+      return true;
+    }
+  }
+  async movePrevPage() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let sele = ["ol.page-number>li>a"];
+    if (siteInfo.code == D.CODE.GMY) sele = ["ul.pageNav>li>a"];
+    // 途中のページで呼ばれること前提　1つ前に遷移できるようにする
+    if (await this.isExistEle(sele[0], true, 2000)) {
+      let eles = await this.getEles(sele[0], 2000);
+      if (eles.length >= 3) // await this.clickEle(eles[eles.length - 3], 1000, 100);
+      await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[eles.length - 3]);
+      return true;
+    }
+  }
+  async hideOverlay() {
+    let seleOver = ["#dismiss-button"];
+    let iSele = { "#dismiss-button": "iframe[title='Advertisement']" };
+    for (let s of seleOver) {
+      if (iSele[s]) {
+        if (await this.isExistEle(iSele[s], true, 1000)) {
+          let iframe = await this.getEles(iSele[s], 1000);
+          if (await iframe[0].isDisplayed()) {
+            await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+            if (await this.isExistEle(s, true, 1000)) {
+              let inputEle = await this.getEle(s, 10000);
+              if (await inputEle.isDisplayed()) {
+                await this.clickEle(inputEle, 1000);
+              } else this.logger.debug("オーバーレイは表示されてないです");
+            }
+            // もとのフレームに戻す
+            await this.driver.switchTo().defaultContent();
+          }
+        }
+      }
+      //  else if (await this.isExistEle(s, true, 1000)) {
+      //   let ele = await this.getEle(s, 1000);
+      //   if (await ele.isDisplayed()) {
+      //     await this.clickEle(ele, 1000);
+      //   } else await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+      // }
+    }
+  }
+  async exchange() {
+    let exSele = ["a.stamp__btn[href*='exchange']", "input.exchange__btn", "a.stamp__btn.stamp__btn-return"];
+    await this.hideOverlay();
+    if (await this.isExistEle(exSele[0], true, 2000)) {
+      let ele = await this.getEle(exSele[0], 3000);
+      await this.clickEle(ele, 2000);
+      if (await this.isExistEle(exSele[1], true, 2000)) {
+        ele = await this.getEle(exSele[1], 3000);
+        await this.clickEle(ele, 2000);
+      }
+      if (await this.isExistEle(exSele[2], true, 2000)) {
+        ele = await this.getEle(exSele[2], 3000);
+        await this.clickEle(ele, 2000);
+      }
+    }
+  }
+}
 exports.PartsRead = PartsRead;
 exports.PartsReadPic = PartsReadPic;
+exports.PartsReadEGLR = PartsReadEGLR;
