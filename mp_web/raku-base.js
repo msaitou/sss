@@ -184,8 +184,8 @@ class RakuClick extends RakuMissonSupper {
     let res = D.STATUS.FAIL;
     let sele = [
       ".rce-userDetails__linkItem a[href*='click-point']",
-      "span.rce-number",
-      "p.dateArrival img", // 2
+      "span.js-edit-total-click-point.top-edit-total-click-point.is-show",
+      "a.click-point-banner-link", // 2
       "div.bnrBoxInner a>img",
       "ancestor::div[contains(@class, 'topArea')]",
     ];
@@ -195,15 +195,16 @@ class RakuClick extends RakuMissonSupper {
       if (await this.isExistElesFromEle(ele, sele[1], true, 2000)) {
         // 未クリック数があれば
         // ele = await this.getElesFromEle(ele, sele[1], 2000);
-        await this.clickEleScrollWeak(ele, 4000, 90); // 遷移
+        await this.clickEleScrollWeak(ele, 2000, 90); // 遷移
         if (await this.isExistEle(sele[2], true, 2000)) {
           let eles = await this.getEles(sele[2], 2000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
             if (i != 0) eles = await this.getEles(sele[2], 2000);
-            let ele2 = await this.getElesXFromEle(eles[0], sele[4], 2000);
-            ele2 = await this.getElesFromEle(ele2[0], sele[3]);
-            await this.clickEle(ele2[0], 4000);
+            // let ele2 = await this.getElesXFromEle(eles[0], sele[4], 2000);
+            // ele2 = await this.getElesFromEle(ele2[0], sele[3]);
+            // await this.clickEle(ele2[0], 4000);
+            await this.clickEle(eles[i], 1000, 200);
             await this.closeOtherWindow(driver);
           }
         }
