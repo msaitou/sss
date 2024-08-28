@@ -24,6 +24,7 @@ class PartsRead extends BaseWebDriverWrapper {
         "a.read_more.btn",
         "p.less_stamp>span", // 4
         "p.all_stamp",
+        "div.read_more.btn",
       ];
       if (siteInfo.code == D.CODE.GMY) {
         sele[1] = "input.getStamp.btn";
@@ -46,28 +47,10 @@ class PartsRead extends BaseWebDriverWrapper {
         for (let i = 0; i < limit; i++) {
           if (!triedFlag) await this.moveLastPage(isReaded), (triedFlag = true); // 最後のページに移動
           if (await this.isExistEle(sele[0], true, 2000)) {
+            await this.ignoreKoukoku();
             eles = await this.getEles(sele[0], 3000);
+            await this.clickEle(eles[eles.length - 1], 2000, 150);
             await this.ignoreKoukoku();
-            await this.clickEle(eles[eles.length - 1], 2000);
-            await this.ignoreKoukoku();
-            // let seleIframe = [
-            //   "iframe[title='Rokt placement']",
-            //   "button[aria-label='閉じる']",
-            //   "iframe[title='Rokt offer']",
-            // ];
-            // if (await this.isExistEle(seleIframe[0], true, 3000)) {
-            //   let iframe = await this.getEle(seleIframe[0], 1000);
-            //   await driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
-            //   if (await this.isExistEle(seleIframe[2], true, 3000)) {
-            //     ele = await this.getEle(seleIframe[2], 2000);
-            //     await driver.switchTo().frame(ele); // 違うフレームなのでそっちをターゲットに
-            //     if (await this.isExistEle(seleIframe[1], true, 3000)) {
-            //       ele = await this.getEle(seleIframe[1], 2000);
-            //       await this.clickEle(ele, 2000);
-            //     }
-            //   }
-            //   await driver.switchTo().defaultContent(); // もとのフレームに戻す
-            // }
             if (await this.isExistEle(sele[6], true, 3000)) {
               eles = await this.getEles(sele[6], 3000);
               for (let i = 0, max = eles.length; i < max; i++) {
@@ -79,19 +62,19 @@ class PartsRead extends BaseWebDriverWrapper {
                   eles = await this.getEles(sele[6], 3000);
                 }
               }
-              if (await this.isExistEle(sele[1], true, 3000)) {
-                let ele = await this.getEle(sele[1], 3000);
-                await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
-                if (await this.isExistEle(sele[2], true, 3000)) {
-                  eles = await this.getEles(sele[2], 3000);
-                  let stampNum = eles.length;
-                  logger.info(`スタンプ ${stampNum} め！`);
-                  if (await this.isExistEle(sele[3], true, 3000)) {
-                    ele = await this.getEle(sele[3], 2000);
-                    // await this.clickEle(ele, 2000);
-                    await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
-                    triedFlag = false;
-                  }
+            }
+            if (await this.isExistEle(sele[1], true, 3000)) {
+              let ele = await this.getEle(sele[1], 3000);
+              await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+              if (await this.isExistEle(sele[2], true, 3000)) {
+                eles = await this.getEles(sele[2], 3000);
+                let stampNum = eles.length;
+                logger.info(`スタンプ ${stampNum} め！`);
+                if (await this.isExistEle(sele[3], true, 3000)) {
+                  ele = await this.getEle(sele[3], 2000);
+                  // await this.clickEle(ele, 2000);
+                  await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+                  triedFlag = false;
                 }
               }
             }
@@ -127,8 +110,8 @@ class PartsRead extends BaseWebDriverWrapper {
         nextNum = nexts.length;
       }
       if (isReaded) nextNum++;
-      await this.ignoreKoukoku();
       await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[eles.length - 1 - nextNum]);
+      await this.ignoreKoukoku();
       return true;
     }
   }
