@@ -117,45 +117,84 @@ class RakuCommon extends RakuMissonSupper {
     await driver.get(siteInfo.entry_url); // エントリーページ表示
     let seleIsLoggedIn = "#rakutenSuperPoints";
     logger.debug(11100);
+    // #region furui
     // ログインしてるかチェック(ログインの印がないことを確認)
+    // if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
+    //   logger.debug(11101);
+    //   let seleInput = { id: "#u", pass: "#p", login: "#loginButton" };
+    //   let seleInput2 = {
+    //     id: "#loginInner_u",
+    //     pass: "#loginInner_p",
+    //     login: 'input[type="submit"]',
+    //     birth: "#loginInner_birthday",
+    //   };
+    //   if (await this.isExistEle(seleInput.id, true, 2000)) {
+    //     logger.debug(11102);
+    //     for (let seleGroup of [seleInput, seleInput2]) {
+    //       if (await this.isExistEle(seleGroup.id, true, 2000)) {
+    //         // アカウント（メール）入力
+    //         let inputEle = await this.getEle(seleGroup.id, 500);
+    //         await inputEle.clear();
+    //         await inputEle.sendKeys(account[this.code].loginid);
+    //         // パスワード入力
+    //         inputEle = await this.getEle(seleGroup.pass, 500);
+    //         await inputEle.clear();
+    //         await inputEle.sendKeys(account[this.code].loginpass);
+    //         if (seleGroup.birth) {
+    //           inputEle = await this.getEle(seleGroup.birth, 500);
+    //           await inputEle.clear();
+    //           await inputEle.sendKeys(account[this.code].birth);
+    //         }
+    //         let ele = await this.getEle(seleGroup.login, 1000);
+    //         await this.clickEle(ele, 3000); // ログインボタン押下
+    //       }
+    //     }
+
+    //     // ログインできてるか、チェック
+    //     if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
+    //       // ログインできてるのでOK
+    //       logger.info("ログインできました！");
+    //       return true;
+    //     } else {
+    //       // ログインできてないので、メール
+    //       logger.info("ログインできませんでした");
+    //       await mailOpe.send(logger, {
+    //         subject: `ログインできません[${this.code}] `,
+    //         contents: `なぜか ${this.code} にログインできません`,
+    //       });
+    //       return;
+    //     }
+    //   } else {
+    //     // 未ログインで、ログインボタンが見つかりません。
+    //     return;
+    //   }
+    // } else logger.debug("ログイン中なのでログインしません");
+    // #endregion
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
-      let seleInput = { id: "#u", pass: "#p", login: "#loginButton" };
+      let seleInput = { id: "#u", pass: "#password_current", login: "div#cta011" };
       let seleInput2 = {
         id: "#loginInner_u",
         pass: "#loginInner_p",
         login: 'input[type="submit"]',
         birth: "#loginInner_birthday",
       };
-      if (await this.isExistEle(seleInput.id, true, 2000)) {
-        logger.debug(11102);
-        for (let seleGroup of [seleInput, seleInput2]) {
-          if (await this.isExistEle(seleGroup.id, true, 2000)) {
-            // アカウント（メール）入力
-            let inputEle = await this.getEle(seleGroup.id, 500);
-            await inputEle.clear();
-            await inputEle.sendKeys(account[this.code].loginid);
-            // パスワード入力
-            inputEle = await this.getEle(seleGroup.pass, 500);
-            await inputEle.clear();
-            await inputEle.sendKeys(account[this.code].loginpass);
-            if (seleGroup.birth) {
-              inputEle = await this.getEle(seleGroup.birth, 500);
-              await inputEle.clear();
-              await inputEle.sendKeys(account[this.code].birth);
-            }
-            let ele = await this.getEle(seleGroup.login, 1000);
-            await this.clickEle(ele, 3000); // ログインボタン押下
-          }
+      if (await this.isExistEle(seleInput.pass, true, 2000)) {
+        let inputEle = await this.getEle(seleInput.pass, 500);
+        await inputEle.clear();
+        await inputEle.sendKeys(account[this.code].loginpass);
+        if (await this.isExistEle(seleInput.login, true, 2000)) {
+          let ele = await this.getEle(seleInput.login, 1000);
+          await this.clickEle(ele, 3000); // ログインボタン押下
+        } else {
+          // 未ログインで、ログインボタンが見つかりません。
+          return;
         }
-
         // ログインできてるか、チェック
         if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
-          // ログインできてるのでOK
           logger.info("ログインできました！");
           return true;
         } else {
-          // ログインできてないので、メール
           logger.info("ログインできませんでした");
           await mailOpe.send(logger, {
             subject: `ログインできません[${this.code}] `,
@@ -163,9 +202,6 @@ class RakuCommon extends RakuMissonSupper {
           });
           return;
         }
-      } else {
-        // 未ログインで、ログインボタンが見つかりません。
-        return;
       }
     } else logger.debug("ログイン中なのでログインしません");
     return true;

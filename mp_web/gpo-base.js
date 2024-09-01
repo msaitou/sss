@@ -143,9 +143,15 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay(seleStr) {
-    let sele0 = ["#modal20th .btn_close>img", "#pfx_interstitial_close"];
+    let sele0 = ["#modal20th .btn_close>img", "#gn_ydn_interstitial_btn","#pfx_interstitial_close"];
     if (seleStr) sele0 = [seleStr, ""];
     for (let s of sele0) {
+      if (["#pfx_interstitial_close"].indexOf(s) > -1) {
+        let iSele = ["iframe.profitx-ad-frame-markup"];
+        if (await this.isExistEle(iSele[0], true, 3000)) {
+          await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`);
+        }
+      } else 
       if (await this.isExistEle(s, true, 2000)) {
         let ele = await this.getEle(s, 1000);
         if (s == sele0[1]) {
@@ -273,6 +279,7 @@ class GpoQuizKentei extends GpoMissonSupper {
     ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
+      await this.hideOverlay();
       await this.clickEle(ele0, 3000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
@@ -421,6 +428,7 @@ class GpoAnq extends GpoMissonSupper {
         if (j !== 0 && (await this.isExistEle(sele[0], true, 2000))) eles = await this.getEles(sele[0], 3000);
         if (!eles.length) break;
         limit = eles.length;
+        await this.hideOverlay();
         await this.clickEle(eles[0], 4000); //
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
@@ -846,6 +854,7 @@ class GpoAnqColum extends GpoMissonSupper {
     let sele = ["a[onclick*='columntoenquete']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
+      await this.hideOverlay();
       await this.clickEle(ele0, 3000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
@@ -909,6 +918,7 @@ class GpoAnqPhoto extends GpoMissonSupper {
     let sele = ["a[onclick*='shashintoenquete']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
+      await this.hideOverlay();
       await this.clickEle(ele0, 3000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
@@ -972,6 +982,7 @@ class GpoAnqZukan extends GpoMissonSupper {
     let sele = ["a[onclick*='doubutsu']", ".enquete-list div>a.ui-btn-c", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
+      await this.hideOverlay();
       await this.clickEle(ele0, 3000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
@@ -1035,6 +1046,7 @@ class GpoAnqIjin extends GpoMissonSupper {
     let sele = ["a[onclick*='ijin']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
+      await this.hideOverlay();
       await this.clickEle(ele0, 3000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
@@ -1098,6 +1110,7 @@ class GpoAnqHirameki extends GpoMissonSupper {
     let sele = ["a[onclick*='hirameki']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
+      await this.hideOverlay();
       await this.clickEle(ele0, 3000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
@@ -1161,6 +1174,7 @@ class GpoAnqJapan extends GpoMissonSupper {
     let sele = ["a[onclick*='nihonhyakkeitoenquete']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
+      await this.hideOverlay();
       await this.clickEle(ele0, 3000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
@@ -1224,6 +1238,7 @@ class GpoAnqSite extends GpoMissonSupper {
     let sele = ["a[onclick*='kansatsuryokutoenquete']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
+      await this.hideOverlay();
       await this.clickEle(ele0, 3000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
@@ -1287,6 +1302,7 @@ class GpoAnqCook extends GpoMissonSupper {
     let sele = ["a[onclick*='ryori']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
+      await this.hideOverlay();
       await this.clickEle(ele0, 3000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
@@ -1351,6 +1367,7 @@ class GpoAnqKenkou extends GpoMissonSupper {
     await this.hideOverlay();
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
+      await this.hideOverlay();
       await this.clickEle(ele0, 3000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
