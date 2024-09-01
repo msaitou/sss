@@ -119,7 +119,13 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
         }
-      } else if (await this.isExistEle(s, true, 3000)) {
+      } else if (["#pfx_interstitial_close"].indexOf(s) > -1) {
+        let iSele = ["iframe.profitx-ad-frame-markup"];
+        if (await this.isExistEle(iSele[0], true, 3000)) {
+          await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`);
+        }
+      }
+      else if (await this.isExistEle(s, true, 3000)) {
         let ele = await this.getEle(s, 2000);
         if (s == seleOver[0]) {
           await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
