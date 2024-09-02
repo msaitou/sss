@@ -220,6 +220,20 @@ class BaseWebDriverWrapper {
       this.logger.warn(e);
     }
   }
+
+  /**
+   * ゆっくり画面の下までスクロール
+   */
+  async slowScroll() {
+    const targetScrollHeight = await this.driver.executeScript("return document.body.scrollHeight;");
+    const scrollAmount = 50;
+    const interval = 5;
+    for (let i = 0; i < targetScrollHeight; i += scrollAmount) {
+      await this.driver.executeScript(`window.scrollBy(0, ${scrollAmount});`);
+      await this.driver.sleep(interval);
+    }
+  }
+
   /**
    * 直前に開いたタブを閉じる
    * @param driver

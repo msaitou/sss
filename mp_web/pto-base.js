@@ -248,8 +248,7 @@ class PtoCm extends PtoMissonSupper {
     let mobH = this.isMob ? 50 : 0;
     if (this.isMob) {
       sele[0] = "img[src*='cm-jk.png']";
-      this.sleep(3000);
-      await driver.executeScript("window.scrollTo(0, 3500);");
+      await this.slowScroll();
     }
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
@@ -580,7 +579,7 @@ class PtoAnqPark extends PtoMissonSupper {
     ];
     let mobH = this.isMob ? 50 : 0;
     if (this.isMob) {
-      await driver.executeScript("window.scrollTo(0, 3800);");
+      await this.slowScroll();
       this.sleep(2000);
     }
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -704,7 +703,9 @@ class PtoGameKokuhaku extends PtoMissonSupper {
     let mobH = this.isMob ? 50 : 0;
     if (this.isMob) {
       this.sleep(3000);
-      await driver.executeScript("window.scrollTo(0, 4300);");
+      // await driver.executeScript("window.scrollTo(0, 5300);");
+      // await driver.executeScript("for(let i = 0;i < document.body.scrollHeight;i++) {window.scrollTo({ top: i, behavior: 'smooth' })}");
+      await this.slowScroll();
     }
     await this.hideOverlay();
     if (await this.isExistEle(se[0], true, 2000)) {
