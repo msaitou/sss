@@ -2044,20 +2044,14 @@ class PartsGame extends BaseWebDriverWrapper {
             await this.driver.switchTo().defaultContent();
           }
         }
+      } else if (["#pfx_interstitial_close"].indexOf(s) > -1) {
+        let iSele = ["iframe.profitx-ad-frame-markup"];
+        if (await this.isExistEle(iSele[0], true, 3000)) {
+          await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`);
+        }
       } else if (await this.isExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
-        // if (s == seleOver[0]) {
-        //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
-        // } else 
-        // if (await ele.isDisplayed()) {
-        //   await this.clickEle(ele, 1000);
-        // } else 
         await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
-        // this.logger.debug("オーバーレイは表示されてないです");
-        // if (this.para.machine == "saitowin11") {
-        //   this.logger.info("win11です");
-          
-        // }
       }
     }
   }
