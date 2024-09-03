@@ -430,7 +430,7 @@ class PartsGame extends BaseWebDriverWrapper {
         "#status_1>span",
         "img[alt='獲得した報酬をゲットする']",
       ];
-      let limit = 20; // 基本は
+      let limit = 10; // 基本は
       let gameUrlHost = await driver.getCurrentUrl();
       gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
       for (let j = 0; j < limit; j++) {
@@ -439,12 +439,12 @@ class PartsGame extends BaseWebDriverWrapper {
           let el = await this.getEle(se[0], 3000);
           await driver.wait(until.elementIsVisible(el), 5000);
           await this.hideOverlay();
-          await this.clickEle(el, 100);
+          await this.clickEle(el, 5000); // あえて5秒
           await this.backNowMissionPage(gameUrlHost);
           if (await this.isExistEle(se[1], true, 2000)) {
             let els = await this.getEles(se[1], 3000);
             await driver.wait(until.elementIsVisible(els[0]), 5000);
-            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 300);
+            await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 5000); // あえて5秒
             await this.backNowMissionPage(gameUrlHost);
             let waitEls = [];
             for (let seButton of [se[2], se[4]]) {
@@ -2030,11 +2030,11 @@ class PartsGame extends BaseWebDriverWrapper {
     let iSele = {"a.gmoam_close_button":"iframe[title='GMOSSP iframe']","div.close-button":"ins iframe[title='3rd party ad content']"};
     for (let s of seleOver) {
       if (iSele[s]) {
-        if (await this.isExistEle(iSele[s], true, 1000)) {
+        if (await this.silentIsExistEle(iSele[s], true, 1000)) {
           let iframe = await this.getEles(iSele[s], 1000);
           if (await iframe[0].isDisplayed()) {
             await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
-            if (await this.isExistEle(s, true, 1000)) {
+            if (await this.silentIsExistEle(s, true, 1000)) {
               let inputEle = await this.getEle(s, 10000);
               if (await inputEle.isDisplayed()) {
                 await this.clickEle(inputEle, 1000);
@@ -2046,10 +2046,20 @@ class PartsGame extends BaseWebDriverWrapper {
         }
       } else if (["#pfx_interstitial_close"].indexOf(s) > -1) {
         let iSele = ["iframe.profitx-ad-frame-markup"];
-        if (await this.isExistEle(iSele[0], true, 3000)) {
-          await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`);
+        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+          let iframe = await this.getEles(iSele[0], 1000);
+          if (await iframe[0].isDisplayed()) {
+            await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+            let isExists = await this.silentIsExistEle(s, true, 1000);
+            // もとのフレームに戻す
+            await this.driver.switchTo().defaultContent();
+            if (isExists) await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`);
+            else if (await this.silentIsExistEle(s, true, 3000)) {
+              await this.exeScriptNoTimeOut(`document.querySelector("${s}").click()`);
+            } 
+          }
         }
-      } else if (await this.isExistEle(s, true, 1000)) {
+      } else if (await this.silentIsExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
         await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
       }

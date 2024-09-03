@@ -170,7 +170,9 @@ class BaseWebDriverWrapper {
       this.driver.navigate().refresh();
     }
   }
-  async isExistEle(sele, showFlag, time) {
+  /** 見つからないときはログを出さない */
+  async silentIsExistEle(sele, showFlag, time) { return await this.isExistEle(sele, showFlag, time, true);}
+  async isExistEle(sele, showFlag, time, isHideLogFlg) {
     try {
       if (!sele) throw "is not param[0]";
       showFlag = showFlag === void 0 ? true : showFlag;
@@ -182,13 +184,15 @@ class BaseWebDriverWrapper {
         if (showFlag) exception = e;
         eles = [];
       }
-      this.logger.info(`sele[${sele}] showFlag[${showFlag}] elelen[${eles.length}]`);
+      if (!isHideLogFlg) this.logger.info(`sele[${sele}] showFlag[${showFlag}] elelen[${eles.length}]`);
       if (exception) {
         // throw exception;
         return false;
       } else if (showFlag && !!eles.length) {
+        if (isHideLogFlg) this.logger.info(`sele[${sele}] showFlag[${showFlag}] elelen[${eles.length}]`);
         return true; // 見つけようと思って見つかった
       } else if (!showFlag && !eles.length) {
+        if (isHideLogFlg) this.logger.info(`sele[${sele}] showFlag[${showFlag}] elelen[${eles.length}]`);
         return true; // 見つからないと思って見つからない
       } // else // 見つからないと思ったけど見つかった
     } catch (e) {

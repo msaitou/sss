@@ -136,7 +136,7 @@ class SugMissonSupper extends BaseWebDriverWrapper {
     let iSele = {"a.gmoam_close_button":"iframe[title='GMOSSP iframe']","div.close-button":"ins iframe[title='3rd party ad content']"};
     for (let s of seleOver) {
       if (iSele[s]) {
-        if (await this.isExistEle(iSele[s], true, 1000)) {
+        if (await this.silentIsExistEle(iSele[s], true, 1000)) {
           let iframe = await this.getEles(iSele[s], 1000);
           if (await iframe[0].isDisplayed()) {
             await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
@@ -148,7 +148,7 @@ class SugMissonSupper extends BaseWebDriverWrapper {
             await this.driver.switchTo().defaultContent();
           }
         }
-      } else if (await this.isExistEle(s, true, 1000)) {
+      } else if (await this.silentIsExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
         // if (s == seleOver[0]) {
         //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
@@ -304,7 +304,8 @@ class SugAnqPark extends SugMissonSupper {
                 ele = ele2[0];
               }
               await this.hideOverlay();
-              await this.clickEle(ele, 3000);
+              await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+              // await this.clickEle(ele, 3000);
               let gameUrl = await driver.getCurrentUrl();
               if (gameUrl.indexOf("403") > -1) {
                 await this.driver.navigate().back();
@@ -312,22 +313,28 @@ class SugAnqPark extends SugMissonSupper {
               }
               switch (text.trim()) {
                 case "漫画":
-                  res = await AnkPark.doManga();
+                  if (this.isMob) res = await AnkPark.doMobManga();
+                  else res = await AnkPark.doManga();
                   break;
                 case "日本百景":
-                  res = await AnkPark.doJapan();
+                  if (this.isMob) res = await AnkPark.doMobJapan();
+                  else res = await AnkPark.doJapan();
                   break;
                 case "観察力":
-                  res = await AnkPark.doSite();
+                  if (this.isMob) res = await AnkPark.doMobSite();
+                  else res = await AnkPark.doSite();
                   break;
                 case "料理":
-                  res = await AnkPark.doCook();
+                  if (this.isMob) res = await AnkPark.doMobCook();
+                  else res = await AnkPark.doCook();
                   break;
                 case "ひらめき":
-                  res = await AnkPark.doHirameki();
+                  if (this.isMob) res = await AnkPark.doMobHirameki();
+                  else res = await AnkPark.doHirameki();
                   break;
                 case "写真":
-                  res = await AnkPark.doPhoto();
+                  if (this.isMob) res = await AnkPark.doMobPhoto();
+                  else res = await AnkPark.doPhoto();
                   break;
               }
               await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
