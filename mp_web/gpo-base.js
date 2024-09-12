@@ -148,8 +148,18 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
     for (let s of sele0) {
       if (["#pfx_interstitial_close"].indexOf(s) > -1) {
         let iSele = ["iframe.profitx-ad-frame-markup"];
-        if (await this.isExistEle(iSele[0], true, 3000)) {
-          await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`);
+        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+          let iframe = await this.getEles(iSele[0], 1000);
+          if (await iframe[0].isDisplayed()) {
+            await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+            let isExists = await this.silentIsExistEle(s, true, 1000);
+            // もとのフレームに戻す
+            await this.driver.switchTo().defaultContent();
+            if (isExists) await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`);
+            else if (await this.silentIsExistEle(s, true, 3000)) {
+              await this.exeScriptNoTimeOut(`document.querySelector("${s}").click()`);
+            } 
+          }
         }
       } else 
       if (await this.isExistEle(s, true, 2000)) {
