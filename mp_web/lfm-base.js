@@ -66,7 +66,7 @@ class LfmBase extends BaseExecuter {
       }
       return p;
     };
-    let sele = ["div.f-number>span.head__mymenu__icon"];
+    let sele = ["div.pointClubHeader__point span.f-number"];
     if (this.isMob) sele[0] = "#js-mypointPoint";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
@@ -104,14 +104,14 @@ class LfmCommon extends LfmMissonSupper {
   async login() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await driver.get(siteInfo.entry_url); // エントリーページ表示
-    let seleIsLoggedIn = "div.f-number>span.head__mymenu__icon";
+    let seleIsLoggedIn = "div.pointClubHeader__point span.f-number";
     if (this.isMob) seleIsLoggedIn = "#js-mypointPoint";
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
       // リンクが存在することを確認
-      let seleLoginLink = "div.item__column a[href='https://lifemedia.jp/login']";
+      let seleLoginLink = "div.pointClubHeader__login a[href='/login']";
       if (this.isMob) seleLoginLink = "li.item__column a[href='https://lifemedia.jp/login']";
       if (await this.isExistEle(seleLoginLink, true, 2000)) {
         logger.debug(11102);
