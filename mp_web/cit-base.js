@@ -151,6 +151,21 @@ class CitMissonSupper extends BaseWebDriverWrapper {
             await this.driver.switchTo().defaultContent();
           }
         }
+      } else if (["#pfx_interstitial_close"].indexOf(s) > -1) {
+        let iSele = ["iframe.profitx-ad-frame-markup"];
+        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+          let iframe = await this.getEles(iSele[0], 1000);
+          if (await iframe[0].isDisplayed()) {
+            await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+            let isExists = await this.silentIsExistEle(s, true, 1000);
+            // もとのフレームに戻す
+            await this.driver.switchTo().defaultContent();
+            if (isExists) await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`);
+            else if (await this.silentIsExistEle(s, true, 3000)) {
+              await this.exeScriptNoTimeOut(`document.querySelector("${s}").click()`);
+            } 
+          }
+        }
       } else if (await this.isExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
         // if (s == seleOver[0]) {
@@ -190,6 +205,15 @@ class CitMissonSupper extends BaseWebDriverWrapper {
         }
       }
     }
+  }
+  /** mobileで画面上に下にスライドすると出っ張る広告回避用にずらし値をwrap
+   * 
+   * @param {*} el 
+   * @param {*} mtime 
+   * @param {*} top 
+   */
+  async clickEle(el, mtime, top = 0) {
+    await super.clickEle(el, mtime, this.isMob ? top + 200 : top);
   }
 }
 // このサイトの共通処理クラス
