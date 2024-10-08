@@ -74,7 +74,7 @@ class RakuMissonSupper extends BaseWebDriverWrapper {
   async hideOverlay() {
     let seleOver = ["div.overlay-item a.button-close", "img[src*='close-interstitial']"];
     for (var sele of seleOver) {
-      if (await this.isExistEle(sele, true, 3000)) {
+      if (await this.silentIsExistEle(sele, true, 3000)) {
         let ele = await this.getEle(sele, 2000);
         if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
@@ -84,15 +84,15 @@ class RakuMissonSupper extends BaseWebDriverWrapper {
   }
   async hideOverlay2() {
     let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']", "#dismiss-button", "[aria-label='Close ad']>img"];
-    if (await this.isExistEle(sele[0], true, 4000)) {
+    if (await this.silentIsExistEle(sele[0], true, 4000)) {
       let ele = await this.getEle(sele[0], 1000);
       await this.clickEle(ele, 1000);
-      if (await this.isExistEle(sele[1], true, 2000)) {
+      if (await this.silentIsExistEle(sele[1], true, 2000)) {
         await this.sleep(15000);
         let iframe = await this.getEles(sele[1], 1000);
         await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
         for (let sele2 of [sele[2], sele[3]]) {
-          if (await this.isExistEle(sele2, true, 2000)) {
+          if (await this.silentIsExistEle(sele2, true, 2000)) {
             let inputEle = await this.getEle(sele2, 1000);
             // if (await inputEle.isDisplayed()) {
             await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);

@@ -215,7 +215,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
         }
-      } else if (await this.isExistEle(s, true, 1000)) {
+      } else if (await this.silentIsExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
         // if (s == seleOver[0]) {
         //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);

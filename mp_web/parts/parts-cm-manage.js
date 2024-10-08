@@ -142,7 +142,7 @@ class PartsCmManage extends BaseExecuter {
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
-        if (await this.isExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
           await this.driver.executeScript(`document.querySelector("${iSele[0]}").remove();`);
           // let iframe = await this.getEles(iSele[0], 1000);
           // await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
@@ -153,7 +153,7 @@ class PartsCmManage extends BaseExecuter {
           // // もとのフレームに戻す
           // await this.driver.switchTo().defaultContent();
         }
-      } else if (await this.isExistEle(s, true, 3000)) {
+      } else if (await this.silentIsExistEle(s, true, 3000)) {
         let ele = await this.getEle(s, 2000);
         if ((await ele.isDisplayed()) || (this.isMob && s == "#pfx_interstitial_close")) {
           if (["div.overlay-item a.button-close", "#pfx_interstitial_close"].indexOf(seleOver[0]) > -1) {
@@ -185,7 +185,7 @@ class CmSuper extends BaseWebDriverWrapper {
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
-        if (await this.isExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
           await this.driver.executeScript(`document.querySelector("${iSele[0]}").remove();`);
           // let iframe = await this.getEles(iSele[0], 1000);
           // await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
@@ -211,7 +211,7 @@ class CmSuper extends BaseWebDriverWrapper {
             } 
           }
         }
-      } else if (await this.isExistEle(s, true, 3000)) {
+      } else if (await this.silentIsExistEle(s, true, 3000)) {
         let ele = await this.getEle(s, 2000);
         if ((await ele.isDisplayed()) || (this.isMob && s == "#pfx_interstitial_close")) {
           if (["div.overlay-item a.button-close", "#pfx_interstitial_close"].indexOf(seleOver[0]) > -1) {

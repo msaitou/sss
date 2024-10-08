@@ -108,7 +108,7 @@ class PtoMissonSupper extends BaseWebDriverWrapper {
     for (let s of seleOver) {
       if (["#dismiss-button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='Advertisement']"];
-        if (await this.isExistEle(iSele[0], true, 1000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 1000)) {
           let iframe = await this.getEles(iSele[0], 1000);
           await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
           let inputEle = await this.getEle(s, 1000);
@@ -133,7 +133,7 @@ class PtoMissonSupper extends BaseWebDriverWrapper {
             } 
           }
         }
-      } else if (await this.isExistEle(s, true, 1000)) {
+      } else if (await this.silentIsExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
         if (await ele.isDisplayed()) {
           if (!this.isMob) {
@@ -148,14 +148,14 @@ class PtoMissonSupper extends BaseWebDriverWrapper {
   async hideOverlay2() {
     let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']"];
     let closeSe = ["[aria-label='Close ad']", "#dismiss-button"]
-    if (await this.isExistEle(sele[0], true, 4000)) {
+    if (await this.silentIsExistEle(sele[0], true, 4000)) {
       let ele = await this.getEle(sele[0], 1000);
       await this.clickEle(ele, 1000);
-      if (await this.isExistEle(sele[1], true, 2000)) {
+      if (await this.silentIsExistEle(sele[1], true, 2000)) {
         let iframe = await this.getEles(sele[1], 1000);
         await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
         for (let cSe of closeSe) {
-          if (await this.isExistEle(cSe, true, 2000)) {
+          if (await this.silentIsExistEle(cSe, true, 2000)) {
             let inputEle = await this.getEle(cSe, 10000);
             await this.sleep(5000);
             // await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
@@ -170,10 +170,10 @@ class PtoMissonSupper extends BaseWebDriverWrapper {
   async hideOverlay3() {
     let sele = ["body>div>iframe[title='GMOSSP iframe']"];
     let closeSe = ["a.gmoyda.gmoam_close_button"];
-    if (await this.isExistEle(sele[0], true, 4000)) {
+    if (await this.silentIsExistEle(sele[0], true, 4000)) {
       let iframe = await this.getEles(sele[0], 1000);
       await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
-      if (await this.isExistEle(closeSe[0], true, 2000)) {
+      if (await this.silentIsExistEle(closeSe[0], true, 2000)) {
         let el = await this.getEle(closeSe[0], 1000);
         // await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
         await this.clickEle(el, 1000);

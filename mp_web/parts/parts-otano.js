@@ -147,7 +147,7 @@ class PartsOtano extends BaseWebDriverWrapper {
   }
   async hideOverlay() {
     let seleOver = ["div.overlay-item a.button-close"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
+    if (await this.silentIsExistEle(seleOver[0], true, 3000)) {
       let ele = await this.getEle(seleOver[0], 2000);
       if (await ele.isDisplayed()) {
         await this.clickEle(ele, 2000);
@@ -156,10 +156,10 @@ class PartsOtano extends BaseWebDriverWrapper {
   }
   async hideOverlay2() {
     let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']", "#dismiss-button"];
-    if (await this.isExistEle(sele[0], true, 4000)) {
+    if (await this.silentIsExistEle(sele[0], true, 4000)) {
       let ele = await this.getEle(sele[0], 1000);
       await this.clickEle(ele, 1000);
-      if (await this.isExistEle(sele[1], true, 2000)) {
+      if (await this.silentIsExistEle(sele[1], true, 2000)) {
         let iframe = await this.getEles(sele[1], 1000);
         await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
         let inputEle = await this.getEle(sele[2], 1000);

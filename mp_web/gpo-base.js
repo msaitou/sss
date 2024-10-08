@@ -162,7 +162,7 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
           }
         }
       } else 
-      if (await this.isExistEle(s, true, 2000)) {
+      if (await this.silentIsExistEle(s, true, 2000)) {
         let ele = await this.getEle(s, 1000);
         if (s == sele0[1]) {
           await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);

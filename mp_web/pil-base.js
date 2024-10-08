@@ -84,7 +84,7 @@ class PilMissonSupper extends BaseWebDriverWrapper {
   }
   async hideOverlay() {
     let seleOver = ["div.overlay-item a.button-close"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
+    if (await this.silentIsExistEle(seleOver[0], true, 3000)) {
       let ele = await this.getEle(seleOver[0], 2000);
       if (await ele.isDisplayed()) {
         await this.clickEle(ele, 2000);
@@ -97,13 +97,13 @@ class PilMissonSupper extends BaseWebDriverWrapper {
       "div.fc-dialog-content button.fc-chip",
       "button.fc-user-interests-save-button",
     ];
-    if (await this.isExistEle(sele[0], true, 4000)) {
+    if (await this.silentIsExistEle(sele[0], true, 4000)) {
       let ele = await this.getEle(sele[0], 1000);
       await this.clickEle(ele, 1000);
-      if (await this.isExistEle(sele[1], true, 2000)) {
+      if (await this.silentIsExistEle(sele[1], true, 2000)) {
         let eles = await this.getEles(sele[1], 1000);
         await this.clickEle(eles[libUtil.getRandomInt(0, eles.length)], 1000);
-        if (await this.isExistEle(sele[2], true, 2000)) {
+        if (await this.silentIsExistEle(sele[2], true, 2000)) {
           let ele = await this.getEle(sele[2], 1000);
           await this.clickEle(ele, 1000);
         }

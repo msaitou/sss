@@ -125,7 +125,7 @@ class PicMissonSupper extends BaseWebDriverWrapper {
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
-        if (await this.isExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
           let iframe = await this.getEles(iSele[0], 1000);
           await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
           let inputEle = await this.getEle(s, 1000);
@@ -135,7 +135,7 @@ class PicMissonSupper extends BaseWebDriverWrapper {
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
         }
-      } else if (await this.isExistEle(s, true, 3000)) {
+      } else if (await this.silentIsExistEle(s, true, 3000)) {
         let ele = await this.getEle(s, 2000);
         if (s == seleOver[0]) {
           await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);

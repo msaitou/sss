@@ -141,7 +141,7 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
-        if (await this.isExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
           let iframe = await this.getEles(iSele[0], 1000);
           await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
           let inputEle = await this.getEle(s, 1000);

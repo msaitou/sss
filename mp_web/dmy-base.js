@@ -70,7 +70,7 @@ class DmyMissonSupper extends BaseWebDriverWrapper {
   }
   async hideOverlay() {
     let seleOver = ["div.mall-popup-close>img"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
+    if (await this.silentIsExistEle(seleOver[0], true, 3000)) {
       let ele = await this.getEle(seleOver[0], 2000);
       if (await ele.isDisplayed()) {
         await this.clickEle(ele, 2000);
