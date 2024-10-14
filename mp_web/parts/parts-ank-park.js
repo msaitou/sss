@@ -606,8 +606,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         }
       }
       try {
-        await this.commonMobAnk(sele, "doColum");
-        res = D.STATUS.DONE;
+        res = await this.commonMobAnk(sele, "doColum");
       } catch (e) {
         logger.warn(e);
       }
@@ -1159,6 +1158,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           let ele = await this.getEle(sele[5], 3000);
           await this.hideOverlay();
           await this.clickEle(ele, 1000, 250, siteInfo.code == D.CODE.LFM);
+          return D.STATUS.DONE;
         }
       }
     } else {

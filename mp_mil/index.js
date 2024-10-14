@@ -69,7 +69,7 @@ class PointMailClass extends BaseWebDriverWrapper {
         this.logger.debug("1");
         let url = uniqueUrls[i];
         try {
-          if (!this.driver) {
+          if (!this.driver || site===D.CODE.PST) {
             this.driver = await this.webDriver(false, conf.chrome.headless);
           }
           this.logger.info(`${Number(i) + 1}/${uniqueUrls.length}`, url);
@@ -111,7 +111,8 @@ class PointMailClass extends BaseWebDriverWrapper {
               await this.driver.sleep(120000); // 2分待ってみる
             } else if ([D.CODE.PST, D.CODE.PIL]) {
               // ポイント獲得ボタンをクリック
-              let sele = ["[name='getpoint']"];
+              let sele = ["[name='btngetpoint']"];
+              // let sele = ["[name='getpoint']"];
               await this.hideOverlay2();
               if (site === D.CODE.PIL) {
                 if (await this.isExistEle(sele[0], true, 2000)) {
