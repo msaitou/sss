@@ -130,9 +130,18 @@ class GmyMissonSupper extends BaseWebDriverWrapper {
     let iSele = {
       "a.gmoam_close_button": "iframe[title='GMOSSP iframe']",
       "div.close-button": "ins iframe[title='3rd party ad content']",
+      "#pfx_interstitial_close": "iframe.profitx-ad-frame-markup"
     };
     for (let s of seleOver) {
-      if (iSele[s]) {
+      if (await this.silentIsExistEle(s, true, 1000)) {
+        let ele = await this.getEle(s, 1000);
+        // if (s == seleOver[0]) {
+        //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        // } else
+        if (await ele.isDisplayed()) {
+          await this.clickEle(ele, 1000);
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      } else if (iSele[s]) {
         if (await this.silentIsExistEle(iSele[s], true, 1000)) {
           let iframe = await this.getEles(iSele[s], 1000);
           if (await iframe[0].isDisplayed()) {
@@ -145,14 +154,6 @@ class GmyMissonSupper extends BaseWebDriverWrapper {
             await this.driver.switchTo().defaultContent();
           }
         }
-      } else if (await this.silentIsExistEle(s, true, 1000)) {
-        let ele = await this.getEle(s, 1000);
-        // if (s == seleOver[0]) {
-        //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
-        // } else
-        if (await ele.isDisplayed()) {
-          await this.clickEle(ele, 1000);
-        } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
     await this.hideOverlay22();
