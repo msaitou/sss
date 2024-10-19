@@ -52,7 +52,7 @@ class PointMailClass extends BaseWebDriverWrapper {
     await search(db, this.logger, urlMap);
     this.logger.info("抽出したURLを開くを始めます");
 
-    let loginSiteList = [D.CODE.RAKU, "rin"];
+    let loginSiteList = [D.CODE.RAKU, "rin", D.CODE.MOP, D.CODE.AME];
     let aca = await db("config", "findOne", { type: "login" });
     for (let site in urlMap) {
       let loginCls = null;
@@ -69,9 +69,8 @@ class PointMailClass extends BaseWebDriverWrapper {
         this.logger.debug("1");
         let url = uniqueUrls[i];
         try {
-          if (!this.driver || site===D.CODE.PST) {
-            this.driver = await this.webDriver(false, conf.chrome.headless);
-          }
+          if (!this.driver) 
+            this.driver = await this.webDriver([D.CODE.PST, D.CODE.PIL].includes(site), conf.chrome.headless);
           this.logger.info(`${Number(i) + 1}/${uniqueUrls.length}`, url);
           if (!isLoginNow && loginSiteList.indexOf(site) !== -1) {
             // ログインが必要そうなサイトだけログイン
@@ -109,53 +108,75 @@ class PointMailClass extends BaseWebDriverWrapper {
             if (site === D.CODE.CRI) {
               this.logger.info("２分待ってみる");
               await this.driver.sleep(120000); // 2分待ってみる
-            } else if ([D.CODE.PST, D.CODE.PIL]) {
+            } else if ([D.CODE.PST, D.CODE.PIL].includes(site)) {
               // ポイント獲得ボタンをクリック
               let sele = ["[name='btngetpoint']"];
               // let sele = ["[name='getpoint']"];
               await this.hideOverlay2();
               if (site === D.CODE.PIL) {
+                sele = [
+                  "p.adv_site_ct_btn",
+                ];
                 if (await this.isExistEle(sele[0], true, 2000)) {
                   let ele = await this.getEle(sele[0], 0,2000);
                   await this.clickEle(ele, 1000);
                   await this.closeOtherWindow(this.driver);
                 }
               } else if (site === D.CODE.PST) {
-                sele = [
-                  "img[hsrc*='bt_cert_01_o.gif']",
-                  "img[src*='_close_']",
-                  "li>input[type='radio']",
-                  "input[type='submit']", // 3
-                  "input[type='button']"
-                ];
-                if (await this.isExistEle(sele[4], true, 2000)) {
-                  let ele = await this.getEle(sele[4], 2000);
-                  await this.clickEle(ele, 1000);
-                  if (await this.isExistEle(sele[1], true, 2000)) {
-                    let ele = await this.getEle(sele[1], 2000);
+                if (false) {  // 必要？
+                  sele = [
+                    "img[hsrc*='bt_cert_01_o.gif']",
+                    "img[src*='_close_']",
+                    "li>input[type='radio']",
+                    "input[type='submit']", // 3
+                    "input[type='button']"
+                  ];
+                  if (await this.isExistEle(sele[4], true, 2000)) {
+                    let ele = await this.getEle(sele[4], 2000);
                     await this.clickEle(ele, 1000);
-                    for (let i = 0; i < 10; i++) {
-                      if (await this.isExistEle(sele[2], true, 2000)) {
-                        let eles = await this.getEles(sele[2], 2000);
-                        let choiceNum = libUtil.getRandomInt(0, eles.length - 2); // 最後は否定的な選択肢なので選ばないのがいい
-                        await this.clickEle(eles[choiceNum], 1000);
-                        if (await this.isExistEle(sele[3], true, 2000)) {
-                          let ele = await this.getEle(sele[3], 2000);
-                          await this.clickEle(ele, 1000);
+                    if (await this.isExistEle(sele[1], true, 2000)) {
+                      let ele = await this.getEle(sele[1], 2000);
+                      await this.clickEle(ele, 1000);
+                      for (let i = 0; i < 10; i++) {
+                        if (await this.isExistEle(sele[2], true, 2000)) {
+                          let eles = await this.getEles(sele[2], 2000);
+                          let choiceNum = libUtil.getRandomInt(0, eles.length - 2); // 最後は否定的な選択肢なので選ばないのがいい
+                          await this.clickEle(eles[choiceNum], 1000);
+                          if (await this.isExistEle(sele[3], true, 2000)) {
+                            let ele = await this.getEle(sele[3], 2000);
+                            await this.clickEle(ele, 1000);
+                          }
                         }
                       }
-                    }
-                    if (await this.isExistEle(sele[3], true, 2000)) {
-                      let ele = await this.getEle(sele[3], 2000);
-                      await this.clickEle(ele, 1000);
+                      if (await this.isExistEle(sele[3], true, 2000)) {
+                        let ele = await this.getEle(sele[3], 2000);
+                        await this.clickEle(ele, 1000);
+                      }
                     }
                   }
+                  else if (await this.isExistEle(sele[0], true, 2000)) {
+                    let ele = await this.getEle(sele[0], 2000);
+                    await this.clickEle(ele, 1000);
+                    await this.closeOtherWindow(this.driver);
+                  }
                 }
-                else if (await this.isExistEle(sele[0], true, 2000)) {
-                  let ele = await this.getEle(sele[0], 2000);
-                  await this.clickEle(ele, 1000);
-                  await this.closeOtherWindow(this.driver);
+                else {
+                  sele = [
+                    "p.adv_site_ct_btn",
+                  ];
+                  if (await this.isExistEle(sele[0], true, 2000)) {
+                    let ele = await this.getEle(sele[0], 2000);
+                    await this.clickEle(ele, 1000);
+                    await this.closeOtherWindow(this.driver);
+                  }
                 }
+              }
+            } else if ([D.CODE.AME].includes(site)) {
+              let sele = ["#sub_redirect_button_confirmed1"];
+              await this.hideOverlay2();
+              if (await this.isExistEle(sele[0], true, 2000)) {
+                let ele = await this.getEle(sele[0], 2000);
+                await this.clickEle(ele, 1000);
               }
             }
           } else {

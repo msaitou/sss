@@ -20,7 +20,7 @@ const labelmap = {
   pic: { dir: "p/pointincome", key: "クリック" },
   cri: { dir: "p/chobi", key: "おみくじ付き" },
   ecn: { dir: "p/ECナビ", key: "" }, // webdriver起動中にログインしないと記憶してくれないポイ
-  i2i: { dir: "p/i2iポイント", key: "pt付" },
+  ame: { dir: "p/i2iポイント", key: "pt付" },
   pto: { dir: "p/ポイントタウン", key: "" },
   mop: { dir: "p/モッピー", key: "付" },
 
@@ -337,7 +337,9 @@ function getPointUrls(urlMap, target, content, cType) {
         break;
       case D.CODE.PST:
         signs = ["/mclick.asp?", "/meqk.asp?pid="];
-        if (row.indexOf(signs[1]) > -1) {
+        // https://www.point-stadium.com/mclick.asp?pid=clonecopyfake&i=2400270&a=s22548
+        // if (row.indexOf(signs[0]) > -1 || row.indexOf(signs[1]) > -1) {
+        if (signs.filter((s) => row.indexOf(s) > -1).length) {
           let url = "";
           // text/plain　前提
           url = row.substring(row.indexOf("http"));
@@ -366,9 +368,9 @@ function getPointUrls(urlMap, target, content, cType) {
           }
         }
         break;
-      case D.CODE.I2I:
+      case D.CODE.AME:
         // https://point.i2i.jp/click/M9sdyWbq
-        signs = ["https://point.i2i.jp/click/"];
+        signs = ["https://www.amefri.net/click/"];
         if (row.indexOf(signs[0]) > -1) {
           let url = "";
           // text/plain　前提
@@ -405,7 +407,7 @@ function getPointUrls(urlMap, target, content, cType) {
         break;
       case D.CODE.MOP:
         // https://pc.moppy.jp/clc/?clc_tag=LP33116563YToxOntpOjA7czo4OiIxMTE0NjYzMiI7fQ==
-        signs = ["https://pc.moppy.jp/clc/?clc_tag="];
+        signs = ["https://pc.moppy.jp/cc/c?t="];
         if (row.indexOf(signs[0]) > -1) {
           let url = "";
           // text/plain　前提
