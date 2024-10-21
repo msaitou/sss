@@ -123,6 +123,7 @@ class GenMissonSupper extends BaseWebDriverWrapper {
       "a.gmoam_close_button",
     ];
     let iSele = {
+      "#pfx_interstitial_close": "iframe.profitx-ad-frame-markup",
       "a.gmoam_close_button": "iframe[title='GMOSSP iframe']",
       "div.close-button": "ins iframe[title='3rd party ad content']",
     };
