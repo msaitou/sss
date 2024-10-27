@@ -318,21 +318,21 @@ class MopGacha extends MopMissonSupper {
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
-      await this.clickEle(ele, 2000);
+      await this.clickEle(ele, 1000, 200);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       if (await this.isExistEle(sele[1], true, 2000)) {
         await this.hideOverlay();
         ele = await this.getEle(sele[1], 2000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 1000, 200);
         if (await this.isExistEle(sele[2], true, 2000)) {
           await this.hideOverlay();
           ele = await this.getEle(sele[2], 2000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 1000, 200);
           if (await this.isExistEle(sele[4], true, 2000)) {
             await this.hideOverlay();
             ele = await this.getEle(sele[4], 2000);
-            await this.clickEle(ele, 2000);
+            await this.clickEle(ele, 1000, 200);
             await this.closeOtherWindow(driver);
             res = D.STATUS.DONE;
           }
@@ -637,7 +637,7 @@ class MopCm extends MopMissonSupper {
     let sele = ["a[data-ga-label='CMくじ']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
-      await this.clickEle(eles[0], 2000);
+      await this.clickEle(eles[0], 1000, 200);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       let cmManage = new PartsCmManage(this.para, this.cmMissionList, "https://moppy.cmnw.jp/game/");
