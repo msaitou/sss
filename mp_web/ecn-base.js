@@ -315,10 +315,12 @@ class EcnNewsWatch extends EcnMissonSupper {
                 let eles1 = await this.getEles(sele[1], 2000);
                 // ランダムで。
                 let choiceNum = libUtil.getRandomInt(0, eles1.length);
+                await this.hideOverlay2();
                 // クリック場所へスクロールが必要（画面に表示しないとだめぽい）
                 await this.clickEle(eles1[choiceNum], 2000); // 同一ページを切り替えてます
                 cnt++;
                 if (await this.isExistEle(sele[2], true, 2000)) {
+                  await this.hideOverlay2();
                   ele = await this.getEle(sele[2], 2000);
                   await this.clickEle(ele, 2000); // newsのトップページへ戻る
                   await this.ignoreKoukoku();

@@ -201,7 +201,9 @@ class PartsFurufuru extends BaseWebDriverWrapper {
     //     } else this.logger.debug("オーバーレイは表示されてないです");
     //   }
     // }
-    let seleOver = ["#gn_ydn_interstitial_btn", "div.overlay-item a.button-close","#svg_close", "#pfx_interstitial_close",  ];
+    let seleOver = ["#gn_ydn_interstitial_btn", "div.overlay-item a.button-close","#svg_close", "#pfx_interstitial_close",
+      "#gn_interstitial_close"
+      ];
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];

@@ -1050,7 +1050,7 @@ class MopKanji extends MopMissonSupper {
       ];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 200);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(3);
