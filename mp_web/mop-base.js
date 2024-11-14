@@ -396,7 +396,7 @@ class MopEitango extends MopMissonSupper {
       ];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 200);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(6);
@@ -472,7 +472,7 @@ class MopNanyoubi extends MopMissonSupper {
       ];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 200);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
@@ -556,7 +556,7 @@ class MopAnzan extends MopMissonSupper {
       ];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 200);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         await this.hideOverlay(); // オーバレイあり。消す
@@ -722,7 +722,7 @@ class MopAnqPark extends MopMissonSupper {
     ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele0, 3000);
+      await this.clickEle(ele0, 3000, 200);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       try {
@@ -816,7 +816,7 @@ class MopResearch1 extends MopMissonSupper {
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele, 2000);
+      await this.clickEle(ele, 2000, 200);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       let Research1 = new PartsResearch1(this.para);
