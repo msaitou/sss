@@ -201,7 +201,8 @@ class PartsFurufuru extends BaseWebDriverWrapper {
     //     } else this.logger.debug("オーバーレイは表示されてないです");
     //   }
     // }
-    let seleOver = ["#gn_ydn_interstitial_btn", "div.overlay-item a.button-close","#svg_close", "#pfx_interstitial_close",
+    let seleOver = ["#pfx_interstitial_close",
+      "#gn_ydn_interstitial_btn", "div.overlay-item a.button-close","#svg_close", 
       "#gn_interstitial_close"
       ];
     for (let s of seleOver) {
@@ -222,7 +223,9 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         // if (s == seleOver[0]) {
         //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
         // } else 
-        if (await ele.isDisplayed()) {
+        if (s == seleOver[0]) {
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        } else if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
