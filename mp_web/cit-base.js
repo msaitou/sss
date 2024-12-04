@@ -358,7 +358,7 @@ class CitReadDog extends CitMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
-    let sele = ["img[src*='ban_dog.gif']"];
+    let sele = ["img[src*='ban_dog']"];
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
@@ -386,7 +386,7 @@ class CitReadCat extends CitMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
-    let sele = ["img[src*='ban_cat.gif']"];
+    let sele = ["img[src*='ban_cat']"];
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
@@ -414,7 +414,7 @@ class CitReadThank extends CitMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
-    let sele = ["img[src*='ban_39mag.gif']"];
+    let sele = ["img[src*='ban_39mag']"];
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
@@ -442,7 +442,7 @@ class CitReadIchi extends CitMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
-    let sele = ["img[src*='ban_ichioshi.gif']"];
+    let sele = ["img[src*='ban_ichioshi']"];
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
@@ -471,10 +471,10 @@ class CitReadEGLR extends CitMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let se = {
-      [D.MISSION.READ_ENTAME]: "img[src*='entame_ranking.png']",
-      [D.MISSION.READ_GEINOU]: "img[src*='entertainer_ranking.png']",
-      [D.MISSION.READ_LIFE]: "img[src*='lifestyle_ranking.png']",
-      [D.MISSION.READ_RENSOU]: "img[src*='aiquiz.png']",
+      [D.MISSION.READ_ENTAME]: "img[src*='entame_ranking']",
+      [D.MISSION.READ_GEINOU]: "img[src*='entertainer_ranking']",
+      [D.MISSION.READ_LIFE]: "img[src*='lifestyle_ranking']",
+      [D.MISSION.READ_RENSOU]: "img[src*='aiquiz']",
     };
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(se[this.main], true, 2000)) {
