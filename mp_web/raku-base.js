@@ -72,7 +72,7 @@ class RakuMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close", "img[src*='close-interstitial']"];
+    let seleOver = ["div.overlay-item a.button-close", "img[src*='close-interstitial']", "div.modal-close-btn-reverse"];
     for (var sele of seleOver) {
       if (await this.silentIsExistEle(sele, true, 3000)) {
         let ele = await this.getEle(sele, 2000);
@@ -117,6 +117,26 @@ class RakuCommon extends RakuMissonSupper {
     await driver.get(siteInfo.entry_url); // エントリーページ表示
     let seleIsLoggedIn = "#rakutenSuperPoints";
     logger.debug(11100);
+    let seleInput = { id: "#u", pass: "#password_current", login: "div#cta011" };
+    let seleInput2 = {
+      id: "#user_id",
+      pass: "#password_current",
+      login1: "#cta001",
+      login2: "#cta011",
+      birth: "#loginInner_birthday",
+    };
+    async function passLogin(self) {
+      if (await self.isExistEle(seleInput2.pass, true, 2000)) {
+        let inputEle = await self.getEle(seleInput2.pass, 500);
+        await inputEle.clear();
+        await inputEle.sendKeys(account[self.code].loginpass);
+        if (await self.isExistEle(seleInput2.login2, true, 2000)) {
+          let ele = await self.getEle(seleInput2.login2, 1000);
+          await self.clickEle(ele, 3000); // ログインボタン押下
+        } else logger.info("ログインできませんでした4");
+      } else logger.info("ログインできませんでした5");
+    }
+
     // #region furui
     // ログインしてるかチェック(ログインの印がないことを確認)
     // if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
@@ -172,21 +192,16 @@ class RakuCommon extends RakuMissonSupper {
     // #endregion
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
-      let seleInput = { id: "#u", pass: "#password_current", login: "div#cta011" };
-      let seleInput2 = {
-        id: "#loginInner_u",
-        pass: "#loginInner_p",
-        login: 'input[type="submit"]',
-        birth: "#loginInner_birthday",
-      };
-      if (await this.isExistEle(seleInput.pass, true, 2000)) {
-        let inputEle = await this.getEle(seleInput.pass, 500);
+      if (await this.isExistEle(seleInput2.id, true, 4000)) {
+        let inputEle = await this.getEle(seleInput2.id, 500);
         await inputEle.clear();
-        await inputEle.sendKeys(account[this.code].loginpass);
-        if (await this.isExistEle(seleInput.login, true, 2000)) {
-          let ele = await this.getEle(seleInput.login, 1000);
+        await inputEle.sendKeys(account[this.code].loginid);
+        if (await this.isExistEle(seleInput2.login1, true, 2000)) {
+          let ele = await this.getEle(seleInput2.login1, 1000);
           await this.clickEle(ele, 3000); // ログインボタン押下
+          await passLogin(this);
         } else {
+          logger.info("ログインできませんでした2");
           // 未ログインで、ログインボタンが見つかりません。
           return;
         }
@@ -202,7 +217,35 @@ class RakuCommon extends RakuMissonSupper {
           });
           return;
         }
+      } else {
+        logger.info("user_idがスキップ？");
+        await passLogin(this);
       }
+
+      // if (await this.isExistEle(seleInput.pass, true, 2000)) {
+      //   let inputEle = await this.getEle(seleInput.pass, 500);
+      //   await inputEle.clear();
+      //   await inputEle.sendKeys(account[this.code].loginpass);
+      //   if (await this.isExistEle(seleInput.login, true, 2000)) {
+      //     let ele = await this.getEle(seleInput.login, 1000);
+      //     await this.clickEle(ele, 3000); // ログインボタン押下
+      //   } else {
+      //     // 未ログインで、ログインボタンが見つかりません。
+      //     return;
+      //   }
+      //   // ログインできてるか、チェック
+      //   if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
+      //     logger.info("ログインできました！");
+      //     return true;
+      //   } else {
+      //     logger.info("ログインできませんでした");
+      //     await mailOpe.send(logger, {
+      //       subject: `ログインできません[${this.code}] `,
+      //       contents: `なぜか ${this.code} にログインできません`,
+      //     });
+      //     return;
+      //   }
+      // }
     } else logger.debug("ログイン中なのでログインしません");
     return true;
   }
@@ -356,6 +399,7 @@ class RakuNews extends RakuMissonSupper {
     try {
       var cnt = 0;
       for (let cSele of cSeleList) {
+        await this.hideOverlay();
         while (true) {
           let scSele = `a[href='${cSele}']`;
           if (await this.isExistEle(scSele, true, 2000)) {
