@@ -143,7 +143,9 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay(seleStr) {
-    let sele0 = ["#modal20th .btn_close>img", "#gn_ydn_interstitial_btn","#pfx_interstitial_close"];
+    let sele0 = ["#modal20th .btn_close>img", "#gn_ydn_interstitial_btn","#pfx_interstitial_close",
+      "#gn_interstitial_outer_area"
+    ];
     if (seleStr) sele0 = [seleStr, ""];
     for (let s of sele0) {
       if (["#pfx_interstitial_close"].indexOf(s) > -1) {
@@ -164,7 +166,9 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
       } else 
       if (await this.silentIsExistEle(s, true, 2000)) {
         let ele = await this.getEle(s, 1000);
-        if (s == sele0[1]) {
+        if (s == "#gn_interstitial_outer_area") {
+          await this.exeScriptNoTimeOut(`for (let t of document.querySelectorAll("#gn_interstitial_outer_area")){t.remove();}`);
+        } else if (s == sele0[1]) {
           await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
         } else if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);

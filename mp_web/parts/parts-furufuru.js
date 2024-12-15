@@ -203,7 +203,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
     // }
     let seleOver = ["#pfx_interstitial_close",
       "#gn_ydn_interstitial_btn", "div.overlay-item a.button-close","#svg_close", 
-      "#gn_interstitial_close"
+      "#gn_interstitial_close", "#gn_interstitial_outer_area"
       ];
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
@@ -220,10 +220,9 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         }
       } else if (await this.silentIsExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
-        // if (s == seleOver[0]) {
-        //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
-        // } else 
-        if (s == seleOver[0]) {
+        if (s == "#gn_interstitial_outer_area") {
+          await this.exeScriptNoTimeOut(`for (let t of document.querySelectorAll("#gn_interstitial_outer_area")){t.remove();}`);
+        } else if (s == seleOver[0]) {
           await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
         } else if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
