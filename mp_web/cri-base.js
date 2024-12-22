@@ -115,7 +115,9 @@ class CriMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["#pfx_interstitial_close", "div.overlay-item a.button-close", "#gn_ydn_interstitial_btn", "div.close", "#close", "#interClose"];
+    let seleOver = ["#pfx_interstitial_close", 
+      "div.overlay-item a.button-close", "#gn_ydn_interstitial_btn", 
+      "div.close", "#close", "#interClose"];
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
@@ -128,6 +130,26 @@ class CriMissonSupper extends BaseWebDriverWrapper {
           } else this.logger.debug("オーバーレイは表示されてないです");
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
+        }
+      } else if (["#pfx_interstitial_close"].indexOf(s) > -1) {
+        let iSele = ["iframe.profitx-ad-frame-markup"];
+        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+          let iframe = await this.getEles(iSele[0], 1000);
+          if (await iframe[0].isDisplayed()) {
+            await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+            let isExists = await this.silentIsExistEle(s, true, 1000);
+            // もとのフレームに戻す
+            await this.driver.switchTo().defaultContent();
+            if (isExists) await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`);
+            else if (await this.silentIsExistEle(s, true, 3000)) {
+              await this.exeScriptNoTimeOut(`document.querySelector("${s}").click()`);
+            } 
+          }
+        }else if (await this.silentIsExistEle(s, true, 1000)) {
+          let ele = await this.getEle(s, 1000);
+          if (await ele.isDisplayed()) {
+            await this.clickEle(ele, 1000);
+          } else this.logger.debug("オーバーレイは表示されてないです");
         }
       } else if (await this.silentIsExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
@@ -665,7 +687,6 @@ class CriAnqPark extends CriMissonSupper {
       await this.clickEle(ele0, 3000, 100);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
-      await this.hideOverlay();
       try {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let eles = await this.getEles(sele[1], 3000);
@@ -673,6 +694,7 @@ class CriAnqPark extends CriMissonSupper {
           for (let i = 0; i < limit; i++) {
             if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
               eles = await this.getEles(sele[1], 3000);
+            await this.hideOverlay();
             let text = await eles[eles.length - 1].getText();
             text = text.split("\n").join("").split("\n").join("");
             if (await this.isExistEle(sele[2], true, 2000)) {
