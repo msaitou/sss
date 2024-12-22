@@ -784,6 +784,7 @@ class CmColum extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       let sele = [".o-content__boxlist img[src*='colum']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
@@ -832,6 +833,7 @@ class CmPhoto extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       let sele = [".o-content__boxlist img[src*='photo']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
@@ -880,6 +882,7 @@ class CmSite extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       let sele = [".o-content__boxlist img[src*='observation']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
@@ -928,6 +931,7 @@ class CmZukan extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       let sele = [".o-content__boxlist img[src*='zoo']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
@@ -976,6 +980,7 @@ class CmJapan extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       let sele = [".o-content__boxlist img[src*='japan']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
@@ -1024,6 +1029,7 @@ class CmCook extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       let sele = [".o-content__boxlist img[src*='food']", "div.status>a:not(.answered)"];
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);

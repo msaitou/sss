@@ -119,7 +119,7 @@ class GenMissonSupper extends BaseWebDriverWrapper {
       "#close_btn>span",
       "#gn_ydn_interstitial_btn",
       ,
-      "div.close-button",
+      ".custom-modal.show-modal.modal-show div.close-button",
       "a.gmoam_close_button",
     ];
     let iSele = {
@@ -169,6 +169,7 @@ class GenCommon extends GenMissonSupper {
       startPage = "https://www.gendama.jp/sp";
     }
     await driver.get(startPage); // エントリーページ表示
+    await this.hideOverlay();
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
