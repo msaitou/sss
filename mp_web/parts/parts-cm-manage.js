@@ -179,6 +179,7 @@ class CmSuper extends BaseWebDriverWrapper {
     let seleOver = [
       "#pfx_interstitial_close",
       // "#inter-close",
+      "a.gmoyda.gmoam_close_button",
       "a.gmoam_close_button",
       // "div.overlay-item a.button-close"
     ];
@@ -187,7 +188,10 @@ class CmSuper extends BaseWebDriverWrapper {
         let iSele = ["iframe[title='GMOSSP iframe']"];
         if (await this.silentIsExistEle(iSele[0], true, 3000)) {
           await this.driver.executeScript(`document.querySelector("${iSele[0]}").remove();`);
-          // let iframe = await this.getEles(iSele[0], 1000);
+          await this.driver.executeScript(
+            `document.querySelector('body').setAttribute('style', 'position: initial;');`
+          );
+          // let iframe = await this.getEles(iSele[0], 1000);position: fixed; 
           // await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
           // let inputEle = await this.getEle(s, 1000);
           // if (await inputEle.isDisplayed()) {
@@ -238,6 +242,7 @@ class CmDotti extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       let sele = [
         "img[src*='dotti2_pc']",
         "p.btn_pink>a",
@@ -388,6 +393,7 @@ class CmKentei extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       let sele = [
         "img[src*='gotochi_pc']",
         "div>a[name='start button']",
@@ -519,6 +525,7 @@ class CmUranai extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       let sele = ["img[src*='kumakumaseiza_pc']"];
       if (this.isMob) sele[0] = "img[src*='kumakumaseiza_sp']";
 
@@ -559,6 +566,7 @@ class CmPochi extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       let sele = [
         "img[src*='pochitto_pc']",
         "#question>dd>a>p",
@@ -697,6 +705,7 @@ class Uranai extends CmSuper {
       let ele = await this.getEle(sele[1], 3000);
       await this.clickEle(ele, 1000);
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       // await driver.wait(until.elementIsVisible(choiceEle), 15000);
       for (let i = 0; i < 3; i++) {
         if (await this.isExistEle(sele[2], true, 3000)) {
@@ -1078,6 +1087,7 @@ class CmGameFurufuru extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       let sele = ["img[src*='game/furu']"];
       let dome = "";
       if (siteInfo.code == D.CODE.CMS) dome = "cmnwcmsite";
@@ -1113,6 +1123,7 @@ class CmGameFurufuruSearch extends CmSuper {
       // 今のページが　cm/game/ページならこのページから始める
       await this.openUrl(this.startUrl); // 操作ページ表示
       await this.ignoreKoukoku();
+      await this.hideOverlay();
       let sele = ["img[src*='game/furu']"];
       let dome = "";
       if (siteInfo.code == D.CODE.CMS) dome = "cmnwcmsite";
