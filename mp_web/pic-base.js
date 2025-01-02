@@ -509,11 +509,11 @@ class PicPointMoll extends PicMissonSupper {
           [D.MISSION.MOLL_OTSUKAI]: `${this.isMob? "#enq": "#game"} img[src*='img_otsukai']`,
           [D.MISSION.MOLL_COOK]: `${this.isMob? "#enq": "#game"}  img[src*='img_cooking']`,
           [D.MISSION.MOLL_FASHION]: `${this.isMob? "#enq": "#game"}  img[src*='img_fashion']`,
-          [D.MISSION.MOLL_OTE]: `${this.isMob? "#enq": "#game"}  img[src*='img_ote']`,
-          [D.MISSION.MOLL_BUS]: `${this.isMob? "#enq": "#game"}  img[src*='img_bus']`,
-          [D.MISSION.MOLL_SUPPA]: `${this.isMob? "#enq": "#game"}  img[src*='img_sour']`,
-          [D.MISSION.MOLL_KOTAE]: `${this.isMob? "#enq": "#game"}  img[src*='img_kotae']`,
-          [D.MISSION.MOLL_GEKIKARA]: `${this.isMob? "#enq": "#game"}  img[src*='img_ramen']`,
+          [D.MISSION.MOLL_OTE]: `${this.isMob? "#enter": "#game"}  img[src*='img_ote']`,
+          [D.MISSION.MOLL_BUS]: `${this.isMob? "#enter": "#game"}  img[src*='img_bus']`,
+          [D.MISSION.MOLL_SUPPA]: `${this.isMob? "#enter": "#game"}  img[src*='img_sour']`,
+          [D.MISSION.MOLL_KOTAE]: `${this.isMob? "#enter": "#game"}  img[src*='img_kotae']`,
+          [D.MISSION.MOLL_GEKIKARA]: `${this.isMob? "#enter": "#game"}  img[src*='img_ramen']`,
         };
         mainSeleMap = Object.assign(mainSeleMap, gameSeleMap);
         let cSeleList = [
