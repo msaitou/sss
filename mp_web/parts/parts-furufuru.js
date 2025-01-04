@@ -126,31 +126,11 @@ class PartsFurufuru extends BaseWebDriverWrapper {
     }
     return res;
   }
+
   async ignoreKoukoku() {
-    try {
-      await this.driver.manage().setTimeouts({ pageLoad: 10000 });
-      await super.ignoreKoukoku();
-    } catch (et) {
-      if (et.name != "TimeoutError") throw et;
-      else {
-        try {
-          await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
-        } catch (e) {
-          if (e.name != "TimeoutError") throw e;
-          try {
-            await this.exeScriptNoTimeOut(`window.stop();`);
-            // await this.driver.navigate().back(); // 戻って
-            // await this.driver.navigate().forward(); // 行く
-          } catch (ee) {
-            if (ee.name != "TimeoutError") throw ee;
-            this.logger.warn(ee.name);
-          }
-        }
-      }
-    } finally {
-      await this.driver.manage().setTimeouts({ pageLoad: D.INTERVAL[180] }); // 元のタイムアウト時間に戻す
-    }
+    await this.noTimeOutWrap(super.ignoreKoukoku);
   }
+
   async getPoint() {
     let sele = ["#getpoint>a"];
     if (await this.isExistEle(sele[0], true, 2000)) {

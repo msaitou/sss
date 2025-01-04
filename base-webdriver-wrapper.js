@@ -1,6 +1,7 @@
 const { initBrowserDriver, db } = require("./initter.js");
 const { libUtil: util, libUtil } = require("./lib/util.js");
 const { Builder, By, until, Select, Key } = require("selenium-webdriver");
+const D = require("./com_cls/define").Def;
 
 class BaseWebDriverWrapper {
   logger;
@@ -369,5 +370,35 @@ class BaseWebDriverWrapper {
     }
     return currentUrl;
   }
+  
+  /**
+   * @param {*} func timeoutを無視したい処理
+   */
+  async noTimeOutWrap(func) {
+    try {
+      await this.driver.manage().setTimeouts({ pageLoad: 10000 });
+      await func();
+    } catch (et) {
+      if (et.name != "TimeoutError") throw et;
+      else {
+        try {
+          await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
+        } catch (e) {
+          if (e.name != "TimeoutError") throw e;
+          try {
+            await this.exeScriptNoTimeOut(`window.stop();`);
+            // await this.driver.navigate().back(); // 戻って
+            // await this.driver.navigate().forward(); // 行く
+          } catch (ee) {
+            if (ee.name != "TimeoutError") throw ee;
+            this.logger.warn(ee.name);
+          }
+        }
+      }
+    } finally {
+      await this.driver.manage().setTimeouts({ pageLoad: D.INTERVAL[180] }); // 元のタイムアウト時間に戻す
+    }
+  }
+
 }
 exports.BaseWebDriverWrapper = BaseWebDriverWrapper;

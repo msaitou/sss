@@ -115,6 +115,7 @@ class GenMissonSupper extends BaseWebDriverWrapper {
   // }
   async hideOverlay() {
     let seleOver = [
+      "button.btn-close",
       "#pfx_interstitial_close",
       "#close_btn>span",
       "#gn_ydn_interstitial_btn",
@@ -1045,6 +1046,7 @@ class GenGameContents extends GenMissonSupper {
     sele[1] = se[0];
 
     await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 100);
