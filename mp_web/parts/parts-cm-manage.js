@@ -181,6 +181,7 @@ class CmSuper extends BaseWebDriverWrapper {
       // "#inter-close",
       "a.gmoyda.gmoam_close_button",
       "a.gmoam_close_button",
+      "#gn_interstitial_close_contents",
       // "div.overlay-item a.button-close"
     ];
     for (let s of seleOver) {
@@ -405,7 +406,7 @@ class CmKentei extends CmSuper {
       if (this.isMob) sele[0] = "img[src*='gotochi_sp']";
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 1000, this.isMob ? (siteInfo.code == D.CODE.PTO ? 500 : 100) : 0);
+        await this.clickEle(ele, 1000, this.isMob ? (siteInfo.code == D.CODE.PTO ? 500 : 250) : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         await this.hideOverlay();
@@ -1098,7 +1099,7 @@ class CmGameFurufuru extends CmSuper {
       }
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 1000, this.isMob ? 100 : 0);
+        await this.clickEle(ele, 1000, this.isMob ? 250 : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         res = await Furufuru.doFuru(gameUrlHost, wid);
