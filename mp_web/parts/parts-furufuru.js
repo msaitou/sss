@@ -128,7 +128,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
   }
 
   async ignoreKoukoku() {
-    await this.noTimeOutWrap(super.ignoreKoukoku);
+    await this.noTimeOutWrap(this.driver, super.ignoreKoukoku);
   }
 
   async getPoint() {

@@ -358,15 +358,15 @@ class BaseWebDriverWrapper {
       }
     }
   }
-  async ignoreKoukoku() {
-    let currentUrl = await this.driver.getCurrentUrl();
+  async ignoreKoukoku(driver) {
+    let currentUrl = await driver.getCurrentUrl();
     // 広告が画面いっぱいに入る時がある
     if (currentUrl.indexOf("google_vignette") > -1) {
       // await driver.actions().sendKeys(Key.ESCAPE).perform();
       // await this.sleep(2000);
-      await this.driver.navigate().back(); // 戻って
-      await this.driver.navigate().forward(); // 行く
-      currentUrl = await this.driver.getCurrentUrl();
+      await driver.navigate().back(); // 戻って
+      await driver.navigate().forward(); // 行く
+      currentUrl = await driver.getCurrentUrl();
     }
     return currentUrl;
   }
