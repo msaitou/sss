@@ -65,12 +65,12 @@ class PartsFurufuru extends BaseWebDriverWrapper {
                   await actions.move({ x: x, y: y }).click().perform();
                   x = libUtil.getRandomInt(eleScope.xStart, eleScope.xEnd);
                   await actions.move({ x: x, y: y }).click().perform();
-// for (let i = 0;i < 500;i++) {
-//   let items = document.querySelectorAll("div.item_type_2");
-//   items.forEach(item => {
-//     item.click();
-//   });
-// }                  
+                  // for (let i = 0;i < 500;i++) {
+                  //   let items = document.querySelectorAll("div.item_type_2");
+                  //   items.forEach(item => {
+                  //     item.click();
+                  //   });
+                  // }
                 } else break;
               }
             } catch (e) {
@@ -125,6 +125,31 @@ class PartsFurufuru extends BaseWebDriverWrapper {
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
     }
     return res;
+  }
+  async ignoreKoukoku() {
+    try {
+      await this.driver.manage().setTimeouts({ pageLoad: 10000 });
+      await super.ignoreKoukoku();
+    } catch (et) {
+      if (et.name != "TimeoutError") throw et;
+      else {
+        try {
+          await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
+        } catch (e) {
+          if (e.name != "TimeoutError") throw e;
+          try {
+            await this.exeScriptNoTimeOut(`window.stop();`);
+            // await this.driver.navigate().back(); // 戻って
+            // await this.driver.navigate().forward(); // 行く
+          } catch (ee) {
+            if (ee.name != "TimeoutError") throw ee;
+            this.logger.warn(ee.name);
+          }
+        }
+      }
+    } finally {
+      await this.driver.manage().setTimeouts({ pageLoad: D.INTERVAL[180] }); // 元のタイムアウト時間に戻す
+    }
   }
   async getPoint() {
     let sele = ["#getpoint>a"];
@@ -201,10 +226,14 @@ class PartsFurufuru extends BaseWebDriverWrapper {
     //     } else this.logger.debug("オーバーレイは表示されてないです");
     //   }
     // }
-    let seleOver = ["#pfx_interstitial_close",
-      "#gn_ydn_interstitial_btn", "div.overlay-item a.button-close","#svg_close", 
-      "#gn_interstitial_close", "#gn_interstitial_outer_area"
-      ];
+    let seleOver = [
+      "#pfx_interstitial_close",
+      "#gn_ydn_interstitial_btn",
+      "div.overlay-item a.button-close",
+      "#svg_close",
+      "#gn_interstitial_close",
+      "#gn_interstitial_outer_area",
+    ];
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
@@ -221,7 +250,9 @@ class PartsFurufuru extends BaseWebDriverWrapper {
       } else if (await this.silentIsExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
         if (s == "#gn_interstitial_outer_area") {
-          await this.exeScriptNoTimeOut(`for (let t of document.querySelectorAll("#gn_interstitial_outer_area")){t.remove();}`);
+          await this.exeScriptNoTimeOut(
+            `for (let t of document.querySelectorAll("#gn_interstitial_outer_area")){t.remove();}`
+          );
         } else if (s == seleOver[0]) {
           await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
         } else if (await ele.isDisplayed()) {
@@ -229,7 +260,6 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
-
   }
 }
 exports.PartsFurufuru = PartsFurufuru;

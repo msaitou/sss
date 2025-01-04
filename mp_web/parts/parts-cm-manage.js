@@ -1093,6 +1093,7 @@ class CmGameFurufuru extends CmSuper {
       let dome = "";
       if (siteInfo.code == D.CODE.CMS) dome = "cmnwcmsite";
       if (siteInfo.code == D.CODE.LFM) dome = "cmnwlifemedia";
+      if (siteInfo.code == D.CODE.GEN) dome = "cmnwgendama";
       let gameUrlHost = `https://${dome}.dropgame.jp/`;
       if (this.isMob) {
         gameUrlHost = `https://${dome}-sp.dropgame.jp/`;
