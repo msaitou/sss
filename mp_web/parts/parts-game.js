@@ -2025,7 +2025,7 @@ class PartsGame extends BaseWebDriverWrapper {
   async hideOverlay() {
     let seleOver = ["#gn_interstitial_close_icon","#pfx_interstitial_close", "div.overlay-item a.button-close", 
     "#gn_ydn_interstitial_btn", 
-    "div.close-button","a.gmoam_close_button"
+    "div.close-button","a.gmoam_close_button", "#geniee_tracking_banner_close"
     ];
     let iSele = {"a.gmoam_close_button":"iframe[title='GMOSSP iframe']","div.close-button":"ins iframe[title='3rd party ad content']"};
     for (let s of seleOver) {
