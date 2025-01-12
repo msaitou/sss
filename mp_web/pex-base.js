@@ -49,7 +49,8 @@ class PexBase extends BaseExecuter {
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.get(pointPage);
     await this.driver.sleep(1000);
-    let sele = ["dl.point_area>dd>span", "span.spend_p:not(.return-p)"];
+    let sele = ["dl.point_area>dd>span", "span.spend_p:not(.return-p)", 
+      "div.status.s1", "ul.mypage-list>a"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.driver.findElement(By.css(sele[0]));
       let nakedNum = await ele.getText();
@@ -59,11 +60,16 @@ class PexBase extends BaseExecuter {
       let toshiPage = "https://pex.jp/investments/portfolio"
       await this.driver.get(toshiPage);
       let anotherP = 0;
-      if (await this.isExistEle(sele[1], true, 2000)) {
-        let eles = await this.getEles(sele[1], 2000);
+      if (await this.isExistEle(sele[3], true, 2000)) {
+        let eles = await this.getEles(sele[3], 2000);
         for (let el of eles) {
-          let p = await el.getText();
-          anotherP += Number(this.convertNumber(p));
+          if (await this.isExistElesFromEle(el, sele[2], true)) {
+            if (await this.isExistElesFromEle(el, sele[1], true)) {
+              let ele2 = await this.getElesFromEle(el, sele[1]);
+              let p = await ele2[0].getText();
+              anotherP += Number(this.convertNumber(p));
+            }
+          }
         }
       }
       await this.pointSummary(this.code, nakedNum, null, anotherP);
@@ -269,22 +275,43 @@ class PexNewsWatch extends PexMissonSupper {
   }
   async hideOverlay2() {
     let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']", "#dismiss-button"];
-    if (await this.isExistEle(sele[0], true, 4000)) {
+    if (await this.silentIsExistEle(sele[0], true, 4000)) {
       let ele = await this.getEle(sele[0], 1000);
       await this.clickEle(ele, 1000);
-      if (await this.isExistEle(sele[1], true, 2000)) {
+      if (await this.silentIsExistEle(sele[1], true, 2000)) {
+        await this.sleep(15000);
         let iframe = await this.getEles(sele[1], 1000);
         await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
-        let inputEle = await this.getEle(sele[2], 1000);
-        await this.sleep(5000);
-        // if (await inputEle.isDisplayed()) {
-        await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
-        // await this.clickEle(inputEle, 2000, 0, true);
-        // } else this.logger.debug("オーバーレイは表示されてないです");
+        for (let sele2 of [sele[2], sele[3]]) {
+          if (await this.silentIsExistEle(sele2, true, 2000)) {
+            let inputEle = await this.getEle(sele2, 1000);
+            // if (await inputEle.isDisplayed()) {
+            await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+            // await this.clickEle(inputEle, 2000, 0, true);
+            // } else this.logger.debug("オーバーレイは表示されてないです");
+            break;
+          }
+        }
         // もとのフレームに戻す
         await this.driver.switchTo().defaultContent();
       }
     }
+    // if (await this.isExistEle(sele[0], true, 4000)) {
+    //   let ele = await this.getEle(sele[0], 1000);
+    //   await this.clickEle(ele, 1000);
+    //   if (await this.isExistEle(sele[1], true, 2000)) {
+    //     let iframe = await this.getEles(sele[1], 1000);
+    //     await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+    //     let inputEle = await this.getEle(sele[2], 1000);
+    //     await this.sleep(5000);
+    //     // if (await inputEle.isDisplayed()) {
+    //     await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+    //     // await this.clickEle(inputEle, 2000, 0, true);
+    //     // } else this.logger.debug("オーバーレイは表示されてないです");
+    //     // もとのフレームに戻す
+    //     await this.driver.switchTo().defaultContent();
+    //   }
+    // }
   }
 }
 class PexCm extends PexMissonSupper {
