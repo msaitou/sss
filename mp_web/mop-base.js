@@ -265,7 +265,7 @@ class MopCommon extends MopMissonSupper {
         inputEle.sendKeys(account[this.code].loginpass);
 
         ele = await this.getEle(seleInput.login, 1000);
-        await this.clickEle(ele, 4000);
+        await this.clickEle(ele, 400, 200);
         // ログインできてるか、チェック
         if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
           // ログインできてるのでOK
