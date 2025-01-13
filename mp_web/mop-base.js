@@ -46,6 +46,18 @@ class MopBase extends BaseExecuter {
           case D.MISSION.NANYOUBI:
             execCls = new MopNanyoubi(para);
             break;
+          case D.MISSION.YOJI:
+            execCls = new MopYoji(para);
+            break;
+          case D.MISSION.NANDOKU:
+            execCls = new MopNandoku(para);
+            break;
+          case D.MISSION.NENGO:
+            execCls = new MopNengo(para);
+            break;
+          case D.MISSION.NANYOUBI:
+            execCls = new MopNanyoubi(para);
+            break;
           case D.MISSION.CM:
             execCls = new MopCm(para, cmMissionList);
             break;
@@ -157,6 +169,26 @@ class MopMissonSupper extends BaseWebDriverWrapper {
           } else this.logger.debug("オーバーレイは表示されてないです");
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
+        }
+      } else if (["#pfx_interstitial_close"].indexOf(s) > -1) {
+        let iSele = ["iframe.profitx-ad-frame-markup"];
+        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+          let iframe = await this.getEles(iSele[0], 1000);
+          if (await iframe[0].isDisplayed()) {
+            await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+            let isExists = await this.silentIsExistEle(s, true, 1000);
+            // もとのフレームに戻す
+            await this.driver.switchTo().defaultContent();
+            if (isExists) await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`);
+            else if (await this.silentIsExistEle(s, true, 3000)) {
+              await this.exeScriptNoTimeOut(`document.querySelector("${s}").click()`);
+            } 
+          }
+        }else if (await this.silentIsExistEle(s, true, 1000)) {
+          let ele = await this.getEle(s, 1000);
+          if (await ele.isDisplayed()) {
+            await this.clickEle(ele, 1000);
+          } else this.logger.debug("オーバーレイは表示されてないです");
         }
       } else if (await this.silentIsExistEle(s, true, 3000)) {
         let ele = await this.getEle(s, 2000);
@@ -444,90 +476,6 @@ class MopEitango extends MopMissonSupper {
     return res;
   }
 }
-// 何曜日
-class MopNanyoubi extends MopMissonSupper {
-  firstUrl = "https://pc.moppy.jp/";
-  targetUrl = "https://pc.moppy.jp/gamecontents/";
-  constructor(para) {
-    super(para);
-    this.logger.debug(`${this.constructor.name} constructor`);
-  }
-  // 1日2回（0時～12時）
-  async do() {
-    let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    logger.info(`${this.constructor.name} START`);
-
-    let res = D.STATUS.FAIL;
-    try {
-      await this.openUrl(this.targetUrl); // 操作ページ表示
-      let sele = [
-        "a[data-ga-label='この日何曜日？']",
-        "input.ui-button-start",
-        "label.ui-label-radio",
-        "input.ui-button-answer",
-        "input.ui-button-result",
-        "a.ui-button-close",
-        "input.ui-button-end",
-        "div.ui-item-header>h2.ui-item-title",
-      ];
-      if (await this.isExistEle(sele[0], true, 2000)) {
-        let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000, 200);
-        let wid = await driver.getWindowHandle();
-        await this.changeWindow(wid); // 別タブに移動する
-        if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
-        if (await this.isExistEle(sele[1], true, 3000)) {
-          ele = await this.getEle(sele[1], 3000);
-          await this.clickEle(ele, 2000, 0, this.isMob);
-          // 8問あり
-          for (let i = 0; i < 8; i++) {
-            let eles;
-            if (await this.isExistEle(sele[2], true, 2000)) {
-              eles = await this.getEles(sele[2], 2000);
-              // 問題から曜日を換算して、選択
-              if (await this.isExistEle(sele[7], true, 3000)) {
-                ele = await this.getEle(sele[7], 2000);
-                let text = await ele.getText();
-                logger.info(`${text}`);
-                let regex = "今日の(\\d+)日後は何曜日？";
-                let matches = text.match(regex);
-                logger.info(`${matches[1]}は、`);
-                let selectYoubi = libUtil.getNanyoubi(matches[1]);
-                logger.info(`${selectYoubi}です`);
-                await this.clickEle(eles[selectYoubi], 2000);
-                if (await this.isExistEle(sele[3], true, 3000)) {
-                  ele = await this.getEle(sele[3], 3000);
-                  await this.clickEle(ele, 2000, 0, this.isMob); // 回答する
-                  await this.hideOverlay(); // オーバレイあり。消す
-                  // 回答結果
-                  if (await this.isExistEle(sele[4], true, 3000)) {
-                    ele = await this.getEle(sele[4], 3000);
-                    await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
-                    await this.hideOverlay(); // オーバレイあり。消す
-                  }
-                }
-              }
-            } else if (await this.isExistEle(sele[5], true, 2000)) {
-              ele = await this.getEle(sele[5], 3000);
-            }
-          }
-          await this.hideOverlay(); // オーバレイあり。消す
-          if (await this.isExistEle(sele[6], true, 2000)) {
-            ele = await this.getEle(sele[6], 3000);
-            await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
-            await driver.close(); // このタブを閉じて
-            await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
-            res = D.STATUS.DONE;
-            logger.info(`${this.constructor.name} END`);
-          }
-        } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
-      }
-    } catch (e) {
-      logger.warn(e);
-    }
-    return res;
-  }
-}
 // 暗算
 class MopAnzan extends MopMissonSupper {
   firstUrl = "https://pc.moppy.jp/";
@@ -612,6 +560,228 @@ class MopAnzan extends MopMissonSupper {
             await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
             res = D.STATUS.DONE;
             logger.info(`${this.constructor.name} END`);
+          }
+        } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+}
+// 歴史年号　難読地名クイズ
+class MopNengo extends MopMissonSupper {
+  firstUrl = "https://pc.moppy.jp/";
+  targetUrl = "https://pc.moppy.jp/gamecontents/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // 1日3回（0時～8時~16）
+  async do() {
+    const t = this;
+    let { retryCnt, account, logger, driver, siteInfo } = t.para;
+    logger.info(`${t.constructor.name} START`);
+    let res = D.STATUS.FAIL;
+    try {
+      await t.openUrl(t.targetUrl); // 操作ページ表示
+      let se = [
+        "a[data-ga-label='難読地名クイズ']",
+        "input.ui-button-start",  // 1
+        "label.ui-label-radio",
+        "input.ui-button-answer", //3
+        "input.ui-button-result", 
+        "a.ui-button-close",  //5
+        "input.ui-button-end",
+        "div.ui-item-header>h2.ui-item-title",  //7
+      ];
+      if (await t.isExistEle(se[0], true, 2000)) { //  "a[data-ga-label='四字熟語 穴埋めクイズ']"
+        let ele = await t.getEle(se[0], 3000);
+        await t.clickEle(ele, 1000, 200);
+        let wid = await driver.getWindowHandle();
+        await t.changeWindow(wid); // 別タブに移動する
+        if (await t.isExistEle(se[1], true, 2000)) await t.exchange(5);
+        if (await t.isExistEle(se[1], true, 3000)) {
+          ele = await t.getEle(se[1], 3000);
+          await t.clickEle(ele, 2000, 0, t.isMob);
+          // 8問あり
+          for (let i = 0; i < 10; i++) {
+            let eles;
+            if (await t.isExistEle(se[2], true, 2000)) {
+              eles = await t.getEles(se[2], 2000);
+              let choiceNum = libUtil.getRandomInt(0, eles.length); // ランダムで。
+              await t.clickEle(eles[choiceNum], 2000, t.isMob? 250:0);
+              if (await t.isExistEle(se[3], true, 3000)) {
+                ele = await t.getEle(se[3], 3000);
+                await t.clickEle(ele, 2000, 0, t.isMob); // 回答する
+                await t.hideOverlay(); // オーバレイあり。消す
+                // 回答結果
+                if (await t.isExistEle(se[4], true, 3000)) {
+                  ele = await t.getEle(se[4], 3000);
+                  await t.clickEle(ele, 2000, 0, t.isMob); // 次のページ
+                  await t.hideOverlay(); // オーバレイあり。消す
+                }
+              }
+            } else if (await t.isExistEle(se[5], true, 2000)) {
+              ele = await t.getEle(se[5], 3000);
+            }
+          }
+          await t.hideOverlay(); // オーバレイあり。消す
+          if (await t.isExistEle(se[6], true, 2000)) {
+            ele = await t.getEle(se[6], 3000);
+            await t.clickEle(ele, 2000, 0, t.isMob); // 次のページ
+            await driver.close(); // このタブを閉じて
+            await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+            res = D.STATUS.DONE;
+            logger.info(`${t.constructor.name} END`);
+          }
+        } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+}
+// 難読地名　"a[data-ga-label='歴史年号クイズ']",
+class MopNandoku extends MopMissonSupper {
+  firstUrl = "https://pc.moppy.jp/";
+  targetUrl = "https://pc.moppy.jp/gamecontents/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // 1日3回（0時～8時~16）
+  async do() {
+    const t = this;
+    let { retryCnt, account, logger, driver, siteInfo } = t.para;
+    logger.info(`${t.constructor.name} START`);
+    let res = D.STATUS.FAIL;
+    try {
+      await t.openUrl(t.targetUrl); // 操作ページ表示
+      let se = [
+        "a[data-ga-label='歴史年号クイズ']",
+        "input.ui-button-start",  // 1
+        "label.ui-label-radio",
+        "input.ui-button-answer", //3
+        "input.ui-button-result", 
+        "a.ui-button-close",  //5
+        "input.ui-button-end",
+        "div.ui-item-header>h2.ui-item-title",  //7
+      ];
+      if (await t.isExistEle(se[0], true, 2000)) { //  "a[data-ga-label='四字熟語 穴埋めクイズ']"
+        let ele = await t.getEle(se[0], 3000);
+        await t.clickEle(ele, 1000, 200);
+        let wid = await driver.getWindowHandle();
+        await t.changeWindow(wid); // 別タブに移動する
+        if (await t.isExistEle(se[1], true, 2000)) await t.exchange(5);
+        if (await t.isExistEle(se[1], true, 3000)) {
+          ele = await t.getEle(se[1], 3000);
+          await t.clickEle(ele, 2000, 0, t.isMob);
+          // 8問あり
+          for (let i = 0; i < 10; i++) {
+            let eles;
+            if (await t.isExistEle(se[2], true, 2000)) {
+              eles = await t.getEles(se[2], 2000);
+              let choiceNum = libUtil.getRandomInt(0, eles.length); // ランダムで。
+              await t.clickEle(eles[choiceNum], 2000, t.isMob? 250:0);
+              if (await t.isExistEle(se[3], true, 3000)) {
+                ele = await t.getEle(se[3], 3000);
+                await t.clickEle(ele, 2000, 0, t.isMob); // 回答する
+                await t.hideOverlay(); // オーバレイあり。消す
+                // 回答結果
+                if (await t.isExistEle(se[4], true, 3000)) {
+                  ele = await t.getEle(se[4], 3000);
+                  await t.clickEle(ele, 2000, 0, t.isMob); // 次のページ
+                  await t.hideOverlay(); // オーバレイあり。消す
+                }
+              }
+            } else if (await t.isExistEle(se[5], true, 2000)) {
+              ele = await t.getEle(se[5], 3000);
+            }
+          }
+          await t.hideOverlay(); // オーバレイあり。消す
+          if (await t.isExistEle(se[6], true, 2000)) {
+            ele = await t.getEle(se[6], 3000);
+            await t.clickEle(ele, 2000, 0, t.isMob); // 次のページ
+            await driver.close(); // このタブを閉じて
+            await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+            res = D.STATUS.DONE;
+            logger.info(`${t.constructor.name} END`);
+          }
+        } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+}
+// 四字熟語
+class MopYoji extends MopMissonSupper {
+  firstUrl = "https://pc.moppy.jp/";
+  targetUrl = "https://pc.moppy.jp/gamecontents/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // 1日3回（0時～8時~16）
+  async do() {
+    const t = this;
+    let { retryCnt, account, logger, driver, siteInfo } = t.para;
+    logger.info(`${t.constructor.name} START`);
+    let res = D.STATUS.FAIL;
+    try {
+      await t.openUrl(t.targetUrl); // 操作ページ表示
+      let se = [
+        "a[data-ga-label='四字熟語 穴埋めクイズ']",
+        "input.ui-button-start",  // 1
+        "label.ui-label-radio",
+        "input.ui-button-answer", //3
+        "input.ui-button-result", 
+        "a.ui-button-close",  //5
+        "input.ui-button-end",
+        "div.ui-item-header>h2.ui-item-title",  //7
+      ];
+      if (await t.isExistEle(se[0], true, 2000)) { //  "a[data-ga-label='四字熟語 穴埋めクイズ']"
+        let ele = await t.getEle(se[0], 3000);
+        await t.clickEle(ele, 1000, 200);
+        let wid = await driver.getWindowHandle();
+        await t.changeWindow(wid); // 別タブに移動する
+        if (await t.isExistEle(se[1], true, 2000)) await t.exchange(5);
+        if (await t.isExistEle(se[1], true, 3000)) {
+          ele = await t.getEle(se[1], 3000);
+          await t.clickEle(ele, 2000, 0, t.isMob);
+          // 8問あり
+          for (let i = 0; i < 10; i++) {
+            let eles;
+            if (await t.isExistEle(se[2], true, 2000)) {
+              eles = await t.getEles(se[2], 2000);
+              let choiceNum = libUtil.getRandomInt(0, eles.length); // ランダムで。
+              await t.clickEle(eles[choiceNum], 2000, t.isMob? 250:0);
+              if (await t.isExistEle(se[3], true, 3000)) {
+                ele = await t.getEle(se[3], 3000);
+                await t.clickEle(ele, 2000, 0, t.isMob); // 回答する
+                await t.hideOverlay(); // オーバレイあり。消す
+                // 回答結果
+                if (await t.isExistEle(se[4], true, 3000)) {
+                  ele = await t.getEle(se[4], 3000);
+                  await t.clickEle(ele, 2000, 0, t.isMob); // 次のページ
+                  await t.hideOverlay(); // オーバレイあり。消す
+                }
+              }
+            } else if (await t.isExistEle(se[5], true, 2000)) {
+              ele = await t.getEle(se[5], 3000);
+            }
+          }
+          await t.hideOverlay(); // オーバレイあり。消す
+          if (await t.isExistEle(se[6], true, 2000)) {
+            ele = await t.getEle(se[6], 3000);
+            await t.clickEle(ele, 2000, 0, t.isMob); // 次のページ
+            await driver.close(); // このタブを閉じて
+            await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+            res = D.STATUS.DONE;
+            logger.info(`${t.constructor.name} END`);
           }
         } else logger.info("今日はもう獲得済み"), (res = D.STATUS.DONE);
       }

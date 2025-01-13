@@ -101,6 +101,11 @@ exports.Def = {
     EITANGO: "eitango",
     ANZAN: "anzan",
     NANYOUBI: "nanyoubi",
+    YOJI: "yoji",
+    NANDOKU: "nandoku",
+    NENGO: "nengo",
+
+
     CLICK: "click",
     CLICK_NEWS: "click_news",
     READ_DOG: "read_dog",
