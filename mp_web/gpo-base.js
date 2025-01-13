@@ -746,7 +746,9 @@ class GpoPointMoll extends GpoMissonSupper {
           let Game = new PartsGame(this.para, this.main);
           let AnkPark = new PartsAnkPark(this.para);
           let QuizKentei = new PartsQuizKentei(this.para);
+          let dirtyFlg = false;
           for (let cSele of cSeleList) {
+            dirtyFlg = true;
             if (await this.isExistEle(cSele, true, 2000)) {
               ele = await this.getEle(cSele, 3000);
               await this.clickEle(ele, 3000);
@@ -831,13 +833,12 @@ class GpoPointMoll extends GpoMissonSupper {
                 //   await this.closeDriver(); // このタブを閉じて
                 //   await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
                 // }
-              } else if (cSele.indexOf("aaaaa") > -1) {
               }
               await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
               await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
             }
           }
-          res = D.STATUS.DONE;
+          if (!(dirtyFlg && res == D.STATUS.FAIL)) res = D.STATUS.DONE;
         } catch (e) {
           logger.warn(e);
         } finally {

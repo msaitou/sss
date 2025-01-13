@@ -528,7 +528,9 @@ class PicPointMoll extends PicMissonSupper {
         let Game = new PartsGame(this.para, this.main);
         let AnkPark = new PartsAnkPark(this.para);
         let QuizKentei = new PartsQuizKentei(this.para);
+        let dirtyFlg = false;
         for (let cSele of cSeleList) {
+          dirtyFlg = true;
           if (await this.isExistEle(cSele, true, 2000)) {
             ele = await this.getEle(cSele, 3000);
             await this.clickEle(ele, 300);
@@ -616,7 +618,7 @@ class PicPointMoll extends PicMissonSupper {
             }
           }
         }
-        res = D.STATUS.DONE;
+        if (!(dirtyFlg && res == D.STATUS.FAIL)) res = D.STATUS.DONE;
       } catch (e) {
         logger.warn(e);
       } finally {
