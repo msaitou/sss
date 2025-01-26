@@ -977,8 +977,8 @@ class PartsGame extends BaseWebDriverWrapper {
       }
       let gameUrlHost = await driver.getCurrentUrl();
       gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
-      if ("https://chobirich4.contents-group.work/sp/sp-dog/err.php".indexOf(gameUrlHost) > -1) 
-        return D.STATUS.DONE;
+      // if ("https://chobirich4.contents-group.work/sp/sp-dog/err.php".indexOf(gameUrlHost) > -1) 
+      //   return D.STATUS.DONE;
       for (let j = 0; j < limit; j++) {
         logger.info(`${j}/${limit}回目-----------`);
         await this.hideOverlay();
