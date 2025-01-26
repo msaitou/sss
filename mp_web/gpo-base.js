@@ -144,7 +144,7 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
   }
   async hideOverlay(seleStr) {
     let sele0 = ["#modal20th .btn_close>img", "#gn_ydn_interstitial_btn","#pfx_interstitial_close",
-      "#gn_interstitial_outer_area", "#gn_ydn_interstitial_btn"
+      "#gn_interstitial_outer_area", "#gn_interstitial_close_icon"
     ];
     if (seleStr) sele0 = [seleStr, ""];
     for (let s of sele0) {
@@ -549,7 +549,8 @@ class GpoAnq extends GpoMissonSupper {
           await driver.close(); // このタブを閉じて
         } finally {
           await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
-          await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+          // await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+          await this.noTimeOutWrap("refresh");
         }
       }
     } else res = D.STATUS.DONE;
@@ -614,6 +615,7 @@ class GpoGameFurufuru extends GpoMissonSupper {
     let gameUrlHost = "https://gpoint.dropgame.jp/";
     if (this.isMob) (gameUrlHost = "https://gpoint-sp.dropgame.jp/"), (sele = ["li.bnr img[alt='ふるふるパニック']", "input[value='OK']"]);
     if (await this.isExistEle(sele[0], true, 2000)) {
+      await this.hideOverlay();
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000);
       let wid = await driver.getWindowHandle();

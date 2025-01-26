@@ -377,7 +377,8 @@ class BaseWebDriverWrapper {
   async noTimeOutWrap(func) {
     try {
       await this.driver.manage().setTimeouts({ pageLoad: 10000 });
-      await func();
+      if (func == "refresh") await this.driver.navigate().refresh();
+      else await func();
     } catch (et) {
       if (et.name != "TimeoutError") throw et;
       else {

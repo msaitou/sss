@@ -43,6 +43,15 @@ class BaseExecuter extends BaseWebDriverWrapper {
         await this.exec(para);
       } catch (e) {
         this.logger.info(e);
+        if (this.isHeadless) {
+          let encodedString = await this.driver.takeScreenshot();
+          let fName = `${conf.machine}-${new Date().toJSON().replaceAll(":", "")}.png`;
+          const fs = require("fs");
+          await fs.writeFileSync(`./log/${fName}`, encodedString, "base64");
+          // let blockingElement = await this.driver.findElement(By.id("gn_interstitial_area"));
+          // let outerHTML = await blockingElement.getAttribute("outerHTML");
+          // this.logger.warn(`HEADLESS ${outerHTML}`);
+        }
         let missionDate = libUtil.getYYMMDDStr(new Date());
         let missionList = await db(D.DB_COL.MISSION_QUE, "find", {
           mission_date: missionDate, // 今日
@@ -114,7 +123,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
         diff = p - oldDoc[siteCode].p;
         diff = Math.round(diff * 100) / 100; // 小数点の誤差をなくす
         if (diff < 0) {
-          let calcDiff2 = ()=>{
+          let calcDiff2 = () => {
             let tmpP = Math.round((p + exch) * 100) / 100; // 小数点の誤差をなくす
             diff = tmpP - oldDoc[siteCode].p;
             return Math.round(diff * 100) / 100; // 小数点の誤差をなくす
@@ -127,10 +136,9 @@ class BaseExecuter extends BaseWebDriverWrapper {
             let useP = await getUsePointFunc();
             useP = this.convertNumber(useP);
             exch = useP * this.siteInfo.rate; // そのサイトのポイント倍率を円に換算
-            if (exch< -1) exch *=-1;
+            if (exch < -1) exch *= -1;
             diff = calcDiff2();
-          }
-          else {
+          } else {
             // TODO ちゃんと作るまではメール飛ばす
             await mailOpe.send(this.logger, {
               subject: `換金した疑い[${siteCode}]`,
@@ -171,7 +179,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
    * @param {*} siteCode
    */
   async updateMissionQue(mission, res, siteCode) {
-    await libUtil.updateMissionQueUtil(db, mission, res, siteCode)     
+    await libUtil.updateMissionQueUtil(db, mission, res, siteCode);
   }
   /**
    * 1つのmission開始時のキューテーブルへの更新
