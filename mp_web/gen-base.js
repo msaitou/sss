@@ -130,14 +130,25 @@ class GenMissonSupper extends BaseWebDriverWrapper {
     };
     for (let s of seleOver) {
       if (iSele[s]) {
+        if (await this.silentIsExistEle(s, true, 1000)) {
+          let ele = await this.getEle(s, 1000);
+          // if (s == seleOver[0]) {
+          //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+          // } else
+          if (await ele.isDisplayed()) {
+            await this.clickEle(ele, 1000);
+          } else this.logger.debug("オーバーレイは表示されてないです");
+        }else 
         if (await this.silentIsExistEle(iSele[s], true, 1000)) {
           let iframe = await this.getEles(iSele[s], 1000);
           if (await iframe[0].isDisplayed()) {
             await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
-            let inputEle = await this.getEle(s, 10000);
-            if (await inputEle.isDisplayed()) {
-              await this.clickEle(inputEle, 1000);
-            } else this.logger.debug("オーバーレイは表示されてないです");
+            if (await this.silentIsExistEle(s, true, 1000)) {
+              let inputEle = await this.getEle(s, 10000);
+              if (await inputEle.isDisplayed()) {
+                await this.clickEle(inputEle, 1000);
+              } else this.logger.debug("オーバーレイは表示されてないです");
+            }
             // もとのフレームに戻す
             await this.driver.switchTo().defaultContent();
           }
@@ -580,7 +591,7 @@ class GenAnqPark extends GenMissonSupper {
           let seleGen = ["ul>li>a[data-type='mini_surveys']", "#tabBox2 div.list_survey>a", "", ""];
           if (await this.isExistEle(seleGen[0], true, 3000)) {
             let ele = await this.getEle(seleGen[0], 3000);
-            await this.clickEle(ele, 3000); // アンケートリストを表示
+            await this.clickEle(ele, 3000, 150); // アンケートリストを表示
             if (await this.isExistEle(seleGen[1], true, 3000)) {
               let eles = await this.getEles(seleGen[1], 3000),
                 limit = eles.length;
@@ -608,7 +619,7 @@ class GenAnqPark extends GenMissonSupper {
                     return true;
                   }
                 });
-                await this.clickEle(ele, 2000);
+                await this.clickEle(ele, 2000, 150);
                 let wid = await driver.getWindowHandle();
                 await this.changeWindow(wid); // 別タブに移動する
                 try {
