@@ -43,15 +43,6 @@ class BaseExecuter extends BaseWebDriverWrapper {
         await this.exec(para);
       } catch (e) {
         this.logger.info(e);
-        if (this.isHeadless) {
-          let encodedString = await this.driver.takeScreenshot();
-          let fName = `${conf.machine}-${new Date().toJSON().replaceAll(":", "")}.png`;
-          const fs = require("fs");
-          await fs.writeFileSync(`./log/${fName}`, encodedString, "base64");
-          // let blockingElement = await this.driver.findElement(By.id("gn_interstitial_area"));
-          // let outerHTML = await blockingElement.getAttribute("outerHTML");
-          // this.logger.warn(`HEADLESS ${outerHTML}`);
-        }
         let missionDate = libUtil.getYYMMDDStr(new Date());
         let missionList = await db(D.DB_COL.MISSION_QUE, "find", {
           mission_date: missionDate, // 今日
@@ -62,6 +53,15 @@ class BaseExecuter extends BaseWebDriverWrapper {
           this.updateMissionQue(missionList[0], D.STATUS.FAIL, missionList[0].site_code);
         } else {
           this.logger.info(JSON.stringify(missionList, null, 2));
+        }
+        if (this.isHeadless) {
+          let encodedString = await this.driver.takeScreenshot();
+          let fName = `${conf.machine}-${missionList[0].site_code}-${new Date().toJSON().replaceAll(":", "")}.png`;
+          const fs = require("fs");
+          await fs.writeFileSync(`./log/${fName}`, encodedString, "base64");
+          // let blockingElement = await this.driver.findElement(By.id("gn_interstitial_area"));
+          // let outerHTML = await blockingElement.getAttribute("outerHTML");
+          // this.logger.warn(`HEADLESS ${outerHTML}`);
         }
         await this.quitDriver();
       } finally {
