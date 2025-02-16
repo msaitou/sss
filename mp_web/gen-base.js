@@ -342,14 +342,14 @@ class GenClick extends GenMissonSupper {
       if (await this.isExistEle(sele[0], true, 2000)) {
         let eles = await this.getEles(sele[0], 3000);
         for (let i = 0; i < eles.length; i++) {
-          await this.clickEle(eles[i], 2000);
+          await this.clickEle(eles[i], 2000, 150);
           await this.closeOtherWindow(driver);
         }
       }
       if (await this.isExistEle(sele[1], true, 2000)) {
         let eles = await this.getEles(sele[1], 3000);
         for (let i = 0; i < eles.length; i++) {
-          await this.clickEle(eles[i], 2000);
+          await this.clickEle(eles[i], 2000, 150);
           await this.closeOtherWindow(driver);
         }
       }
