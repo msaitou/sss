@@ -3,6 +3,7 @@ const D = require("../../com_cls/define").Def;
 const { libUtil } = require("../../lib/util.js");
 const { Builder, By, until, Select, Key } = require("selenium-webdriver");
 const mailOpe = require("../../mp_mil/mail_operate");
+const conf = require("config");
 
 class PartsGame extends BaseWebDriverWrapper {
   para;
@@ -1225,7 +1226,9 @@ class PartsGame extends BaseWebDriverWrapper {
       ];
       if (!this.isMob) {
         se[2] = "#getPtip img[alt='次へ']";
-        se[4] = "#coinGetSpecial>button>img";
+        se[4] = "#coinGetSpecial[style*='display: block']>button>img";
+        se[6] = "section#contents div[style*='display: block'] img";
+        se[7] = "#nbtn[style*='visibility: visible']>a>img";
       }
       let limit = 30; // 基本は
       if (await this.isExistEle(se[3], true, 2000)) {
@@ -1263,6 +1266,17 @@ class PartsGame extends BaseWebDriverWrapper {
               }
             }
           }
+          if (await this.isExistEle(se[6], true, 2000)) {
+            let el = await this.getEle(se[6], 3000);
+            await this.hideOverlay();
+            await this.clickEle(el, 200, 200);
+            await this.adver();
+            if (await this.isExistEle(se[7], true, 2000)) {
+              let el = await this.getEle(se[7], 3000);
+              await this.hideOverlay();
+              await this.clickEle(el, 200, 200);
+            }
+          }
           if (await this.isExistEle(se[1], true, 2000)) {
             let el = await this.getEle(se[1], 3000);
             await this.clickEle(el, 1000, 200);
@@ -1275,7 +1289,18 @@ class PartsGame extends BaseWebDriverWrapper {
               await this.clickEle(el, 300, 200);
               await this.backNowMissionPage(gameUrlHost);
             }
-          } else break;
+          }
+          else {
+            let encodedString = await driver.takeScreenshot();
+            let fName = `${conf.machine}-${this.isMob?"m_":""}${this.para.code}-${new Date().toJSON().replaceAll(":", "")}.png`;
+            const fs = require("fs");
+            await fs.writeFileSync(`./log/${fName}`, encodedString, "base64");
+            let blockingElement = await driver.findElement(By.tagName("html"));
+            let outerHTML = await blockingElement.getAttribute("outerHTML");
+            this.logger.warn(`HEADLESS ${outerHTML}`);
+          }
+
+          //  else break;
         }
       }
       if (await this.isExistEle(se[3], true, 2000)) {
@@ -1309,7 +1334,9 @@ class PartsGame extends BaseWebDriverWrapper {
       ];
       if (!this.isMob) {
         se[2] = "#getPtip img[alt='次へ']";
-        se[4] = "#coinGetSpecial>button>img";
+        se[4] = "#coinGetSpecial[style*='display: block']>button>img";
+        se[6] = "#wrapMovie2[style*='display: block']>img";
+        se[7] = "#nbtn[style*='visibility: visible']>a>img";
       }
       let limit = 30; // 基本は
       if (await this.isExistEle(se[3], true, 2000)) {
@@ -1345,6 +1372,17 @@ class PartsGame extends BaseWebDriverWrapper {
                 await this.clickEle(el, 1000, 200);
                 await this.backNowMissionPage(gameUrlHost);
               }
+            }
+          }
+          if (await this.isExistEle(se[6], true, 2000)) {
+            let el = await this.getEle(se[6], 3000);
+            await this.hideOverlay();
+            await this.clickEle(el, 200, 200);
+            await this.adver();
+            if (await this.isExistEle(se[7], true, 2000)) {
+              let el = await this.getEle(se[7], 3000);
+              await this.hideOverlay();
+              await this.clickEle(el, 200, 200);
             }
           }
           if (await this.isExistEle(se[1], true, 2000)) {
@@ -1393,7 +1431,9 @@ class PartsGame extends BaseWebDriverWrapper {
       ];
       if (!this.isMob) {
         se[2] = "#getPtip img[alt='次へ']";
-        se[4] = "#coinGetSpecial>button>img";
+        se[4] = "#coinGetSpecial[style*='display: block']>button>img";
+        se[6] = "section#contents div[style*='display: block'] img";
+        se[7] = "#nbtn[style*='visibility: visible']>a>img";
       }
       let limit = 30; // 基本は
       if (await this.isExistEle(se[3], true, 2000)) {
@@ -1431,6 +1471,17 @@ class PartsGame extends BaseWebDriverWrapper {
               }
             }
           }
+          if (await this.isExistEle(se[6], true, 2000)) {
+            let el = await this.getEle(se[6], 3000);
+            await this.hideOverlay();
+            await this.clickEle(el, 200, 200);
+            await this.adver();
+            if (await this.isExistEle(se[7], true, 2000)) {
+              let el = await this.getEle(se[7], 3000);
+              await this.hideOverlay();
+              await this.clickEle(el, 200, 200);
+            }
+          }
           if (await this.isExistEle(se[1], true, 2000)) {
             let el = await this.getEle(se[1], 3000);
             await this.clickEle(el, 1000, 200);
@@ -1443,7 +1494,7 @@ class PartsGame extends BaseWebDriverWrapper {
               await this.clickEle(el, 300, 200);
               await this.backNowMissionPage(gameUrlHost);
             }
-          } else break;
+          }
         }
       }
       if (await this.isExistEle(se[3], true, 2000)) {

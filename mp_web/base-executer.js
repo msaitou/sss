@@ -56,7 +56,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
         }
         if (this.isHeadless) {
           let encodedString = await this.driver.takeScreenshot();
-          let fName = `${conf.machine}-${missionList[0].site_code}-${new Date().toJSON().replaceAll(":", "")}.png`;
+          let fName = `${conf.machine}-${missionList[0]?.site_code}-${new Date().toJSON().replaceAll(":", "")}.png`;
           const fs = require("fs");
           await fs.writeFileSync(`./log/${fName}`, encodedString, "base64");
           // let blockingElement = await this.driver.findElement(By.id("gn_interstitial_area"));

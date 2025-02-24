@@ -2,6 +2,7 @@ const { initBrowserDriver, db } = require("./initter.js");
 const { libUtil: util, libUtil } = require("./lib/util.js");
 const { Builder, By, until, Select, Key } = require("selenium-webdriver");
 const D = require("./com_cls/define").Def;
+const conf = require("config");
 
 class BaseWebDriverWrapper {
   logger;
@@ -130,14 +131,25 @@ class BaseWebDriverWrapper {
     if (time >= 1000) await this.sleep(1000);
     // if (!this.isMob) await this.driver.actions().scroll(0, 0, 5, 10, ele).perform();
     const actions = this.driver.actions();
-    if (!this.isMob) await actions.move({ origin: ele }).perform();
-    if (time >= 1000) await this.sleep(1000);
     try {
+      if (!this.isMob) await actions.move({ origin: ele }).perform();
+      if (time >= 1000) await this.sleep(1000);
       await this.driver.manage().setTimeouts({ pageLoad: 10000 });
       if (isEnter) await ele.sendKeys(Key.ENTER);
       else await ele.click();
     } catch (e) {
-      if (e.name != "TimeoutError") throw e;
+      if (e.name != "TimeoutError") {
+        if (this.para.isHeadless) {
+          let encodedString = await this.driver.takeScreenshot();
+          let fName = `${conf.machine}-${this.isMob?"m_":""}${this.para.code}-${new Date().toJSON().replaceAll(":", "")}.png`;
+          const fs = require("fs");
+          await fs.writeFileSync(`./log/${fName}`, encodedString, "base64");
+          let blockingElement = await this.driver.findElement(By.tagName("html"));
+          let outerHTML = await blockingElement.getAttribute("outerHTML");
+          this.logger.warn(`HEADLESS ${outerHTML}`);
+        }
+        throw e;
+      }
       else {
         try {
           await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
