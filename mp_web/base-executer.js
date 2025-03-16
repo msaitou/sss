@@ -138,13 +138,15 @@ class BaseExecuter extends BaseWebDriverWrapper {
             exch = useP * this.siteInfo.rate; // そのサイトのポイント倍率を円に換算
             if (exch < -1) exch *= -1;
             diff = calcDiff2();
-          } else {
-            // TODO ちゃんと作るまではメール飛ばす
-            await mailOpe.send(this.logger, {
-              subject: `換金した疑い[${siteCode}]`,
-              contents: `直前のポイント：${oldDoc[siteCode].p}\n今回のポイント：${p}\n差額：${diff}`,
-            });
           }
+          // 減ったことによる影響より、メールがうざいのでやっぱやめる
+          // else {
+          //   // TODO ちゃんと作るまではメール飛ばす
+          //   await mailOpe.send(this.logger, {
+          //     subject: `換金した疑い[${siteCode}]`,
+          //     contents: `直前のポイント：${oldDoc[siteCode].p}\n今回のポイント：${p}\n差額：${diff}`,
+          //   });
+          // }
         }
       }
     }
