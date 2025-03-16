@@ -1098,6 +1098,8 @@ class CmGameFurufuru extends CmSuper {
       if (this.isMob) {
         gameUrlHost = `https://${dome}-sp.dropgame.jp/`;
       }
+      await this.answerCMPreAnq(driver, logger);
+
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 1000, this.isMob ? 250 : 0);
