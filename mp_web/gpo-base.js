@@ -143,7 +143,7 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay(seleStr) {
-    let sele0 = ["#modal20th .btn_close>img", "#gn_ydn_interstitial_btn","#pfx_interstitial_close",
+    let sele0 = ["#modalContent .btn_close>img", "#gn_ydn_interstitial_btn","#pfx_interstitial_close",
       "#gn_interstitial_outer_area", "#gn_interstitial_close_icon"
     ];
     if (seleStr) sele0 = [seleStr, ""];

@@ -55,10 +55,10 @@ class CmsBase extends BaseExecuter {
     }
   }
   async saveNowPoint() {
-    let startPage = "https://www.cmsite.co.jp/top/home/";
+    let startPage = "https://www.cmsite.co.jp/point/reward";
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
-    let sele = ["p.menbertxt>span"];
+    let sele = ["div.cm-header__point>span.cm-header__point--num"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
@@ -96,54 +96,17 @@ class CmsCommon extends CmsMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
 
     await driver.get(siteInfo.entry_url); // エントリーページ表示
-    let seleIsLoggedIn = "p.menbertxt>span"; // ポイント数のセレクタでもあります
+    let seleIsLoggedIn = "div.cm-header__point>span.cm-header__point--num"; // ポイント数のセレクタでもあります
 
     logger.debug(11100);
+    // ログイン機能無くなりました
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
-      logger.debug(11101);
-      // リンクが存在することを確認
-      let seleLoginLink = "ul#GuestMenu>li>a[href*='login']";
-      if (await this.isExistEle(seleLoginLink, true, 2000)) {
-        logger.debug(11102);
-        let ele = await this.getEle(seleLoginLink, 2000);
-        await this.clickEle(ele, 2000); // ログイン入力画面へ遷移
-        await this.ignoreKoukoku();
-        let seleInput = {
-          id: "input#usermei",
-          pass: "input[name='password']",
-          login: "input#btn_send",
-        };
-        // アカウント（メール）入力
-        let inputEle = await this.getEle(seleInput.id, 500);
-        await inputEle.clear();
-        inputEle.sendKeys(account[this.code].loginid);
-
-        // パスワード入力
-        inputEle = await this.getEle(seleInput.pass, 500);
-        await inputEle.clear();
-        inputEle.sendKeys(account[this.code].loginpass);
-
-        ele = await this.getEle(seleInput.login, 1000);
-        await this.clickEle(ele, 4000);
-        // ログインできてるか、チェック
-        if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
-          // ログインできてるのでOK
-          logger.info("ログインできました！");
-          return true;
-        } else {
-          // ログインできてないので、メール
-          logger.info("ログインできませんでした");
-          await mailOpe.send(logger, {
-            subject: `ログインできません[${this.code}] `,
-            contents: `なぜか ${this.code} にログインできません`,
-          });
-          return;
-        }
-      } else {
-        // 未ログインで、ログインボタンが見つかりません。
-        return;
-      }
+      await mailOpe.send(logger, {
+        subject: `ログインできません[${this.code}] `,
+        contents: ` ${this.code} ログインが切れました`,
+      });
+      return;
     } else logger.debug("ログイン中なのでログインしません");
     return true;
   }
@@ -154,8 +117,8 @@ const { PartsCmManage } = require("./parts/parts-cm-manage.js");
 const { PartsResearch1 } = require("./parts/parts-research1.js");
 // デイリークイズ
 class CmsQuizDaily extends CmsMissonSupper {
-  firstUrl = "https://www.cmsite.co.jp/top/home/";
-  targetUrl = "https://www.cmsite.co.jp/top/game/";
+  firstUrl = "https://www.cmsite.co.jp/point/reward";
+  targetUrl = "https://www.cmsite.co.jp/point/reward/cmnw";
   QuizDaily;
   constructor(para) {
     super(para);
@@ -174,7 +137,7 @@ class CmsQuizDaily extends CmsMissonSupper {
 }
 // リサーチ1
 class CmsResearch1 extends CmsMissonSupper {
-  firstUrl = "https://www.cmsite.co.jp/top/home/";
+  firstUrl = "https://www.cmsite.co.jp/point/reward";
   targetUrl = "https://www.cmsite.co.jp/top/enq/";
   constructor(para) {
     super(para);
@@ -200,8 +163,8 @@ class CmsResearch1 extends CmsMissonSupper {
 }
 // CM系のクッション
 class CmsCm extends CmsMissonSupper {
-  firstUrl = "https://www.cmsite.co.jp/top/home/";
-  targetUrl = "https://www.cmsite.co.jp/top/cm/";
+  firstUrl = "https://www.cmsite.co.jp/point/reward";
+  targetUrl = "https://www.cmsite.co.jp/point/reward/cmnw";
   cmMissionList;
   constructor(para, cmMissionList) {
     super(para);
@@ -211,7 +174,7 @@ class CmsCm extends CmsMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
-    let sele = ["a[target='cmnw']>img"];
+    let sele = ["section.cmnw>a>img"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 2000, 115);
@@ -230,8 +193,8 @@ class CmsCm extends CmsMissonSupper {
 }
 // 本日の1本
 class CmsDailyCm extends CmsMissonSupper {
-  firstUrl = "https://www.cmsite.co.jp/top/home/";
-  targetUrl = "https://www.cmsite.co.jp/top/home/";
+  firstUrl = "https://www.cmsite.co.jp/point/reward";
+  targetUrl = "https://www.cmsite.co.jp/point/reward";
   constructor(para) {
     super(para);
     this.logger.debug(`${this.constructor.name} constructor`);
