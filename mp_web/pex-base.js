@@ -4,6 +4,7 @@ const { libUtil } = require("../lib/util.js");
 const { Builder, By, until, Select } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
+const conf = require("config");
 
 class PexBase extends BaseExecuter {
   code = D.CODE.PEX;
@@ -49,15 +50,19 @@ class PexBase extends BaseExecuter {
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.get(pointPage);
     await this.driver.sleep(1000);
-    let sele = ["dl.point_area>dd>span", "span.spend_p:not(.return-p)", 
-      "div.status.s1", "ul.mypage-list>a"];
+    let sele = [
+      "dl.point_area>dd>span",
+      "span.spend_p:not(.return-p)",
+      "div.status.s1",
+      "ul.mypage-list>a",
+    ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.driver.findElement(By.css(sele[0]));
       let nakedNum = await ele.getText();
       this.logger.info("now point total:" + nakedNum);
 
       // 投資中分
-      let toshiPage = "https://pex.jp/investments/portfolio"
+      let toshiPage = "https://pex.jp/investments/portfolio";
       await this.driver.get(toshiPage);
       let anotherP = 0;
       if (await this.isExistEle(sele[3], true, 2000)) {
@@ -143,13 +148,15 @@ class PexCommon extends PexMissonSupper {
         // もとのフレームに戻す
         await driver.switchTo().defaultContent();
         if (await this.isExistEle(seleRecap.panel_iframe, true, 2000)) {
-          let res = await this.driver.findElement(By.css(seleRecap.panel_iframe)).isDisplayed();
+          let res = await this.driver
+            .findElement(By.css(seleRecap.panel_iframe))
+            .isDisplayed();
           if (res) {
             // 画層識別が表示されたらログインを諦めて、メールを飛ばす
             logger.info("RECAPTCHA発生　手動でログインして！");
             await mailOpe.send(logger, {
-              subject: `ログインできません[${this.code}] RECAPTCHA発生`,
-              contents: `${this.code} にログインできません`,
+              subject: `ログインできません[${this.code}]${conf.machine} RECAPTCHA発生`,
+              contents: `${conf.machine} ${this.code} にログインできません`,
             });
             return;
           }
@@ -166,13 +173,17 @@ class PexCommon extends PexMissonSupper {
           // ログインできてないので、メール
           logger.info("ログインできませんでした");
           await mailOpe.send(logger, {
-            subject: `ログインできません[${this.code}] `,
-            contents: `なぜか ${this.code} にログインできません`,
+            subject: `ログインできません[${this.code}]${conf.machine}`,
+            contents: `なぜか ${conf.machine} の ${this.code} にログインできません`,
           });
           return;
         }
       } else {
         // 未ログインで、ログインボタンが見つかりません。
+        await mailOpe.send(logger, {
+          subject: `ログインできません[${this.code}]${conf.machine}`,
+          contents: `多分mobile ${conf.machine} の ${this.code} にログインできません`,
+        });
         return;
       }
     } else logger.debug("ログイン中なのでログインしません");
@@ -218,7 +229,7 @@ class PexNewsWatch extends PexMissonSupper {
         "a>div.go_top",
         "ul#point-action-",
       ];
-      if (this.isMob) sele[2] ="form>input[type='submit']";
+      if (this.isMob) sele[2] = "form>input[type='submit']";
       if (await this.isExistEle(sele[0], true, 2000)) {
         // let eles = await this.getEles(sele[0], 2000);
         // let repeatNum = eles.length === 3 ? 5 : eles.length === 2 ? 3 : 1;
@@ -240,7 +251,9 @@ class PexNewsWatch extends PexMissonSupper {
           let selePart = ["div.panel_label>span.emo_action", "img"];
           for (let j = eles.length - 1; j >= 0; j--) {
             // なんか既読じゃなかったらみたいな条件あり
-            if (await this.isExistElesFromEle(eles[j], selePart[0], false, 2000)) {
+            if (
+              await this.isExistElesFromEle(eles[j], selePart[0], false, 2000)
+            ) {
               await this.clickEle(eles[j], 2000, this.isMob ? 70 : 0); // 同一ページを切り替えてます
               await this.ignoreKoukoku();
               await this.hideOverlay2();
@@ -250,7 +263,12 @@ class PexNewsWatch extends PexMissonSupper {
                 // ランダムで。
                 let choiceNum = libUtil.getRandomInt(0, eles1.length);
                 // クリック場所へスクロールが必要（画面に表示しないとだめぽい）
-                await this.clickEle(eles1[choiceNum], 5000, this.isMob ? 120 : 0, this.isMob); // 同一ページを切り替えてます
+                await this.clickEle(
+                  eles1[choiceNum],
+                  5000,
+                  this.isMob ? 120 : 0,
+                  this.isMob
+                ); // 同一ページを切り替えてます
                 cnt++;
                 await this.hideOverlay2();
                 if (await this.isExistEle(sele[3], true, 2000)) {
@@ -274,7 +292,11 @@ class PexNewsWatch extends PexMissonSupper {
     return res;
   }
   async hideOverlay2() {
-    let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']", "#dismiss-button"];
+    let sele = [
+      "div.fc-dialog button.fc-rewarded-ad-button",
+      "ins iframe[title^='3rd']",
+      "#dismiss-button",
+    ];
     if (await this.silentIsExistEle(sele[0], true, 4000)) {
       let ele = await this.getEle(sele[0], 1000);
       await this.clickEle(ele, 1000);

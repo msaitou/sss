@@ -4,6 +4,7 @@ const { libUtil } = require("../lib/util.js");
 const { Builder, By, until, Select } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
+const conf = require("config");
 
 class CriBase extends BaseExecuter {
   code = D.CODE.CRI;
@@ -18,8 +19,12 @@ class CriBase extends BaseExecuter {
     let islogin = await gmyCom.login();
     if (islogin) {
       // cm系のミッションはまとめてやるため、ここでは1つ扱いのダミーミッションにする
-      let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
-      this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
+      let cmMissionList = this.missionList.filter(
+        (m) => m.main.indexOf("cm_") === 0
+      );
+      this.missionList = this.missionList.filter(
+        (m) => m.main.indexOf("cm_") === -1
+      );
       if (cmMissionList.length) {
         this.missionList.push({ main: D.MISSION.CM });
       }
@@ -83,7 +88,8 @@ class CriBase extends BaseExecuter {
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     const getUsePointFunc = async () => {
-      let exchangePage = "https://www.chobirich.com/mypage/point_details/koukan";
+      let exchangePage =
+        "https://www.chobirich.com/mypage/point_details/koukan";
       let p = "0";
       await this.driver.get(exchangePage);
       let sele = ["div.PointDetailsItem__pt.PointDetailsItem__pt--minus"];
@@ -115,9 +121,14 @@ class CriMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["#pfx_interstitial_close", 
-      "div.overlay-item a.button-close", "#gn_ydn_interstitial_btn", 
-      "div.close", "#close", "#interClose"];
+    let seleOver = [
+      "#pfx_interstitial_close",
+      "div.overlay-item a.button-close",
+      "#gn_ydn_interstitial_btn",
+      "div.close",
+      "#close",
+      "#interClose",
+    ];
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
@@ -140,12 +151,17 @@ class CriMissonSupper extends BaseWebDriverWrapper {
             let isExists = await this.silentIsExistEle(s, true, 1000);
             // もとのフレームに戻す
             await this.driver.switchTo().defaultContent();
-            if (isExists) await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`);
+            if (isExists)
+              await this.exeScriptNoTimeOut(
+                `document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`
+              );
             else if (await this.silentIsExistEle(s, true, 3000)) {
-              await this.exeScriptNoTimeOut(`document.querySelector("${s}").click()`);
-            } 
+              await this.exeScriptNoTimeOut(
+                `document.querySelector("${s}").click()`
+              );
+            }
           }
-        }else if (await this.silentIsExistEle(s, true, 1000)) {
+        } else if (await this.silentIsExistEle(s, true, 1000)) {
           let ele = await this.getEle(s, 1000);
           if (await ele.isDisplayed()) {
             await this.clickEle(ele, 1000);
@@ -155,13 +171,14 @@ class CriMissonSupper extends BaseWebDriverWrapper {
         let ele = await this.getEle(s, 1000);
         // if (s == seleOver[0]) {
         //   await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
-        // } else 
+        // } else
         if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
-  }}
+  }
+}
 // このサイトの共通処理クラス
 class CriCommon extends CriMissonSupper {
   constructor(para) {
@@ -171,10 +188,14 @@ class CriCommon extends CriMissonSupper {
   async login() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
 
-    await driver.get(siteInfo.entry_url?siteInfo.entry_url:"https://www.chobirich.com/"); // エントリーページ表示
+    await driver.get(
+      siteInfo.entry_url ? siteInfo.entry_url : "https://www.chobirich.com/"
+    ); // エントリーページ表示
     let sele = ["#interstitialSpecialAd"];
     if (await this.isExistEle(sele[0], true, 1000)) {
-      await this.driver.executeScript(`document.querySelector('${sele[0]}').setAttribute('style', 'display:none;');`);
+      await this.driver.executeScript(
+        `document.querySelector('${sele[0]}').setAttribute('style', 'display:none;');`
+      );
     }
     let seleIsLoggedIn = "p.g-navi__user__pt";
     if (this.isMob) seleIsLoggedIn = "p.HeaderNav__userPt";
@@ -227,13 +248,15 @@ class CriCommon extends CriMissonSupper {
           // もとのフレームに戻す
           await driver.switchTo().defaultContent();
           if (await this.isExistEle(seleRecap.panel_iframe, true, 2000)) {
-            let res = await this.driver.findElement(By.css(seleRecap.panel_iframe)).isDisplayed();
+            let res = await this.driver
+              .findElement(By.css(seleRecap.panel_iframe))
+              .isDisplayed();
             if (res) {
               // 画層識別が表示されたらログインを諦めて、メールを飛ばす
               logger.info("RECAPTCHA発生　手動でログインして！");
               await mailOpe.send(logger, {
-                subject: `ログインできません[${this.code}] RECAPTCHA発生`,
-                contents: `${this.code} にログインできません`,
+                subject: `ログインできません[${this.code}]${conf.machine} RECAPTCHA発生`,
+                contents: `${conf.machine} ${this.code} にログインできません`,
               });
               return;
             }
@@ -250,14 +273,18 @@ class CriCommon extends CriMissonSupper {
             // ログインできてないので、メール
             logger.info("ログインできませんでした");
             await mailOpe.send(logger, {
-              subject: `ログインできません[${this.code}] `,
-              contents: `なぜか ${this.code} にログインできません`,
+              subject: `ログインできません[${this.code}]${conf.machine}`,
+              contents: `なぜか ${conf.machine} の ${this.code} にログインできません`,
             });
             return;
           }
         }
       } else {
         // 未ログインで、ログインボタンが見つかりません。
+        await mailOpe.send(logger, {
+          subject: `ログインできません[${this.code}]${conf.machine}`,
+          contents: `これ何？ ${conf.machine} の ${this.code} にログインできません`,
+        });
         return;
       }
     } else logger.debug("ログイン中なのでログインしません");
@@ -308,7 +335,11 @@ class CriClick extends CriMissonSupper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START`);
 
-    let sele = ["div.tokusen_bnr a img", ".clickstamp_list a img", ".clickstamp_list a img"];
+    let sele = [
+      "div.tokusen_bnr a img",
+      ".clickstamp_list a img",
+      ".clickstamp_list a img",
+    ];
     let urlList = [
       this.firstUrl,
       "https://www.chobirich.com/shopping/",
@@ -567,7 +598,7 @@ class CriAnq extends CriMissonSupper {
       for (let i = 0; i < limit; i++) {
         if (i !== 0 && (await this.isExistEle(sele[0], true, 2000)))
           eles = await this.getEles(sele[0], 3000);
-        let ele = eles[eles.length - 1-skip]; // 下から
+        let ele = eles[eles.length - 1 - skip]; // 下から
         await this.clickEleScrollWeak(ele, 4000, 70);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
@@ -699,7 +730,9 @@ class CriAnqPark extends CriMissonSupper {
             text = text.split("\n").join("").split("\n").join("");
             if (await this.isExistEle(sele[2], true, 2000)) {
               let eles2 = await this.getEles(sele[2], 3000);
-              await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+              await driver.executeScript(
+                `window.scrollTo(0, document.body.scrollHeight);`
+              );
               let ele = eles2[eles.length - 1];
               let ele2 = null;
               try {
@@ -806,7 +839,7 @@ class CriAnqHappy extends CriMissonSupper {
                   "あなたのペットに対する考えとイメージに関するアンケート",
                   "家事に関するアンケート",
                   "バッグについてのアンケート",
-                  "二次創作に関するアンケート"
+                  "二次創作に関するアンケート",
                 ].indexOf(title) > -1
               ) {
                 skip++;
@@ -836,25 +869,36 @@ class CriAnqHappy extends CriMissonSupper {
                 for (let i = 0; i < 30; i++) {
                   let currentUrl = await driver.getCurrentUrl();
                   // 広告が画面いっぱいに入る時がある
-                  if (currentUrl.indexOf("https://chobirich.enquete.vip/") === -1) {
+                  if (
+                    currentUrl.indexOf("https://chobirich.enquete.vip/") === -1
+                  ) {
                     await driver.navigate().back(); // 広告をクリックしたぽいので戻る
                     await this.sleep(2000);
                     logger.info("広告をクリックさせられたのでbackします");
                     let iBreak = false;
                     for (let k = 0; k < 5; k++) {
                       currentUrl = await driver.getCurrentUrl();
-                      if (currentUrl.indexOf("https://chobirich.enquete.vip/") === -1) {
+                      if (
+                        currentUrl.indexOf("https://chobirich.enquete.vip/") ===
+                        -1
+                      ) {
                         await driver.navigate().back(); // 広告をクリックしたぽいので戻る
                         await this.sleep(2000);
                         logger.info("広告をクリックさせられたのでbackします");
                       } else {
                         currentUrl = await driver.getCurrentUrl();
-                        if (currentUrl.indexOf("https://chobirich.enquete.vip/start") === 0) {
+                        if (
+                          currentUrl.indexOf(
+                            "https://chobirich.enquete.vip/start"
+                          ) === 0
+                        ) {
                           await driver.navigate().back(); // 一覧からやり直す
                           await this.sleep(2000);
                           iBreak = true;
                         } else if (
-                          currentUrl.indexOf("https://chobirich.enquete.vip/question") === 0
+                          currentUrl.indexOf(
+                            "https://chobirich.enquete.vip/question"
+                          ) === 0
                         ) {
                           // ナニモシナイ
                         } else if (isStartPage) iBreak = true;
@@ -897,25 +941,42 @@ class CriAnqHappy extends CriMissonSupper {
                     }
                     if (await this.isExistEle(sele[7], true, 2000)) {
                       let eles = await this.getEles(sele[7], 3000);
-                      if (choiceNum === -1) choiceNum = libUtil.getRandomInt(0, eles.length);
+                      if (choiceNum === -1)
+                        choiceNum = libUtil.getRandomInt(0, eles.length);
                       if (choiceNum >= eles.length) choiceNum = eles.length - 1;
                       // await this.clickEle(eles[choiceNum], 3000, 500);
-                      await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[choiceNum]);
+                      await this.exeScriptNoTimeOut(
+                        `arguments[0].click()`,
+                        eles[choiceNum]
+                      );
                       await this.sleep(2000);
-                      let done = await this.closeElesWindowAndAlert([wid, wid2]);
+                      let done = await this.closeElesWindowAndAlert([
+                        wid,
+                        wid2,
+                      ]);
                       if (await this.isExistEle(sele[3], true, 2000)) {
                         let ele = await this.getEle(sele[3], 3000);
                         // await this.clickEle(ele, 3000, 500, this.isMob);
-                        await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+                        await this.exeScriptNoTimeOut(
+                          `arguments[0].click()`,
+                          ele
+                        );
                         await this.sleep(2000);
-                        if ((await this.closeElesWindowAndAlert([wid, wid2])) || done) i--;
+                        if (
+                          (await this.closeElesWindowAndAlert([wid, wid2])) ||
+                          done
+                        )
+                          i--;
                       }
                     }
                   } else if (isStartPage) {
                     if (await this.isExistEle(sele[2], true, 2000)) {
                       ele = await this.getEle(sele[2], 3000);
                       // await this.clickEle(ele, 3000, 500, this.isMob);
-                      await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+                      await this.exeScriptNoTimeOut(
+                        `arguments[0].click()`,
+                        ele
+                      );
                       await this.sleep(2000);
                       await this.closeElesWindowAndAlert([wid, wid2]);
                       i--;
@@ -1030,8 +1091,10 @@ class CriGameContents extends CriMissonSupper {
     //   case D.MISSION.GAME_OTE:
 
     if (this.mission == D.MISSION.GAME_COOK) se = ["img[src*='cooking_90_90']"];
-    else if (this.mission == D.MISSION.GAME_EGG) se = ["img[src*='eggchoice_90_90']"];
-    else if (this.mission == D.MISSION.GAME_TENKI) se = ["img[src*='otenki_90_90']"];
+    else if (this.mission == D.MISSION.GAME_EGG)
+      se = ["img[src*='eggchoice_90_90']"];
+    else if (this.mission == D.MISSION.GAME_TENKI)
+      se = ["img[src*='otenki_90_90']"];
     else if (this.mission == D.MISSION.GAME_OTE) se = ["img[src*='ote_90_90']"];
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(se[0], true, 2000)) {

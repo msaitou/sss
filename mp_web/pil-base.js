@@ -4,6 +4,7 @@ const { libUtil } = require("../lib/util.js");
 const { Builder, By, until, Select } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
+const conf = require("config");
 
 class PilBase extends BaseExecuter {
   code = D.CODE.PIL;
@@ -159,8 +160,8 @@ class PilCommon extends PilMissonSupper {
         // ログインできてないので、メール
         logger.info("ログインできませんでした");
         await mailOpe.send(logger, {
-          subject: `ログインできません[${this.code}] `,
-          contents: `なぜか ${this.code} にログインできません`,
+          subject: `ログインできません[${this.code}]${conf.machine}`,
+          contents: `なぜか ${conf.machine} の ${this.code} にログインできません`,
         });
         return;
       }

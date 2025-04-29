@@ -4,6 +4,7 @@ const { libUtil } = require("../lib/util.js");
 const { Builder, By, until, Select } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
+const conf = require("config");
 
 class GmyBase extends BaseExecuter {
   code = D.CODE.GMY;
@@ -18,8 +19,12 @@ class GmyBase extends BaseExecuter {
     let islogin = await gmyCom.login();
     if (islogin) {
       // cm系のミッションはまとめてやるため、ここでは1つ扱いのダミーミッションにする
-      let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
-      this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
+      let cmMissionList = this.missionList.filter(
+        (m) => m.main.indexOf("cm_") === 0
+      );
+      this.missionList = this.missionList.filter(
+        (m) => m.main.indexOf("cm_") === -1
+      );
       if (cmMissionList.length) {
         this.missionList.push({ main: D.MISSION.CM });
       }
@@ -130,7 +135,7 @@ class GmyMissonSupper extends BaseWebDriverWrapper {
     let iSele = {
       "a.gmoam_close_button": "iframe[title='GMOSSP iframe']",
       "div.close-button": "ins iframe[title='3rd party ad content']",
-      "#pfx_interstitial_close": "iframe.profitx-ad-frame-markup"
+      "#pfx_interstitial_close": "iframe.profitx-ad-frame-markup",
     };
     for (let s of seleOver) {
       if (await this.silentIsExistEle(s, true, 1000)) {
@@ -241,13 +246,15 @@ class GmyCommon extends GmyMissonSupper {
         // もとのフレームに戻す
         await driver.switchTo().defaultContent();
         if (await this.isExistEle(seleRecap.panel_iframe, true, 2000)) {
-          let res = await this.driver.findElement(By.css(seleRecap.panel_iframe)).isDisplayed();
+          let res = await this.driver
+            .findElement(By.css(seleRecap.panel_iframe))
+            .isDisplayed();
           if (res) {
             // 画層識別が表示されたらログインを諦めて、メールを飛ばす
             logger.info("RECAPTCHA発生　手動でログインして！");
             await mailOpe.send(logger, {
-              subject: `ログインできません[${this.code}] RECAPTCHA発生`,
-              contents: `${this.code} にログインできません`,
+              subject: `ログインできません[${this.code}]${conf.machine} RECAPTCHA発生`,
+              contents: `${conf.machine} ${this.code} にログインできません`,
             });
             return;
           }
@@ -264,13 +271,17 @@ class GmyCommon extends GmyMissonSupper {
           // ログインできてないので、メール
           logger.info("ログインできませんでした");
           await mailOpe.send(logger, {
-            subject: `ログインできません[${this.code}] `,
-            contents: `なぜか ${this.code} にログインできません`,
+            subject: `ログインできません[${this.code}]${conf.machine}`,
+            contents: `なぜか ${conf.machine} の ${this.code} にログインできません`,
           });
           return;
         }
       } else {
         // 未ログインで、ログインボタンが見つかりません。
+        await mailOpe.send(logger, {
+          subject: `ログインできません[${this.code}]${conf.machine}`,
+          contents: `多分mobile ${conf.machine} の ${this.code} にログインできません`,
+        });
         return;
       }
     } else logger.debug("ログイン中なのでログインしません");
@@ -300,7 +311,11 @@ class GmyCm extends GmyMissonSupper {
       await this.changeWindow(wid); // 別タブに移動する
       let targetUrl = "https://dietnavi.cmnw.jp/game/";
       if (this.isMob) targetUrl = "https://dietnavi-sp.cmnw.jp/game/";
-      let cmManage = new PartsCmManage(this.para, this.cmMissionList, targetUrl);
+      let cmManage = new PartsCmManage(
+        this.para,
+        this.cmMissionList,
+        targetUrl
+      );
       await cmManage.do();
       await driver.close(); // このタブを閉じて
       await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -424,7 +439,8 @@ class GmyOtano extends GmyMissonSupper {
             limit = eles0.length;
           for (let i = 0; i < limit; i++) {
             await this.hideOverlay();
-            if (i !== 0 && (await this.isExistEle(sele[0], true, 2000))) eles0 = await this.getEles(sele[0], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[0], true, 2000)))
+              eles0 = await this.getEles(sele[0], 3000);
             await this.clickEle(eles0[0], 3000);
             res = await Otano.do();
           }
@@ -609,8 +625,11 @@ class GmyAnqKenkou extends GmyMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
-            await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+              eles = await this.getEles(sele[1], 3000);
+            await driver.executeScript(
+              `window.scrollTo(0, document.body.scrollHeight);`
+            );
             await this.clickEle(eles[eles.length - 1], 6000, 250);
             res = await AnkPark.doMobKenkou();
             await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
@@ -654,8 +673,11 @@ class GmyAnqManga extends GmyMissonSupper {
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
             await this.hideOverlay();
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
-            await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+              eles = await this.getEles(sele[1], 3000);
+            await driver.executeScript(
+              `window.scrollTo(0, document.body.scrollHeight);`
+            );
             await this.clickEle(eles[eles.length - 1], 6000, 250);
             res = await AnkPark.doMobManga();
             await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
@@ -703,13 +725,16 @@ class GmyAnqPark extends GmyMissonSupper {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
-            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
+            if (i !== 0 && (await this.isExistEle(sele[1], true, 2000)))
+              eles = await this.getEles(sele[1], 3000);
             await this.hideOverlay();
             let text = await eles[eles.length - 1].getText();
             text = text.split("\n").join("").split("\n").join("");
             if (await this.isExistEle(sele[2], true, 2000)) {
               let eles2 = await this.getEles(sele[2], 3000);
-              await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
+              await driver.executeScript(
+                `window.scrollTo(0, document.body.scrollHeight);`
+              );
               let ele = eles2[eles.length - 1];
               let ele2 = null;
               try {

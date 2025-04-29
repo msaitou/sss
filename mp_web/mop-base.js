@@ -5,6 +5,7 @@ const { Builder, By, until, Select, Key } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
 const { PartsCmManage } = require("./parts/parts-cm-manage.js");
+const conf = require("config");
 
 class MopBase extends BaseExecuter {
   code = D.CODE.MOP;
@@ -272,13 +273,17 @@ class MopCommon extends MopMissonSupper {
           // ログインできてないので、メール
           logger.info("ログインできませんでした");
           await mailOpe.send(logger, {
-            subject: `ログインできません[${this.code}] `,
-            contents: `なぜか ${this.code} にログインできません`,
+            subject: `ログインできません[${this.code}]${conf.machine}`,
+            contents: `なぜか ${conf.machine} の ${this.code} にログインできません`,
           });
           return;
         }
       } else {
         // 未ログインで、ログインボタンが見つかりません。
+        await mailOpe.send(logger, {
+          subject: `ログインできません[${this.code}]${conf.machine}`,
+          contents: `多分moile ${conf.machine} の ${this.code} にログインできません`,
+        });
         return;
       }
     } else logger.debug("ログイン中なのでログインしません");

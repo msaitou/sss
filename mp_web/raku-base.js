@@ -5,6 +5,7 @@ const { Builder, By, until, Select } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
 const { log } = require("../initter.js");
+const conf = require("config");
 
 class RakuBase extends BaseExecuter {
   code = D.CODE.RAKU;
@@ -212,8 +213,8 @@ class RakuCommon extends RakuMissonSupper {
         } else {
           logger.info("ログインできませんでした");
           await mailOpe.send(logger, {
-            subject: `ログインできません[${this.code}] `,
-            contents: `なぜか ${this.code} にログインできません`,
+            subject: `ログインできません[${this.code}]${conf.machine}`,
+            contents: `なぜか ${conf.machine} の ${this.code} にログインできません`,
           });
           return;
         }

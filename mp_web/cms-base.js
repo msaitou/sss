@@ -4,6 +4,7 @@ const { libUtil } = require("../lib/util.js");
 const { Builder, By, until, Select } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
+const conf = require("config");
 
 class CmsBase extends BaseExecuter {
   code = D.CODE.CMS;
@@ -103,8 +104,8 @@ class CmsCommon extends CmsMissonSupper {
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       await mailOpe.send(logger, {
-        subject: `ログインできません[${this.code}] `,
-        contents: ` ${this.code} ログインが切れました`,
+        subject: `ログインできません[${this.code}]${conf.machine}`,
+        contents: `なぜか ${conf.machine} の ${this.code} にログインが切れました`,
       });
       return;
     } else logger.debug("ログイン中なのでログインしません");

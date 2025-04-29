@@ -4,6 +4,7 @@ const { libUtil } = require("../lib/util.js");
 const { Builder, By, until, Select, Key } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
+const conf = require("config");
 
 class GenBase extends BaseExecuter {
   code = D.CODE.GEN;
@@ -229,8 +230,8 @@ class GenCommon extends GenMissonSupper {
             // 画層識別が表示されたらログインを諦めて、メールを飛ばす
             logger.info("RECAPTCHA発生　手動でログインして！");
             await mailOpe.send(logger, {
-              subject: `ログインできません[${this.code}] RECAPTCHA発生`,
-              contents: `${this.code} にログインできません`,
+              subject: `ログインできません[${this.code}]${conf.machine} RECAPTCHA発生`,
+              contents: `${conf.machine} ${this.code} にログインできません`,
             });
             return;
           }
@@ -247,14 +248,18 @@ class GenCommon extends GenMissonSupper {
           // ログインできてないので、メール
           logger.info("ログインできませんでした");
           await mailOpe.send(logger, {
-            subject: `ログインできません[${this.code}] `,
-            contents: `なぜか ${this.code} にログインできません`,
+            subject: `ログインできません[${this.code}]${conf.machine}`,
+            contents: `なぜか ${conf.machine} の ${this.code} にログインできません`,
           });
           return;
         }
       } else {
         // 未ログインで、ログインボタンが見つかりません。
-        return;
+          await mailOpe.send(logger, {
+            subject: `ログインできません[${this.code}]${conf.machine}`,
+            contents: `多分mobile ${conf.machine} の ${this.code} にログインできません`,
+          });
+          return;
       }
     } else logger.debug("ログイン中なのでログインしません");
     return true;

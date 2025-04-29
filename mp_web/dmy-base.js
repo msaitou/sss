@@ -4,6 +4,7 @@ const { libUtil } = require("../lib/util.js");
 const { Builder, By, until, Select } = require("selenium-webdriver");
 const D = require("../com_cls/define").Def;
 const mailOpe = require("../mp_mil/mail_operate");
+const conf = require("config");
 
 class DmyBase extends BaseExecuter {
   code = D.CODE.DMY;
@@ -18,8 +19,12 @@ class DmyBase extends BaseExecuter {
     let islogin = await dmyCom.login();
     if (islogin) {
       // cm系のミッションはまとめてやるため、ここでは1つ扱いのダミーミッションにする
-      let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
-      this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
+      let cmMissionList = this.missionList.filter(
+        (m) => m.main.indexOf("cm_") === 0
+      );
+      this.missionList = this.missionList.filter(
+        (m) => m.main.indexOf("cm_") === -1
+      );
       if (cmMissionList.length) this.missionList.push({ main: D.MISSION.CM });
       for (let i in this.missionList) {
         let mission = this.missionList[i];
@@ -131,8 +136,8 @@ class DmyCommon extends DmyMissonSupper {
           // ログインできてないので、メール
           logger.info("ログインできませんでした");
           await mailOpe.send(logger, {
-            subject: `ログインできません[${this.code}] `,
-            contents: `なぜか ${this.code} にログインできません`,
+            subject: `ログインできません[${this.code}]${conf.machine}`,
+            contents: `なぜか ${conf.machine} の ${this.code} にログインできません`,
           });
           return;
         }
@@ -142,6 +147,10 @@ class DmyCommon extends DmyMissonSupper {
         // }
       } else {
         // 未ログインで、ログインボタンが見つかりません。
+        await mailOpe.send(logger, {
+          subject: `ログインできません[${this.code}]${conf.machine}`,
+          contents: `多分mobile ${conf.machine} の ${this.code} にログインできません`,
+        });
         return;
       }
     } else logger.debug("ログイン中なのでログインしません");
