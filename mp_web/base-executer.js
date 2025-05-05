@@ -55,10 +55,7 @@ class BaseExecuter extends BaseWebDriverWrapper {
           this.logger.info(JSON.stringify(missionList, null, 2));
         }
         if (this.isHeadless) {
-          let encodedString = await this.driver.takeScreenshot();
-          let fName = `${conf.machine}-${missionList[0]?.site_code}-${new Date().toJSON().replaceAll(":", "")}.png`;
-          const fs = require("fs");
-          await fs.writeFileSync(`./log/${fName}`, encodedString, "base64");
+          await this.takeScreen();
           // let blockingElement = await this.driver.findElement(By.id("gn_interstitial_area"));
           // let outerHTML = await blockingElement.getAttribute("outerHTML");
           // this.logger.warn(`HEADLESS ${outerHTML}`);

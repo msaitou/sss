@@ -230,6 +230,7 @@ class PtoCommon extends PtoMissonSupper {
           logger.info("ログインできました！");
           return true;
         } else {
+          await this.takeScreen();
           // ログインできてないので、メール
           logger.info("ログインできませんでした");
           await mailOpe.send(logger, {

@@ -277,6 +277,7 @@ class GmyCommon extends GmyMissonSupper {
           return;
         }
       } else {
+        await this.takeScreen();
         // 未ログインで、ログインボタンが見つかりません。
         await mailOpe.send(logger, {
           subject: `ログインできません[${this.code}]${conf.machine}`,

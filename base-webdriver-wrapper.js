@@ -412,6 +412,11 @@ class BaseWebDriverWrapper {
       await this.driver.manage().setTimeouts({ pageLoad: D.INTERVAL[180] }); // 元のタイムアウト時間に戻す
     }
   }
-
+  async takeScreen() {
+    let encodedString = await this.driver.takeScreenshot();
+    let fName = `${conf.machine}-${this.code}-${new Date().toJSON().replaceAll(":", "")}.png`;
+    const fs = require("fs");
+    await fs.writeFileSync(`./log/${fName}`, encodedString, "base64");
+  }
 }
 exports.BaseWebDriverWrapper = BaseWebDriverWrapper;

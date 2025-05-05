@@ -47,7 +47,7 @@ const labelmap = {
     test: { dir: "p/test", key: "" },
   },
 };
-const targetList = conf.p_mil.target;
+const targetList = conf?.p_mil?.target;
 
 // gmailでメール抽出
 exports.search = async (db, log, urlMap) => {
@@ -491,7 +491,7 @@ exports.send = async (log, body) => {
   log.debug(response);
 };
 // 試し時使用用
-// (async () => {
-//   await send();
-//   console.log("owari");
-// })();
+(async () => {
+  await this.send({debug:()=>{}}, {});
+  console.log("owari");
+})();
