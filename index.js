@@ -86,5 +86,7 @@ if (process.argv[2] && MODE[process.argv[2].toUpperCase()]) {
   start(process.argv[2]);
 } else {
   console.log(`引数は、${Object.keys(MODE)} のどれかです！`);
+  console.log(`debugの引数は cit click 等です`);
+
   process.exit();
 }

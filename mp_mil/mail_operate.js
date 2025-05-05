@@ -490,8 +490,11 @@ exports.send = async (log, body) => {
   });
   log.debug(response);
 };
-// 試し時使用用
-(async () => {
-  await this.send({debug:()=>{}}, {});
-  console.log("owari");
-})();
+console.debug(process.argv);
+if (process.argv[1].indexOf("mail_operate.js") > -1) {
+  // 試し時使用用
+  (async () => {
+    await this.send({debug:()=>{}}, {});
+    console.log("owari");
+  })();
+}
