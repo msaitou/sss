@@ -176,6 +176,9 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
+    await this.exeScriptNoTimeOut(
+      `for (let t of document.querySelectorAll("iframe")){t.remove();}`
+    );
   }
 }
 exports.PartsQuizKentei = PartsQuizKentei;

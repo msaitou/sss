@@ -325,13 +325,14 @@ class PartsGame extends BaseWebDriverWrapper {
           if (await this.isExistEle(se[1], true, 2000)) {
             let els = await this.getEles(se[1], 3000);
             await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 5000, 200);
+            // await this.exeScriptNoTimeOut(`document.querySelectorAll("${se[1]}")[${libUtil.getRandomInt(0, els.length)}].click()`);
             await this.backNowMissionPage(gameUrlHost);
             await this.hideOverlay();
             await this.sleep(5000);
             if (await this.isExistEle(se[0], true, 2000)) {
               let el = await this.getEle(se[0], 3000);
               await driver.wait(until.elementIsVisible(el), 10000);
-              await this.clickEle(el, 1000, 200);
+              await this.clickEle(el, 1000, 200,);
               await this.backNowMissionPage(gameUrlHost);
             }
           } else break;
@@ -2115,6 +2116,9 @@ class PartsGame extends BaseWebDriverWrapper {
         await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
       }
     }
+    await this.exeScriptNoTimeOut(
+      `for (let t of document.querySelectorAll("iframe")){t.remove();}`
+    );
   }
 
   // async hideOverlay() {

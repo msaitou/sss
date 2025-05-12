@@ -497,11 +497,11 @@ class PicPointMoll extends PicMissonSupper {
         let anqSeleList = Object.values(anqSeleMap);
         let mainSeleMap = {
           ...anqSeleMap,
-          [D.MISSION.MOLL_QUIZ_KENTEI_1]: "img[src*='img_quiz01']",
-          [D.MISSION.MOLL_QUIZ_KENTEI_2]: "img[src*='img_quiz02']",
-          [D.MISSION.MOLL_QUIZ_KENTEI_3]: "img[src*='img_quiz03']",
-          [D.MISSION.MOLL_QUIZ_KENTEI_4]: "img[src*='img_quiz04']",
-          [D.MISSION.MOLL_QUIZ_KENTEI_5]: "img[src*='img_quiz05']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_1]: "#game img[src*='img_quiz01']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_2]: "#game img[src*='img_quiz02']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_3]: "#game img[src*='img_quiz03']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_4]: "#game img[src*='img_quiz04']",
+          [D.MISSION.MOLL_QUIZ_KENTEI_5]: "#game img[src*='img_quiz05']",
         };
         let gameSeleMap = {
           [D.MISSION.MOLL_KOKUHAKU]: "div>img[src*='img_kokuhaku']",
