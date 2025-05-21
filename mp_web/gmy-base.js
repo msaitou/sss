@@ -277,12 +277,14 @@ class GmyCommon extends GmyMissonSupper {
           return;
         }
       } else {
-        await this.takeScreen();
-        // 未ログインで、ログインボタンが見つかりません。
-        await mailOpe.send(logger, {
-          subject: `ログインできません[${this.code}]${conf.machine}`,
-          contents: `多分mobile ${conf.machine} の ${this.code} にログインできません`,
-        });
+        if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
+          await this.takeScreen();
+          // 未ログインで、ログインボタンが見つかりません。
+          await mailOpe.send(logger, {
+            subject: `ログインできません[${this.code}]${conf.machine}`,
+            contents: `多分mobile ${conf.machine} の ${this.code} にログインできません`,
+          });
+        }
         return;
       }
     } else logger.debug("ログイン中なのでログインしません");
