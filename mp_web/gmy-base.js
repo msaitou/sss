@@ -284,8 +284,8 @@ class GmyCommon extends GmyMissonSupper {
             subject: `ログインできません[${this.code}]${conf.machine}`,
             contents: `多分mobile ${conf.machine} の ${this.code} にログインできません`,
           });
+          return;
         }
-        return;
       }
     } else logger.debug("ログイン中なのでログインしません");
     return true;

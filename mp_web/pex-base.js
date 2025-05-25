@@ -179,12 +179,14 @@ class PexCommon extends PexMissonSupper {
           return;
         }
       } else {
-        // 未ログインで、ログインボタンが見つかりません。
-        await mailOpe.send(logger, {
-          subject: `ログインできません[${this.code}]${conf.machine}`,
-          contents: `多分mobile ${conf.machine} の ${this.code} にログインできません`,
-        });
-        return;
+        if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
+          // 未ログインで、ログインボタンが見つかりません。
+          await mailOpe.send(logger, {
+            subject: `ログインできません[${this.code}]${conf.machine}`,
+            contents: `多分mobile ${conf.machine} の ${this.code} にログインできません`,
+          });
+          return;
+        }
       }
     } else logger.debug("ログイン中なのでログインしません");
     return true;
