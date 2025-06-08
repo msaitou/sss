@@ -27,7 +27,8 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         "",
         "",
       ];
-      if (this.isMob) (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
+      if (this.isMob)
+        (sele[1] = "#game_area #item"), (sele[2] = "#game_area #item>div");
       // await this.openUrl(`${gameUrlHost}drop/practice/top`); // todo 練習用
       await this.ignoreKoukoku();
       await this.getPoint();
@@ -38,6 +39,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
           await this.hideOverlay();
           let ele = await this.getEles(sele[0], 3000);
           await this.clickEle(ele[0], 4000);
+          await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 2000)) {
             let ele = await this.getEle(sele[1], 3000);
             let rect = await ele.getRect();
@@ -213,6 +215,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
       "#svg_close",
       "#gn_interstitial_close",
       "#gn_interstitial_outer_area",
+      "ins iframe[title='3rd party ad content']",
     ];
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
@@ -229,7 +232,27 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         }
       } else if (await this.silentIsExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
-        if (s == "#gn_interstitial_outer_area") {
+        if (s == "ins iframe[title='3rd party ad content']") {
+          let sele = [
+            "ins iframe[title='3rd party ad content']",
+            "#dismiss-button",
+          ];
+          let iframes = await this.getEles(sele[0], 1000);
+          for (let iframe of iframes) {
+            if (await iframe.isDisplayed()) {
+              await this.driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
+              await this.sleep(10000);
+              if (await this.silentIsExistEle(sele[1], true, 1000)) {
+                let inputEle = await this.getEle(sele[1], 1000);
+                if (await inputEle.isDisplayed()) {
+                  await this.clickEle(inputEle, 1000);
+                } else this.logger.debug("オーバーレイは表示されてないです");
+              }
+              // もとのフレームに戻す
+              await this.driver.switchTo().defaultContent();
+            }
+          }
+        } else if (s == "#gn_interstitial_outer_area") {
           await this.exeScriptNoTimeOut(
             `for (let t of document.querySelectorAll("#gn_interstitial_outer_area")){t.remove();}`
           );

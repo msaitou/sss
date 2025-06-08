@@ -183,6 +183,7 @@ class CmSuper extends BaseWebDriverWrapper {
       "a.gmoam_close_button",
       "#gn_interstitial_close_contents",
       // "div.overlay-item a.button-close"
+      "#fluct_ydn_interstitial_btn"
     ];
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
@@ -215,6 +216,18 @@ class CmSuper extends BaseWebDriverWrapper {
               await this.exeScriptNoTimeOut(`document.querySelector("${s}").click()`);
             } 
           }
+        }
+      } else if (["#fluct_ydn_interstitial_btn"].indexOf(s) > -1) {
+        let iSele = ["div[data-fluct-ad-script-already-reserved]>iframe"];
+        if (await this.silentIsExistEle(iSele[0], true, 1000)) {
+          let iframe = await this.getEles(iSele[0], 1000);
+          await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+          let inputEle = await this.getEle(s, 1000);
+          if (await inputEle.isDisplayed()) {
+            await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+          } else this.logger.debug("オーバーレイは表示されてないです");
+          // もとのフレームに戻す
+          await this.driver.switchTo().defaultContent();
         }
       } else if (await this.silentIsExistEle(s, true, 3000)) {
         let ele = await this.getEle(s, 2000);

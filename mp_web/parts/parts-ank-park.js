@@ -598,10 +598,10 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         let ele = await this.getEle(sele[1], 5000);
         await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
       }
-      await this.hideOverlay();
       for (let i = 0; i < 7; i++) {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);
+          await this.hideOverlay();
           await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
         }
       }
@@ -1187,6 +1187,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       "div.close",
       "#close",
       "#interClose",
+      "#fluct_ydn_interstitial_btn"
     ];
     for (let s of seleOver) {
       if (["#pfx_interstitial_close"].indexOf(s) > -1) {
@@ -1218,6 +1219,18 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           let inputEle = await this.getEle(s, 1000);
           if (await inputEle.isDisplayed()) {
             await this.clickEle(inputEle, 1000);
+          } else this.logger.debug("オーバーレイは表示されてないです");
+          // もとのフレームに戻す
+          await this.driver.switchTo().defaultContent();
+        }
+      } else if (["#fluct_ydn_interstitial_btn"].indexOf(s) > -1) {
+        let iSele = ["div[data-fluct-ad-script-already-reserved]>iframe"];
+        if (await this.silentIsExistEle(iSele[0], true, 1000)) {
+          let iframe = await this.getEles(iSele[0], 1000);
+          await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+          let inputEle = await this.getEle(s, 1000);
+          if (await inputEle.isDisplayed()) {
+            await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
           } else this.logger.debug("オーバーレイは表示されてないです");
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
