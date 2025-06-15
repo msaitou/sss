@@ -55,24 +55,30 @@ class PexBase extends BaseExecuter {
       "span.spend_p:not(.return-p)",
       "div.status.s1",
       "ul.mypage-list>a",
+      "nav.pagination>span.page>a[rel='next']",
     ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.driver.findElement(By.css(sele[0]));
       let nakedNum = await ele.getText();
       this.logger.info("now point total:" + nakedNum);
 
-      // 投資中分
-      let toshiPage = "https://pex.jp/investments/portfolio";
-      await this.driver.get(toshiPage);
+      // 投資中分 履歴が複数ページある。投資中だけに絞り込めない
       let anotherP = 0;
-      if (await this.isExistEle(sele[3], true, 2000)) {
-        let eles = await this.getEles(sele[3], 2000);
-        for (let el of eles) {
-          if (await this.isExistElesFromEle(el, sele[2], true)) {
-            if (await this.isExistElesFromEle(el, sele[1], true)) {
-              let ele2 = await this.getElesFromEle(el, sele[1]);
-              let p = await ele2[0].getText();
-              anotherP += Number(this.convertNumber(p));
+      if (await this.isExistEle(sele[4], true, 2000)) {
+        let eles = await this.getEles(sele[4], 2000);
+        for (let i = 1; i <= eles.length + 1; i++) {
+          let toshiPage = `https://pex.jp/investments/portfolio?page=${i}`;
+          await this.driver.get(toshiPage);
+          if (await this.isExistEle(sele[3], true, 2000)) {
+            let eles = await this.getEles(sele[3], 2000);
+            for (let el of eles) {
+              if (await this.isExistElesFromEle(el, sele[2], true)) {
+                if (await this.isExistElesFromEle(el, sele[1], true)) {
+                  let ele2 = await this.getElesFromEle(el, sele[1]);
+                  let p = await ele2[0].getText();
+                  anotherP += Number(this.convertNumber(p));
+                }
+              }
             }
           }
         }
