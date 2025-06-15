@@ -1164,8 +1164,8 @@ class PartsGame extends BaseWebDriverWrapper {
           await this.backNowMissionPage(gameUrlHost);
           if (await this.isExistEle(se[4], true, 2000)) {
             let el = await this.getEle(se[4], 3000);
-            await this.hideOverlay();
             await this.clickEle(el, 200, 200);
+            // await this.hideOverlay();
             await this.adver();
             if (await this.isExistEle(se[2], true, 2000)) {
               let el = await this.getEle(se[2], 3000);
@@ -1251,12 +1251,12 @@ class PartsGame extends BaseWebDriverWrapper {
           await this.backNowMissionPage(gameUrlHost);
           if (await this.isExistEle(se[4], true, 2000)) {
             let el = await this.getEle(se[4], 3000);
-            await this.hideOverlay();
+            // await this.hideOverlay();
             await this.clickEle(el, 200, 200);
             await this.adver();
             if (await this.isExistEle(se[2], true, 2000)) {
               let el = await this.getEle(se[2], 3000);
-              await this.hideOverlay();
+              // await this.hideOverlay();
               await this.clickEle(el, 200, 200);
               if (await this.isExistEle(se[0], true, 2000)) {
                 let el = await this.getEle(se[0], 3000);
@@ -1359,8 +1359,11 @@ class PartsGame extends BaseWebDriverWrapper {
           await this.backNowMissionPage(gameUrlHost);
           if (await this.isExistEle(se[4], true, 2000)) {
             let el = await this.getEle(se[4], 3000);
-            await this.hideOverlay();
-            await this.clickEle(el, 200, 200);
+            // await this.hideOverlay();
+            // await this.clickEle(el, 200, 200);
+            await this.exeScriptNoTimeOut(
+              `document.querySelector("${se[4]}").click()`
+            );
             await this.adver();
             if (await this.isExistEle(se[2], true, 2000)) {
               let el = await this.getEle(se[2], 3000);
@@ -1377,8 +1380,11 @@ class PartsGame extends BaseWebDriverWrapper {
           }
           if (await this.isExistEle(se[6], true, 2000)) {
             let el = await this.getEle(se[6], 3000);
-            await this.hideOverlay();
-            await this.clickEle(el, 200, 200);
+            // await this.hideOverlay();
+            // await this.clickEle(el, 200, 200);
+            await this.exeScriptNoTimeOut(
+              `document.querySelector("${se[6]}").click()`
+            );
             await this.adver();
             if (await this.isExistEle(se[7], true, 2000)) {
               let el = await this.getEle(se[7], 3000);
@@ -1456,7 +1462,7 @@ class PartsGame extends BaseWebDriverWrapper {
           await this.backNowMissionPage(gameUrlHost);
           if (await this.isExistEle(se[4], true, 2000)) {
             let el = await this.getEle(se[4], 3000);
-            await this.hideOverlay();
+            // await this.hideOverlay();
             await this.clickEle(el, 200, 200);
             await this.adver();
             if (await this.isExistEle(se[2], true, 2000)) {
@@ -2119,6 +2125,9 @@ class PartsGame extends BaseWebDriverWrapper {
     await this.exeScriptNoTimeOut(
       `for (let t of document.querySelectorAll("iframe")){t.remove();}`
     );
+    // await this.exeScriptNoTimeOut(
+    //   `for (let t of document.querySelectorAll("[data-google-query-id]")){t.remove();}`
+    // );
   }
 
   // async hideOverlay() {
@@ -2162,21 +2171,21 @@ class PartsGame extends BaseWebDriverWrapper {
       await this.ignoreKoukoku();
     }
     let iSele = ["ins [aria-label*='Advertisement']", "div.rewardResumebutton"];
-    if (await this.isExistEle(iSele[0], true, 3000)) {
+    if (await this.silentIsExistEle(iSele[0], true, 3000)) {
       // await this.exeScriptNoTimeOut(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
       // await this.exeScriptNoTimeOut(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
       let iframe = await this.getEles(iSele[0], 1000);
       await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
       for (let s of seleOver) {
         if ((s === seleOver[0] || s === seleOver[2]) && (await this.isExistEle(s, true, 3000))) {
-          if (await this.isExistEle(iSele[1], true, 3000)) {
+          if (await this.silentIsExistEle(iSele[1], true, 3000)) {
             let els = await this.getEles(iSele[1], 2000);
             if (await els[els.length - 1].isDisplayed()) {
               await this.clickEle(els[els.length - 1], 200); // 音声が出るよ
             }
           }
           await this.sleep(27000);
-          if (await this.isExistEle(s, true, 3000)) {
+          if (await this.silentIsExistEle(s, true, 3000)) {
             await this.sleep(3000);
             let inputEle = await this.getEle(s, 1000);
             if (await inputEle.isDisplayed()) {
