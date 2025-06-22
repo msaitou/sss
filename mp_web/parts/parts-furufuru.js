@@ -38,7 +38,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
           let winList = await driver.getAllWindowHandles();
           await this.hideOverlay();
           let ele = await this.getEles(sele[0], 3000);
-          await this.clickEle(ele[0], 4000);
+          await this.clickEle(ele[0], 4000, 200);
           await this.hideOverlay();
           if (await this.isExistEle(sele[1], true, 2000)) {
             let ele = await this.getEle(sele[1], 3000);
@@ -95,22 +95,23 @@ class PartsFurufuru extends BaseWebDriverWrapper {
             }
             if (await this.isExistEle(sele[3], true, 2000)) {
               let ele = await this.getEle(sele[3], 3000);
-              await this.clickEle(ele, 2000, this.isMob ? 150 : 0);
+              await this.clickEle(ele, 2000, 200);
               await this.ignoreKoukoku();
             }
             await this.hideOverlay();
             if (await this.isExistEle(sele[4], true, 2000)) {
               let ele = await this.getEle(sele[4], 3000);
-              await this.clickEle(ele, 2000, this.isMob ? 150 : 0);
+              await this.clickEle(ele, 2000, 200);
               await this.ignoreKoukoku();
             }
           } else if (await this.isExistEle(sele[3], true, 2000)) {
             let ele = await this.getEle(sele[3], 3000);
-            await this.clickEle(ele, 2000, this.isMob ? 150 : 0);
+            await this.clickEle(ele, 2000, 200);
             await this.ignoreKoukoku();
+            await this.hideOverlay();
             if (await this.isExistEle(sele[4], true, 2000)) {
               let ele = await this.getEle(sele[4], 3000);
-              await this.clickEle(ele, 2000, this.isMob ? 150 : 0);
+              await this.clickEle(ele, 2000, 200);
               await this.ignoreKoukoku();
             }
           }
