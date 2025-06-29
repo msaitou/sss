@@ -435,7 +435,7 @@ class GpoAnq extends GpoMissonSupper {
       ".surveyList div.button>a",
       "button[value='movenext']",
       ".question-text", // 2
-      "label:not(.hide)",
+      "label.radio-label:not(.hide)",
       "select", // 4
       "button[value='movesubmit']",
       "button.nextBtn", // 6
@@ -453,6 +453,7 @@ class GpoAnq extends GpoMissonSupper {
         await this.clickEle(eles[0], 4000); //
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
+        await this.hideOverlay();
         try {
           if (await this.isExistEle(sele[1], true, 2000)) {
             let ele = await this.getEle(sele[1], 3000);
