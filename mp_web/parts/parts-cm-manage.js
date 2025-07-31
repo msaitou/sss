@@ -502,6 +502,8 @@ class CmKentei extends CmSuper {
               if (await this.isExistEle(sele[5], true, 3000)) {
                 ele = await this.getEle(sele[5], 3000);
                 await this.clickEle(ele, 1000);
+                await this.ignoreKoukoku();
+                await this.hideOverlay();
                 if (await this.isExistEle(sele[5], true, 3000)) {
                   ele = await this.getEle(sele[5], 3000);
                   await this.clickEle(ele, 1000);

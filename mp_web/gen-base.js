@@ -683,7 +683,8 @@ class GenAnqPark extends GenMissonSupper {
                 await driver.navigate().refresh(); // 画面更新
                 if (await this.isExistEle(seleGen[0], true, 3000)) {
                   let ele = await this.getEle(seleGen[0], 3000);
-                  await this.clickEle(ele, 3000); // アンケートリストを表示
+                  await this.sleep(2000);
+                  await this.clickEle(ele, 3000, 200); // アンケートリストを表示
                 }
               }
             }

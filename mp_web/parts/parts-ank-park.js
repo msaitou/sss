@@ -1228,10 +1228,12 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         if (await this.silentIsExistEle(iSele[0], true, 1000)) {
           let iframe = await this.getEles(iSele[0], 1000);
           await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
-          let inputEle = await this.getEle(s, 1000);
-          if (await inputEle.isDisplayed()) {
-            await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
-          } else this.logger.debug("オーバーレイは表示されてないです");
+          if (await this.silentIsExistEle(s, true, 1000)) {
+            let inputEle = await this.getEle(s, 1000);
+            if (await inputEle.isDisplayed()) {
+              await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+            } else this.logger.debug("オーバーレイは表示されてないです");
+          }
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
         }
