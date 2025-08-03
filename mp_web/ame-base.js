@@ -76,7 +76,7 @@ class AmeMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close"];
+    let seleOver = ["#not_show_today_popup_item","div.overlay-item a.button-close"];
     if (await this.silentIsExistEle(seleOver[0], true, 3000)) {
       let ele = await this.getEle(seleOver[0], 2000);
       if (await ele.isDisplayed()) {
@@ -197,6 +197,7 @@ class AmeAnqColum extends AmeMissonSupper {
     let sele = ["img[alt='コラムとアンケート']", ".enquete-list div.status>a[href]"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
+      await this.hideOverlay();
       await this.clickEle(ele0, 3000);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
