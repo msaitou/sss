@@ -878,7 +878,7 @@ class GpoAnqColum extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["a[onclick*='columntoenquete']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
+    let sele = ["a[href*='column']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.hideOverlay();
