@@ -888,7 +888,9 @@ class GpoAnqColum extends GpoMissonSupper {
       try {
         if (await this.isExistEle(sele[3], true, 2000)) {
           let ele0 = await this.getEle(sele[3], 3000);
-          await this.clickEle(ele0, 3000);
+          // await this.clickEle(ele0, 3000);
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele0);
+          await this.sleep(2000);
           if (await this.isExistEle(sele[1], true, 2000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
@@ -942,7 +944,7 @@ class GpoAnqPhoto extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["a[onclick*='shashintoenquete']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
+    let sele = ["a[href*='cosmeticsstyle']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.hideOverlay();
@@ -952,7 +954,9 @@ class GpoAnqPhoto extends GpoMissonSupper {
       try {
         if (await this.isExistEle(sele[3], true, 2000)) {
           let ele0 = await this.getEle(sele[3], 3000);
-          await this.clickEle(ele0, 3000);
+          // await this.clickEle(ele0, 3000);
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele0);
+          await this.sleep(2000);
           if (await this.isExistEle(sele[1], true, 2000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
@@ -1006,7 +1010,7 @@ class GpoAnqZukan extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["a[onclick*='doubutsu']", ".enquete-list div>a.ui-btn-c", "", "input.LgBtnsbmt"];
+    let sele = ["a[href*='beaute.com']", ".enquete-list div>a.ui-btn-c", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.hideOverlay();
@@ -1016,7 +1020,9 @@ class GpoAnqZukan extends GpoMissonSupper {
       try {
         if (await this.isExistEle(sele[3], true, 2000)) {
           let ele0 = await this.getEle(sele[3], 3000);
-          await this.clickEle(ele0, 3000);
+          // await this.clickEle(ele0, 3000);
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele0);
+          await this.sleep(2000);
           if (await this.isExistEle(sele[1], true, 2000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
@@ -1070,7 +1076,7 @@ class GpoAnqIjin extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["a[onclick*='ijin']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
+    let sele = ["a[href*='fijin']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.hideOverlay();
@@ -1080,7 +1086,9 @@ class GpoAnqIjin extends GpoMissonSupper {
       try {
         if (await this.isExistEle(sele[3], true, 2000)) {
           let ele0 = await this.getEle(sele[3], 3000);
-          await this.clickEle(ele0, 3000);
+          // await this.clickEle(ele0, 3000);
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele0);
+          await this.sleep(2000);
           if (await this.isExistEle(sele[1], true, 2000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
@@ -1134,7 +1142,7 @@ class GpoAnqHirameki extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["a[onclick*='hirameki']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
+    let sele = ["a[href*='hirameki']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.hideOverlay();
@@ -1144,7 +1152,9 @@ class GpoAnqHirameki extends GpoMissonSupper {
       try {
         if (await this.isExistEle(sele[3], true, 2000)) {
           let ele0 = await this.getEle(sele[3], 3000);
-          await this.clickEle(ele0, 3000);
+          // await this.clickEle(ele0, 3000);
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele0);
+          await this.sleep(2000);
           if (await this.isExistEle(sele[1], true, 2000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
@@ -1198,7 +1208,7 @@ class GpoAnqJapan extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["a[onclick*='nihonhyakkeitoenquete']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
+    let sele = ["a[href*='beautyhair']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.hideOverlay();
@@ -1208,7 +1218,9 @@ class GpoAnqJapan extends GpoMissonSupper {
       try {
         if (await this.isExistEle(sele[3], true, 2000)) {
           let ele0 = await this.getEle(sele[3], 3000);
-          await this.clickEle(ele0, 3000);
+          // await this.clickEle(ele0, 3000);
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele0);
+          await this.sleep(2000);
           if (await this.isExistEle(sele[1], true, 2000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
@@ -1262,7 +1274,7 @@ class GpoAnqSite extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["a[onclick*='kansatsuryokutoenquete']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
+    let sele = ["a[href*='eyemake']", ".enquete-list div>a", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.hideOverlay();
@@ -1272,7 +1284,9 @@ class GpoAnqSite extends GpoMissonSupper {
       try {
         if (await this.isExistEle(sele[3], true, 2000)) {
           let ele0 = await this.getEle(sele[3], 3000);
-          await this.clickEle(ele0, 3000);
+          // await this.clickEle(ele0, 3000);
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele0);
+          await this.sleep(2000);
           if (await this.isExistEle(sele[1], true, 2000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
@@ -1336,7 +1350,9 @@ class GpoAnqCook extends GpoMissonSupper {
       try {
         if (await this.isExistEle(sele[3], true, 2000)) {
           let ele0 = await this.getEle(sele[3], 3000);
-          await this.clickEle(ele0, 3000);
+          // await this.clickEle(ele0, 3000);
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele0);
+          await this.sleep(2000);
           if (await this.isExistEle(sele[1], true, 2000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
