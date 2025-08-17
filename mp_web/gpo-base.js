@@ -761,7 +761,9 @@ class GpoPointMoll extends GpoMissonSupper {
             dirtyFlg = true;
             if (await this.isExistEle(cSele, true, 2000)) {
               ele = await this.getEle(cSele, 3000);
-              await this.clickEle(ele, 3000);
+              // await this.clickEle(ele, 3000);
+              // await this.clickEle(ele, 3000);
+              await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
               let wid2 = await driver.getWindowHandle();
               await this.changeWindow(wid2); // 別タブに移動する
               if (Object.values(gameSeleMap).indexOf(cSele) > -1) {
