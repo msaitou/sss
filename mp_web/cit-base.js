@@ -47,6 +47,7 @@ class CitBase extends BaseExecuter {
           case D.MISSION.READ_GEINOU:
           case D.MISSION.READ_LIFE:
           case D.MISSION.READ_RENSOU:
+          case D.MISSION.READ_PRENEW:
             execCls = new CitReadEGLR(para, mission.main);
             break;
           case D.MISSION.OTANO:
@@ -482,6 +483,7 @@ class CitReadEGLR extends CitMissonSupper {
       [D.MISSION.READ_GEINOU]: "img[src*='entertainer_ranking']",
       [D.MISSION.READ_LIFE]: "img[src*='lifestyle_ranking']",
       [D.MISSION.READ_RENSOU]: "img[src*='aiquiz']",
+      [D.MISSION.READ_PRENEW]: "img[src*='prenew']",
     };
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(se[this.main], true, 2000)) {

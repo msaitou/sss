@@ -343,12 +343,17 @@ class PartsReadEGLR extends BaseWebDriverWrapper {
       ];
       if (this.main == D.MISSION.READ_RENSOU) sele[1] = "div.read_more.btn";
       if (siteInfo.code == D.CODE.GMY) {
-        // sele[1] = "input.getStamp.btn";
-        // sele[2] = "div.stampCard li.stampGet";
-        // sele[3] = "a.readMore.btn";
+        if (this.main == D.MISSION.READ_PRENEW) sele[3] = "form>input.getStamp.btn";
+        if (this.main == D.MISSION.READ_RENSOU) {
+          sele[1] = "div>button.readMore.btn";
+          sele[3] = "form>input.getStamp.btn";
+        }
         sele[4] = "p.lessStamp";
         sele[5] = "a.readMore.btn";
         sele[7] = "p.allStamp";
+      }
+      else if (siteInfo.code == D.CODE.CIT) {
+        if (this.main == D.MISSION.READ_PRENEW) sele[1] = "div.read_more.btn";
       }
       if (await this.isExistEle(sele[4], true, 2000)) {
         let eles = await this.getEles(sele[4], 3000);
@@ -364,7 +369,7 @@ class PartsReadEGLR extends BaseWebDriverWrapper {
           await this.moveLastPage(preCnt); // 最後のページに移動
           if (await this.isExistEle(sele[0], true, 2000)) {
             eles = await this.getEles(sele[0], 3000);
-            await this.clickEle(eles[eles.length - 1], 1000);
+            await this.clickEle(eles[eles.length - 1], 1000, 200);
             if (await this.isExistEle(sele[1], true, 3000)) {
               eles = await this.getEles(sele[1], 3000);
               for (let i = 0, max = eles.length; i < max; i++) {
@@ -404,7 +409,7 @@ class PartsReadEGLR extends BaseWebDriverWrapper {
     } catch (e) {
       logger.warn(e);
     }
-    return res;
+    　return res;
   }
   async moveLastPage(preCnt) {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;

@@ -117,6 +117,7 @@ exports.Def = {
     READ_GEINOU: "read_geinou",
     READ_LIFE: "read_life",
     READ_RENSOU: "read_rensou",
+    READ_PRENEW: "read_prenew",
     
     OTANO: "otano",
     QUIZ_KENTEI: "quiz_kentei",
