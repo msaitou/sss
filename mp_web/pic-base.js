@@ -38,16 +38,11 @@ class PicBase extends BaseExecuter {
             execCls = new PicClick(para);
             break;
           case D.MISSION.READ_DOG:
-            execCls = new PicReadDog(para);
-            break;
           case D.MISSION.READ_CAT:
-            execCls = new PicReadCat(para);
-            break;
           case D.MISSION.READ_THANK:
-            execCls = new PicReadThank(para);
-            break;
           case D.MISSION.READ_ICHI:
-            execCls = new PicReadIchi(para);
+          case D.MISSION.READ_PRENEW:
+            execCls = new PicRead(para, mission.main);
             break;
           case D.MISSION.MOLL_KOKUHAKU:
           case D.MISSION.MOLL_DOKOMADE:
@@ -642,89 +637,31 @@ class PicPointMoll extends PicMissonSupper {
 
 const { PartsReadPic } = require("./parts/parts-read.js");
 const { util } = require("config");
-// 犬の気持ち
-class PicReadDog extends PicMissonSupper {
+class PicRead extends PicMissonSupper {
   firstUrl = "https://www.chance.com/";
   targetUrl = "https://pointi.jp/contents/magazine/";
-  constructor(para) {
+  constructor(para, main) {
     super(para);
+    this.main = main;
     this.logger.debug(`${this.constructor.name} constructor`);
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
     await this.openUrl(this.targetUrl); // 操作ページ表示
-    let sele = ["img[alt='いぬのきもち']"];
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      let eles = await this.getEles(sele[0], 3000);
+    let se = {
+      [D.MISSION.READ_PRENEW]: "img[src*='magazineatpress']",
+      [D.MISSION.READ_CAT]: "img[alt='ねこのきもち']",
+      [D.MISSION.READ_DOG]: "img[alt='いぬのきもち']",
+      [D.MISSION.READ_THANK]: "img[alt='サンキュ！']",
+      [D.MISSION.READ_ICHI]: "img[alt='イチオシ']",
+    };
+    // if (await this.isExistEle(sele[0], true, 2000)) {
+    //   let eles = await this.getEles(sele[0], 3000);
+    if (await this.isExistEle(se[this.main], true, 2000)) {
+      let eles = await this.getEles(se[this.main], 3000);
       await this.clickEle(eles[0], 2000);
-      let PartsReadCls = new PartsReadPic(this.para);
-      res = await PartsReadCls.do();
-    }
-    return res;
-  }
-}
-// 猫の気持ち
-class PicReadCat extends PicMissonSupper {
-  firstUrl = "https://www.chance.com/";
-  targetUrl = "https://pointi.jp/contents/magazine/";
-  constructor(para) {
-    super(para);
-    this.logger.debug(`${this.constructor.name} constructor`);
-  }
-  async do() {
-    let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    let res = D.STATUS.FAIL;
-    await this.openUrl(this.targetUrl); // 操作ページ表示
-    let sele = ["img[alt='ねこのきもち']"];
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      let eles = await this.getEles(sele[0], 3000);
-      await this.clickEle(eles[0], 2000);
-      let PartsReadCls = new PartsReadPic(this.para);
-      res = await PartsReadCls.do();
-    }
-    return res;
-  }
-}
-// サンキュ
-class PicReadThank extends PicMissonSupper {
-  firstUrl = "https://www.chance.com/";
-  targetUrl = "https://pointi.jp/contents/magazine/";
-  constructor(para) {
-    super(para);
-    this.logger.debug(`${this.constructor.name} constructor`);
-  }
-  async do() {
-    let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    let res = D.STATUS.FAIL;
-    await this.openUrl(this.targetUrl); // 操作ページ表示
-    let sele = ["img[alt='サンキュ！']"];
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      let eles = await this.getEles(sele[0], 3000);
-      await this.clickEle(eles[0], 2000);
-      let PartsReadCls = new PartsReadPic(this.para);
-      res = await PartsReadCls.do();
-    }
-    return res;
-  }
-}
-// 一押し
-class PicReadIchi extends PicMissonSupper {
-  firstUrl = "https://www.chance.com/";
-  targetUrl = "https://pointi.jp/contents/magazine/";
-  constructor(para) {
-    super(para);
-    this.logger.debug(`${this.constructor.name} constructor`);
-  }
-  async do() {
-    let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    let res = D.STATUS.FAIL;
-    await this.openUrl(this.targetUrl); // 操作ページ表示
-    let sele = ["img[alt='イチオシ']"];
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      let eles = await this.getEles(sele[0], 3000);
-      await this.clickEle(eles[0], 2000);
-      let PartsReadCls = new PartsReadPic(this.para);
+      let PartsReadCls = new PartsReadPic(this.para, this.main);
       res = await PartsReadCls.do();
     }
     return res;

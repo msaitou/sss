@@ -156,9 +156,10 @@ class PartsRead extends BaseWebDriverWrapper {
 }
 class PartsReadPic extends BaseWebDriverWrapper {
   para;
-  constructor(para) {
+  constructor(para, main) {
     super();
     this.para = para;
+    this.main = main;
     this.setDriver(this.para.driver);
     this.logger.debug(`${this.constructor.name} constructor`);
   }
@@ -209,14 +210,26 @@ class PartsReadPic extends BaseWebDriverWrapper {
           }
           // await this.clickEle(eles[choiceNum], 3000);
           // 別タブに強制
-          let action = await driver.actions();
-          await action.keyDown(Key.CONTROL).click(eles[choiceNum]).keyUp(Key.CONTROL).perform();
+          if (this.main == D.MISSION.READ_PRENEW){
+            let eletmp = await this.getElesXFromEle(
+              eles[choiceNum],
+              "ancestor::a"
+            );
+            let href = await eletmp[0].getAttribute("href");
+            await this.exeScriptNoTimeOut(`window.open('${href}')`);
+          } 
+          else {
+            let action = await driver.actions();
+            await action.keyDown(Key.CONTROL).click(eles[choiceNum]).keyUp(Key.CONTROL).perform();
+          }
           await this.sleep(2000);
+
           let wid = await driver.getWindowHandle();
           await this.changeWindow(wid); // 別タブに移動する
           try {
             for (let j = 0; j < 50; j++) {
               if (await this.isExistEle(sele[6], true, 3000)) {
+                if (this.main == D.MISSION.READ_PRENEW) await this.hideOverlay();
                 let ele = await this.getEle(sele[6], 3000);
                 await this.clickEle(ele, 3000);
               } else break;
@@ -269,6 +282,7 @@ class PartsReadPic extends BaseWebDriverWrapper {
     //   return true;
     // }
     if (await this.isExistEle(sele[0], true, 2000)) {
+      if (this.main == D.MISSION.READ_PRENEW) await this.hideOverlay();
       let eles = await this.getEles(sele[0], 2000);
       let nextNum = 0;
       if (await this.isExistEle(sele[1], true, 2000)) {
@@ -286,20 +300,89 @@ class PartsReadPic extends BaseWebDriverWrapper {
     let sele = ["div.pager>a:not(.hide)", "div.pager>a.next:not(.hide)", "div.pager>a.prev:not(.hide)"];
     // 途中のページで呼ばれること前提　1つ前に遷移できるようにする
     if (await this.isExistEle(sele[2], true, 2000)) {
+      if (this.main == D.MISSION.READ_PRENEW) await this.hideOverlay();
       let ele = await this.getEle(sele[2], 2000);
       await this.clickEle(ele, 2000);
       return true;
     }
   }
+  // async hideOverlay() {
+  //   let seleOver = ["div.overlay-item a.button-close"];
+  //   if (await this.isExistEle(seleOver[0], true, 3000)) {
+  //     let ele = await this.getEle(seleOver[0], 2000);
+  //     if (await ele.isDisplayed()) {
+  //       await this.clickEle(ele, 2000);
+  //     } else this.logger.debug("オーバーレイは表示されてないです");
+  //   }
+  // }
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close"];
-    if (await this.isExistEle(seleOver[0], true, 3000)) {
-      let ele = await this.getEle(seleOver[0], 2000);
-      if (await ele.isDisplayed()) {
-        await this.clickEle(ele, 2000);
-      } else this.logger.debug("オーバーレイは表示されてないです");
+    // let seleOver = [
+    //   // "#pfx_interstitial_close",
+    //   // "#inter-close",
+    //   // "a.gmoyda.gmoam_close_button",
+    //   // "a.gmoam_close_button",
+    //   "#gn_interstitial_close_contents",
+    //   "div.overlay-item a.button-close"
+    //   // "#fluct_ydn_interstitial_btn"
+    // ];
+    let seleOver = [
+      // "#pfx_interstitial_close",
+      // "#gn_ydn_interstitial_btn",
+      "div.overlay-item a.button-close",
+      // "#svg_close",
+      "#gn_interstitial_close",
+      "#gn_interstitial_close_contents",
+      "#gn_interstitial_outer_area",
+      // "ins iframe[title='3rd party ad content']",
+    ];
+    for (let s of seleOver) {
+      if (["a.gmoam_close_button"].indexOf(s) > -1) {
+        let iSele = ["iframe[title='GMOSSP iframe']"];
+        if (await this.isExistEle(iSele[0], true, 1000)) {
+          let iframe = await this.getEles(iSele[0], 1000);
+          await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+          let inputEle = await this.getEle(s, 1000);
+          if (await inputEle.isDisplayed()) {
+            await this.clickEle(inputEle, 1000);
+          } else this.logger.debug("オーバーレイは表示されてないです");
+          // もとのフレームに戻す
+          await this.driver.switchTo().defaultContent();
+        }
+      } else if (await this.silentIsExistEle(s, true, 1000)) {
+        let ele = await this.getEle(s, 1000);
+        if (s == "ins iframe[title='3rd party ad content']") {
+          let sele = [
+            "ins iframe[title='3rd party ad content']",
+            "#dismiss-button",
+          ];
+          let iframes = await this.getEles(sele[0], 1000);
+          for (let iframe of iframes) {
+            if (await iframe.isDisplayed()) {
+              await this.driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
+              await this.sleep(10000);
+              if (await this.silentIsExistEle(sele[1], true, 1000)) {
+                let inputEle = await this.getEle(sele[1], 1000);
+                if (await inputEle.isDisplayed()) {
+                  await this.clickEle(inputEle, 1000);
+                } else this.logger.debug("オーバーレイは表示されてないです");
+              }
+              // もとのフレームに戻す
+              await this.driver.switchTo().defaultContent();
+            }
+          }
+        } else if (s == "#gn_interstitial_outer_area") {
+          await this.exeScriptNoTimeOut(
+            `for (let t of document.querySelectorAll("#gn_interstitial_outer_area")){t.remove();}`
+          );
+        } else if (s == seleOver[0]) {
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        } else if (await ele.isDisplayed()) {
+          await this.clickEle(ele, 1000);
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
     }
   }
+
   async exchange() {
     let exSele = ["a.stamp__btn[href*='exchange']", "input.exchange__btn", "a.stamp__btn.stamp__btn-return"];
     await this.hideOverlay();
