@@ -21,7 +21,22 @@ const config = require("config");
 const { Entry } = require("selenium-webdriver/lib/logging");
 const D = require("../com_cls/define").Def;
 const { libUtil } = require("../lib/util.js");
-
+const { execSync } = require("child_process");
+const iconv = require("iconv-lite");
+const PS = {
+  WIN: {
+    PS: {
+      KILL_CMD: "Stop-Process -Name ",
+      KILL_OTHER: "chrome, chromedriver",
+    },
+  },
+  LINUX: {
+    PS: {
+      KILLALL_CMD: "killall ",
+      KILL_OTHER: "chrome chromedriver",
+    },
+  },
+};
 class PointWebCls {
   logger;
   exeKind;
@@ -30,7 +45,44 @@ class PointWebCls {
     this.exeKind = kind ? kind.toLowerCase() : "";
     this.logger.debug(`${this.constructor.name} constructor`);
   }
+  async stopChromeDriver() {
+    // let PS_KILL_CMD = `chcp 65001 && ${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.KILL_OTHER}`; // デフォはwindows
+    let PS_KILL_CMD = `${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.KILL_OTHER}`; // デフォはwindows
+    if (process.platform === "linux")
+      PS_KILL_CMD = `${PS.LINUX.PS.KILLALL_CMD}${PS.LINUX.PS.KILL_OTHER}`;
+    try {
+      let stdout = "";
+      if (process.platform === "linux") {
+        stdout = execSync(PS_KILL_CMD);
+      } else {
+        // win
+        const stdoutBuffer = execSync(PS_KILL_CMD, {
+          encoding: "buffer",
+          shell: "powershell.exe",
+        });
+        // iconv-liteを使ってShift_JISとしてデコード
+        stdout = iconv.decode(stdoutBuffer, "Shift_JIS");
+      }
+      console.log(stdout.toString(), "chrome is killed!!");
+    } catch (e) {
+      // エラー時の処理
+      let decodedError;
+      if (process.platform === "linux") {
+        // Linux環境のエラーは通常UTF-8
+        decodedError = e.message;
+      } else {
+        // Windows
+        // Windows環境のエラーはShift_JISなのでデコード
+        // execSyncのエラーオブジェクトには、stdoutとstderrの両方が含まれる可能性がある
+        const errorBuffer = e.stderr || e.stdout;
+        decodedError = iconv.decode(errorBuffer, "Shift_JIS");
+      }
+      console.warn(decodedError);
+    }
+  }
+
   async main(missionMap) {
+    await this.stopChromeDriver();
     this.logger.info("PointWebCls main begin!");
     if (missionMap && Object.keys(missionMap).length) {
       let tmpKeys = Object.keys(missionMap);
@@ -52,7 +104,9 @@ class PointWebCls {
       for (let [key, lines] of Object.entries(missionMap)) {
         for (let line of lines) {
           let dateKey =
-            line.valid_term && line.valid_term.const_h_to ? line.valid_term.const_h_to : maxDate;
+            line.valid_term && line.valid_term.const_h_to
+              ? line.valid_term.const_h_to
+              : maxDate;
           if (!tmpMap[dateKey]) tmpMap[dateKey] = {};
           if (!tmpMap[dateKey][key]) tmpMap[dateKey][key] = [];
           tmpMap[dateKey][key].push(line);
@@ -75,8 +129,15 @@ class PointWebCls {
               !(line.valid_term && line.valid_term.const_h_to) ||
               new Date() < line.valid_term.const_h_to
           );
-          if (key.indexOf("m_") === 0) (key = key.replace("m_", "")), (isMob = true);
-          await this.execOperator(key, line, aca, siteInfos.length ? siteInfos.filter((i) => i.code == key)[0]: {}, isMob);
+          if (key.indexOf("m_") === 0)
+            (key = key.replace("m_", "")), (isMob = true);
+          await this.execOperator(
+            key,
+            line,
+            aca,
+            siteInfos.length ? siteInfos.filter((i) => i.code == key)[0] : {},
+            isMob
+          );
         }
       }
     } else this.logger.info("ミッションは登録されていません");
@@ -133,7 +194,10 @@ class PointWebCls {
             // 実行条件がある場合、開始時刻等を計算して設定
             if (line.is_valid_cond && line.valid_term) {
               line.valid_time = {};
-              if (line.valid_term.const_h_from || line.valid_term.const_h_from === 0) {
+              if (
+                line.valid_term.const_h_from ||
+                line.valid_term.const_h_from === 0
+              ) {
                 let d = new Date();
                 d.setHours(line.valid_term.const_h_from, 0, 0, 0);
                 line.valid_time.from = d;
@@ -161,7 +225,9 @@ class PointWebCls {
           for (let insertM of insertList) {
             let dupMissionList = missionList.filter(
               (m) =>
-                m.main == insertM.main && m.sub == insertM.sub && m.site_code == insertM.site_code
+                m.main == insertM.main &&
+                m.sub == insertM.sub &&
+                m.site_code == insertM.site_code
             );
             if (!dupMissionList.length) {
               addMissionList.push(insertM);
@@ -170,7 +236,12 @@ class PointWebCls {
           insertList = addMissionList;
         }
         if (insertList.length) {
-          let list = await db(D.DB_COL.MISSION_QUE, "insertMany", {}, insertList);
+          let list = await db(
+            D.DB_COL.MISSION_QUE,
+            "insertMany",
+            {},
+            insertList
+          );
           this.logger.info(list);
           missionList = missionList.concat(insertList);
         }
@@ -185,7 +256,11 @@ class PointWebCls {
               return true;
             } else {
               // 今の時間でやるべきものだけ、やるべきものだけ
-              if (m.valid_time && m.valid_time.from && m.valid_time.from < now) {
+              if (
+                m.valid_time &&
+                m.valid_time.from &&
+                m.valid_time.from < now
+              ) {
                 if (m.valid_time.to) {
                   if (m.valid_time.to > now) {
                     return true;
@@ -225,58 +300,184 @@ class PointWebCls {
         await PMil.main(missionList);
         break;
       case D.CODE.RAKU:
-        opeCls = new rakuBase.Raku(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new rakuBase.Raku(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.PEX:
-        opeCls = new pexBase.Pex(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new pexBase.Pex(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.MOP:
-        opeCls = new mopBase.Mop(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new mopBase.Mop(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.CMS:
-        opeCls = new cmsBase.Cms(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new cmsBase.Cms(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.GPO:
-        opeCls = new gpoBase.Gpo(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new gpoBase.Gpo(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.GMY:
-        opeCls = new gmyBase.Gmy(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new gmyBase.Gmy(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.GEN:
-        opeCls = new genBase.Gen(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new genBase.Gen(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.PTO:
-        opeCls = new ptoBase.Pto(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new ptoBase.Pto(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.CIT:
-        opeCls = new citBase.Cit(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new citBase.Cit(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.CRI:
-        opeCls = new criBase.Cri(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new criBase.Cri(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.SUG:
-        opeCls = new sugBase.Sug(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new sugBase.Sug(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.PIC:
-        opeCls = new picBase.Pic(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new picBase.Pic(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.LFM:
-        opeCls = new lfmBase.Lfm(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new lfmBase.Lfm(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.PST:
-        opeCls = new pstBase.Pst(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new pstBase.Pst(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.AME:
-        opeCls = new ameBase.Ame(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new ameBase.Ame(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.PIL:
-        opeCls = new pilBase.Pil(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new pilBase.Pil(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.ECN:
-        opeCls = new ecnBase.Ecn(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new ecnBase.Ecn(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
       case D.CODE.DMY:
-        opeCls = new dmyBase.Dmy(0, siteInfo, aca, missionList, isMob, config?.chrome?.headless);
+        opeCls = new dmyBase.Dmy(
+          0,
+          siteInfo,
+          aca,
+          missionList,
+          isMob,
+          config?.chrome?.headless
+        );
         break;
     }
     if (opeCls) {

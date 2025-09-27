@@ -12,6 +12,7 @@
     "adm-zip": "^0.5.10",
     "config": "^3.3.8",
     "googleapis": "^109.0.1",
+    "iconv-lite": "^0.7.0",
     "jsdom": "^20.0.3",
     "kuroshiro": "^1.2.0",
     "kuroshiro-analyzer-kuromoji": "^1.1.0",
