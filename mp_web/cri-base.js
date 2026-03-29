@@ -100,8 +100,9 @@ class CriBase extends BaseExecuter {
       }
       return p;
     };
-    let sele = ["p.g-navi__user__pt"];
-    if (this.isMob) sele[0] = "p.HeaderNav__userPt";
+    // let sele = ["p.g-navi__user__pt"];
+    let sele = ["a[href='/mypage/point_details']>p.text-default"];
+    // if (this.isMob) sele[0] = "p.HeaderNav__userPt";
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       let nakedNum = await ele.getText();
@@ -197,14 +198,15 @@ class CriCommon extends CriMissonSupper {
         `document.querySelector('${sele[0]}').setAttribute('style', 'display:none;');`
       );
     }
-    let seleIsLoggedIn = "p.g-navi__user__pt";
-    if (this.isMob) seleIsLoggedIn = "p.HeaderNav__userPt";
+    // let seleIsLoggedIn = "p.g-navi__user__pt";
+    let seleIsLoggedIn = "a[href='/mypage/point_details']>p.text-default";
+    // if (this.isMob) seleIsLoggedIn = "p.HeaderNav__userPt";
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
       // リンクが存在することを確認
-      let seleLoginLink = "label[data-for='login']";
+      let seleLoginLink = "[data-tui-popover-trigger='loginDialog']";
       if (this.isMob || (await this.isExistEle(seleLoginLink, true, 2000))) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
