@@ -350,6 +350,7 @@ class MopGacha extends MopMissonSupper {
       "img[alt='バナー']",
     ];
     let res = D.STATUS.FAIL;
+    await this.hideOverlay();
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 2000);
       await this.clickEle(ele, 1000, 200);
@@ -398,6 +399,7 @@ class MopQuizDaily extends MopMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START###`);
+    await this.hideOverlay();
     let res = await this.QuizDaily.do(this.targetUrl);
     logger.info(`${this.constructor.name} END#####`);
     return res;
@@ -428,6 +430,7 @@ class MopEitango extends MopMissonSupper {
         "a.ui-button-close", // 5
         "input.ui-button-end",
       ];
+      await this.hideOverlay();
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, 200);
@@ -504,6 +507,7 @@ class MopAnzan extends MopMissonSupper {
         "input.ui-button-end",
         "div.ui-item-header>h2.ui-item-title",
       ];
+      await this.hideOverlay();
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, 200);
@@ -597,6 +601,7 @@ class MopNanyoubi extends MopMissonSupper {
         "input.ui-button-end",
         "div.ui-item-header>h2.ui-item-title",
       ];
+      await this.hideOverlay();
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, 200);
@@ -681,6 +686,7 @@ class MopNengo extends MopMissonSupper {
         "input.ui-button-end",
         "div.ui-item-header>h2.ui-item-title",  //7
       ];
+      await this.hideOverlay();
       if (await t.isExistEle(se[0], true, 2000)) { //  "a[data-ga-label='四字熟語 穴埋めクイズ']"
         let ele = await t.getEle(se[0], 3000);
         await t.clickEle(ele, 1000, 200);
@@ -755,6 +761,7 @@ class MopNandoku extends MopMissonSupper {
         "input.ui-button-end",
         "div.ui-item-header>h2.ui-item-title",  //7
       ];
+      await this.hideOverlay();
       if (await t.isExistEle(se[0], true, 2000)) { //  "a[data-ga-label='四字熟語 穴埋めクイズ']"
         let ele = await t.getEle(se[0], 3000);
         await t.clickEle(ele, 1000, 200);
@@ -829,6 +836,7 @@ class MopYoji extends MopMissonSupper {
         "input.ui-button-end",
         "div.ui-item-header>h2.ui-item-title",  //7
       ];
+      await this.hideOverlay();
       if (await t.isExistEle(se[0], true, 2000)) { //  "a[data-ga-label='四字熟語 穴埋めクイズ']"
         let ele = await t.getEle(se[0], 3000);
         await t.clickEle(ele, 1000, 200);
@@ -890,6 +898,7 @@ class MopCm extends MopMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
     let sele = ["a[data-ga-label='CMくじ']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
@@ -920,6 +929,7 @@ class MopGameFurufuru extends MopMissonSupper {
     let gameUrlHost = "https://moppy.dropgame.jp/";
     if (this.isMob) gameUrlHost = "https://moppy-sp.dropgame.jp/";
     await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEleScrollWeak(eles[0], 2000, 100);
@@ -946,6 +956,7 @@ class MopGameFurufuruSearch extends MopMissonSupper {
     let gameUrlHost = "https://moppy.dropgame.jp/";
     if (this.isMob) gameUrlHost = "https://moppy-sp.dropgame.jp/";
     await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEleScrollWeak(eles[0], 2000, 100);
@@ -976,6 +987,7 @@ class MopAnqPark extends MopMissonSupper {
       ".enquete-list td.status>a", // 2
       "td>form>input[name='submit']",
     ];
+    await this.hideOverlay();
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.clickEle(ele0, 3000, 200);
@@ -1070,6 +1082,7 @@ class MopResearch1 extends MopMissonSupper {
       "td>form>input[name='submit']",
     ];
     let res = D.STATUS.FAIL;
+    await this.hideOverlay();
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 3000);
       await this.clickEle(ele, 2000, 200);
@@ -1105,6 +1118,7 @@ class MopAnqHappy extends MopMissonSupper {
       ".answer-list label",
       "div.question-title", // 8
     ];
+    await this.hideOverlay();
     let res = D.STATUS.FAIL;
     let skip = 0; // バグって完了できないやつがあるのでスキップ
     if (await this.isExistEle(sele[6], true, 2000)) {
@@ -1304,6 +1318,7 @@ class MopKanji extends MopMissonSupper {
         "input.ui-button-end",
         ".ui-item-title",
       ];
+      await this.hideOverlay();
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000, 200);
@@ -1383,6 +1398,7 @@ class MopGameKokuhaku extends MopMissonSupper {
     let PGame = new PartsGame(this.para);
     let se = ["a[data-ga-label='告白アルバム']"];
     await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
     if (await this.isExistEle(se[0], true, 2000)) {
       let el = await this.getEle(se[0], 3000);
       await this.clickEleScrollWeak(el, 2000, 100);
@@ -1408,6 +1424,7 @@ class MopGameTrain extends MopMissonSupper {
     let PGame = new PartsGame(this.para);
     let se = ["a[data-ga-label='ピタッとトレイン']"];
     await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
     if (await this.isExistEle(se[0], true, 2000)) {
       let el = await this.getEle(se[0], 3000);
       await this.clickEleScrollWeak(el, 2000, 100);
@@ -1433,6 +1450,7 @@ class MopGameYuusya extends MopMissonSupper {
     let PGame = new PartsGame(this.para);
     let se = ["a[data-ga-label='誰でも勇者']"];
     await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
     if (await this.isExistEle(se[0], true, 2000)) {
       let el = await this.getEle(se[0], 3000);
       await this.clickEleScrollWeak(el, 2000, 100);
@@ -1466,6 +1484,7 @@ class MopGameContents extends MopMissonSupper {
     else if (this.mission == D.MISSION.GAME_OTE) se = ["a[data-ga-label='お手できるかな']"];
     else if (this.mission == D.MISSION.GAME_DARUMA) se = ["a[data-ga-label='だるま落としゲーム']"];
     await this.openUrl(this.targetUrl); // 操作ページ表示
+    await this.hideOverlay();
     if (await this.isExistEle(se[0], true, 2000)) {
       let el = await this.getEle(se[0], 3000);
       await this.clickEleScrollWeak(el, 2000, 100);
