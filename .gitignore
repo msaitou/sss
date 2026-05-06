@@ -9,3 +9,4 @@ config/prof/
 backup/
 .vscode/launch.json
 node-sss.exe
+package-lock.json

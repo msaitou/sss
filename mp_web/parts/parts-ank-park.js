@@ -1182,12 +1182,13 @@ class PartsAnkPark extends BaseWebDriverWrapper {
 
   async hideOverlay() {
     let seleOver = [
+      "#fluct_interstitial_close",
+      "#fluct_ydn_interstitial_btn",
       "#gn_ydn_interstitial_btn",
       "#pfx_interstitial_close",
       "div.close",
       "#close",
       "#interClose",
-      "#fluct_ydn_interstitial_btn"
     ];
     for (let s of seleOver) {
       if (["#pfx_interstitial_close"].indexOf(s) > -1) {
@@ -1203,11 +1204,13 @@ class PartsAnkPark extends BaseWebDriverWrapper {
             else if (await this.silentIsExistEle(s, true, 3000)) {
               await this.exeScriptNoTimeOut(`document.querySelector("${s}").click()`);
             } 
+            return;
           }
         }else if (await this.silentIsExistEle(s, true, 1000)) {
           let ele = await this.getEle(s, 1000);
           if (await ele.isDisplayed()) {
             await this.clickEle(ele, 1000);
+            return;
           } else this.logger.debug("オーバーレイは表示されてないです");
         }
       } else 
@@ -1222,6 +1225,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           } else this.logger.debug("オーバーレイは表示されてないです");
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
+          return;
         }
       } else if (["#fluct_ydn_interstitial_btn"].indexOf(s) > -1) {
         let iSele = ["div[data-fluct-ad-script-already-reserved]>iframe"];
@@ -1236,13 +1240,16 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           }
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
+          return;
         }
       } else if (await this.silentIsExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
         if (s == seleOver[0]) {
           await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+          return;
         } else if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
+          return;
         } else await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
         //  else this.logger.debug("オーバーレイは表示されてないです");
       }

@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "adm-zip": "^0.5.10",
-    "config": "^3.3.8",
+    "config": "^4.4.1",
     "googleapis": "^109.0.1",
     "iconv-lite": "^0.7.0",
     "jsdom": "^20.0.3",

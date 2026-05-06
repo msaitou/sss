@@ -177,13 +177,14 @@ class CmSuper extends BaseWebDriverWrapper {
   }
   async hideOverlay() {
     let seleOver = [
+      "#fluct_interstitial_close",
+      "#fluct_ydn_interstitial_btn",
       "#pfx_interstitial_close",
       // "#inter-close",
       "a.gmoyda.gmoam_close_button",
       "a.gmoam_close_button",
       "#gn_interstitial_close_contents",
       // "div.overlay-item a.button-close"
-      "#fluct_ydn_interstitial_btn"
     ];
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
@@ -201,6 +202,7 @@ class CmSuper extends BaseWebDriverWrapper {
           // } else this.logger.debug("オーバーレイは表示されてないです");
           // // もとのフレームに戻す
           // await this.driver.switchTo().defaultContent();
+          return;
         }
       } else if (["#pfx_interstitial_close"].indexOf(s) > -1) {
         let iSele = ["iframe.profitx-ad-frame-markup"];
@@ -215,6 +217,7 @@ class CmSuper extends BaseWebDriverWrapper {
             else if (await this.silentIsExistEle(s, true, 3000)) {
               await this.exeScriptNoTimeOut(`document.querySelector("${s}").click()`);
             } 
+            return;
           }
         }
       } else if (["#fluct_ydn_interstitial_btn"].indexOf(s) > -1) {
@@ -228,6 +231,7 @@ class CmSuper extends BaseWebDriverWrapper {
           } else this.logger.debug("オーバーレイは表示されてないです");
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
+          return;
         }
       } else if (await this.silentIsExistEle(s, true, 3000)) {
         let ele = await this.getEle(s, 2000);
@@ -235,6 +239,7 @@ class CmSuper extends BaseWebDriverWrapper {
           if (["div.overlay-item a.button-close", "#pfx_interstitial_close"].indexOf(seleOver[0]) > -1) {
             await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
           } else await this.clickEle(ele, 1000);
+          return;
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
