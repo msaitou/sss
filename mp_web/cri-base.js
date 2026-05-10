@@ -142,6 +142,7 @@ class CriMissonSupper extends BaseWebDriverWrapper {
           } else this.logger.debug("オーバーレイは表示されてないです");
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
+          return;
         }
       } else if (["#pfx_interstitial_close"].indexOf(s) > -1) {
         let iSele = ["iframe.profitx-ad-frame-markup"];
@@ -161,11 +162,13 @@ class CriMissonSupper extends BaseWebDriverWrapper {
                 `document.querySelector("${s}").click()`
               );
             }
+            return;
           }
         } else if (await this.silentIsExistEle(s, true, 1000)) {
           let ele = await this.getEle(s, 1000);
           if (await ele.isDisplayed()) {
             await this.clickEle(ele, 1000);
+            return;
           } else this.logger.debug("オーバーレイは表示されてないです");
         }
       } else if (await this.silentIsExistEle(s, true, 1000)) {
@@ -175,6 +178,7 @@ class CriMissonSupper extends BaseWebDriverWrapper {
         // } else
         if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
+          return;
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
@@ -206,7 +210,7 @@ class CriCommon extends CriMissonSupper {
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
       // リンクが存在することを確認
-      let seleLoginLink = "[data-tui-popover-trigger='loginDialog']";
+      let seleLoginLink = "a[href='/account/login']";
       if (this.isMob || (await this.isExistEle(seleLoginLink, true, 2000))) {
         logger.debug(11102);
         let ele = await this.getEle(seleLoginLink, 2000);
@@ -720,6 +724,8 @@ class CriAnqPark extends CriMissonSupper {
       await this.clickEle(ele0, 3000, 100);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
+      await this.hideOverlay();
+
       try {
         if (await this.isExistEle(sele[1], true, 2000)) {
           let eles = await this.getEles(sele[1], 3000);

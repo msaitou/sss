@@ -26,6 +26,15 @@ class PartsRead extends BaseWebDriverWrapper {
         "p.all_stamp",
         "div.read_more.btn",
       ];
+      if (siteInfo.code == D.CODE.CIT) {
+        // sele[1] = "input.getStamp.btn";
+        // sele[2] = "div.stampCard li.stampGet";
+        // sele[3] = "a.readMore.btn";
+        // sele[4] = "p.lessStamp>span";
+        // sele[5] = "p.allStamp";
+        sele[6] = "button.read_more.btn";
+      }
+
       if (siteInfo.code == D.CODE.GMY) {
         sele[1] = "input.getStamp.btn";
         sele[2] = "div.stampCard li.stampGet";
@@ -53,13 +62,25 @@ class PartsRead extends BaseWebDriverWrapper {
             await this.ignoreKoukoku();
             if (await this.isExistEle(sele[6], true, 3000)) {
               eles = await this.getEles(sele[6], 3000);
-              for (let i = 0, max = eles.length; i < max; i++) {
-                // 次へボタンの分
-                if (await eles[i].isDisplayed()) {
-                  // let el = await this.getEle(sele[2], 3000); // 見えてるボタン
-                  // await this.clickEle(eles[i], 1000);
-                  await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[i]);
-                  eles = await this.getEles(sele[6], 3000);
+              if (siteInfo.code !== D.CODE.CIT) {
+                for (let i = 0, max = eles.length; i < max; i++) {
+                  // 次へボタンの分
+                  if (await eles[i].isDisplayed()) {
+                    // let el = await this.getEle(sele[2], 3000); // 見えてるボタン
+                    // await this.clickEle(eles[i], 1000);
+                    await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[i]);
+                    eles = await this.getEles(sele[6], 3000);
+                  }
+                }
+              }
+              else {
+                for (let i = 0; eles && 0 < eles.length;) {
+                  // 次へボタンの分
+                  if (await eles[i].isDisplayed()) {
+                    // await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[i]);
+                    await this.clickEle(eles[i], 2000, 150);
+                    eles = await this.getEles(sele[6], 3000);
+                  }
                 }
               }
             }

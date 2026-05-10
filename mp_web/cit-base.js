@@ -371,6 +371,7 @@ class CitReadDog extends CitMissonSupper {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 1000);
+      await this.ignoreKoukoku();
       // let wid = await driver.getWindowHandle();
       // await this.changeWindow(wid); // 別タブに移動する
       let PartsReadDogCls = new PartsRead(this.para);
@@ -399,6 +400,7 @@ class CitReadCat extends CitMissonSupper {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 1000);
+      await this.ignoreKoukoku();
       // let wid = await driver.getWindowHandle();
       // await this.changeWindow(wid); // 別タブに移動する
       let PartsReadDogCls = new PartsRead(this.para);
@@ -427,6 +429,7 @@ class CitReadThank extends CitMissonSupper {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 1000);
+      await this.ignoreKoukoku();
       // let wid = await driver.getWindowHandle();
       // await this.changeWindow(wid); // 別タブに移動する
       let PartsReadDogCls = new PartsRead(this.para);
@@ -455,6 +458,7 @@ class CitReadIchi extends CitMissonSupper {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
       await this.clickEle(eles[0], 1000);
+      await this.ignoreKoukoku();
       // let wid = await driver.getWindowHandle();
       // await this.changeWindow(wid); // 別タブに移動する
       let PartsReadDogCls = new PartsRead(this.para);
