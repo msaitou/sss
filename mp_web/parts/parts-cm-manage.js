@@ -177,6 +177,7 @@ class CmSuper extends BaseWebDriverWrapper {
   }
   async hideOverlay() {
     let seleOver = [
+      "div#rise-close-text-base>a.linkCloseTextEl",
       "#fluct_interstitial_close",
       "#fluct_ydn_interstitial_btn",
       "#pfx_interstitial_close",
@@ -437,6 +438,7 @@ class CmKentei extends CmSuper {
             if (await this.isExistEle(sele[1], true, 3000)) {
               ele = await this.getEle(sele[1], 3000);
               await this.clickEle(ele, 1000, 0, this.isMob);
+              await this.hideOverlay();
               // 12問
               for (let i = 0; i < 12; i++) {
                 await this.ignoreKoukoku();
