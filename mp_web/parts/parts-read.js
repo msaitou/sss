@@ -457,7 +457,10 @@ class PartsReadEGLR extends BaseWebDriverWrapper {
         sele[7] = "p.allStamp";
       }
       else if (siteInfo.code == D.CODE.CIT) {
-        if (this.main == D.MISSION.READ_PRENEW) sele[1] = "div.read_more.btn";
+        if ([D.MISSION.READ_PRENEW, D.MISSION.READ_RENSOU].includes(this.main))
+          sele[1] = "button.read_more.btn";
+        else if ([ D.MISSION.READ_ENTAME, D.MISSION.READ_GEINOU, D.MISSION.READ_LIFE,].includes(this.main))
+          sele[1] = "button#btn_move_next";
       }
       if (await this.isExistEle(sele[4], true, 2000)) {
         let eles = await this.getEles(sele[4], 3000);
@@ -476,13 +479,25 @@ class PartsReadEGLR extends BaseWebDriverWrapper {
             await this.clickEle(eles[eles.length - 1], 1000, 200);
             if (await this.isExistEle(sele[1], true, 3000)) {
               eles = await this.getEles(sele[1], 3000);
-              for (let i = 0, max = eles.length; i < max; i++) {
-                // 次へボタンの分
-                if (await eles[i].isDisplayed()) {
-                  // let el = await this.getEle(sele[2], 3000); // 見えてるボタン
-                  // await this.clickEle(eles[i], 1000);
-                  await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[i]);
-                  eles = await this.getEles(sele[1], 3000);
+              if (siteInfo.code != D.CODE.CIT) {
+                for (let i = 0, max = eles.length; i < max; i++) {
+                  // 次へボタンの分
+                  if (await eles[i].isDisplayed()) {
+                    // let el = await this.getEle(sele[2], 3000); // 見えてるボタン
+                    // await this.clickEle(eles[i], 1000);
+                    await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[i]);
+                    eles = await this.getEles(sele[1], 3000);
+                  }
+                }
+              }
+              else {
+                for (let i = 0; eles && 0 < eles.length;) {
+                  // 次へボタンの分
+                  if (await eles[i].isDisplayed()) {
+                    // await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[i]);
+                    await this.clickEle(eles[i], 2000, 150);
+                    eles = await this.getEles(sele[1], 3000);
+                  }
                 }
               }
               if (await this.isExistEle(sele[3], true, 3000)) {
