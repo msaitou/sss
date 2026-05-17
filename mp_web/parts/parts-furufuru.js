@@ -17,11 +17,12 @@ class PartsFurufuru extends BaseWebDriverWrapper {
     let res = D.STATUS.FAIL;
     try {
       let sele = [
-        "#start_btn",
+        "#start_btn", //  sele[0] = "#more_play>a[href='/drop/play/top']"; リトライ時は、こっちのセレクタになる
         "#main_column #item",
         "#main_column #item>div", // 2
         "#finish>a[href='result']",
-        "#scoreboard>a[href*='/top']", // 4
+        // "#scoreboard>a[href*='/top']", // 4
+        "#scoreboard>a[href*='/drop/play/more_play']", // 4
         "#getpoint>a",
         "a[target='_blank'], iframe", // 6
         "",
@@ -32,6 +33,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
       // await this.openUrl(`${gameUrlHost}drop/practice/top`); // todo 練習用
       await this.ignoreKoukoku();
       await this.getPoint();
+      await this.hideOverlay();
       for (let i = 0; i < 3; i++) {
         // スコアボード後、ここに戻る　２時間毎に３回チャレンジ可
         if (await this.isExistEle(sele[0], true, 2000)) {
@@ -103,6 +105,18 @@ class PartsFurufuru extends BaseWebDriverWrapper {
               let ele = await this.getEle(sele[4], 3000);
               await this.clickEle(ele, 2000, 200);
               await this.ignoreKoukoku();
+              sele[0] = "#more_play>a[href='/drop/play/top']";
+              if (siteInfo.code == D.CODE.CRI) {
+                if (await this.isExistEle(sele[0], true, 2000)) {
+                  let winList = await driver.getAllWindowHandles();
+                  await this.hideOverlay();
+                  let ele = await this.getEles(sele[0], 3000);
+                  await this.clickEle(ele[0], 4000, 200);
+                  await this.hideOverlay();
+                  sele[0] = "#start_btn";
+                  await this.closeElesWindow(winList);  // criはもとに戻す
+                }
+              }
             }
           } else if (await this.isExistEle(sele[3], true, 2000)) {
             let ele = await this.getEle(sele[3], 3000);
@@ -113,6 +127,18 @@ class PartsFurufuru extends BaseWebDriverWrapper {
               let ele = await this.getEle(sele[4], 3000);
               await this.clickEle(ele, 2000, 200);
               await this.ignoreKoukoku();
+              sele[0] = "#more_play>a[href='/drop/play/top']";
+              if (siteInfo.code == D.CODE.CRI) {
+                if (await this.isExistEle(sele[0], true, 2000)) {
+                  let winList = await driver.getAllWindowHandles();
+                  await this.hideOverlay();
+                  let ele = await this.getEles(sele[0], 3000);
+                  await this.clickEle(ele[0], 4000, 200);
+                  await this.hideOverlay();
+                  sele[0] = "#start_btn";
+                  await this.closeElesWindow(winList);  // criはもとに戻す
+                }
+              }
             }
           }
           res = D.STATUS.DONE;
@@ -210,6 +236,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
     //   }
     // }
     let seleOver = [
+      "div#im_interstitial_b div.im_btn_b",
       "#pfx_interstitial_close",
       "#gn_ydn_interstitial_btn",
       "div.overlay-item a.button-close",
@@ -230,6 +257,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
           } else this.logger.debug("オーバーレイは表示されてないです");
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
+          return;
         }
       } else if (await this.silentIsExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
@@ -251,16 +279,20 @@ class PartsFurufuru extends BaseWebDriverWrapper {
               }
               // もとのフレームに戻す
               await this.driver.switchTo().defaultContent();
+              return;
             }
           }
         } else if (s == "#gn_interstitial_outer_area") {
           await this.exeScriptNoTimeOut(
             `for (let t of document.querySelectorAll("#gn_interstitial_outer_area")){t.remove();}`
           );
+          return;
         } else if (s == seleOver[0]) {
           await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+          return;
         } else if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
+          return;
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }

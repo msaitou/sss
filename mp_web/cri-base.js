@@ -123,6 +123,7 @@ class CriMissonSupper extends BaseWebDriverWrapper {
   }
   async hideOverlay() {
     let seleOver = [
+      "#gn_interstitial_close_icon",
       "#pfx_interstitial_close",
       "div.overlay-item a.button-close",
       "#gn_ydn_interstitial_btn",
@@ -448,7 +449,7 @@ class CriStamp extends CriMissonSupper {
     let res = D.STATUS.FAIL;
     try {
       let sele = [
-        "a>img[alt='イチオシ']",
+        "a>img[alt='きたよ!ボタン']",
         "p.list_left>img:not([alt='“済”'])",
         "a.stamp__modal__item-confirm-btn", // 2
       ];
@@ -456,6 +457,7 @@ class CriStamp extends CriMissonSupper {
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 2000);
         await this.clickEleScrollWeak(ele, 2000, 150);
+        await this.hideOverlay();
         if (await this.isExistEle(sele[1], true, 2000)) {
           let eles = await this.getEles(sele[1], 2000);
           let limit = eles.length;
