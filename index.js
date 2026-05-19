@@ -9,12 +9,14 @@ const MODE = {
   L_UTL: "L_UTL",
   MANUAL: "manual",
   MOBILE: "mobile",
+  TESTMAIL: "testmail",
 };
 const logger = require("./initter.js").log();
 global.log = logger;
 logger.info("start!");
 logger.debug(process.argv);
 const db = require("./initter.js").db;
+const mailOpe = require("./mp_mil/mail_operate");
 
 async function start(mode) {
   return new Promise(async (resolve, reject) => {
@@ -22,9 +24,15 @@ async function start(mode) {
     let Web = null;
     let PWeb = null;
     switch (mode) {
-      case "mobile":
+      case MODE.TESTMAIL:
+        await mailOpe.send({}, {
+          subject: `gmail送信テスト`,
+          contents: `テストです`,
+        });
+        break;
+      case MODE.MOBILE:
         global.mobile = true;
-      case "manual":
+      case MODE.MANUAL:
         global.manual = true;
         const man = require("./exam.js");
         await man.alone(logger);

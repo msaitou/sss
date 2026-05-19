@@ -488,7 +488,7 @@ exports.send = async (log, body) => {
       refreshToken: refreshToken,
     },
   });
-  log.debug(response);
+  if (log.debug) log.debug(response);
 };
 console.debug(process.argv);
 if (process.argv[1].indexOf("mail_operate.js") > -1) {
