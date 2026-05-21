@@ -186,17 +186,19 @@ class PartsFurufuru extends BaseWebDriverWrapper {
       if (await this.isExistEle(sele[3], true, 2000)) {
         return D.STATUS.DONE;
       }
+      await this.hideOverlay();
       if (await this.isExistEle(sele[5], true, 2000)) {
         let ele = await this.getEle(sele[5], 3000);
-        await this.clickEle(ele, 2000);
+        await this.clickEle(ele, 2000, 200);
         await this.ignoreKoukoku();
       }
       for (let i = 0; i < 3; i++) {
+        await this.hideOverlay();
         // スコアボード後、ここに戻る　２時間毎に３回チャレンジ可
         if (await this.isExistEle(sele[0], true, 2000)) {
           let wid2 = await driver.getWindowHandle();
           let ele = await this.getEle(sele[0], 3000);
-          await this.clickEle(ele, 2000);
+          await this.clickEle(ele, 2000, 150);
           if (await this.isExistEle(sele[1], true, 2000)) {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length * 2; // 最大でも
@@ -206,10 +208,11 @@ class PartsFurufuru extends BaseWebDriverWrapper {
                   eles = await this.getEles(sele[1], 3000);
                 } else break;
               await this.ignoreKoukoku();
-              await this.clickEle(eles[0], 2000);
+              await this.clickEle(eles[0], 2000, 150);
+              await this.hideOverlay();
               if (await this.isExistEle(sele[2], true, 2000)) {
                 ele = await this.getEle(sele[2], 3000);
-                await this.clickEle(ele, 2000);
+                await this.clickEle(ele, 2000, 150);
               }
             }
           }
@@ -237,6 +240,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
     // }
     let seleOver = [
       "div#im_interstitial_b div.im_btn_b",
+      "button.smarttag-adx-inst__close-btn",
       "#pfx_interstitial_close",
       "#gn_ydn_interstitial_btn",
       "div.overlay-item a.button-close",

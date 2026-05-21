@@ -667,7 +667,7 @@ class CitGameFurufuruSearch extends CitMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 3000);
-      await this.clickEle(eles[0], 2000, 100);
+      await this.clickEle(eles[0], 2000, 300);
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       res = await Furufuru.doSearch(gameUrlHost, wid);
