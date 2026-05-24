@@ -177,6 +177,8 @@ class CmSuper extends BaseWebDriverWrapper {
   }
   async hideOverlay() {
     let seleOver = [
+      "button.smarttag-adx-inst__close-btn",
+      "#rise-close-text-base",
       "div#rise-close-text-base>a.linkCloseTextEl",
       "#fluct_interstitial_close",
       "#fluct_ydn_interstitial_btn",
@@ -187,6 +189,7 @@ class CmSuper extends BaseWebDriverWrapper {
       "#gn_interstitial_close_contents",
       // "div.overlay-item a.button-close"
     ];
+    "#rise-interstitial-area iframe"
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
@@ -220,6 +223,24 @@ class CmSuper extends BaseWebDriverWrapper {
             } 
             return;
           }
+        }
+      } else if (["#rise-close-text-base"].indexOf(s) > -1) {
+        let iSele = ["#rise-interstitial-area"];
+        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+          await this.driver.executeScript(`document.querySelector("${iSele[0]}").remove();`);
+          return;
+          // let iframe = await this.getEles(iSele[0], 1000);
+          // if (await iframe[0].isDisplayed()) {
+          //   await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+          //   let isExists = await this.silentIsExistEle(s, true, 1000);
+          //   // もとのフレームに戻す
+          //   await this.driver.switchTo().defaultContent();
+          //   if (isExists) await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`);
+          //   else if (await this.silentIsExistEle(s, true, 3000)) {
+          //     await this.exeScriptNoTimeOut(`document.querySelector("${s}").click()`);
+          //   } 
+          //   return;
+          // }
         }
       } else if (["#fluct_ydn_interstitial_btn"].indexOf(s) > -1) {
         let iSele = ["div[data-fluct-ad-script-already-reserved]>iframe"];
@@ -506,6 +527,7 @@ class CmKentei extends CmSuper {
                   }
                 } else break;
               }
+              await this.hideOverlay();
               if (await this.isExistEle(sele[5], true, 3000)) {
                 ele = await this.getEle(sele[5], 3000);
                 await this.clickEle(ele, 1000);
@@ -1160,6 +1182,9 @@ class CmGameFurufuruSearch extends CmSuper {
       }
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
+        if (siteInfo.code == D.CODE.LFM) {
+          await this.clickEle(ele, 1000, this.isMob ? 300 : 0);
+        } else
         await this.clickEle(ele, 1000, this.isMob ? 100 : 0);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
