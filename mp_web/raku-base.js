@@ -20,8 +20,12 @@ class RakuBase extends BaseExecuter {
     let islogin = await rakuCom.login();
     if (islogin) {
       // cm系のミッションはまとめてやるため、ここでは1つ扱いのダミーミッションにする
-      let cmMissionList = this.missionList.filter((m) => m.main.indexOf("cm_") === 0);
-      this.missionList = this.missionList.filter((m) => m.main.indexOf("cm_") === -1);
+      let cmMissionList = this.missionList.filter(
+        (m) => m.main.indexOf("cm_") === 0,
+      );
+      this.missionList = this.missionList.filter(
+        (m) => m.main.indexOf("cm_") === -1,
+      );
       if (cmMissionList.length) {
         this.missionList.push({ main: D.MISSION.CM });
       }
@@ -73,7 +77,11 @@ class RakuMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay() {
-    let seleOver = ["div.overlay-item a.button-close", "img[src*='close-interstitial']", "div.modal-close-btn-reverse"];
+    let seleOver = [
+      "div.overlay-item a.button-close",
+      "img[src*='close-interstitial']",
+      "div.modal-close-btn-reverse",
+    ];
     for (var sele of seleOver) {
       if (await this.silentIsExistEle(sele, true, 3000)) {
         let ele = await this.getEle(sele, 2000);
@@ -84,29 +92,56 @@ class RakuMissonSupper extends BaseWebDriverWrapper {
     }
   }
   async hideOverlay2() {
-    let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']", "#dismiss-button", "[aria-label='Close ad']>img"];
-    if (await this.silentIsExistEle(sele[0], true, 4000)) {
-      let ele = await this.getEle(sele[0], 1000);
-      await this.clickEle(ele, 1000);
-      if (await this.silentIsExistEle(sele[1], true, 2000)) {
-        await this.sleep(15000);
-        let iframe = await this.getEles(sele[1], 1000);
-        await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
-        for (let sele2 of [sele[2], sele[3]]) {
-          if (await this.silentIsExistEle(sele2, true, 2000)) {
-            let inputEle = await this.getEle(sele2, 1000);
-            // if (await inputEle.isDisplayed()) {
-            await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
-            // await this.clickEle(inputEle, 2000, 0, true);
-            // } else this.logger.debug("オーバーレイは表示されてないです");
-            break;
+    let sele = [
+      "div.fc-dialog button.fc-rewarded-ad-button",
+      "#gn_interstitial_iframe_content",
+      "div.fc-message-root"
+    ];
+    let seMap = {
+      "div.fc-dialog button.fc-rewarded-ad-button": [
+        "ins iframe[title^='3rd']",
+        "#dismiss-button",
+        "[aria-label='Close ad']>img",
+      ],
+      "#gn_interstitial_iframe_content": ["#gn_interstitial_close_icon"],
+    };
+    for (let se of sele) {
+      if (await this.silentIsExistEle(se, true, 4000)) {
+        let ele = await this.getEle(se, 1000);
+        if ("div.fc-dialog button.fc-rewarded-ad-button" === se) {
+          await this.clickEle(ele, 1000);
+          if (await this.silentIsExistEle(seMap[se][0], true, 2000)) {
+            await this.sleep(15000);
+            let iframe = await this.getEles(seMap[se][0], 1000);
+            await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+            for (let sele2 of [seMap[se][1], seMap[se][2]]) {
+              if (await this.silentIsExistEle(sele2, true, 2000)) {
+                let inputEle = await this.getEle(sele2, 1000);
+                // if (await inputEle.isDisplayed()) {
+                await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+                // await this.clickEle(inputEle, 2000, 0, true);
+                // } else this.logger.debug("オーバーレイは表示されてないです");
+                break;
+              }
+            }
+            // もとのフレームに戻す
+            await this.driver.switchTo().defaultContent();
+            return;
           }
+        } else {
+          await this.exeScriptNoTimeOut(
+            `for (let t of document.querySelectorAll("${se}")){t.remove();}`,
+          );
+          await this.exeScriptNoTimeOut(
+            `document.querySelectorAll('*').forEach(e=>getComputedStyle(e).overflow=='hidden'&&e.style.setProperty('overflow','auto','important'))`,
+          );
+
+          return;
         }
-        // もとのフレームに戻す
-        await this.driver.switchTo().defaultContent();
       }
     }
-  }}
+  }
+}
 // このサイトの共通処理クラス
 class RakuCommon extends RakuMissonSupper {
   constructor(para) {
@@ -115,10 +150,17 @@ class RakuCommon extends RakuMissonSupper {
   }
   async login() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
-    await driver.get(siteInfo.entry_url); // エントリーページ表示
+    // await driver.get(siteInfo.entry_url); // エントリーページ表示
+    await driver.get(
+      "https://www.rakuten-card.co.jp/e-navi/members/index.xhtml",
+    ); // エントリーページ表示
     let seleIsLoggedIn = "#rakutenSuperPoints";
     logger.debug(11100);
-    let seleInput = { id: "#u", pass: "#password_current", login: "div#cta011" };
+    let seleInput = {
+      id: "#u",
+      pass: "#password_current",
+      login: "div#cta011",
+    };
     let seleInput2 = {
       id: "#user_id",
       pass: "#password_current",
@@ -398,6 +440,8 @@ class RakuNews extends RakuMissonSupper {
     ];
     await this.openUrl(this.firstUrl); // 操作ページ表示
     try {
+      let limit = 25;
+      // let limit = 50;
       var cnt = 0;
       for (let cSele of cSeleList) {
         await this.hideOverlay();
@@ -419,30 +463,39 @@ class RakuNews extends RakuMissonSupper {
                 }
               }
               if (unReadEle) {
+                await this.hideOverlay2();
                 await this.clickEle(unReadEle, 2000);
                 if (await this.isExistEle(sele[1], true, 2000)) {
                   ele = await this.getEle(sele[1], 2000);
                   // 1記事を10秒待機。その後ページの最下部へ移動して、2秒待機？TOPページを表示
                   await this.hideOverlay();
                   await this.clickEle(ele, 1000); // 10秒待機
-                  let reactionSele = ["#reaction-icon-container li>button", "#reaction-icon-container li>button.is-disabled",".pager>li>ul>li"];
-                  if (await this.isExistEle(reactionSele[2], true, 1000)) {
-                    eles = await this.getEles(reactionSele[2], 1000);
-                    await this.clickEle(eles[eles.length-1], 3000); // 最後のページに移動
-                  }
-                  if (await this.isExistEle(reactionSele[1], false, 1000) // リアクション済みでない
-                  && await this.isExistEle(reactionSele[0], true, 1000)) {
-                    await this.hideOverlay();
-                    await this.hideOverlay2();
-                    await this.sleep(5000); // 10秒待機
-                    eles = await this.getEles(reactionSele[0], 1000);
-                    let choiceNum = libUtil.getRandomInt(0, eles.length);
-                    await this.clickEle(eles[choiceNum], 1000); // リアクションする
-                    cnt++;
-                  }
-                  await driver.executeScript(`window.scrollTo(0, document.body.scrollHeight);`);
-                  await this.sleep(2000);
                 }
+                let reactionSele = [
+                  "#reaction-icon-container li>button",
+                  "#reaction-icon-container li>button.is-disabled",
+                  ".pager>li>ul>li",
+                ];
+                if (await this.isExistEle(reactionSele[2], true, 1000)) {
+                  eles = await this.getEles(reactionSele[2], 1000);
+                  await this.clickEle(eles[eles.length - 1], 3000); // 最後のページに移動
+                }
+                if (
+                  (await this.isExistEle(reactionSele[1], false, 1000)) && // リアクション済みでない
+                  (await this.isExistEle(reactionSele[0], true, 1000))
+                ) {
+                  await this.hideOverlay();
+                  await this.hideOverlay2();
+                  eles = await this.getEles(reactionSele[0], 1000);
+                  let choiceNum = libUtil.getRandomInt(0, eles.length);
+                  await this.clickEle(eles[choiceNum], 1000); // リアクションする
+                  await this.sleep(5000); // 10秒待機
+                  cnt++;
+                }
+                await driver.executeScript(
+                  `window.scrollTo(0, document.body.scrollHeight);`,
+                );
+                await this.sleep(2000);
                 await this.openUrl(this.firstUrl); // 操作ページ表示
               } else {
                 logger.debug("このタブは全部読んだので次のタブを見る");
@@ -450,33 +503,33 @@ class RakuNews extends RakuMissonSupper {
               }
             }
           } else break;
-          if (readedList.length > 25 && cnt > 25) break;
+          if (readedList.length > limit && cnt > limit) break;
         }
-        if (readedList.length > 25 && cnt > 25) break;
+        if (readedList.length > limit && cnt > limit) break;
       }
-    }
-    catch(e) {
+    } catch (e) {
       this.logger.warn(e);
     }
-    // if (await this.isExistEle(sele[0], true, 2000)) {
-    //   ele = await this.getEle(sele[0], 2000);
-    //   await this.clickEle(ele, 2000);
-    // }
-    await this.openUrl("https://www.infoseek.co.jp/mission/list/");
-    // ループ完了後、ミッションページでポイント獲得ボタンを押下（押せるやつのみ）
-    if (await this.isExistEle(sele[2], true, 2000)) {
-      eles = await this.getEles(sele[2], 2000);
-      let limit = eles.length;
-      for (let i = 0; i < limit; i++) {
-        if (i != 0) eles = await this.getEles(sele[2], 2000);
-        await this.clickEle(eles[0], 2000);
-        await this.driver.navigate().back(); // 戻って
+    try {
+      await this.openUrl("https://www.infoseek.co.jp/mission/list/");
+      // ループ完了後、ミッションページでポイント獲得ボタンを押下（押せるやつのみ）
+      if (await this.isExistEle(sele[2], true, 2000)) {
+        eles = await this.getEles(sele[2], 2000);
+        let limit = eles.length;
+        for (let i = 0; i < limit; i++) {
+          if (i != 0) eles = await this.getEles(sele[2], 2000);
+          await this.hideOverlay2();
+          await this.clickEle(eles[0], 2000);
+          await this.driver.navigate().back(); // 戻って
+        }
+        res = D.STATUS.DONE;
       }
-      res = D.STATUS.DONE;
+      // TOPページの総合タブに表示されてるリンクを下から順に表示する
+      // リンクは保持して、同じものはスキップする。このタブに表示するものがなくなったら次のタブ。
+      // 26回ループ
+    } catch (e) {
+      this.logger.warn(e);
     }
-    // TOPページの総合タブに表示されてるリンクを下から順に表示する
-    // リンクは保持して、同じものはスキップする。このタブに表示するものがなくなったら次のタブ。
-    // 26回ループ
     logger.info(`${this.constructor.name} END`);
     return res;
   }

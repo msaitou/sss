@@ -147,7 +147,24 @@ exports.initBrowserDriver = async function (isMob = false, headless = false) {
   chromeOptions.addArguments(`--user-data-dir=${conf.chrome["user-data-dir"]}`);
   chromeOptions.addArguments(`--profile-directory=${conf.chrome["profile"]}`);
   chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
-  chromeOptions.addArguments("--lang=en");
+  // chromeOptions.addArguments("--lang=en");
+  chromeOptions.addArguments('--lang=ja-JP');
+
+  // なんか、pc版gmyのkokuhakuで日本語にしてくださいと表示されて対処したけど無駄だった対応
+  // chromeOptions.setUserPreferences({'intl.accept_languages': 'ja,ja-JP'});
+  // chromeOptions.addArguments('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+  // // 3. 自動制御の痕跡を消す設定
+  // chromeOptions.excludeSwitches('enable-automation');
+  // // ★ Windows特有のプロキシ・ネットワーク誤認対策
+  // chromeOptions.addArguments('--no-proxy-server'); // プロキシを一切使わない
+  // chromeOptions.addArguments('--proxy-bypass-list=*'); // すべてのホストでプロキシをバイパス
+  // chromeOptions.addArguments('--proxy-server="direct://"'); // 直接接続を強制
+  // // ★ 余計なバックグラウンド通信の停止
+  // chromeOptions.addArguments('--disable-component-update'); // コンポーネントの自動更新を停止
+  // chromeOptions.addArguments('--disable-default-apps');     // デフォルトアプリを無効化
+  // chromeOptions.addArguments('--disable-extensions');       // 拡張機能を完全無効化
+  // chromeOptions.addArguments('--disable-features=Translate'); // 翻訳機能を無効化
+
   // アプリ外で操作したプロファイルでログイン中にし、アプリでそのプロファイルを利用する。
   // アプリ外で、どのプロファイルを使うか、デフォルトどのプロファイルを使うのがいいか。
   // アプリ内にプロファイルは保存しておきたい気がする。
