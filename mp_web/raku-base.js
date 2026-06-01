@@ -384,7 +384,7 @@ class RakuNews extends RakuMissonSupper {
     ];
     // topに飛ぶ
     try {
-      await this.driver.manage().setTimeouts({ pageLoad: 10000 });
+      // await this.driver.manage().setTimeouts({ pageLoad: 10000 });
       await this.openUrl(this.firstUrl); // 操作ページ表示
     } catch (e) {
       if (e.name != "TimeoutError") {
