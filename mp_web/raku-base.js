@@ -95,7 +95,8 @@ class RakuMissonSupper extends BaseWebDriverWrapper {
     let sele = [
       "div.fc-dialog button.fc-rewarded-ad-button",
       "#gn_interstitial_iframe_content",
-      "div.fc-message-root"
+      "div.fc-message-root",
+      "ins[id*='Infoseek/News/Offerwall_Mission_']",
     ];
     let seMap = {
       "div.fc-dialog button.fc-rewarded-ad-button": [
@@ -180,59 +181,6 @@ class RakuCommon extends RakuMissonSupper {
       } else logger.info("ログインできませんでした5");
     }
 
-    // #region furui
-    // ログインしてるかチェック(ログインの印がないことを確認)
-    // if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
-    //   logger.debug(11101);
-    //   let seleInput = { id: "#u", pass: "#p", login: "#loginButton" };
-    //   let seleInput2 = {
-    //     id: "#loginInner_u",
-    //     pass: "#loginInner_p",
-    //     login: 'input[type="submit"]',
-    //     birth: "#loginInner_birthday",
-    //   };
-    //   if (await this.isExistEle(seleInput.id, true, 2000)) {
-    //     logger.debug(11102);
-    //     for (let seleGroup of [seleInput, seleInput2]) {
-    //       if (await this.isExistEle(seleGroup.id, true, 2000)) {
-    //         // アカウント（メール）入力
-    //         let inputEle = await this.getEle(seleGroup.id, 500);
-    //         await inputEle.clear();
-    //         await inputEle.sendKeys(account[this.code].loginid);
-    //         // パスワード入力
-    //         inputEle = await this.getEle(seleGroup.pass, 500);
-    //         await inputEle.clear();
-    //         await inputEle.sendKeys(account[this.code].loginpass);
-    //         if (seleGroup.birth) {
-    //           inputEle = await this.getEle(seleGroup.birth, 500);
-    //           await inputEle.clear();
-    //           await inputEle.sendKeys(account[this.code].birth);
-    //         }
-    //         let ele = await this.getEle(seleGroup.login, 1000);
-    //         await this.clickEle(ele, 3000); // ログインボタン押下
-    //       }
-    //     }
-
-    //     // ログインできてるか、チェック
-    //     if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
-    //       // ログインできてるのでOK
-    //       logger.info("ログインできました！");
-    //       return true;
-    //     } else {
-    //       // ログインできてないので、メール
-    //       logger.info("ログインできませんでした");
-    //       await mailOpe.send(logger, {
-    //         subject: `ログインできません[${this.code}] `,
-    //         contents: `なぜか ${this.code} にログインできません`,
-    //       });
-    //       return;
-    //     }
-    //   } else {
-    //     // 未ログインで、ログインボタンが見つかりません。
-    //     return;
-    //   }
-    // } else logger.debug("ログイン中なのでログインしません");
-    // #endregion
     if (await this.isExistEle(seleIsLoggedIn, false, 2000)) {
       logger.debug(11101);
       if (await this.isExistEle(seleInput2.id, true, 4000)) {
@@ -264,31 +212,6 @@ class RakuCommon extends RakuMissonSupper {
         logger.info("user_idがスキップ？");
         await passLogin(this);
       }
-
-      // if (await this.isExistEle(seleInput.pass, true, 2000)) {
-      //   let inputEle = await this.getEle(seleInput.pass, 500);
-      //   await inputEle.clear();
-      //   await inputEle.sendKeys(account[this.code].loginpass);
-      //   if (await this.isExistEle(seleInput.login, true, 2000)) {
-      //     let ele = await this.getEle(seleInput.login, 1000);
-      //     await this.clickEle(ele, 3000); // ログインボタン押下
-      //   } else {
-      //     // 未ログインで、ログインボタンが見つかりません。
-      //     return;
-      //   }
-      //   // ログインできてるか、チェック
-      //   if (await this.isExistEle(seleIsLoggedIn, true, 2000)) {
-      //     logger.info("ログインできました！");
-      //     return true;
-      //   } else {
-      //     logger.info("ログインできませんでした");
-      //     await mailOpe.send(logger, {
-      //       subject: `ログインできません[${this.code}] `,
-      //       contents: `なぜか ${this.code} にログインできません`,
-      //     });
-      //     return;
-      //   }
-      // }
     } else logger.debug("ログイン中なのでログインしません");
     return true;
   }
@@ -477,6 +400,7 @@ class RakuNews extends RakuMissonSupper {
                   ".pager>li>ul>li",
                 ];
                 if (await this.isExistEle(reactionSele[2], true, 1000)) {
+                  await this.hideOverlay2();
                   eles = await this.getEles(reactionSele[2], 1000);
                   await this.clickEle(eles[eles.length - 1], 3000); // 最後のページに移動
                 }
@@ -512,6 +436,7 @@ class RakuNews extends RakuMissonSupper {
     }
     try {
       await this.openUrl("https://www.infoseek.co.jp/mission/list/");
+      await this.hideOverlay2();
       // ループ完了後、ミッションページでポイント獲得ボタンを押下（押せるやつのみ）
       if (await this.isExistEle(sele[2], true, 2000)) {
         eles = await this.getEles(sele[2], 2000);

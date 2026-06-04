@@ -151,19 +151,23 @@ class BaseWebDriverWrapper {
         throw e;
       }
       else {
-        try {
-          await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
-        } catch (e) {
-          if (e.name != "TimeoutError") throw e;
-          try {
-            await this.exeScriptNoTimeOut(`window.stop();`);
-            // await this.driver.navigate().back(); // 戻って
-            // await this.driver.navigate().forward(); // 行く
-          } catch (e) {
-            if (e.name != "TimeoutError") throw e;
-            this.logger.warn(e.name);
-          }
-        }
+        // try {
+        //   await this.driver.navigate().refresh(); // 画面更新  しないとなにも起きない
+        // } catch (e) {
+        //   if (e.name != "TimeoutError") throw e;
+        //   try {
+        //     await this.exeScriptNoTimeOut(`window.stop();`);
+        //     // await this.driver.navigate().back(); // 戻って
+        //     // await this.driver.navigate().forward(); // 行く
+        //   } catch (e) {
+        //     if (e.name != "TimeoutError") throw e;
+        //     this.logger.warn(e.name);
+        //   }
+        // }
+        // タイムアウト時は単純にログして先へ進む
+        this.logger.warn(`Click timeout (continuing anyway): ${e.message}`);
+        // 非同期で window.stop() を試みるが応答を待たない
+        this.driver.executeScript(`window.stop();`).catch(err => this.logger.warn("window.stop() failed:", err));
       }
     } finally {
       await this.driver.manage().setTimeouts({ pageLoad: 180000 });
