@@ -31,6 +31,12 @@ class PexBase extends BaseExecuter {
           case D.MISSION.CM:
             execCls = new PexCm(para);
             break;
+          case D.MISSION.PEX_ANQ:
+            execCls = new PexAnq(para);
+            break;
+          case D.MISSION.PEX_URANAI:
+            execCls = new PexUranai(para);
+            break;
         }
         if (execCls) {
           this.writeLogMissionStart(mission.main);
@@ -216,6 +222,96 @@ class PexChirashi extends PexMissonSupper {
     return await this.ChirashiCls.do(this.targetUrl);
   }
 }
+// PEXアンケート
+class PexAnq extends PexMissonSupper {
+  firstUrl = "https://pex.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // ポイントゲットのチャンスは1日2回チラシが更新される朝6時と夜20時
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      await driver.get(this.firstUrl); // 最初のページ表示
+      let sele = ["img[alt='PeXアンケート']", "div.offerwall a"];
+      // if (this.isMob) sele[2] = "form>input[type='submit']";
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 1000);
+        await this.clickEle(ele, 2000, this.isMob ? 120 : 100);
+        await this.changeWindow();
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let eles = await this.getEles(sele[1], 1000);
+          await this.clickEle(eles[0], 2000, this.isMob ? 120 : 100);
+          await this.closeOtherWindow(driver);
+          res = D.STATUS.DONE;
+        }
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+}
+// PEXuranai
+class PexUranai extends PexMissonSupper {
+  firstUrl = "https://pex.jp/";
+  constructor(para) {
+    super(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // ポイントゲットのチャンスは1日2回チラシが更新される朝6時と夜20時
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
+    try {
+      await driver.get(this.firstUrl); // 最初のページ表示
+      let sele = ["img[alt='PeX毎日うらない']", "ul.pex-divination__list a", "a[href='/divination']"];
+      // if (this.isMob) sele[2] = "form>input[type='submit']";
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let ele = await this.getEle(sele[0], 1000);
+        await this.clickEle(ele, 2000, this.isMob ? 120 : 100);
+        for (let i = 0; i < 3; i++) {
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let eles = await this.getEles(sele[1], 1000);
+            await this.clickEle(eles[i], 2000, this.isMob ? 120 : 100);
+            let se = "";
+            if (i === 0) {
+              se = "img[alt='さそり座']";
+              if (await this.isExistEle(se, true, 2000)) {
+                ele = await this.getEle(se, 1000);
+                await this.clickEle(ele, 2000, this.isMob ? 120 : 100);
+              }
+            }
+            else if (i === 1) {
+              se = "button.draw-tarot__button";
+              if (await this.isExistEle(se, true, 2000)) {
+                eles = await this.getEles(se, 1000);
+                await this.clickEle(eles[0], 2000, this.isMob ? 120 : 100);
+              }
+            }
+            else if (i === 2) {
+              se = "#draw-button";
+              if (await this.isExistEle(se, true, 2000)) {
+                ele = await this.getEle(se, 1000);
+                await this.clickEle(ele, 5000, this.isMob ? 120 : 100);
+              }
+            }
+            if (await this.isExistEle(sele[2], true, 2000)) {
+              eles = await this.getEles(sele[2], 1000);
+              await this.clickEle(eles[1], 2000, this.isMob ? 220 : 100);
+            }
+          }
+        }
+        res = D.STATUS.DONE;
+      }
+    } catch (e) {
+      logger.warn(e);
+    }
+    return res;
+  }
+}
 // みんなのNEWSウォッチ
 class PexNewsWatch extends PexMissonSupper {
   firstUrl = "https://pex.jp/";
@@ -302,30 +398,53 @@ class PexNewsWatch extends PexMissonSupper {
   async hideOverlay2() {
     let sele = [
       "div.fc-dialog button.fc-rewarded-ad-button",
+      "div.fc-message-root",
       "ins iframe[title^='3rd']",
       "#dismiss-button",
     ];
-    if (await this.silentIsExistEle(sele[0], true, 4000)) {
-      let ele = await this.getEle(sele[0], 1000);
-      await this.clickEle(ele, 1000);
-      if (await this.silentIsExistEle(sele[1], true, 2000)) {
-        await this.sleep(15000);
-        let iframe = await this.getEles(sele[1], 1000);
-        await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
-        for (let sele2 of [sele[2], sele[3]]) {
-          if (await this.silentIsExistEle(sele2, true, 2000)) {
-            let inputEle = await this.getEle(sele2, 1000);
-            // if (await inputEle.isDisplayed()) {
-            await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
-            // await this.clickEle(inputEle, 2000, 0, true);
-            // } else this.logger.debug("オーバーレイは表示されてないです");
-            break;
-          }
-        }
-        // もとのフレームに戻す
-        await this.driver.switchTo().defaultContent();
+    let seMap = {
+      "div.fc-dialog button.fc-rewarded-ad-button": [
+        "ins iframe[title^='3rd']",
+        "#dismiss-button",
+        "[aria-label='Close ad']>img",
+      ],
+      "#gn_interstitial_iframe_content": ["#gn_interstitial_close_icon"],
+    };
+    for (let se of sele) {
+      if (await this.silentIsExistEle(se, true, 4000)) {
+        // let ele = await this.getEle(se, 1000);
+        // if ("div.fc-dialog button.fc-rewarded-ad-button" === se) {
+        //   await this.clickEle(ele, 1000);
+        //   if (await this.silentIsExistEle(seMap[se][0], true, 2000)) {
+        //     await this.sleep(15000);
+        //     let iframe = await this.getEles(seMap[se][0], 1000);
+        //     await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+        //     for (let sele2 of [seMap[se][1], seMap[se][2]]) {
+        //       if (await this.silentIsExistEle(sele2, true, 2000)) {
+        //         let inputEle = await this.getEle(sele2, 1000);
+        //         // if (await inputEle.isDisplayed()) {
+        //         await this.exeScriptNoTimeOut(`arguments[0].click()`, inputEle);
+        //         // await this.clickEle(inputEle, 2000, 0, true);
+        //         // } else this.logger.debug("オーバーレイは表示されてないです");
+        //         break;
+        //       }
+        //     }
+        //     // もとのフレームに戻す
+        //     await this.driver.switchTo().defaultContent();
+        //     return;
+        //   }
+        // } else {
+          await this.exeScriptNoTimeOut(
+            `for (let t of document.querySelectorAll("${se}")){t.remove();}`,
+          );
+          await this.exeScriptNoTimeOut(
+            `document.querySelectorAll('*').forEach(e=>getComputedStyle(e).overflow=='hidden'&&e.style.setProperty('overflow','auto','important'))`,
+          );
+          // return; // 1つ消して、また消しに来る　のでなし
+        // }
       }
     }
+
     // if (await this.isExistEle(sele[0], true, 4000)) {
     //   let ele = await this.getEle(sele[0], 1000);
     //   await this.clickEle(ele, 1000);

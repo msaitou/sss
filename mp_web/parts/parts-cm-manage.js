@@ -194,7 +194,7 @@ class CmSuper extends BaseWebDriverWrapper {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
         if (await this.silentIsExistEle(iSele[0], true, 3000)) {
-          await this.driver.executeScript(`document.querySelector("${iSele[0]}").remove();`);
+          await this.driver.executeScript(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
           await this.driver.executeScript(
             `document.querySelector('body').setAttribute('style', 'position: initial;');`
           );
@@ -227,7 +227,7 @@ class CmSuper extends BaseWebDriverWrapper {
       } else if (["#rise-close-text-base"].indexOf(s) > -1) {
         let iSele = ["#rise-interstitial-area"];
         if (await this.silentIsExistEle(iSele[0], true, 3000)) {
-          await this.driver.executeScript(`document.querySelector("${iSele[0]}").remove();`);
+          await this.driver.executeScript(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
           return;
           // let iframe = await this.getEles(iSele[0], 1000);
           // if (await iframe[0].isDisplayed()) {
