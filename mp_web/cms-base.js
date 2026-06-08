@@ -210,13 +210,13 @@ class CmsDailyCm extends CmsMissonSupper {
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000);
         await this.clickEle(ele, 2000);
-        await this.sleep(60000); // 1分くらい待つ
-        await this.ignoreKoukoku();
-        if (await this.isExistEle(sele[1], true, 1000)) {
-          let ele = await this.getEle(sele[1], 1000);
+        await this.sleep(90000); // 1分くらい待つ
+        if (await this.isExistEle("#" + sele[1], true, 1000)) {
+          await this.ignoreKoukoku();
+          let ele = await this.getEle("#" + sele[1], 1000);
           // await this.clickEle(ele, 2000);
           await this.driver.executeScript(
-            "document.getElementById('"+sele[1]+"').click();"
+            "document.getElementById('" + sele[1] + "').click();",
           );
           await this.changeWindow();
           res = D.STATUS.DONE;

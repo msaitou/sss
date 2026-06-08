@@ -476,6 +476,7 @@ class PartsReadEGLR extends BaseWebDriverWrapper {
           await this.moveLastPage(preCnt); // 最後のページに移動
           if (await this.isExistEle(sele[0], true, 2000)) {
             eles = await this.getEles(sele[0], 3000);
+            await this.sleep(5000);
             await this.clickEle(eles[eles.length - 1], 1000, 200);
             if (await this.isExistEle(sele[1], true, 3000)) {
               eles = await this.getEles(sele[1], 3000);
@@ -500,6 +501,7 @@ class PartsReadEGLR extends BaseWebDriverWrapper {
                   }
                 }
               }
+            }
               if (await this.isExistEle(sele[3], true, 3000)) {
                 let el = await this.getEle(sele[3], 3000); // stampGET
                 await this.exeScriptNoTimeOut(`arguments[0].click()`, el);
@@ -514,7 +516,6 @@ class PartsReadEGLR extends BaseWebDriverWrapper {
                   await this.exeScriptNoTimeOut(`arguments[0].click()`, el);
                 }
               }
-            }
           } else {
             // このページに読むものがないので前のページに移動
             await this.movePrevPage();
