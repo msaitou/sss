@@ -1296,9 +1296,10 @@ class PartsGame extends BaseWebDriverWrapper {
             let fName = `${conf.machine}-${this.isMob?"m_":""}${this.para.code}-${new Date().toJSON().replaceAll(":", "")}.png`;
             const fs = require("fs");
             await fs.writeFileSync(`./log/${fName}`, encodedString, "base64");
-            let blockingElement = await driver.findElement(By.tagName("html"));
-            let outerHTML = await blockingElement.getAttribute("outerHTML");
-            this.logger.warn(`HEADLESS ${outerHTML}`);
+            // まったく見てないのでなし。
+            // let blockingElement = await driver.findElement(By.tagName("html"));
+            // let outerHTML = await blockingElement.getAttribute("outerHTML");
+            // this.logger.warn(`HEADLESS ${outerHTML}`);
           }
 
           //  else break;

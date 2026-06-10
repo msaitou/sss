@@ -141,12 +141,13 @@ class BaseWebDriverWrapper {
       if (e.name != "TimeoutError") {
         if (this.para.isHeadless) {
           let encodedString = await this.driver.takeScreenshot();
-          let fName = `${conf.machine}-${this.isMob?"m_":""}${this.para.code}-${new Date().toJSON().replaceAll(":", "")}.png`;
+          let fName = `${conf.machine}-${this.isMob ? "m_" : ""}${this.para.code ? this.para.code : this.siteInfo?.code}-${new Date().toJSON().replaceAll(":", "")}.png`;
           const fs = require("fs");
           await fs.writeFileSync(`./log/${fName}`, encodedString, "base64");
-          let blockingElement = await this.driver.findElement(By.tagName("html"));
-          let outerHTML = await blockingElement.getAttribute("outerHTML");
-          this.logger.warn(`HEADLESS ${outerHTML}`);
+          // まったく見てないのでなし。
+          // let blockingElement = await this.driver.findElement(By.tagName("html"));
+          // let outerHTML = await blockingElement.getAttribute("outerHTML");
+          // this.logger.warn(`HEADLESS ${outerHTML}`);
         }
         throw e;
       }
@@ -418,7 +419,7 @@ class BaseWebDriverWrapper {
   }
   async takeScreen() {
     let encodedString = await this.driver.takeScreenshot();
-    let fName = `${conf.machine}-${this.code}-${new Date().toJSON().replaceAll(":", "")}.png`;
+    let fName = `${conf.machine}-${this.code ? this.code : this.siteInfo?.code}-${new Date().toJSON().replaceAll(":", "")}.png`;
     const fs = require("fs");
     await fs.writeFileSync(`./log/${fName}`, encodedString, "base64");
   }
