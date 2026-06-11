@@ -107,9 +107,31 @@ class PstMissonSupper extends BaseWebDriverWrapper {
         if (await this.silentIsExistEle(sele[2], true, 2000)) {
           let ele = await this.getEle(sele[2], 1000);
           await this.clickEle(ele, 1000);
+          return;
         }
       }
     }
+    let seleOver = ["#dismiss-button"];
+    let iSele = { "#dismiss-button": "iframe[title='Advertisement']" };
+    for (let s of seleOver) {
+      if (iSele[s]) {
+        if (await this.isExistEle(iSele[s], true, 1000)) {
+          let iframe = await this.getEles(iSele[s], 1000);
+          if (await iframe[0].isDisplayed()) {
+            await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
+            if (await this.isExistEle(s, true, 1000)) {
+              let inputEle = await this.getEle(s, 10000);
+              if (await inputEle.isDisplayed()) {
+                await this.clickEle(inputEle, 1000);
+              } else this.logger.debug("オーバーレイは表示されてないです");
+            }
+            // もとのフレームに戻す
+            await this.driver.switchTo().defaultContent();
+          }
+        }
+      }
+    }
+
   }
 }
 // このサイトの共通処理クラス
@@ -315,40 +337,46 @@ class PstClick extends PstMissonSupper {
     let sele = [".normal_desc a>img", "#keywd>li>a", "input[name='btnentry']"];
     let urlList = [
       this.targetUrl,
-      "https://www.point-stadium.com/otokuc2.asp",
       "https://www.point-stadium.com/otokuc3.asp",
+      "https://www.point-stadium.com/otokuc2.asp",
     ];
-    await this.openUrl(urlList[0]); // 操作ページ表示
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      let eles = await this.getEles(sele[0], 2000);
-      for (let i = 0; i < eles.length; i++) {
-        await this.ignoreKoukoku()
-        await this.hideOverlay2();
-        await this.clickEle(eles[i], 2000);
-        await this.closeOtherWindow(driver);
-      }
-    }
-    for (let j = 1; j < 3; j++) {
-      await this.openUrl(urlList[j]); // 操作ページ表示
-      if (await this.isExistEle(sele[1], true, 2000)) {
-        let eles = await this.getEles(sele[1], 2000);
-        for (let i = 0; i < eles.length && i < 6; i++) {
+    try {
+      await this.openUrl(urlList[0]); // 操作ページ表示
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let eles = await this.getEles(sele[0], 2000);
+        for (let i = 0; i < eles.length; i++) {
           await this.ignoreKoukoku()
           await this.hideOverlay2();
           await this.clickEle(eles[i], 2000);
           await this.closeOtherWindow(driver);
         }
-        if (await this.isExistEle(sele[2], true, 2000)) {
-          await this.ignoreKoukoku()
-          await this.hideOverlay2();
-          let ele = await this.getEle(sele[2], 2000);
-          await this.clickEle(ele, 2000);
+      }
+      for (let j = 1; j < 3; j++) {
+        await this.openUrl(urlList[j]); // 操作ページ表示
+        if (await this.isExistEle(sele[1], true, 2000)) {
+          let eles = await this.getEles(sele[1], 2000);
+          for (let i = 0; i < eles.length && i < 6; i++) {
+            await this.ignoreKoukoku()
+            await this.hideOverlay2();
+            await this.clickEle(eles[i], 2000);
+            await this.closeOtherWindow(driver);
+          }
+          if (await this.isExistEle(sele[2], true, 2000)) {
+            await this.ignoreKoukoku()
+            await this.hideOverlay2();
+            let ele = await this.getEle(sele[2], 2000);
+            await this.clickEle(ele, 2000);
+          }
         }
       }
     }
-
-    logger.info(`${this.constructor.name} END`);
-    return D.STATUS.DONE;
+    catch (e) {
+      logger.error(e);
+    }
+    finally {
+      logger.info(`${this.constructor.name} END`);
+      return D.STATUS.DONE;
+    }
   }
 }
 exports.PstCommon = PstCommon;
