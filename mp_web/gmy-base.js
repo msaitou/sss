@@ -166,29 +166,18 @@ class GmyMissonSupper extends BaseWebDriverWrapper {
     await this.hideOverlay22();
   }
   async hideOverlay22() {
-    let sele = [
-      "div.fc-dialog button.fc-list-item-button",
-      "ins iframe[title='3rd party ad content']",
-      "#dismiss-button-element",
-    ];
-    if (await this.isExistEle(sele[0], true, 4000)) {
-      let ele = await this.getEle(sele[0], 1000);
-      await this.clickEle(ele, 1000);
-      if (await this.isExistEle(sele[1], true, 4000)) {
-        let iframes = await this.getEles(sele[1], 1000);
-        for (let iframe of iframes) {
-          if (await iframe.isDisplayed()) {
-            await this.driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
-            await this.sleep(10000);
-            if (await this.isExistEle(sele[2], true, 1000)) {
-              let inputEle = await this.getEle(sele[2], 1000);
-              if (await inputEle.isDisplayed()) {
-                await this.clickEle(inputEle, 1000);
-              } else this.logger.debug("オーバーレイは表示されてないです");
-            }
-            // もとのフレームに戻す
-            await this.driver.switchTo().defaultContent();
-          }
+    let se = ["div#im_interstitial_b div.im_btn_b", "ins iframe"];
+    for (let s of se) {
+      if (await this.silentIsExistEle(s, true, 1000)) {
+        if (s == se[0]) {
+          let ele = await this.getEle(s, 1000);
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+          return;
+        } else if (s == se[1]) {
+          await this.exeScriptNoTimeOut(
+            `for (let t of document.querySelectorAll("${s}")){t.remove();}`,
+          );
+          return;
         }
       }
     }

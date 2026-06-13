@@ -155,6 +155,17 @@ class PartsOtano extends BaseWebDriverWrapper {
     }
   }
   async hideOverlay2() {
+    let se = ["div#im_interstitial_b div.im_btn_b",];
+    for (let s of se) {
+      if (await this.silentIsExistEle(s, true, 1000)) {
+        let ele = await this.getEle(s, 1000);
+        if (s == se[0]) {
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+          return;
+        }
+      }
+    }
+
     let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']", "#dismiss-button"];
     if (await this.silentIsExistEle(sele[0], true, 4000)) {
       let ele = await this.getEle(sele[0], 1000);
@@ -170,6 +181,7 @@ class PartsOtano extends BaseWebDriverWrapper {
         // } else this.logger.debug("オーバーレイは表示されてないです");
         // もとのフレームに戻す
         await this.driver.switchTo().defaultContent();
+        return;
       }
     }
   }
