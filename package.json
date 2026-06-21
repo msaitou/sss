@@ -23,5 +23,8 @@
     "request": "^2.88.2",
     "selenium-download": "^2.0.16",
     "selenium-webdriver": "^4.11.1"
+  },
+  "volta": {
+    "node": "22.23.0"
   }
 }

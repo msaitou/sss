@@ -746,76 +746,81 @@ class Uranai extends CmSuper {
       "div[style='display: block;'] img[alt='進む']",
       "img[alt='占い終わり']",
     ];
-    if (await this.isExistEle(sele[1], true, 3000)) {
-      let ele = await this.getEle(sele[1], 3000);
-      await this.clickEle(ele, 1000);
-      await this.ignoreKoukoku();
-      await this.hideOverlay();
-      // await driver.wait(until.elementIsVisible(choiceEle), 15000);
-      for (let i = 0; i < 3; i++) {
-        if (await this.isExistEle(sele[2], true, 3000)) {
-          ele = await this.getEle(sele[2], 3000);
-          await this.clickEle(ele, 1000);
-        }
-      }
-      if (await this.isExistEle(sele[3], true, 3000)) {
-        ele = await this.getEle(sele[3], 3000);
+    try {
+      if (await this.isExistEle(sele[1], true, 3000)) {
+        let ele = await this.getEle(sele[1], 3000);
         await this.clickEle(ele, 1000);
-        for (let j = 0; j < 2; j++) {
-          if (await this.isExistEle(sele[4], true, 3000)) {
-            ele = await this.getEle(sele[4], 3000);
+        await this.ignoreKoukoku();
+        await this.hideOverlay();
+        // await driver.wait(until.elementIsVisible(choiceEle), 15000);
+        for (let i = 0; i < 3; i++) {
+          if (await this.isExistEle(sele[2], true, 3000)) {
+            ele = await this.getEle(sele[2], 3000);
             await this.clickEle(ele, 1000);
-            if (await this.isExistEle(sele[5], true, 3000)) {
-              ele = await this.getEle(sele[5], 3000);
-              await this.clickEle(ele, 1000);
-            }
           }
         }
-        if (await this.isExistEle(sele[4], true, 3000)) {
-          ele = await this.getEle(sele[4], 3000);
+        if (await this.isExistEle(sele[3], true, 3000)) {
+          ele = await this.getEle(sele[3], 3000);
           await this.clickEle(ele, 1000);
-          if (await this.isExistEle(sele[6], true, 3000)) {
-            ele = await this.getEle(sele[6], 3000);
-            await this.clickEle(ele, 1000);
+          for (let j = 0; j < 2; j++) {
             if (await this.isExistEle(sele[4], true, 3000)) {
               ele = await this.getEle(sele[4], 3000);
               await this.clickEle(ele, 1000);
-              for (let k = 0; k < 2; k++) {
-                if (await this.isExistEle(sele[2], true, 3000)) {
-                  ele = await this.getEle(sele[2], 3000);
-                  await this.clickEle(ele, 1000);
-                }
-              }
-              if (await this.isExistEle(sele[7], true, 3000)) {
-                ele = await this.getEle(sele[7], 3000);
-                await this.clickEle(ele, 3000);
-                if (await this.isExistEle(sele[8], true, 3000)) {
-                  ele = await this.getEle(sele[8], 3000);
-                  await this.clickEle(ele, 1000);
-                  if (await this.isExistEle(sele[9], true, 3000)) {
-                    ele = await this.getEle(sele[9], 3000);
-                    // 時間かかりそう　TODO
-                    await this.clickEle(ele, 2000);
-                    if (await this.isExistEle(sele[10], true, 3000)) {
-                      ele = await this.getEle(sele[10], 3000);
-                      await this.clickEle(ele, 1000);
-                      if (await this.isExistEle(sele[11], true, 3000)) {
-                        ele = await this.getEle(sele[11], 3000);
-                        await this.clickEle(ele, 1000);
-                      }
-                    }
-                  }
-                }
-              }
-              else if (await this.isExistEle(sele[11], true, 3000)) {
-                ele = await this.getEle(sele[11], 3000);
+              if (await this.isExistEle(sele[5], true, 3000)) {
+                ele = await this.getEle(sele[5], 3000);
                 await this.clickEle(ele, 1000);
               }
             }
           }
+          if (await this.isExistEle(sele[4], true, 3000)) {
+            ele = await this.getEle(sele[4], 3000);
+            await this.clickEle(ele, 1000);
+            if (await this.isExistEle(sele[6], true, 3000)) {
+              ele = await this.getEle(sele[6], 3000);
+              await this.clickEle(ele, 1000);
+              if (await this.isExistEle(sele[4], true, 3000)) {
+                ele = await this.getEle(sele[4], 3000);
+                await this.clickEle(ele, 1000);
+                for (let k = 0; k < 2; k++) {
+                  if (await this.isExistEle(sele[2], true, 3000)) {
+                    ele = await this.getEle(sele[2], 3000);
+                    await this.clickEle(ele, 1000);
+                  }
+                }
+                if (await this.isExistEle(sele[7], true, 3000)) {
+                  ele = await this.getEle(sele[7], 3000);
+                  await this.clickEle(ele, 3000);
+                  if (await this.isExistEle(sele[8], true, 3000)) {
+                    ele = await this.getEle(sele[8], 3000);
+                    await this.clickEle(ele, 1000);
+                    if (await this.isExistEle(sele[9], true, 3000)) {
+                      ele = await this.getEle(sele[9], 3000);
+                      // 時間かかりそう　TODO
+                      await this.clickEle(ele, 2000);
+                      if (await this.isExistEle(sele[10], true, 3000)) {
+                        ele = await this.getEle(sele[10], 3000);
+                        await this.clickEle(ele, 1000);
+                        if (await this.isExistEle(sele[11], true, 3000)) {
+                          ele = await this.getEle(sele[11], 3000);
+                          await this.clickEle(ele, 1000);
+                        }
+                      }
+                    }
+                  }
+                }
+                else if (await this.isExistEle(sele[11], true, 3000)) {
+                  ele = await this.getEle(sele[11], 3000);
+                  await this.clickEle(ele, 1000);
+                }
+              }
+            }
+          }
         }
+        res = D.STATUS.DONE;
       }
-      res = D.STATUS.DONE;
+    }
+    catch (e) {
+      logger.warn(e);
     }
     logger.info(`${this.constructor.name} END`);
     return res;

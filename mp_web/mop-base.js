@@ -1491,6 +1491,8 @@ class MopGameContents extends MopMissonSupper {
       await this.ignoreKoukoku();
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
+      // リフレッシュ
+      await driver.navigate().refresh();
       res = await PGame.doMethod(wid);
     }
     return res;
