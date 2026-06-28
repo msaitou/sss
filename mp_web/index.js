@@ -197,15 +197,45 @@ class PointWebCls {
         }
         // クリアした今日のミッションテンプレートを更新
         let defaultMission = await db(D.DB_COL.MISSION_MSTS, "find", {
-          machine: conf.machine, // このマシンで実行するミッションだけを抽出
+          machine: config.machine, // このマシンで実行するミッションだけを抽出
         });
-        if (!defaultMission.length) {
-          defaultMission = config[this.exeKind]["1"]; // 1に意味はないよ
-        }
         // DB用の形に整形
         let insertList = [];
-        for (let [siteCode, list] of Object.entries(defaultMission)) {
-          list.forEach((line) => {
+        if (!defaultMission.length) {
+          defaultMission = config[this.exeKind]["1"]; // 1に意味はないよ
+          for (let [siteCode, list] of Object.entries(defaultMission)) {
+            list.forEach((line) => {
+              // 実行条件がある場合、開始時刻等を計算して設定
+              if (line.is_valid_cond && line.valid_term) {
+                line.valid_time = {};
+                if (
+                  line.valid_term.const_h_from ||
+                  line.valid_term.const_h_from === 0
+                ) {
+                  let d = new Date();
+                  d.setHours(line.valid_term.const_h_from, 0, 0, 0);
+                  line.valid_time.from = d;
+                }
+                if (line.valid_term.const_h_to) {
+                  let d = new Date();
+                  d.setHours(line.valid_term.const_h_to, 0, 0, 0);
+                  line.valid_time.to = d;
+                }
+              }
+              let mission = {
+                ...line,
+                status: D.STATUS.BEFO,
+                site_code: siteCode,
+                machine: config.machine,
+                mod_date: null,
+                mission_date: missionDate,
+              };
+              insertList.push(mission);
+            });
+          }
+        }
+        else {
+          defaultMission.forEach((line) => {
             // 実行条件がある場合、開始時刻等を計算して設定
             if (line.is_valid_cond && line.valid_term) {
               line.valid_time = {};
@@ -226,8 +256,8 @@ class PointWebCls {
             let mission = {
               ...line,
               status: D.STATUS.BEFO,
-              site_code: siteCode,
-              machine: config.machine,
+              // site_code: siteCode,
+              // machine: config.machine,
               mod_date: null,
               mission_date: missionDate,
             };
