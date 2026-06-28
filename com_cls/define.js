@@ -1,6 +1,7 @@
 exports.Def = {
   DB_COL: {
     POINT: "point_summary",
+    MISSION_MSTS: "mission_msts",
     MISSION_QUE: "mission_que",
     MISSION_QUE_HIS: "mission_que_history",
   },

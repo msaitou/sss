@@ -23,6 +23,7 @@ const D = require("../com_cls/define").Def;
 const { libUtil } = require("../lib/util.js");
 const { execSync } = require("child_process");
 const iconv = require("iconv-lite");
+const { machine } = require("os");
 const PS = {
   WIN: {
     PS: {
@@ -112,6 +113,15 @@ class PointWebCls {
           tmpMap[dateKey][key].push(line);
         }
       }
+      for (let dateKey of Object.keys(tmpMap)) {
+        for (let key of Object.keys(tmpMap[dateKey])) {
+          tmpMap[dateKey][key].sort((a, b) => {
+            const aCnt = Number(a.tryCnt ?? 0);
+            const bCnt = Number(b.tryCnt ?? 0);
+            return aCnt - bCnt;
+          });
+        }
+      }
       let limitList = Object.keys(tmpMap);
       limitList.sort(function (a, b) {
         return a > b ? 1 : -1;
@@ -186,7 +196,12 @@ class PointWebCls {
           }
         }
         // クリアした今日のミッションテンプレートを更新
-        let defaultMission = config[this.exeKind]["1"]; // 1に意味はないよ
+        let defaultMission = await db(D.DB_COL.MISSION_MSTS, "find", {
+          machine: conf.machine, // このマシンで実行するミッションだけを抽出
+        });
+        if (!defaultMission.length) {
+          defaultMission = config[this.exeKind]["1"]; // 1に意味はないよ
+        }
         // DB用の形に整形
         let insertList = [];
         for (let [siteCode, list] of Object.entries(defaultMission)) {
