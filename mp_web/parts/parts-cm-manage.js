@@ -177,6 +177,8 @@ class CmSuper extends BaseWebDriverWrapper {
   }
   async hideOverlay() {
     let seleOver = [
+      "div.o-content__topsegment__adsence",
+      "div.o-content__topsegment__overlay",
       "button.smarttag-adx-inst__close-btn",
       "#rise-close-text-base",
       "div#rise-close-text-base>a.linkCloseTextEl",
@@ -241,6 +243,12 @@ class CmSuper extends BaseWebDriverWrapper {
           //   } 
           //   return;
           // }
+        }
+      } else if (["div.o-content__topsegment__adsence", "div.o-content__topsegment__overlay"].indexOf(s) > -1) {
+        let iSele = [s];
+        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+          await this.driver.executeScript(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
+          // return;
         }
       } else if (["#fluct_ydn_interstitial_btn"].indexOf(s) > -1) {
         let iSele = ["div[data-fluct-ad-script-already-reserved]>iframe"];
