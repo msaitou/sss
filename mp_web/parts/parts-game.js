@@ -960,6 +960,8 @@ class PartsGame extends BaseWebDriverWrapper {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     let res = D.STATUS.FAIL;
     try {
+// 1. Chromeのキャッシュを無効化する（開発者ツールの「Disable cache」にチェックを入れるのと同じ）
+await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabled: true });
       let se = [
         "a>img[alt='次へ']",
         "img[src*='btn_start']",
@@ -1004,6 +1006,7 @@ class PartsGame extends BaseWebDriverWrapper {
             await this.clickEle(el, 100, 400);
             await this.backNowMissionPage(gameUrlHost);
             await this.hideOverlay();
+            await driver.navigate().refresh();
           }
         }
       }
@@ -1018,6 +1021,8 @@ class PartsGame extends BaseWebDriverWrapper {
       logger.warn(e);
     } finally {
       if (wid) {
+// 3. 必要であれば、以降の処理のためにキャッシュ無効化を元に戻す
+await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabled: false });          
         await driver.close(); // このタブを閉じて
         await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
       }
