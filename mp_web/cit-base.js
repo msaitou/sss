@@ -492,7 +492,7 @@ class CitReadEGLR extends CitMissonSupper {
     let res = D.STATUS.FAIL;
     if (await this.isExistEle(se[this.main], true, 2000)) {
       let eles = await this.getEles(se[this.main], 3000);
-      await this.clickEle(eles[0], 1000, 100);
+      await this.clickEle(eles[0], 1000, 300);
       let ReadCls = new PartsReadEGLR(this.para, this.main);
       res = await ReadCls.do();
     }

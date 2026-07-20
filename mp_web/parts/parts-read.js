@@ -476,10 +476,13 @@ class PartsReadEGLR extends BaseWebDriverWrapper {
           await this.moveLastPage(preCnt); // 最後のページに移動
           if (await this.isExistEle(sele[0], true, 2000)) {
             eles = await this.getEles(sele[0], 3000);
-            await this.sleep(5000);
+            await this.hideOverlay();
+            // await this.sleep(5000);
             await this.clickEle(eles[eles.length - 1], 1000, 200);
             if (await this.isExistEle(sele[1], true, 3000)) {
               eles = await this.getEles(sele[1], 3000);
+              await this.hideOverlay();
+
               if (siteInfo.code != D.CODE.CIT) {
                 for (let i = 0, max = eles.length; i < max; i++) {
                   // 次へボタンの分
@@ -498,6 +501,7 @@ class PartsReadEGLR extends BaseWebDriverWrapper {
                     // await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[i]);
                     await this.clickEle(eles[i], 2000, 150);
                     eles = await this.getEles(sele[1], 3000);
+                    await this.hideOverlay();
                   }
                 }
               }
@@ -557,7 +561,7 @@ class PartsReadEGLR extends BaseWebDriverWrapper {
     }
   }
   async hideOverlay() {
-    let seleOver = ["#dismiss-button"];
+    let seleOver = ["#dismiss-button", "#gn_interstitial_close_contents",];
     let iSele = { "#dismiss-button": "iframe[title='Advertisement']" };
     for (let s of seleOver) {
       if (iSele[s]) {
@@ -573,15 +577,20 @@ class PartsReadEGLR extends BaseWebDriverWrapper {
             }
             // もとのフレームに戻す
             await this.driver.switchTo().defaultContent();
+            return;
           }
         }
       }
-      //  else if (await this.isExistEle(s, true, 1000)) {
-      //   let ele = await this.getEle(s, 1000);
-      //   if (await ele.isDisplayed()) {
-      //     await this.clickEle(ele, 1000);
-      //   } else await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
-      // }
+      else if (await this.silentIsExistEle(s, true, 1000)) {
+        let ele = await this.getEle(s, 1000);
+        if (s == seleOver[0]) {
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+          return;
+        } else if (await ele.isDisplayed()) {
+          await this.clickEle(ele, 1000);
+          return;
+        } else this.logger.debug("オーバーレイは表示されてないです");
+      }
     }
   }
   async exchange() {
