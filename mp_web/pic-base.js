@@ -477,10 +477,10 @@ class PicPointMoll extends PicMissonSupper {
     let sele = ["img[alt='メダルモール']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 3000);
-      await this.clickEle(ele, 3000);
-      let wid = await driver.getWindowHandle();
-      await this.changeWindow(wid); // 別タブに移動する
       try {
+        await this.clickEle(ele, 3000);
+        let wid = await driver.getWindowHandle();
+        await this.changeWindow(wid); // 別タブに移動する
         let anqSeleMap = {
           [D.MISSION.MOLL_IJIN]: "div>img[src*='img_ijin.']",
           [D.MISSION.MOLL_HIRAMEKI]: "div>img[src*='img_hirameki.']",
