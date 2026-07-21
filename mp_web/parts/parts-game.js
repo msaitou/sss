@@ -820,6 +820,8 @@ class PartsGame extends BaseWebDriverWrapper {
         let matches = text.match(regex);
         if (matches[1]) limit = Number(matches[1]);
       }
+// 1. Chromeのキャッシュを無効化する（開発者ツールの「Disable cache」にチェックを入れるのと同じ）
+await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabled: true });
       let gameUrlHost = await driver.getCurrentUrl();
       gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
       for (let j = 0; j < limit; j++) {
@@ -828,12 +830,14 @@ class PartsGame extends BaseWebDriverWrapper {
         if (await this.isExistEle(se[0], true, 2000)) {
           let el = await this.getEle(se[0], 3000);
           await this.clickEle(el, 100, 200);
+          await this.refreshUntilSuccess();
           await this.backNowMissionPage(gameUrlHost);
           await this.hideOverlay();
           for (let j = 0; j < 2; j++) {
             if (await this.isExistEle(se[4], true, 2000)) {
               let els = await this.getEles(se[4], 3000);
               await this.clickEle(els[libUtil.getRandomInt(0, els.length)], 100, 400);
+              await this.refreshUntilSuccess();
               await this.backNowMissionPage(gameUrlHost);
               await this.hideOverlay();
             }
@@ -844,11 +848,14 @@ class PartsGame extends BaseWebDriverWrapper {
             await this.backNowMissionPage(gameUrlHost);
             // 勝手に動く
             await this.sleep(10000);
+            await this.refreshUntilSuccess();
             await this.hideOverlay();
             if (await this.isExistEle(se[2], true, 3000)) {
               let el = await this.getEle(se[2], 3000);
               await this.clickEle(el, 100, 200); // トップへ
+              await this.refreshUntilSuccess();
               await this.backNowMissionPage(gameUrlHost);
+              await driver.navigate().refresh();
             }
           }
         }
@@ -863,6 +870,7 @@ class PartsGame extends BaseWebDriverWrapper {
     } catch (e) {
       logger.warn(e);
     } finally {
+await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabled: false });
       if (wid) {
         await driver.close(); // このタブを閉じて
         await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
@@ -990,6 +998,7 @@ await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabl
           if (await this.isExistEle(se[0], true, 2000)) {
             let el = await this.getEle(se[0], 3000);
             await this.clickEle(el, 100, 400);
+            await this.refreshUntilSuccess();
             await this.backNowMissionPage(gameUrlHost);
             await this.hideOverlay();
           }
@@ -997,6 +1006,7 @@ await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabl
         if (await this.isExistEle(se[1], true, 2000)) {
           let el = await this.getEle(se[1], 3000);
           await this.clickEle(el, 100, 400);
+          await this.refreshUntilSuccess();
           await this.backNowMissionPage(gameUrlHost);
           // 勝手に動く
           await this.sleep(10000);
@@ -1004,6 +1014,7 @@ await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabl
           if (await this.isExistEle(se[0], true, 2000)) {
             let el = await this.getEle(se[0], 3000);
             await this.clickEle(el, 100, 400);
+            await this.refreshUntilSuccess();
             await this.backNowMissionPage(gameUrlHost);
             await this.hideOverlay();
             await driver.navigate().refresh();

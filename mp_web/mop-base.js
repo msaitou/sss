@@ -1493,6 +1493,7 @@ class MopGameContents extends MopMissonSupper {
       await this.changeWindow(wid); // 別タブに移動する
       // リフレッシュ
       await driver.navigate().refresh();
+      await this.refreshUntilSuccess();
       res = await PGame.doMethod(wid);
     }
     return res;

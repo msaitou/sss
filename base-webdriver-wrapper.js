@@ -423,5 +423,51 @@ class BaseWebDriverWrapper {
     const fs = require("fs");
     await fs.writeFileSync(`./log/${fName}`, encodedString, "base64");
   }
+
+  /** ERR_SSL_PROTOCOL_ERROR 等が出た場合に、正常表示されるまでリロードを繰り返す関数
+   * @param {WebDriver} driver 
+   * @param {string} targetSelector 正常なページにしか存在しない要素のセレクタ（例: '#main-content' や 'body'）
+   * @param {number} maxRetries 最大リトライ回数
+   */
+  async refreshUntilSuccess(targetSelector, maxRetries = 5) {
+    for (let i = 0; i < maxRetries; i++) {
+      // ページの HTML / テキストを取得してエラー画面かどうか判定
+      const pageSource = await this.driver.getPageSource();
+      
+      // ERR_SSL_PROTOCOL_ERROR や Chromeのエラーメッセージが含まれていないかチェック
+      const isErrorPage = pageSource.includes('ERR_SSL_PROTOCOL_ERROR') || 
+                          pageSource.includes('このサイトは安全に接続できません');
+
+      if (!isErrorPage) {
+        if (i) this.logger.info(`[成功] ${i + 1} 回目で正常にページが読み込まれました。`);
+        return true;
+      }
+      this.logger.warn(`[エラー検知] 正常に読み込めませんでした (${i + 1}/${maxRetries}回目)。リロードします...`);
+      
+      // 1秒待ってからリロード（スーパーリロード相当のURLパラメータ付与）
+      await this.driver.sleep(1000);
+      try {
+        // キャッシュを回避するためにタイムスタンプを付与してリロード
+        const currentUrl = await this.driver.getCurrentUrl();
+        // const urlObj = new URL(currentUrl);
+        // urlObj.searchParams.set('retry_t', Date.now().toString());
+        // await this.driver.get(urlObj.toString());
+        await this.driver.get(currentUrl);
+      } catch (error) {
+        // driver.get 自体が ERR_SSL_PROTOCOL_ERROR 等で例外を投げた場合はここに来る
+        if (
+          error.message.includes("ERR_SSL_PROTOCOL_ERROR") ||
+          error.name === "WebDriverError"
+        ) {
+          this.logger.warn(`[通信エラー捕捉] ${error.message.split("\n")[0]}`);
+        } else {
+          // SSLエラー以外の予期せぬエラーはそのまま上に投げる
+          throw error;
+        }
+      }
+    }
+
+    throw new Error(`${maxRetries} 回リロードを行いましたが、エラー画面を解消できませんでした。`);
+  }
 }
 exports.BaseWebDriverWrapper = BaseWebDriverWrapper;
