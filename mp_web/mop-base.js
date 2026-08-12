@@ -126,7 +126,8 @@ class MopBase extends BaseExecuter {
       }
       return p;
     };
-    let sele = ["p.a-point__point"];
+    let sele = ["span.a-mypage__point__text"];
+    // let sele = ["p.a-point__point"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.driver.findElement(By.css(sele[0]));
       let nakedNum = await ele.getText();
