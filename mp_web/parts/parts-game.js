@@ -848,8 +848,8 @@ await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabl
             await this.backNowMissionPage(gameUrlHost);
             // 勝手に動く
             await this.sleep(10000);
-            await this.refreshUntilSuccess();
             await this.hideOverlay();
+            await this.refreshUntilSuccess();
             if (await this.isExistEle(se[2], true, 3000)) {
               let el = await this.getEle(se[2], 3000);
               await this.clickEle(el, 100, 200); // トップへ
@@ -1006,11 +1006,11 @@ await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabl
         if (await this.isExistEle(se[1], true, 2000)) {
           let el = await this.getEle(se[1], 3000);
           await this.clickEle(el, 100, 400);
-          await this.refreshUntilSuccess();
           await this.backNowMissionPage(gameUrlHost);
           // 勝手に動く
           await this.sleep(10000);
           await this.hideOverlay();
+          await this.refreshUntilSuccess();
           if (await this.isExistEle(se[0], true, 2000)) {
             let el = await this.getEle(se[0], 3000);
             await this.clickEle(el, 100, 400);
@@ -2139,7 +2139,7 @@ await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabl
     return res;
   }
   async hideOverlay() {
-    let seleOver = ["#gn_interstitial_close_icon","#pfx_interstitial_close", "div.overlay-item a.button-close", 
+    let seleOver = ["#pfx_interstitial", "#gn_interstitial_close_icon","#pfx_interstitial_close", "div.overlay-item a.button-close", 
     "#gn_ydn_interstitial_btn", 
     "div.close-button","a.gmoam_close_button", "#geniee_tracking_banner_close"
     ];
@@ -2176,10 +2176,21 @@ await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabl
           }
         }
       } else if (await this.silentIsExistEle(s, true, 1000)) {
-        let ele = await this.getEle(s, 1000);
-        await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        if (s === "#pfx_interstitial") {
+          await this.exeScriptNoTimeOut(
+            `for (let t of document.querySelectorAll("${s}")){t.remove();}`
+          );
+          break;
+        }
+        else {
+          let ele = await this.getEle(s, 1000);
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        }
       }
     }
+    await this.exeScriptNoTimeOut(
+      `for (let t of document.querySelectorAll("#rise-interstitial-area")){t.remove();}`
+    );
     await this.exeScriptNoTimeOut(
       `for (let t of document.querySelectorAll("iframe")){t.remove();}`
     );

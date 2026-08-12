@@ -440,6 +440,8 @@ class BaseWebDriverWrapper {
 
       if (!isErrorPage) {
         if (i) this.logger.info(`[成功] ${i + 1} 回目で正常にページが読み込まれました。`);
+        // 1秒待っ
+        await this.driver.sleep(1000);
         return true;
       }
       this.logger.warn(`[エラー検知] 正常に読み込めませんでした (${i + 1}/${maxRetries}回目)。リロードします...`);
