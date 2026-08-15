@@ -1172,10 +1172,10 @@ await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabl
       gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
       for (let j = 0; j < limit; j++) {
         logger.info(`${j}/${limit}回目-----------`);
+        await this.hideOverlay();
         if (await this.isExistEle(se[0], true, 2000)) {
           let el = await this.getEle(se[0], 3000);
-          // await driver.wait(until.elementIsVisible(el), 5000);
-          await this.hideOverlay();
+          await driver.wait(until.elementIsVisible(el), 5000);
           await this.clickEle(el, 200, 200);
           await this.backNowMissionPage(gameUrlHost);
           if (await this.isExistEle(se[4], true, 2000)) {
@@ -1486,10 +1486,10 @@ await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabl
       gameUrlHost = gameUrlHost.substr(0, gameUrlHost.indexOf("/", 8));
       for (let j = 0; j < limit; j++) {
         logger.info(`${j}/${limit}回目-----------`);
+        await this.hideOverlay();
         if (await this.isExistEle(se[0], true, 2000)) {
           let el = await this.getEle(se[0], 3000);
-          // await driver.wait(until.elementIsVisible(el), 5000);
-          await this.hideOverlay();
+          await driver.wait(until.elementIsVisible(el), 5000);
           await this.clickEle(el, 1000, 200);
           await this.backNowMissionPage(gameUrlHost);
           if (await this.isExistEle(se[4], true, 2000)) {
