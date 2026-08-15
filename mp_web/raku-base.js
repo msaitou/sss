@@ -87,6 +87,7 @@ class RakuMissonSupper extends BaseWebDriverWrapper {
         let ele = await this.getEle(sele, 2000);
         if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
+          return;
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
@@ -107,7 +108,7 @@ class RakuMissonSupper extends BaseWebDriverWrapper {
       "#gn_interstitial_iframe_content": ["#gn_interstitial_close_icon"],
     };
     for (let se of sele) {
-      if (await this.silentIsExistEle(se, true, 4000)) {
+      if (await this.silentIsExistEle(se, true, 2000)) {
         let ele = await this.getEle(se, 1000);
         if ("div.fc-dialog button.fc-rewarded-ad-button" === se) {
           await this.clickEle(ele, 1000);
