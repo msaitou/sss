@@ -213,6 +213,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
               if (await this.isExistEle(sele[2], true, 2000)) {
                 ele = await this.getEle(sele[2], 3000);
                 await this.clickEle(ele, 2000, 150);
+                await this.ignoreKoukoku();
               }
             }
           }
