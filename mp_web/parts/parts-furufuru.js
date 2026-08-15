@@ -275,7 +275,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
           for (let iframe of iframes) {
             if (await iframe.isDisplayed()) {
               await this.driver.switchTo().frame(iframe); // 違うフレームなのでそっちをターゲットに
-              await this.sleep(10000);
+              await this.sleep(5000);
               if (await this.silentIsExistEle(sele[1], true, 1000)) {
                 let inputEle = await this.getEle(sele[1], 1000);
                 if (await inputEle.isDisplayed()) {
