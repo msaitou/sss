@@ -1,5 +1,7 @@
 // winかlinuxかでコマンドが変わるだけ
 const { execSync, exec, spawn } = require("child_process");
+const util = require("util");
+const execPromise = util.promisify(exec);
 const fs = require("fs");
 const { Def: D } = require("./com_cls/define");
 const { db } = require("./initter.js");
@@ -140,110 +142,114 @@ async function mainWin() {
   let count = 0;
   let prePid = "";
   let lastLogTime = undefined;
-  const PS_CHECK_CMD = `${PS.WIN.PS.CHECK_CMD}${PS.WIN.PS.NAME}`;
-  // const PS_KILL_CMD = `${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.NAME},${PS.WIN.PS.KILL_OTHER}`;
-  const PS_KILL_CMD = `${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.KILL_OTHER}`;
-  const EXEC_P_WEB_H_CMD = `${PS.WIN.PS.NAME}${EXEC_P_WEB_H}`;
-  const toString = (bytes) => {
-    const Encoding = require("encoding-japanese");
-    return Encoding.convert(bytes, {
-      from: "SJIS",
-      to: "utf8",
-      type: "string",
-    });
-  };
-  const monitoring = async () => {
-    console.log(count++);
-    // プロセスが生きてるかチェック
-    let isLive = false;
-    var child = spawn("powershell.exe", ["-Command", "-"]);
-    let self = { stout: "", sterr: "" };
 
-    let ok = () => {
-      return new Promise((res, rej) => {
-        child.stdout.on("end", function (data) {
-          console.log("end");
-          res();
-        });
-      });
-    };
-    child.stdout.on("data", function (data) {
-      let stout = data.toString();
-      stout = stout.split("\n").join("").split("\r").join("").trim();
-      if (stout) console.log("stdout: " + stout), (self.stout += stout);
-    });
-    child.stderr.on("data", function (data) {
-      self.sterr = data.toString();
-      console.log("stderr: " + self.sterr);
-    });
+  // 実行中かどうかを判定するフラグ
+  let isRunning = false;
+
+  const PS_CHECK_CMD = `powershell.exe -Command "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; ${PS.WIN.PS.CHECK_CMD}${PS.WIN.PS.NAME}"`;
+  const PS_KILL_CMD = `powershell.exe -Command "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; ${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.KILL_OTHER}"`;
+
+  // const PS_CHECK_CMD = `powershell.exe -Command "${PS.WIN.PS.CHECK_CMD}${PS.WIN.PS.NAME}"`;
+  // const PS_KILL_CMD = `powershell.exe -Command "${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.KILL_OTHER}"`;
+  const EXEC_P_WEB_H_CMD = `${PS.WIN.PS.NAME}${EXEC_P_WEB_H}`;
+  // const toString = (bytes) => {
+  //   const Encoding = require("encoding-japanese");
+  //   return Encoding.convert(bytes, {
+  //     from: "SJIS",
+  //     to: "utf8",
+  //     type: "string",
+  //   });
+  // };
+  const monitoring = async () => {
+    // 前の処理がまだ終わっていない場合は、今回の実行をスキップする
+    if (isRunning) {
+      console.log(
+        "警告: 前回のチェック処理がまだ完了していません。今回のチェックはスキップします。",
+      );
+      return;
+    }
+
+    isRunning = true; // ロックをかける
+    console.log(count++);
+
     try {
-      // const stdout = execSync(PS_CHECK_CMD, { encoding: 'Shift_JIS' });
-      // const stdout = execSync("Get-Process");
-      child.stdin.write(PS_CHECK_CMD + "\n");
-      child.stdin.end();
-      await ok();
-      // console.log("ok:  ", self.stout);
-      // isLive = true;
-    } catch (e) {
-      console.log("errrrrr");
-      console.log(e); // 生きてない
-    }
-    if (self.stout) isLive = true;
-    self = { stout: "", sterr: "" };
-    if (isLive) {
-      console.log("生きてるよ");
-      let fileStatus = fs.statSync(LOG_FILE);
-      // 生きてる場合、ログファイルの更新時間を取得
-      if (lastLogTime) {
-        // 前回の更新時間と比較
+      let isLive = false;
+      let needsRestart = false;
+
+      try {
+        // 【対策2】execにタイムアウト（例: 30秒）を設定し、永久にフリーズするのを防ぐ
+        const { stdout } = await execPromise(PS_CHECK_CMD, { timeout: 30000 });
+        if (stdout && stdout.trim().length > 0) {
+          isLive = true;
+        }
+      } catch (e) {
         console.log(
-          lastLogTime.toString(),
-          fileStatus.mtime.toString(),
-          lastLogTime.toString() === fileStatus.mtime.toString()
+          "プロセスが見つかりません、またはタイムアウトエラー:",
+          e.message,
         );
-        if (lastLogTime.toString() === fileStatus.mtime.toString()) {
-          // 変化がなければプロセスをキルする
-          // const stdout = execSync(PS_KILL_CMD);
-          // console.log('dededede');
-          isLive = false;
-        } // else 変化があれば何もしない
       }
-      console.log(fileStatus.mtime);
-      lastLogTime = fileStatus.mtime;
-    }
-    if (!isLive) {
-      child = spawn("powershell.exe", ["-Command", "-"]);
-      await child.stdin.write(PS_KILL_CMD + "\n");
-      child.stdin.end();
-      await ok();
-      const pid = String(prePid).trim();
-      if (pid) {
+
+      if (isLive) {
+        console.log("生きてるよ");
         try {
-          // SIGINT シグナルを送信
-          process.kill(pid, "SIGINT");
-          console.log(`node-sss is killed!! with PID: ${pid}`);
+          let fileStatus = fs.statSync(LOG_FILE);
+          // 生きてる場合、ログファイルの更新時間を取得
+          if (lastLogTime) {
+            if (lastLogTime.toString() === fileStatus.mtime.toString()) {
+              console.log("ログが更新されていません。プロセスを再起動します。");
+              needsRestart = true;
+            }
+          }
+          lastLogTime = fileStatus.mtime;
         } catch (err) {
-          console.error(`Error while sending SIGINT: ${err}`);
+          console.warn("Log stat error:", err.message);
         }
       } else {
-        console.log(`No process found with the name: ${PS.WIN.PS.NAME}`);
+        needsRestart = true;
       }
-      console.log("しんだよ");
-      let cmds = EXEC_P_WEB_H_CMD.split(" ");
-      // 起動(非同期)
-      child = spawn(".\\" + cmds[0], [cmds[1], cmds[2]], {
-        stdio: "ignore", // piping all stdio to /dev/null
-        detached: true, // メインプロセスから切り離す設定
-        env: process.env, // NODE_ENV を tick.js へ与えるため
-      });
-      child.on("exit", callbackExitProcess); // sigint終了時のリスナー
-      prePid = child.pid; // プロセスIDゲット
-      child.unref(); // メインプロセスから切り離す
+
+      // 再起動処理
+      if (needsRestart) {
+        try {
+          // キル処理にもタイムアウトを設ける
+          await execPromise(PS_KILL_CMD, { timeout: 30000 });
+          console.log("しんだよ（キル処理開始）");
+        } catch (e) {
+          console.log("キル処理エラー（または対象なし）:", e.message);
+        }
+
+        const pid = String(prePid).trim();
+        if (pid) {
+          try {
+            // SIGINT シグナルを送信
+            process.kill(pid, "SIGINT");
+            console.log(`node-sss is killed!! with PID: ${pid}`);
+          } catch (err) {
+            console.error(`Error while sending SIGINT: ${err.message}`);
+          }
+        }
+
+        // 新しいプロセスの起動
+        let cmds = EXEC_P_WEB_H_CMD.split(" ");
+        let child = spawn(".\\" + cmds[0], [cmds[1], cmds[2]], {
+          stdio: "ignore",
+          detached: true,
+          env: process.env,
+        });
+
+        child.on("exit", callbackExitProcess);
+        prePid = child.pid;
+        child.unref();
+
+        lastLogTime = undefined;
+      }
+    } finally {
+      // 【重要】エラーが起きても起きなくても、最後に必ずロックを解除する
+      isRunning = false;
     }
   };
-  await monitoring();
-  await setInterval(monitoring, D.INTERVAL[180] + 10000); // 6分毎にチェックでエンドレス
-  // await setInterval(monitoring, 20 * 1000); // 6分毎にチェックでエンドレス
+  setInterval(monitoring, D.INTERVAL[180] - 10000); // 3分-10毎にチェックでエンドレス
+  monitoring();
 }
 if (IS_LINUX) {
   mainLinux();
