@@ -83,7 +83,7 @@ class RakuMissonSupper extends BaseWebDriverWrapper {
       "div.modal-close-btn-reverse",
     ];
     for (var sele of seleOver) {
-      if (await this.silentIsExistEle(sele, true, 3000)) {
+      if (await this.silentIsExistEle(sele, true, 1000)) {
         let ele = await this.getEle(sele, 2000);
         if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
@@ -108,7 +108,7 @@ class RakuMissonSupper extends BaseWebDriverWrapper {
       "#gn_interstitial_iframe_content": ["#gn_interstitial_close_icon"],
     };
     for (let se of sele) {
-      if (await this.silentIsExistEle(se, true, 2000)) {
+      if (await this.silentIsExistEle(se, true, 1000)) {
         let ele = await this.getEle(se, 1000);
         if ("div.fc-dialog button.fc-rewarded-ad-button" === se) {
           await this.clickEle(ele, 1000);
@@ -321,7 +321,7 @@ class RakuNews extends RakuMissonSupper {
         }
       }
     } finally {
-      await this.driver.manage().setTimeouts({ pageLoad: 180000 });
+      await this.driver.manage().setTimeouts({ pageLoad: 120000 });
     }
 
     let ele,
@@ -399,6 +399,7 @@ class RakuNews extends RakuMissonSupper {
                   "#reaction-icon-container li>button",
                   "#reaction-icon-container li>button.is-disabled",
                   ".pager>li>ul>li",
+                  "#reaction-icon-container[style*='display: none']",
                 ];
                 if (await this.isExistEle(reactionSele[2], true, 1000)) {
                   await this.hideOverlay2();
@@ -411,11 +412,20 @@ class RakuNews extends RakuMissonSupper {
                 ) {
                   await this.hideOverlay();
                   await this.hideOverlay2();
-                  eles = await this.getEles(reactionSele[0], 1000);
-                  let choiceNum = libUtil.getRandomInt(0, eles.length);
-                  await this.clickEle(eles[choiceNum], 1000); // リアクションする
-                  await this.sleep(5000); // 10秒待機
-                  cnt++;
+                  // ポイント獲得条件の１０秒カウント処理を必ず発生させる
+                  await driver.executeScript(
+                    "window.dispatchEvent(new Event('CloseInterstitialModal'));"
+                  );
+                  if (
+                    (await this.isExistEle(reactionSele[3], false, 1000)) && // 表示されてる
+                    await this.isExistEle(reactionSele[0], true, 1000)
+                  ) {
+                    eles = await this.getEles(reactionSele[0], 1000);
+                    let choiceNum = libUtil.getRandomInt(0, eles.length);
+                    await this.clickEle(eles[choiceNum], 1000); // リアクションする
+                    await this.sleep(5000); // 10秒待機
+                    cnt++;
+                  }
                 }
                 await driver.executeScript(
                   `window.scrollTo(0, document.body.scrollHeight);`,
