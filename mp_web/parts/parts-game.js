@@ -754,6 +754,7 @@ class PartsGame extends BaseWebDriverWrapper {
         await this.hideOverlay();
         if (await this.isExistEle(se[0], true, 2000)) {
           let el = await this.getEle(se[0], 3000);
+          await driver.wait(until.elementIsVisible(el), 3000);
           await this.clickEle(el, 100, 400);
           await this.backNowMissionPage(gameUrlHost);
           await this.hideOverlay();
@@ -770,7 +771,7 @@ class PartsGame extends BaseWebDriverWrapper {
                 await this.clickEle(el, 100, 400);
                 await this.backNowMissionPage(gameUrlHost);
                 // 勝手に動く
-                await this.sleep(10000);
+                await this.sleep(8000);
                 await this.hideOverlay();
               }
             }
@@ -1381,8 +1382,8 @@ await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabl
         logger.info(`${j}/${limit}回目-----------`);
         if (await this.isExistEle(se[0], true, 2000)) {
           let el = await this.getEle(se[0], 3000);
-          // await driver.wait(until.elementIsVisible(el), 5000);
           await this.hideOverlay();
+          await driver.wait(until.elementIsVisible(el), 3000);
           await this.clickEle(el, 1000, 200);
           await this.backNowMissionPage(gameUrlHost);
           if (await this.isExistEle(se[4], true, 2000)) {
