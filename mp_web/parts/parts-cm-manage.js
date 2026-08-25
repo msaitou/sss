@@ -746,21 +746,20 @@ class Uranai extends CmSuper {
       "img[alt='次へ']",
       "img[alt='ラッキーシンボルへ']",
       "img[alt='次のページを確認する']",
-      "img[alt='さらにラッキーシンボルを見る']",
+      "img[alt='さらにラッキーシンボルを見る']", // 5
       "input[src*='button_symbols.png']",
-      "img[alt='進む']",
+      "img[alt='進む']", // 7
       "img[alt='ガチャを引くボタン']",
-      "img[alt='閉じる']",
+      "img[alt='閉じる']", // 9
       "div[style='display: block;'] img[alt='進む']",
       "img[alt='占い終わり']",
     ];
     try {
-      if (await this.isExistEle(sele[1], true, 3000)) {
+      if (await this.isExistEle(sele[1], true, 6000)) {
         let ele = await this.getEle(sele[1], 3000);
         await this.clickEle(ele, 1000);
         await this.ignoreKoukoku();
         await this.hideOverlay();
-        // await driver.wait(until.elementIsVisible(choiceEle), 15000);
         for (let i = 0; i < 3; i++) {
           if (await this.isExistEle(sele[2], true, 3000)) {
             ele = await this.getEle(sele[2], 3000);
@@ -797,13 +796,14 @@ class Uranai extends CmSuper {
                 }
                 if (await this.isExistEle(sele[7], true, 3000)) {
                   ele = await this.getEle(sele[7], 3000);
+                  await driver.wait(until.elementIsVisible(ele), 5000);
                   await this.clickEle(ele, 3000);
                   if (await this.isExistEle(sele[8], true, 3000)) {
                     ele = await this.getEle(sele[8], 3000);
                     await this.clickEle(ele, 1000);
                     if (await this.isExistEle(sele[9], true, 3000)) {
                       ele = await this.getEle(sele[9], 3000);
-                      // 時間かかりそう　TODO
+                      await driver.wait(until.elementIsVisible(ele), 5000);
                       await this.clickEle(ele, 2000);
                       if (await this.isExistEle(sele[10], true, 3000)) {
                         ele = await this.getEle(sele[10], 3000);
