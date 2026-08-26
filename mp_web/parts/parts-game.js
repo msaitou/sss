@@ -1511,8 +1511,8 @@ await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabl
 
               if (await this.isExistEle(se[0], true, 2000)) {
                 let el = await this.getEle(se[0], 3000);
-                // await driver.wait(until.elementIsVisible(el), 5000);
                 await this.hideOverlay();
+                await driver.wait(until.elementIsVisible(el), 5000);
                 await this.clickEle(el, 1000, 200);
                 await this.backNowMissionPage(gameUrlHost);
               }

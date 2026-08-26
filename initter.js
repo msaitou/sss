@@ -62,6 +62,12 @@ function getLogInstance() {
 const thisLog = () => {
   const log = require("log4js");
   const logPath = "./log/";
+
+  // ★ 追加: PM2経由（メイン処理）か、監視スクリプト経由かを判定
+  const isMainApp = !!process.env.pm_id; 
+  // ★ 追加: メイン処理なら a.log、監視スクリプトなら watcher.log を使う
+  const logFileName = isMainApp ? "a.log" : "watcher.log";
+
   log.configure({
     appenders: {
       // フォーマットリファレンス　https://log4js-node.github.io/log4js-node/layouts.html#pattern-format
@@ -71,11 +77,18 @@ const thisLog = () => {
       },
       app: {
         type: "dateFile",
-        filename: `${logPath}/a.log`,
-        pattern: "yyMMdd",
+
+        filename: `${logPath}/${logFileName}`,
+        pattern: ".yyMMdd",
         keepFileExt: true,
         layout: { type: "pattern", pattern: "[%d{yy-MM-dd hh:mm:ss} %.4p] %m ->%f{2} %l" },
-        // daysToKeep: 14, // 指定した日数分保持
+        daysToKeep: 7,
+
+        // filename: `${logPath}/a.log`,
+        // pattern: "yyMMdd",
+        // keepFileExt: true,
+        // layout: { type: "pattern", pattern: "[%d{yy-MM-dd hh:mm:ss} %.4p] %m ->%f{2} %l" },
+        // // daysToKeep: 14, // 指定した日数分保持
       },
       wrapInfo: { type: "logLevelFilter", appender: "app", level: "info" },
     },
