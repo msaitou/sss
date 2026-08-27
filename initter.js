@@ -79,7 +79,7 @@ const thisLog = () => {
         type: "dateFile",
 
         filename: `${logPath}/${logFileName}`,
-        pattern: ".yyMMdd",
+        pattern: "yyMMdd",
         keepFileExt: true,
         layout: { type: "pattern", pattern: "[%d{yy-MM-dd hh:mm:ss} %.4p] %m ->%f{2} %l" },
         daysToKeep: 7,
