@@ -167,6 +167,12 @@ class BaseWebDriverWrapper {
         // }
         // タイムアウト時は単純にログして先へ進む
         this.logger.warn(`Click timeout (continuing anyway): ${e.message}`);
+        try {
+          // await を付与して、タイムアウト設定が5秒の状態で実行・エラー判定を終わらせる
+          await this.driver.executeScript(`window.stop();`);
+        } catch (err) {
+          this.logger.warn("window.stop() failed:", err);
+        }
         // 非同期で window.stop() を試みるが応答を待たない
         this.driver.executeScript(`window.stop();`).catch(err => this.logger.warn("window.stop() failed:", err));
       }

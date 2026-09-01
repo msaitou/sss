@@ -716,7 +716,7 @@ class CriAnqPark extends CriMissonSupper {
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
     let sele = [
-      "a>img[src*='enquetehiroba']",
+      "a>img[src*='https://ms.cdn.chobirich.com/seagull/upload_image/20260824101506_bnr_675_160.png']",
       ".enquete-list td.cate",
       ".enquete-list td.status>a", // 2
       "td>form>input[name='submit']",
@@ -751,8 +751,19 @@ class CriAnqPark extends CriMissonSupper {
               } catch (e) {
                 logger.debug(e);
               }
-              if (ele2 && ele2.length) ele = ele2[0]; // 回答ボタンが実際別の場合が半分くらいあるので置き換え
+              let script = "arguments[0]";
+              if (ele2 && ele2.length) {
+                ele = ele2[0]; // 回答ボタンが実際別の場合が半分くらいあるので置き換え
+                script = "arguments[0].closest('form')";
+              }
+              await this.driver.executeScript(`${script}.setAttribute('target', '_blank');`, ele);
               await this.clickEle(ele, 3000);
+              // let action = await driver.actions();
+              // await action.keyDown(Key.CONTROL).click(ele).keyUp(Key.CONTROL).perform();
+              // await this.sleep(2000);
+              let wid2 = await driver.getWindowHandle();
+              await this.changeWindow(wid2); // 別タブに移動する
+
               switch (text.trim()) {
                 case "MIX":
                   res = await AnkPark.doMobMix();
@@ -785,7 +796,14 @@ class CriAnqPark extends CriMissonSupper {
                   res = await AnkPark.doMobPhoto();
                   break;
               }
-              await driver.navigate().refresh(); // 画面更新  しないとエラー画面になる
+              try {
+                await driver.close(); // このタブを閉じて
+                await driver.switchTo().window(wid2); // 元のウインドウIDにスイッチ
+              } catch (e) {
+                logger.warn(e);
+              }
+              await driver.navigate().refresh(); // 画面更新  しないとスタンプが反映されん
+              await driver.sleep(1000);
             }
           }
         } else {

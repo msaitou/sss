@@ -168,6 +168,7 @@ class MopMissonSupper extends BaseWebDriverWrapper {
           } else this.logger.debug("オーバーレイは表示されてないです");
           // もとのフレームに戻す
           await this.driver.switchTo().defaultContent();
+          break;
         }
       } else if (["#pfx_interstitial_close"].indexOf(s) > -1) {
         let iSele = ["iframe.profitx-ad-frame-markup"];
@@ -182,23 +183,27 @@ class MopMissonSupper extends BaseWebDriverWrapper {
             else if (await this.silentIsExistEle(s, true, 3000)) {
               await this.exeScriptNoTimeOut(`document.querySelector("${s}").click()`);
             } 
+            break;
           }
         }else if (await this.silentIsExistEle(s, true, 1000)) {
           let ele = await this.getEle(s, 1000);
           if (await ele.isDisplayed()) {
             await this.clickEle(ele, 1000);
           } else this.logger.debug("オーバーレイは表示されてないです");
+          break;
         }
       } else if (await this.silentIsExistEle(s, true, 3000)) {
         let ele = await this.getEle(s, 2000);
         if (s == seleOver[0]) {
           await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+          break;
         } else if (await ele.isDisplayed()) {
           if (!this.isMob) {
             await this.clickEle(ele, 2000);
           } else {
             await ele.sendKeys(Key.ENTER);
           }
+          break;
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
@@ -301,32 +306,40 @@ class MopClick extends MopMissonSupper {
   }
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    let res = D.STATUS.FAIL;
     logger.info(`${this.constructor.name} START`);
     await this.openUrl(this.targetUrl); // 操作ページ表示
 
     let sele = ["#cc-item li.gamecontents__box>a", "#modal_detail a[href*='jp/cc/']"];
     if (this.isMob) sele[1] = "div[style*='display: block;']>#modal_detail div.m-btn>a";
-    if (await this.isExistEle(sele[0], true, 2000)) {
-      let eles = await this.getEles(sele[0], 2000);
-      for (let i = 0; i < eles.length; i++) {
-        if (i != 0) eles = await this.getEles(sele[0], 2000);
-        await this.clickEle(eles[i], 2000);
-        if (await this.isExistEle(sele[1], true, 2000)) {
-          let ele = await this.getEle(sele[1], 2000);
-          if (await ele.isDisplayed()) {
-            await this.clickEle(ele, 4000);
+    try {
+      if (await this.isExistEle(sele[0], true, 2000)) {
+        let eles = await this.getEles(sele[0], 2000);
+        for (let i = 0; i < eles.length; i++) {
+          if (i != 0) eles = await this.getEles(sele[0], 2000);
+          await this.hideOverlay();
+          await this.clickEle(eles[i], 2000, 200);
+          if (await this.isExistEle(sele[1], true, 2000)) {
+            let ele = await this.getEle(sele[1], 2000);
+            if (await ele.isDisplayed()) {
+              await this.clickEle(ele, 4000, 200);
+              await this.closeOtherWindow(driver);
+              // リフレッシュ
+              await driver.navigate().refresh();
+            }
+          } else {
+            await this.sleep(13000);
             await this.closeOtherWindow(driver);
-            // リフレッシュ
-            await driver.navigate().refresh();
           }
-        } else {
-          await this.sleep(13000);
-          await this.closeOtherWindow(driver);
         }
       }
+      logger.info(`${this.constructor.name} END`);
+      res = D.STATUS.DONE;
     }
-    logger.info(`${this.constructor.name} END`);
-    return D.STATUS.DONE;
+    catch (e) {
+      logger.error(e);
+    }
+    return res;
     // return await this.ChirashiCls.do(this.targetUrl);
   }
 }
