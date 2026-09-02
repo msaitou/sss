@@ -629,6 +629,14 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         "#endlink", // 6
         "input[src*='next']",
       ];
+      const clickWrapper = async (element) => {
+        if (siteInfo.code == D.CODE.LFM) {
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, element);
+        } else {
+          await this.clickEle(element, 1000, 0);
+        }
+      };
+
       await this.hideOverlay();
       if (siteInfo.code == D.CODE.PIC) sele[6] = sele[1];
       await this.sleep(5000);
@@ -641,28 +649,28 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         await this.hideOverlay();
         let ele = await this.getEle(sele[0], 4000);
         try {
-          await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
+          await clickWrapper(ele);
         } catch (e) {
           if (await this.isExistEle(sele[1], true, 3000)) {
             let ele = await this.getEle(sele[1], 2000);
             await this.sleep(5000);
-            await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
+            await clickWrapper(ele);
           }
         }
         // }
       } else if (await this.isExistEle(sele[1], true, 3000)) {
         let ele = await this.getEle(sele[1], 2000);
-        await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
+        await clickWrapper(ele);
       }
       await this.hideOverlay();
       if (await this.isExistEle(sele[1], true, 2000)) {
         let ele = await this.getEle(sele[1], 3000);
-        await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
+        await clickWrapper(ele);
         for (let i = 0; i < 6; i++) {
           if (await this.isExistEle(sele[7], true, 2000)) {
             let ele = await this.getEle(sele[7], 3000);
             await this.hideOverlay();
-            await this.clickEle(ele, 1000, 0, siteInfo.code == D.CODE.LFM);
+            await clickWrapper(ele);
           }
         }
         try {
