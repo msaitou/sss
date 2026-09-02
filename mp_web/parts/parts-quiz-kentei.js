@@ -134,6 +134,7 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
   async hideOverlay() {
     let seleOver = [
       "#pfx_interstitial_close",
+      "div[style*='z-index: 2147483647;']",
       "#inter-close",
       "a.gmoam_close_button"
       // "div.overlay-item a.button-close"
@@ -141,7 +142,7 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
-        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 2000)) {
           let iframe = await this.getEles(iSele[0], 1000);
           await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
           let inputEle = await this.getEle(s, 1000);
@@ -153,7 +154,7 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
         }
       } else if (["#pfx_interstitial_close"].indexOf(s) > -1) {
         let iSele = ["iframe.profitx-ad-frame-markup"];
-        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 2000)) {
           let iframe = await this.getEles(iSele[0], 1000);
           if (await iframe[0].isDisplayed()) {
             await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
@@ -167,7 +168,13 @@ class PartsQuizKentei extends BaseWebDriverWrapper {
           }
         }
       }
-      else if (await this.isExistEle(s, true, 3000)) {
+      else if (await this.isExistEle(s, true, 2000)) {
+        if(s === "div[style*='z-index: 2147483647;']") {
+          await this.exeScriptNoTimeOut(
+            `for (let t of document.querySelectorAll("${s}")){t.remove();}`
+          );
+          break;
+        }
         let ele = await this.getEle(s, 2000);
         if (await ele.isDisplayed()) {
           if (s == seleOver[0]) {
