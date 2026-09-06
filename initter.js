@@ -2,6 +2,12 @@ const conf = require("config");
 const { Builder, By, until, Capabilities } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const fs = require("fs");
+let killId = "sss-1st";
+let appIdExt = "";
+if (process.env.APP_ID) {
+  killId = `sss-${process.env.APP_ID}`; // 2nd　が来る想定
+  appIdExt = `-${process.env.APP_ID}`;
+}
 exports.db = async function (coll, method, cond = {}, doc) {
   if (conf.db.no) return true;  // DBなし
   let log = getLogInstance();
@@ -66,7 +72,8 @@ const thisLog = () => {
   // ★ 追加: PM2経由（メイン処理）か、監視スクリプト経由かを判定
   const isMainApp = !!process.env.pm_id; 
   // ★ 追加: メイン処理なら a.log、監視スクリプトなら watcher.log を使う
-  const logFileName = isMainApp ? "a.log" : "watcher.log";
+  // const logFileName = isMainApp ? "a.log" : "watcher.log";
+  const logFileName = isMainApp ? `a${appIdExt}.log` : `watcher${appIdExt}.log`;
 
   log.configure({
     appenders: {
@@ -102,7 +109,9 @@ const thisLog = () => {
   // 2個残す。　logファイルがあるフォルダで、m.*.logを古い順にけす
   const KEEP_NUM = 7;
   let files = fs.readdirSync(logPath);
-  files = files.filter((f) => /^(a|m)\.\d{6}\.log$/.test(f)); // aかm.数字6桁.logという文字列をチェック
+  const regex = new RegExp(`^(a|m)${appIdExt}\\.\\d{6}\\.log$`);
+  files = files.filter((f) => regex.test(f));
+  // files = files.filter((f) => /^(a|m)\.\d{6}\.log$/.test(f)); // aかm.数字6桁.logという文字列をチェック
   let cnt = files.length;
   for (let f of files) {
     if (cnt > KEEP_NUM) {
@@ -152,16 +161,22 @@ exports.initBrowserDriver = async function (isMob = false, headless = false) {
   // # Driverのパスを取得する
   let driverPath = await getDriverPath();
   // log.info(`driver${driverPath}`);
+  const nullDevice = process.platform === 'win32' ? 'NUL' : '/tmp'; // /dev/null/だとエラーになった　/tmpはlinuxだと再起動したら消える
 
   // # Driverのパスを渡す
-  let service = new chrome.ServiceBuilder(driverPath).build();
+  // const service = new chrome.ServiceBuilder(driverPath).build();
+  const service = new chrome.ServiceBuilder(driverPath)
+    .addArguments(`--log-path=${nullDevice}/${killId}`)
+    .build();
   const chromeOptions = new chrome.Options();
   // https://selenium-world.net/selenium-tips/3519/
   chromeOptions.addArguments(`--user-data-dir=${conf.chrome["user-data-dir"]}`);
-  chromeOptions.addArguments(`--profile-directory=${conf.chrome["profile"]}`);
+  chromeOptions.addArguments(`--profile-directory=${conf.chrome["profile"]}${appIdExt}`);
   chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
-  // chromeOptions.addArguments("--lang=en");
   chromeOptions.addArguments('--lang=ja-JP');
+  chromeOptions.addArguments(`--app-id-tag=${killId}`); // これで印つけてプロセスを切る
+
+  // chromeOptions.addArguments(`--log-path=NUL#${killId}`);  // これで印つけてプロセスを切る
 
   // なんか、pc版gmyのkokuhakuで日本語にしてくださいと表示されて対処したけど無駄だった対応
   // chromeOptions.setUserPreferences({'intl.accept_languages': 'ja,ja-JP'});

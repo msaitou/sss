@@ -13,7 +13,7 @@ const MODE = {
 };
 const logger = require("./initter.js").log();
 global.log = logger;
-logger.info("start!");
+logger.info("start!start!start!start!");
 logger.debug(process.argv);
 const db = require("./initter.js").db;
 const mailOpe = require("./mp_mil/mail_operate");
@@ -78,7 +78,7 @@ async function start(mode) {
     resolve(true);
   })
     .then((res) => {
-      logger.info("res", res);
+      // logger.info("res", res);
     })
     .catch((e) => {
       logger.error(e);

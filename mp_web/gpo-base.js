@@ -296,7 +296,7 @@ class GpoQuizKentei extends GpoMissonSupper {
       "img[alt='クイズ検定Q']",
       ".enquete-list td.cate",
       ".enquete-list td.status>a", // 2
-      "input[alt='OK']",
+      "input[value='OK']",
     ];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
@@ -1340,7 +1340,7 @@ class GpoAnqCook extends GpoMissonSupper {
     await this.openUrl(this.targetUrl); // 操作ページ表示
     let res = D.STATUS.FAIL;
     let AnkPark = new PartsAnkPark(this.para);
-    let sele = ["a[onclick*='ryori']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
+    let sele = ["a[href*='natural']", ".enquete-list div>a:not(.answered)", "", "input.LgBtnsbmt"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele0 = await this.getEle(sele[0], 3000);
       await this.hideOverlay();

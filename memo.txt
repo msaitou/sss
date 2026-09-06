@@ -1,6 +1,22 @@
 win11では、動作不可系
-cm_uranai（pto）
-otukai(m_mop)
+profie
+logfile
+mission 
+site_code
+shellファイル
+
+node-sss-2nd
+★config/prof/2nd
+★a.log-2nd
+vaiosaito-2nd
+
+killID=sss-1st
+chrome,chromedriverのkillは
+実行時の引数を含むコマンドライン全体を対象にしたい場合は、-fオプションを使用します。
+pkill -f 
+
+APP_ID=1st; // デフォ
+APP_ID=2nd; // 
 
 
 ★・当日の完了タスク一覧（実行中時間も）

@@ -24,6 +24,11 @@ const { libUtil } = require("../lib/util.js");
 const { execSync } = require("child_process");
 const iconv = require("iconv-lite");
 const { machine } = require("os");
+let killId = "sss-1st";
+if (process.env.APP_ID) {
+  killId = `sss-${process.env.APP_ID}`; // 2nd　が来る想定
+}
+
 const PS = {
   WIN: {
     PS: {
@@ -50,7 +55,8 @@ class PointWebCls {
     // let PS_KILL_CMD = `chcp 65001 && ${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.KILL_OTHER}`; // デフォはwindows
     let PS_KILL_CMD = `${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.KILL_OTHER}`; // デフォはwindows
     if (process.platform === "linux")
-      PS_KILL_CMD = `${PS.LINUX.PS.KILLALL_CMD}${PS.LINUX.PS.KILL_OTHER}`;
+      // PS_KILL_CMD = `${PS.LINUX.PS.KILLALL_CMD}${PS.LINUX.PS.KILL_OTHER}`;
+      PS_KILL_CMD = `pkill -f "${killId}"`;
     try {
       let stdout = "";
       if (process.platform === "linux") {

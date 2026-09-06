@@ -10,3 +10,5 @@ backup/
 .vscode/launch.json
 node-sss.exe
 package-lock.json
+node*.sh
+config/*.json

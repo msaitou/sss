@@ -293,6 +293,7 @@ class LfmAnqPark extends LfmMissonSupper {
           let limit = eles.length;
           for (let i = 0; i < limit; i++) {
             if (i !== 0 && (await this.isExistEle(sele[1], true, 2000))) eles = await this.getEles(sele[1], 3000);
+            else if (i !== 0) break;
             let text = await eles[eles.length - 1].getText();
             text = text.split("\n").join("").split("\n").join("");
             if (await this.isExistEle(sele[2], true, 2000)) {

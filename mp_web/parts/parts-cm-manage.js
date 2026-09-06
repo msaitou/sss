@@ -195,7 +195,7 @@ class CmSuper extends BaseWebDriverWrapper {
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe']"];
-        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 1500)) {
           await this.driver.executeScript(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
           await this.driver.executeScript(
             `document.querySelector('body').setAttribute('style', 'position: initial;');`
@@ -212,7 +212,7 @@ class CmSuper extends BaseWebDriverWrapper {
         }
       } else if (["#pfx_interstitial_close"].indexOf(s) > -1) {
         let iSele = ["iframe.profitx-ad-frame-markup"];
-        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 1500)) {
           let iframe = await this.getEles(iSele[0], 1000);
           if (await iframe[0].isDisplayed()) {
             await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
@@ -228,7 +228,7 @@ class CmSuper extends BaseWebDriverWrapper {
         }
       } else if (["#rise-close-text-base"].indexOf(s) > -1) {
         let iSele = ["#rise-interstitial-area"];
-        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 1400)) {
           await this.driver.executeScript(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
           return;
           // let iframe = await this.getEles(iSele[0], 1000);
@@ -246,7 +246,7 @@ class CmSuper extends BaseWebDriverWrapper {
         }
       } else if (["div.o-content__topsegment__adsence", "div.o-content__topsegment__overlay"].indexOf(s) > -1) {
         let iSele = [s];
-        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 1500)) {
           await this.driver.executeScript(`document.querySelectorAll("${iSele[0]}").forEach((e)=>{e.remove();});`);
           // return;
         }
@@ -263,7 +263,7 @@ class CmSuper extends BaseWebDriverWrapper {
           await this.driver.switchTo().defaultContent();
           return;
         }
-      } else if (await this.silentIsExistEle(s, true, 3000)) {
+      } else if (await this.silentIsExistEle(s, true, 1500)) {
         let ele = await this.getEle(s, 2000);
         if ((await ele.isDisplayed()) || (this.isMob && s == "#pfx_interstitial_close")) {
           if (["div.overlay-item a.button-close", "#pfx_interstitial_close"].indexOf(seleOver[0]) > -1) {

@@ -11,6 +11,13 @@ const IS_WIN = process.platform === "win32";
 const IS_LINUX = process.platform === "linux";
 const LOG_FILE = "./log/a.log";
 const EXEC_P_WEB_H = " ./index.js P_WEB_H";
+let killId = "sss-1st";
+let appIdExt = "";
+if (process.env.APP_ID) {
+  killId = `sss-${process.env.APP_ID}`; // 2nd　が来る想定
+  appIdExt = `-${process.env.APP_ID}`;
+}
+
 const PS = {
   WIN: {
     PS: {
@@ -24,8 +31,10 @@ const PS = {
     PS: {
       NAME: "node-sss",
       CHECK_CMD: "ps -ae | grep ",
-      KILLALL_CMD: "killall ",
       KILLSIGINT_CMD: "kill -2 ",
+      // KILLALL_CMD: "killall ",
+      // KILL_OTHER: " chrome chromedriver",
+      KILLALL_CMD: "pkill -f ",
       KILL_OTHER: " chrome chromedriver",
     },
   },
@@ -34,8 +43,10 @@ async function mainLinux() {
   let count = 0;
   let lastLogTime = undefined;
   
-  const APP_NAME = PS.LINUX.PS.NAME; // "node-sss"
-  const PS_KILLALL_CMD = `${PS.LINUX.PS.KILLALL_CMD}${PS.LINUX.PS.KILL_OTHER}`;
+  // const APP_NAME = PS.LINUX.PS.NAME; // "node-sss"
+  const APP_NAME = PS.LINUX.PS.NAME + appIdExt; // "node-sss"
+  // const PS_KILLALL_CMD = `${PS.LINUX.PS.KILLALL_CMD}${PS.LINUX.PS.KILL_OTHER}`;
+  const PS_KILLALL_CMD = `pkill -f ${killId}`;
 
   const monitoring = async () => {
     console.log(count++);
