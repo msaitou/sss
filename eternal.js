@@ -9,13 +9,14 @@ const { libUtil } = require("./lib/util.js");
 const conf = require("config");
 const IS_WIN = process.platform === "win32";
 const IS_LINUX = process.platform === "linux";
-const LOG_FILE = "./log/a.log";
 const EXEC_P_WEB_H = " ./index.js P_WEB_H";
+let LOG_FILE = "./log/a.log";
 let killId = "sss-1st";
 let appIdExt = "";
 if (process.env.APP_ID) {
   killId = `sss-${process.env.APP_ID}`; // 2nd　が来る想定
   appIdExt = `-${process.env.APP_ID}`;
+  LOG_FILE = `./log/a${appIdExt}.log`;
 }
 
 const PS = {
