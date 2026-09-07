@@ -158,7 +158,7 @@ class MopMissonSupper extends BaseWebDriverWrapper {
     for (let s of seleOver) {
       if (["a.gmoam_close_button"].indexOf(s) > -1) {
         let iSele = ["iframe[title='GMOSSP iframe'][style*='z-index']"];
-        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 1000)) {
           let iframe = await this.getEles(iSele[0], 1000);
           await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
           if (await this.silentIsExistEle(s, true, 3000)) {
@@ -172,7 +172,7 @@ class MopMissonSupper extends BaseWebDriverWrapper {
         }
       } else if (["#pfx_interstitial_close"].indexOf(s) > -1) {
         let iSele = ["iframe.profitx-ad-frame-markup"];
-        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 1000)) {
           let iframe = await this.getEles(iSele[0], 1000);
           if (await iframe[0].isDisplayed()) {
             await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
@@ -192,7 +192,7 @@ class MopMissonSupper extends BaseWebDriverWrapper {
           } else this.logger.debug("オーバーレイは表示されてないです");
           break;
         }
-      } else if (await this.silentIsExistEle(s, true, 3000)) {
+      } else if (await this.silentIsExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 2000);
         if (s == seleOver[0]) {
           await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
@@ -207,6 +207,12 @@ class MopMissonSupper extends BaseWebDriverWrapper {
         } else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
+    // await this.exeScriptNoTimeOut(
+    //   `for (let t of document.querySelectorAll("#rise-interstitial-area")){t.remove();}`
+    // );
+    await this.exeScriptNoTimeOut(
+      `for (let t of document.querySelectorAll("iframe")){t.remove();}`
+    );
   }
   async exchange(minExcNum) {
     let exSele = ["a.stamp__btn[href*='exchange']", "input.exchange__btn", "a.stamp__btn-return", "p.stamp__num"];
@@ -451,6 +457,7 @@ class MopEitango extends MopMissonSupper {
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(6);
+        await this.hideOverlay();
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           await this.clickEle(ele, 2000, 0, this.isMob);
@@ -622,6 +629,7 @@ class MopNanyoubi extends MopMissonSupper {
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         if (await this.isExistEle(sele[1], true, 2000)) await this.exchange(5);
+        await this.hideOverlay();
         if (await this.isExistEle(sele[1], true, 3000)) {
           ele = await this.getEle(sele[1], 3000);
           await this.clickEle(ele, 2000, 0, this.isMob);
@@ -1008,6 +1016,8 @@ class MopAnqPark extends MopMissonSupper {
       let wid = await driver.getWindowHandle();
       await this.changeWindow(wid); // 別タブに移動する
       try {
+        await this.refreshUntilSuccess();
+
         if (await this.isExistEle(sele[1], true, 2000)) {
           let eles = await this.getEles(sele[1], 3000);
           let limit = eles.length;

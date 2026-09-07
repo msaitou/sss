@@ -32,8 +32,9 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
             : "img[alt='DAILYQUIZ']"
           : sele[0];
       if (await this.isExistEle(sele[0], true, 2000)) {
+        await this.hideOverlay();
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000, this.isMob ? 120 : 0);
+        await this.clickEle(ele, 2000, 200);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         await this.hideOverlay();
@@ -85,19 +86,6 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
     }
     return res;
   }
-  // async hideOverlay() {
-  //   let seleOver = ["div.overlay-item a.button-close"];
-  //   if (await this.isExistEle(seleOver[0], true, 3000)) {
-  //     let ele = await this.getEle(seleOver[0], 2000);
-  //     if (await ele.isDisplayed()) {
-  //       if (!this.isMob) {
-  //         await this.clickEle(ele, 2000);
-  //       } else {
-  //         await ele.sendKeys(Key.ENTER);
-  //       }
-  //     } else this.logger.debug("オーバーレイは表示されてないです");
-  //   }
-  // }
   async hideOverlay() {
     let seleOver = [
       "#pfx_interstitial_close",

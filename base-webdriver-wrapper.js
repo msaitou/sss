@@ -116,6 +116,7 @@ class BaseWebDriverWrapper {
    */
   async clickEle(ele, time, top = 0, isEnter = false) {
     await this.clickEleCommon(ele, time, top, isEnter);
+    await this.refreshUntilSuccess();
   }
   /**
    * 要素をクリックして指定時間寝る

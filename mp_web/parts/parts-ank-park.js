@@ -715,6 +715,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           let ele = await this.getEle(sele[1], 3000);
           await this.hideOverlay();
           await this.clickEle(ele, 1000);
+          await this.refreshUntilSuccess();
         }
       }
       try {
@@ -1048,6 +1049,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           let ele = await this.getEle(sele[7], 3000);
           await this.hideOverlay();
           await this.clickEle(ele, 1000, 250);
+          await this.refreshUntilSuccess();
         }
       }
       await this.hideOverlay();
@@ -1134,6 +1136,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
             if (await this.isExistEle(sele[4], true, 2000)) {
               ele = await this.getEle(sele[4], 3000);
               await this.clickEle(ele, 1000, 250, siteInfo.code == D.CODE.LFM); // 次のページ
+              await this.refreshUntilSuccess();
             }
           }
         }
@@ -1149,10 +1152,12 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         await this.hideOverlay();
         try {
           await this.clickEle(ele, 1000, 250, siteInfo.code == D.CODE.LFM);
+          await this.refreshUntilSuccess();
         } catch (e) {
           if (await this.isExistEle("input.enquete_nextbt", true, 4000)) {
             let ele = await this.getEle("input.enquete_nextbt", 1000);
             await this.clickEle(ele, 1000, 250, siteInfo.code == D.CODE.LFM);
+            await this.refreshUntilSuccess();
           }
         }
       }
@@ -1162,10 +1167,12 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         let ele = await this.getEle(sele[1], 3000);
         await this.hideOverlay();
         await this.clickEle(ele, 1000, 250, siteInfo.code == D.CODE.LFM);
+        await this.refreshUntilSuccess();
         if (await this.isExistEle(sele[5], true, 4000)) {
           let ele = await this.getEle(sele[5], 3000);
           await this.hideOverlay();
           await this.clickEle(ele, 1000, 250, siteInfo.code == D.CODE.LFM);
+          await this.refreshUntilSuccess();
           return D.STATUS.DONE;
         }
       }
@@ -1179,10 +1186,12 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         let ele = await this.getEle(sele[6], 3000);
         await this.hideOverlay();
         await this.clickEle(ele, 1000, 250, siteInfo.code == D.CODE.LFM);
+        await this.refreshUntilSuccess();
         if (await this.isExistEle(sele[5], true, 4000)) {
           let ele = await this.getEle(sele[5], 3000);
           await this.hideOverlay();
           await this.clickEle(ele, 1000, 250, siteInfo.code == D.CODE.LFM);
+          await this.refreshUntilSuccess();
         }
       }
     }
@@ -1191,6 +1200,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
   async hideOverlay() {
     let seleOver = [
       "#fluct_interstitial_close",
+      "#gn_interstitial_close_icon",
       "#fluct_ydn_interstitial_btn",
       "#gn_ydn_interstitial_btn",
       "#pfx_interstitial_close",
@@ -1252,16 +1262,19 @@ class PartsAnkPark extends BaseWebDriverWrapper {
         }
       } else if (await this.silentIsExistEle(s, true, 1000)) {
         let ele = await this.getEle(s, 1000);
-        if (s == seleOver[0]) {
-          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
-          return;
-        } else if (await ele.isDisplayed()) {
+        if (await ele.isDisplayed()) {
           await this.clickEle(ele, 1000);
           return;
-        } else await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+        } else {
+          await this.exeScriptNoTimeOut(`arguments[0].click()`, ele);
+          return;
+        }
         //  else this.logger.debug("オーバーレイは表示されてないです");
       }
     }
+    await this.exeScriptNoTimeOut(
+      `for (let t of document.querySelectorAll("iframe")){t.remove();}`
+    );
   }
 }
 exports.PartsAnkPark = PartsAnkPark;
