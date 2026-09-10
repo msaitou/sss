@@ -2,6 +2,7 @@ const conf = require("config");
 const { Builder, By, until, Capabilities } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const fs = require("fs");
+const os = require("os");
 let killId = "sss-1st";
 let appIdExt = "";
 if (process.env.APP_ID) {
@@ -156,12 +157,14 @@ const getDriverPath = async function () {
 };
 exports.getDriverPath = getDriverPath;
 
+
 exports.initBrowserDriver = async function (isMob = false, headless = false) {
   let log = getLogInstance();
   // # Driverのパスを取得する
   let driverPath = await getDriverPath();
   // log.info(`driver${driverPath}`);
-  const nullDevice = process.platform === 'win32' ? 'NUL' : '/tmp'; // /dev/null/だとエラーになった　/tmpはlinuxだと再起動したら消える
+  // OS標準の一時フォルダ（Windowsなら C:\Users\...\AppData\Local\Temp）を取得
+  const nullDevice = process.platform === 'win32' ? os.tmpdir() : '/tmp'; // /dev/null/だとエラーになった　/tmpはlinuxだと再起動したら消える
 
   // # Driverのパスを渡す
   // const service = new chrome.ServiceBuilder(driverPath).build();
@@ -339,7 +342,8 @@ const getNowChromeVer = async (fullPath, isDriver) => {
     let cmd =
       isDriver || os === "linux64"
         ? `${fullPath} --version`
-        : `wmic datafile where name="${fullPath}" get Version /value`;
+        // : `wmic datafile where name="${fullPath}" get Version /value`;
+        : `powershell -NoProfile -Command "(Get-ItemProperty -Path '${fullPath}').VersionInfo.FileVersion"`;
     await exec(cmd, (err, stdout, stderr) => {
       if (err) {
         console.error(err);
