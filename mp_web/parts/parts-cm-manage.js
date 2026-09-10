@@ -220,7 +220,7 @@ class CmSuper extends BaseWebDriverWrapper {
             // もとのフレームに戻す
             await this.driver.switchTo().defaultContent();
             if (isExists) await this.exeScriptNoTimeOut(`document.querySelector("${iSele[0]}").contentWindow.document.querySelector("${s}").click()`);
-            else if (await this.silentIsExistEle(s, true, 3000)) {
+            else if (await this.silentIsExistEle(s, true, 1200)) {
               await this.exeScriptNoTimeOut(`document.querySelector("${s}").click()`);
             } 
             return;
@@ -317,6 +317,7 @@ class CmDotti extends CmSuper {
             let eles = await this.getEles(sele[1], 3000);
             let limit = eles.length;
             for (let j = 0; j < limit; j++) {
+              await this.ignoreKoukoku();
               if (j !== 0 && (await this.isExistEle(sele[1], true, 3000))) {
                 eles = await this.getEles(sele[1], 3000);
               }
@@ -347,26 +348,27 @@ class CmDotti extends CmSuper {
                   await this.clickEle(eles[0], 1000); // 一番上を選択
                   if (await this.isExistEle(sele[4], true, 3000)) {
                     ele = await this.getEle(sele[4], 3000);
-                    await driver.wait(until.elementIsVisible(ele), 15000);
+                    await driver.wait(until.elementIsVisible(ele), 12000);
                     await this.hideOverlay();
                     await this.clickEle(ele, 1000); // 次へ
                     if (await this.isExistEle(sele[5], true, 3000)) {
                       eles = await this.getEles(sele[5], 3000);
                       let choiceNum = libUtil.getRandomInt(0, eles.length);
-                      await driver.wait(until.elementIsVisible(eles[choiceNum]), 15000);
+                      await driver.wait(until.elementIsVisible(eles[choiceNum]), 12000);
                       await this.clickEle(eles[choiceNum], 1000);
                       if (await this.isExistEle(sele[6], true, 3000)) {
                         ele = await this.getEle(sele[6], 3000);
                         await this.clickEle(ele, 5000); // 次へ（回答する）
                         if (await this.isExistEle(sele[7], true, 3000)) {
                           ele = await this.getEle(sele[7], 4000);
-                          await driver.wait(until.elementIsEnabled(ele), 15000);
+                          await driver.wait(until.elementIsEnabled(ele), 12000);
                           await this.clickEle(ele, 2000); // シールを獲得
                           await this.ignoreKoukoku();
                           if (await this.isExistEle(sele[2], true, 3000)) {
                             ele = await this.getEle(sele[2], 3000);
                             await this.clickEle(ele, 1000); // topへ（この質問種類の一覧へ）
                             await this.exchangeDotti(sele);
+                            await this.ignoreKoukoku();
                             // await driver.navigate().refresh();  // スクロールできないので
                             if (i == 9 && await this.isExistEle(sele[9], true, 3000)) {
                               ele = await this.getEle(sele[9], 1000);
@@ -459,12 +461,12 @@ class CmKentei extends CmSuper {
         await this.changeWindow(wid); // 別タブに移動する
         await this.hideOverlay();
         try {
-          if (await this.isExistEle(sele[1], true, 3000)) {
+          if (await this.isExistEle(sele[1], true, 2000)) {
             ele = await this.getEle(sele[1], 3000);
             await this.clickEle(ele, 1000, 0, this.isMob);
             await this.ignoreKoukoku();
             await this.hideOverlay();
-            if (await this.isExistEle(sele[1], true, 3000)) {
+            if (await this.isExistEle(sele[1], true, 2000)) {
               ele = await this.getEle(sele[1], 3000);
               await this.clickEle(ele, 1000, 0, this.isMob);
               await this.hideOverlay();
@@ -472,11 +474,11 @@ class CmKentei extends CmSuper {
               for (let i = 0; i < 12; i++) {
                 await this.ignoreKoukoku();
                 await this.hideOverlay();
-                if (await this.isExistEle(sele[2], true, 3000)) {
+                if (await this.isExistEle(sele[2], true, 2000)) {
                   let answerList = [];
                   if (await this.isExistEle(sele[3], true, 3000)) {
                     ele = await this.getEle(sele[3], 3000);
-                    await driver.wait(until.elementIsVisible(ele), 20000);
+                    await driver.wait(until.elementIsVisible(ele), 15000);
                     await this.clickEle(ele, 1000);
                     let wid2 = await driver.getWindowHandle();
                     await this.changeWindow(wid2); // 別タブに移動する

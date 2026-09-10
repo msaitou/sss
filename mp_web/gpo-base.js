@@ -144,14 +144,15 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
     // this.logger.debug(`${this.constructor.name} constructor`);
   }
   async hideOverlay(seleStr) {
-    let sele0 = ["#modalContent .btn_close>img", "#gn_ydn_interstitial_btn","#pfx_interstitial_close",
-      "#gn_interstitial_outer_area", "#gn_interstitial_close_icon"
+    let sele0 = ["#modalContent .btn_close>img", "#gn_ydn_interstitial_btn",
+      "#pfx_interstitial_close",
+      "#gn_interstitial_outer_area", "#gn_interstitial_close_icon",
     ];
     if (seleStr) sele0 = [seleStr, ""];
     for (let s of sele0) {
       if (["#pfx_interstitial_close"].indexOf(s) > -1) {
         let iSele = ["iframe.profitx-ad-frame-markup"];
-        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 1500)) {
           let iframe = await this.getEles(iSele[0], 1000);
           if (await iframe[0].isDisplayed()) {
             await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに
@@ -176,6 +177,12 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
         } else this.logger.debug("オーバーレイは表示されてないです");
       }    
     }
+    await this.exeScriptNoTimeOut(
+      `for (let t of document.querySelectorAll("iframe")){t.remove();}`
+    );
+    await this.exeScriptNoTimeOut(
+      `for (let t of document.querySelectorAll("ins.adsbygoogle")){t.remove();}`
+    );
   }
 }
 // このサイトの共通処理クラス
@@ -455,6 +462,7 @@ class GpoAnq extends GpoMissonSupper {
         await this.changeWindow(wid); // 別タブに移動する
         await this.hideOverlay();
         try {
+          await this.hideOverlay(sele[8]); // 選択しないで回答した場合、選んでポップアップが表示
           if (await this.isExistEle(sele[1], true, 2000)) {
             let ele = await this.getEle(sele[1], 3000);
             await this.clickEle(ele, 3000);
@@ -463,6 +471,8 @@ class GpoAnq extends GpoMissonSupper {
             if (await this.isExistEle(sele[1], true, 2000)) {
               // 多分15問あり
               for (let i = 0; i < 15; i++) {
+                await this.hideOverlay(sele[8]);
+                
                 if (await this.isExistEle(sele[2], true, 3000)) {
                   ele = await this.getEle(sele[2], 3000);
                   let q = await ele.getText(),
@@ -525,11 +535,11 @@ class GpoAnq extends GpoMissonSupper {
                       if (!choiceNum) choiceNum++;
                       await select.selectByValue(choiceNum.toString());
                     } else {
-                      await this.clickEle(eles[choiceNum], 2000);
+                      await this.clickEle(eles[choiceNum], 1000);
                     }
                     if (await this.isExistEle(sele[1], true, 2000)) {
                       ele = await this.getEle(sele[1], 3000);
-                      await this.clickEle(ele, 5000); // 次のページ
+                      await this.clickEle(ele, 3000); // 次のページ
                     } else if (await this.isExistEle(sele[5], true, 2000)) {
                       ele = await this.getEle(sele[5], 3000);
                       await this.clickEle(ele, 2000); // 次のページ

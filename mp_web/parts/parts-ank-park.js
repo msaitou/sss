@@ -672,6 +672,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
             await this.hideOverlay();
             await clickWrapper(ele);
           }
+          else break;
         }
         try {
           await this.commonMobAnk(sele, "doPhoto");
@@ -757,6 +758,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           await this.hideOverlay();
           await this.clickEle(ele, 1000);
         }
+        else break;
       }
       try {
         await this.commonMobAnk(sele, "doZukan");
@@ -797,6 +799,7 @@ class PartsAnkPark extends BaseWebDriverWrapper {
           let ele = await this.getEle(sele[1], 3000);
           await this.clickEle(ele, 1000);
         }
+        else break;
       }
       try {
         await this.commonMobAnk(sele, "doJapan");
@@ -998,11 +1001,13 @@ class PartsAnkPark extends BaseWebDriverWrapper {
       }
       for (let i = 0; i < 5; i++) {
         if (i === 3) {
-          // 正解していないけど次へのボタンを表示
-          await this.driver.executeScript(
-            "document.getElementById('puzzleBtn').setAttribute('style', 'display: block');"
-          );
-          await this.sleep(2000);
+          if (await this.isExistEle("#puzzleBtn", true, 2000)) {
+            // 正解していないけど次へのボタンを表示
+            await this.driver.executeScript(
+              "document.getElementById('puzzleBtn').setAttribute('style', 'display: block');"
+            );
+            await this.sleep(2000);
+          }
         }
         if (await this.isExistEle(sele[1], true, 2000)) {
           let ele = await this.getEle(sele[1], 3000);

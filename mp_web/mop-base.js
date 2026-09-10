@@ -1078,6 +1078,7 @@ class MopAnqPark extends MopMissonSupper {
         }
       } catch (e) {
         logger.warn(e);
+        res = D.STATUS.FAIL;
       } finally {
         await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
         await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
