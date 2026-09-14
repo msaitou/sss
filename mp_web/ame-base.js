@@ -38,6 +38,13 @@ class AmeBase extends BaseExecuter {
           case D.MISSION.ANQ_KENKOU:
             execCls = new AmeAnqKenkou(para);
             break;
+          case D.MISSION.KANJI:
+          case D.MISSION.YOJI:
+          // case D.MISSION.NANDOKU:
+          // case D.MISSION.NENGO:
+          // case D.MISSION.QUIZ_DAILY:
+            execCls = new AmeDailyQuiz(para, mission.main);
+            break;
         }
         if (execCls) {
           this.writeLogMissionStart(mission.main);
@@ -367,6 +374,46 @@ class AmeAnqKenkou extends AmeMissonSupper {
         await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
       }
     }
+    return res;
+  }
+}
+const { PartsQuizDaily, PartsQuizDailyCommon } = require("./parts/parts-quiz-daily.js");
+// デイリー、漢字、歴史年号　難読地名,四次熟語クイズ
+class AmeDailyQuiz extends AmeMissonSupper {
+  firstUrl = "https://point.i2i.jp/";
+  targetUrl = "https://point.i2i.jp/special/freepoint";
+  QuizDailyCom;
+  // QuizDaily;
+  constructor(para, main) {
+    super(para);
+    this.main = main;
+    this.QuizDailyCom = new PartsQuizDailyCommon(para);
+    // this.QuizDaily = new PartsQuizDaily(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // 1日3回（0時～8時~16）
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START###`);
+    let res = D.STATUS.FAIL;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let se = {
+      [D.MISSION.KANJI]: "a[onclick*='漢字テスト']",
+      [D.MISSION.YOJI]: "a[onclick*='四字熟語']",
+      // [D.MISSION.KANJI]: "img[src*='kanji']",
+      // [D.MISSION.YOJI]: "img[src*='yojijukugo']",
+      // [D.MISSION.NANDOKU]: "img[src*='place']",
+      // [D.MISSION.NENGO]: "img[src*='history']",
+      // [D.MISSION.QUIZ_DAILY]: "img[src*='quiz']",
+    };
+    await this.hideOverlay();
+    // let sele = "a[data-ga-label='難読地名クイズ']";
+    let exexCls = this.QuizDailyCom;
+    if (this.main === D.MISSION.QUIZ_DAILY) {
+      exexCls = this.QuizDaily;
+    }
+    res = await exexCls.do(this.targetUrl, se[this.main]);
+    logger.info(`${this.constructor.name} END#####`);
     return res;
   }
 }

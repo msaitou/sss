@@ -404,7 +404,7 @@ class MopGacha extends MopMissonSupper {
     // return await this.ChirashiCls.do(this.targetUrl);
   }
 }
-const { PartsQuizDaily } = require("./parts/parts-quiz-daily.js");
+const { PartsQuizDaily, PartsQuizDailyCommon } = require("./parts/parts-quiz-daily.js");
 // デイリークイズ
 class MopQuizDaily extends MopMissonSupper {
   firstUrl = "https://pc.moppy.jp/";
@@ -682,6 +682,7 @@ class MopNanyoubi extends MopMissonSupper {
     return res;
   }
 }
+
 // 歴史年号　難読地名クイズ
 class MopNengo extends MopMissonSupper {
   firstUrl = "https://pc.moppy.jp/";

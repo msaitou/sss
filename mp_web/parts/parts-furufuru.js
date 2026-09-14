@@ -25,7 +25,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
         "#scoreboard>a[href*='/drop/play/more_play']", // 4
         "#getpoint>a",
         "a[target='_blank'], iframe", // 6
-        "",
+        "#scoreboard>a[href*='/drop/play/top']",
         "",
       ];
       if (this.isMob)
@@ -84,6 +84,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
           await this.closeElesWindow(winList);
           await this.driver.manage().setTimeouts({ pageLoad: D.INTERVAL[180] }); // 元のタイムアウト時間に戻す
           let currentUrl = await driver.getCurrentUrl();
+          await this.hideOverlay();
           if (currentUrl.indexOf(gameUrlHost) === -1) {
             await driver.navigate().back();
             await this.sleep(1000);
@@ -95,6 +96,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
                 logger.info("広告をクリックさせられたのでbackします");
               } else break;
             }
+            await this.hideOverlay();
             if (await this.isExistEle(sele[3], true, 2000)) {
               let ele = await this.getEle(sele[3], 3000);
               await this.clickEle(ele, 2000, 200);
@@ -105,6 +107,41 @@ class PartsFurufuru extends BaseWebDriverWrapper {
               let ele = await this.getEle(sele[4], 3000);
               await this.clickEle(ele, 2000, 200);
               await this.ignoreKoukoku();
+              
+              if (siteInfo.code == D.CODE.GPO && this.isMob) {
+                // 何もしない
+              }
+              else {
+                // 以下の変更をしない
+                sele[0] = "#more_play>a[href='/drop/play/top']";
+                if (siteInfo.code == D.CODE.CRI) {
+                  if (await this.isExistEle(sele[0], true, 2000)) {
+                    let winList = await driver.getAllWindowHandles();
+                    await this.hideOverlay();
+                    let ele = await this.getEles(sele[0], 3000);
+                    await this.clickEle(ele[0], 4000, 200);
+                    await this.hideOverlay();
+                    sele[0] = "#start_btn";
+                    await this.closeElesWindow(winList);  // criはもとに戻す
+                  }
+                }
+              }
+            }
+            else if (await this.isExistEle(sele[7], true, 2000)) {
+              let ele = await this.getEle(sele[7], 3000);
+              await this.clickEle(ele, 2000, 200);
+              await this.ignoreKoukoku();
+            }
+          } else if (await this.isExistEle(sele[3], true, 2000)) {
+            let ele = await this.getEle(sele[3], 3000);
+            await this.clickEle(ele, 2000, 200);
+            await this.ignoreKoukoku();
+            await this.hideOverlay();
+            if (await this.isExistEle(sele[4], true, 2000)) {
+              let ele = await this.getEle(sele[4], 3000);
+              await this.clickEle(ele, 2000, 200);
+              await this.ignoreKoukoku();
+              await this.hideOverlay();
               sele[0] = "#more_play>a[href='/drop/play/top']";
               if (siteInfo.code == D.CODE.CRI) {
                 if (await this.isExistEle(sele[0], true, 2000)) {
@@ -118,27 +155,10 @@ class PartsFurufuru extends BaseWebDriverWrapper {
                 }
               }
             }
-          } else if (await this.isExistEle(sele[3], true, 2000)) {
-            let ele = await this.getEle(sele[3], 3000);
-            await this.clickEle(ele, 2000, 200);
-            await this.ignoreKoukoku();
-            await this.hideOverlay();
-            if (await this.isExistEle(sele[4], true, 2000)) {
-              let ele = await this.getEle(sele[4], 3000);
+            if (await this.isExistEle(sele[7], true, 2000)) {
+              let ele = await this.getEle(sele[7], 3000);
               await this.clickEle(ele, 2000, 200);
               await this.ignoreKoukoku();
-              sele[0] = "#more_play>a[href='/drop/play/top']";
-              if (siteInfo.code == D.CODE.CRI) {
-                if (await this.isExistEle(sele[0], true, 2000)) {
-                  let winList = await driver.getAllWindowHandles();
-                  await this.hideOverlay();
-                  let ele = await this.getEles(sele[0], 3000);
-                  await this.clickEle(ele[0], 4000, 200);
-                  await this.hideOverlay();
-                  sele[0] = "#start_btn";
-                  await this.closeElesWindow(winList);  // criはもとに戻す
-                }
-              }
             }
           }
           res = D.STATUS.DONE;

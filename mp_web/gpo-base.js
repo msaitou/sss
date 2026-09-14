@@ -148,7 +148,7 @@ class GpoMissonSupper extends BaseWebDriverWrapper {
       "#pfx_interstitial_close",
       "#gn_interstitial_outer_area", "#gn_interstitial_close_icon",
     ];
-    if (seleStr) sele0 = [seleStr, ""];
+    if (seleStr) sele0 = [seleStr, "#gn_interstitial_close_icon"];
     for (let s of sele0) {
       if (["#pfx_interstitial_close"].indexOf(s) > -1) {
         let iSele = ["iframe.profitx-ad-frame-markup"];

@@ -78,6 +78,13 @@ class PicBase extends BaseExecuter {
           case D.MISSION.PIC_VARIABLE:
             execCls = new PicVariable(para);
             break;
+          case D.MISSION.KANJI:
+          case D.MISSION.YOJI:
+          case D.MISSION.NANDOKU:
+          case D.MISSION.NENGO:
+          case D.MISSION.QUIZ_DAILY:
+            execCls = new PicDailyQuiz(para, mission.main);
+            break;
         }
         if (execCls) {
           this.writeLogMissionStart(mission.main);
@@ -664,6 +671,44 @@ class PicRead extends PicMissonSupper {
       let PartsReadCls = new PartsReadPic(this.para, this.main);
       res = await PartsReadCls.do();
     }
+    return res;
+  }
+}
+
+const { PartsQuizDaily, PartsQuizDailyCommon } = require("./parts/parts-quiz-daily.js");
+// デイリー、漢字、歴史年号　難読地名,四次熟語クイズ
+class PicDailyQuiz extends PicMissonSupper {
+  targetUrl = "https://sp.pointi.jp/daily/daily_list.php";
+  QuizDailyCom;
+  QuizDaily;
+  constructor(para, main) {
+    super(para);
+    this.main = main;
+    this.QuizDailyCom = new PartsQuizDailyCommon(para);
+    this.QuizDaily = new PartsQuizDaily(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // 1日3回（0時～8時~16）
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START###`);
+    let res = D.STATUS.FAIL;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let se = {
+      [D.MISSION.KANJI]: "img[src*='kanji']",
+      [D.MISSION.YOJI]: "img[src*='yojijukugo']",
+      [D.MISSION.NANDOKU]: "img[src*='place']",
+      [D.MISSION.NENGO]: "img[src*='history']",
+      [D.MISSION.QUIZ_DAILY]: "img[src*='quiz']",
+    };
+    await this.hideOverlay();
+    // let sele = "a[data-ga-label='難読地名クイズ']";
+    let exexCls = this.QuizDailyCom;
+    if (this.main === D.MISSION.QUIZ_DAILY) {
+      exexCls = this.QuizDaily;
+    }
+    res = await exexCls.do(this.targetUrl, se[this.main]);
+    logger.info(`${this.constructor.name} END#####`);
     return res;
   }
 }
