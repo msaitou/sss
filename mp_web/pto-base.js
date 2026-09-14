@@ -532,7 +532,7 @@ class PtoPointQ extends PtoMissonSupper {
               if (await this.isExistEle(sele[2], true, 2000)) {
                 let eles = await this.getEles(sele[2], 2000);
                 let choiceNum = libUtil.getRandomInt(0, eles.length); // 最後は否定的な選択肢なので選ばないのがいいと思ったが、問題なさそう
-                await this.clickEle(eles[choiceNum], 3000);
+                await this.clickEle(eles[choiceNum], 3000, 100);
                 if (await this.isExistEle(sele[3], true, 2000)) {
                   ele = await this.getEle(sele[3], 2000);
                   // await this.clickEle(ele, 1000);
