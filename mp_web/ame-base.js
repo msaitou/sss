@@ -377,8 +377,8 @@ class AmeAnqKenkou extends AmeMissonSupper {
     return res;
   }
 }
-const { PartsQuizDaily, PartsQuizDailyCommon } = require("./parts/parts-quiz-daily.js");
-// デイリー、漢字、歴史年号　難読地名,四次熟語クイズ
+const { PartsQuizDailyCommon } = require("./parts/parts-quiz-daily.js");
+// 漢字、四次熟語クイズ
 class AmeDailyQuiz extends AmeMissonSupper {
   firstUrl = "https://point.i2i.jp/";
   targetUrl = "https://point.i2i.jp/special/freepoint";

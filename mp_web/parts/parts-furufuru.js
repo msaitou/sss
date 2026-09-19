@@ -82,7 +82,7 @@ class PartsFurufuru extends BaseWebDriverWrapper {
             }
           }
           await this.closeElesWindow(winList);
-          await this.driver.manage().setTimeouts({ pageLoad: D.INTERVAL[180] }); // 元のタイムアウト時間に戻す
+          await this.driver.manage().setTimeouts({ pageLoad: 60000 }); // 元のタイムアウト時間に戻す
           let currentUrl = await driver.getCurrentUrl();
           await this.hideOverlay();
           if (currentUrl.indexOf(gameUrlHost) === -1) {

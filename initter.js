@@ -227,7 +227,9 @@ exports.initBrowserDriver = async function (isMob = false, headless = false) {
       chromeOptions.addArguments("high-dpi-support=0.5");
     }
   }
-  return chrome.Driver.createSession(chromeOptions, service);
+  const driver = await chrome.Driver.createSession(chromeOptions, service);
+  await driver.manage().setTimeouts({ pageLoad: 60000 });
+  return driver;
   // return new Builder().forBrowser("chrome").setChromeOptions(chromeOptions).build();
 };
 

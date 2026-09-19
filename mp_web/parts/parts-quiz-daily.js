@@ -187,7 +187,25 @@ class PartsQuizDailyCommon extends BaseWebDriverWrapper {
       if (await this.isExistEle(sele[0], true, 2000)) {
         await this.hideOverlay();
         let ele = await this.getEle(sele[0], 3000);
-        await this.clickEle(ele, 2000, 200);
+        if (siteInfo.code == D.CODE.PTO) {
+          let windowHandles = await driver.getAllWindowHandles();
+          let targetUrl = await driver.executeScript(
+            "const link = arguments[0].closest('a'); return link ? link.href : null;",
+            ele,
+          );
+          if (targetUrl) {
+            await driver.executeScript("window.open(arguments[0], '_blank');", targetUrl);
+          } else {
+            await driver.actions().keyDown(Key.CONTROL).click(ele).keyUp(Key.CONTROL).perform();
+          }
+          await driver.wait(
+            async () => (await driver.getAllWindowHandles()).length > windowHandles.length,
+            3000,
+          );
+        } 
+        else {
+          await this.clickEle(ele, 2000, 200);
+        }
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         await this.hideOverlay();
@@ -228,6 +246,9 @@ class PartsQuizDailyCommon extends BaseWebDriverWrapper {
           if (await this.isExistEle(sele[6], true, 2000)) {
             ele = await this.getEle(sele[6], 3000);
             await this.clickEle(ele, 2000, 0, this.isMob); // 次のページ
+            // if (siteInfo.code !== D.CODE.PTO) {
+            //   await driver.close(); // このタブを閉じて
+            // }
             await driver.close(); // このタブを閉じて
             await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
             res = D.STATUS.DONE;

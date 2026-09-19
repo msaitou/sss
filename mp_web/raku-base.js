@@ -321,7 +321,7 @@ class RakuNews extends RakuMissonSupper {
         }
       }
     } finally {
-      await this.driver.manage().setTimeouts({ pageLoad: 120000 });
+      await this.driver.manage().setTimeouts({ pageLoad: 60000 });
     }
 
     let ele,

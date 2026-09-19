@@ -40,6 +40,9 @@ class PtoBase extends BaseExecuter {
             break;
           case D.MISSION.GAME_KOKUHAKU:
             execCls = new PtoGameKokuhaku(para);
+          case D.MISSION.KANJI:
+          case D.MISSION.YOJI:
+            execCls = new PtoDailyQuiz(para, mission.main);
             break;
         }
         if (execCls) {
@@ -366,7 +369,7 @@ class PtoClick extends PtoMissonSupper {
               }
             }
           } finally {
-            await this.driver.manage().setTimeouts({ pageLoad: 180000 });
+            await this.driver.manage().setTimeouts({ pageLoad: 60000 });
             await driver.close(); // このタブを閉じて
             await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
           }
@@ -742,6 +745,38 @@ class PtoGameKokuhaku extends PtoMissonSupper {
       await this.changeWindow(wid); // 別タブに移動する
       res = await PGame.doKokuhaku(wid);
     }
+    return res;
+  }
+}
+const { PartsQuizDailyCommon } = require("./parts/parts-quiz-daily.js");
+// 漢字、四次熟語クイズ
+class PtoDailyQuiz extends PtoMissonSupper {
+  firstUrl = "https://www.pointtown.com/";
+  targetUrl = "https://www.pointtown.com/game";
+  QuizDailyCom;
+  constructor(para, main) {
+    super(para);
+    this.main = main;
+    this.QuizDailyCom = new PartsQuizDailyCommon(para);
+    this.logger.debug(`${this.constructor.name} constructor`);
+  }
+  // 1日3回（0時～8時~16）
+  async do() {
+    let { retryCnt, account, logger, driver, siteInfo } = this.para;
+    logger.info(`${this.constructor.name} START###`);
+    let res = D.STATUS.FAIL;
+    await this.openUrl(this.targetUrl); // 操作ページ表示
+    let se = {
+      [D.MISSION.KANJI]: "img[alt*='漢字テスト']",
+      [D.MISSION.YOJI]: "img[alt*='四字熟語']",
+    };
+    await this.hideOverlay();
+    let exexCls = this.QuizDailyCom;
+    if (this.main === D.MISSION.QUIZ_DAILY) {
+      exexCls = this.QuizDaily;
+    }
+    res = await exexCls.do(this.targetUrl, se[this.main]);
+    logger.info(`${this.constructor.name} END#####`);
     return res;
   }
 }

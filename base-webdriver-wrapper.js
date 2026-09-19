@@ -178,7 +178,7 @@ class BaseWebDriverWrapper {
         this.driver.executeScript(`window.stop();`).catch(err => this.logger.warn("window.stop() failed:", err));
       }
     } finally {
-      await this.driver.manage().setTimeouts({ pageLoad: 180000 });
+      await this.driver.manage().setTimeouts({ pageLoad: 60000 });
     }
     this.logger.debug("clicked");
     await this.sleep(time);
@@ -422,7 +422,7 @@ class BaseWebDriverWrapper {
         }
       }
     } finally {
-      await this.driver.manage().setTimeouts({ pageLoad: D.INTERVAL[180] }); // 元のタイムアウト時間に戻す
+      await this.driver.manage().setTimeouts({ pageLoad: 60000 }); // 元のタイムアウト時間に戻す
     }
   }
   async takeScreen() {
