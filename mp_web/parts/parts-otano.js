@@ -33,12 +33,12 @@ class PartsOtano extends BaseWebDriverWrapper {
       //   sele[4] = "p.lessStamp>span";
       //   sele[5] = "p.allStamp";
       // }
-      await this.hideOverlay2();
-      await this.hideOverlay22();
       if (await this.isExistEle(sele[0], true, 2000)) {
         let ele = await this.getEle(sele[0], 3000),
           isKensyoFlag = false;
         await this.clickEle(ele, 1000); // 次のページ
+      await this.hideOverlay2();
+      await this.hideOverlay22();
         for (let i = 0; i < 10; i++) {
           if (await this.isExistEle(sele[1], true, 2000)) {
             ele = await this.getEle(sele[1], 3000);
@@ -75,6 +75,7 @@ class PartsOtano extends BaseWebDriverWrapper {
              
             await this.hideOverlay2();
             await this.hideOverlay22();
+            await this.closeAlert();
             if (await this.isExistEle(ansSele, true, 2000)) {
               let eles = await this.getEles(ansSele, 3000);
               if (choiceNum === -1) {
@@ -97,15 +98,22 @@ class PartsOtano extends BaseWebDriverWrapper {
             }
           }
         }
-        if (await this.isExistEle(sele[0], true, 2000)) {
-          ele = await this.getEle(sele[0], 3000);
-          await this.clickEle(ele, 1000); // このページが閉じる？　picは少なくとも　gmyは閉じない
-          res = D.STATUS.DONE;
+        try {
+          if (await this.isExistEle(sele[0], true, 2000)) {
+            ele = await this.getEle(sele[0], 3000);
+            await this.clickEle(ele, 1000); // このページが閉じる？　picは少なくとも　gmyは閉じない
+            res = D.STATUS.DONE;
+          }
+          else if (await this.isExistEle(sele[5], true, 2000)) {
+            ele = await this.getEle(sele[5], 3000);
+            await this.clickEle(ele, 1000); // このページが閉じる？　picは少なくとも　gmyは閉じない
+            res = D.STATUS.DONE;
+          }
         }
-        else if (await this.isExistEle(sele[5], true, 2000)) {
-          ele = await this.getEle(sele[5], 3000);
-          await this.clickEle(ele, 1000); // このページが閉じる？　picは少なくとも　gmyは閉じない
-          res = D.STATUS.DONE;
+        catch(ee) {
+          if (ee.name != "NoSuchWindowError") {
+            logger.warn(ee);
+          } 
         }
       }
     } catch (e) {
@@ -167,7 +175,7 @@ class PartsOtano extends BaseWebDriverWrapper {
     }
 
     let sele = ["div.fc-dialog button.fc-rewarded-ad-button", "ins iframe[title^='3rd']", "#dismiss-button"];
-    if (await this.silentIsExistEle(sele[0], true, 4000)) {
+    if (await this.silentIsExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 1000);
       await this.clickEle(ele, 1000);
       if (await this.silentIsExistEle(sele[1], true, 2000)) {
@@ -190,7 +198,17 @@ class PartsOtano extends BaseWebDriverWrapper {
       "ins iframe[title='3rd party ad content']",
       "#dismiss-button",
     ];
-    if (await this.isExistEle(sele[1], true, 4000)) {
+    await this.exeScriptNoTimeOut(
+      `for (let t of document.querySelectorAll("#rise-interstitial-area")){t.remove();}`
+    );
+    await this.exeScriptNoTimeOut(
+      `for (let t of document.querySelectorAll("iframe")){t.remove();}`
+    );
+    await this.exeScriptNoTimeOut(
+      `for (let t of document.querySelectorAll("ins")){t.remove();}`
+    );
+
+    if (await this.isExistEle(sele[1], true, 2000)) {
       let iframes = await this.getEles(sele[1], 1000);
       for (let iframe of iframes) {
         if (await iframe.isDisplayed()) {

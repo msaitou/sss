@@ -2141,7 +2141,7 @@ await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabl
     return res;
   }
   async hideOverlay() {
-    let seleOver = ["#pfx_interstitial", "#gn_interstitial_close_icon","#pfx_interstitial_close", "div.overlay-item a.button-close", 
+    let seleOver = ["img[src*='close-interstitial']", "#pfx_interstitial", "#gn_interstitial_close_icon","#pfx_interstitial_close", "div.overlay-item a.button-close", 
     "#gn_ydn_interstitial_btn", 
     "div.close-button","a.gmoam_close_button", "#geniee_tracking_banner_close"
     ];

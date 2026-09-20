@@ -302,7 +302,7 @@ class PicOtano extends PicMissonSupper {
         for (let j = 0; j < limit2; j++) {
           let index = limit2 - 1 - j;
           let text = await eles0[index].getText();
-          if (text.trim() == "2pt") {
+          if (text.trim() == "1pt") {
             // picのお楽しみは2ptのみ
             if (await this.isExistEle(sele[1], true, 2000)) {
               let eles = await this.getEles(sele[1], 3000);

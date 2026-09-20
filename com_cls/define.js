@@ -45,6 +45,7 @@ exports.Def = {
     GAME_MEISHO: "game_meisho",
     GAME_OTE: "game_ote",
     GAME_DARUMA: "game_daruma",
+    GAME_SUPPA: "game_suppa",
  
 
     MOLL_HIGHLOW: "moll_highlow",

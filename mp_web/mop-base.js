@@ -419,6 +419,7 @@ class MopQuizDaily extends MopMissonSupper {
   async do() {
     let { retryCnt, account, logger, driver, siteInfo } = this.para;
     logger.info(`${this.constructor.name} START###`);
+    await this.openUrl(this.targetUrl); // 操作ページ表示
     await this.hideOverlay();
     let res = await this.QuizDaily.do(this.targetUrl);
     logger.info(`${this.constructor.name} END#####`);
