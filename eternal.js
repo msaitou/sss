@@ -47,7 +47,7 @@ async function mainLinux() {
   // const APP_NAME = PS.LINUX.PS.NAME; // "node-sss"
   const APP_NAME = PS.LINUX.PS.NAME + appIdExt; // "node-sss"
   // const PS_KILLALL_CMD = `${PS.LINUX.PS.KILLALL_CMD}${PS.LINUX.PS.KILL_OTHER}`;
-  const PS_KILLALL_CMD = `pkill -f ${killId}`;
+  const PS_KILLALL_CMD = `pkill -f -- "--app-id-tag=${killId}"`;
 
   const monitoring = async () => {
     console.log(count++);

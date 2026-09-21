@@ -56,7 +56,7 @@ class PointWebCls {
     let PS_KILL_CMD = `${PS.WIN.PS.KILL_CMD}${PS.WIN.PS.KILL_OTHER}`; // デフォはwindows
     if (process.platform === "linux")
       // PS_KILL_CMD = `${PS.LINUX.PS.KILLALL_CMD}${PS.LINUX.PS.KILL_OTHER}`;
-      PS_KILL_CMD = `pkill -f "${killId}"`;
+      PS_KILL_CMD = `pkill -f -- "--app-id-tag=${killId}"`;
     try {
       let stdout = "";
       if (process.platform === "linux") {
