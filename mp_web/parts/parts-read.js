@@ -74,12 +74,15 @@ class PartsRead extends BaseWebDriverWrapper {
                 }
               }
               else {
-                for (let i = 0; eles && 0 < eles.length;) {
+                for (let i = 0; eles && 0 < eles.length && i < limit; i++) {
                   // 次へボタンの分
                   if (await eles[i].isDisplayed()) {
                     // await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[i]);
-                    await this.clickEle(eles[i], 2000, 150);
+                    const clicked = await this.clickEle(eles[i], 2000, 150);
+                    if (!clicked) break;
                     eles = await this.getEles(sele[6], 3000);
+                  } else {
+                    break;
                   }
                 }
               }

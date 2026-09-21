@@ -115,8 +115,9 @@ class BaseWebDriverWrapper {
    * @param {*} time
    */
   async clickEle(ele, time, top = 0, isEnter = false) {
-    await this.clickEleCommon(ele, time, top, isEnter);
+    const clicked = await this.clickEleCommon(ele, time, top, isEnter);
     await this.refreshUntilSuccess();
+    return clicked;
   }
   /**
    * 要素をクリックして指定時間寝る
@@ -176,12 +177,14 @@ class BaseWebDriverWrapper {
         }
         // 非同期で window.stop() を試みるが応答を待たない
         this.driver.executeScript(`window.stop();`).catch(err => this.logger.warn("window.stop() failed:", err));
+        return false;
       }
     } finally {
       await this.driver.manage().setTimeouts({ pageLoad: 60000 });
     }
     this.logger.debug("clicked");
     await this.sleep(time);
+    return true;
   }
   async exeScriptNoTimeOut(script, ele = null) {
     try {

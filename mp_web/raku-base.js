@@ -303,7 +303,7 @@ class RakuNews extends RakuMissonSupper {
       "ancestor::div[contains(@class, 'topArea')]", // 3
       "li.list-challenge>div>h4",
       "a[href='/mission/visit/']", //5
-      "",
+      "li.list-done>div#mission-task-name_1003",
       "",
     ];
     // topに飛ぶ
@@ -326,32 +326,17 @@ class RakuNews extends RakuMissonSupper {
 
     let ele,
       eles,
-      readedList = [];
-    // if (await this.isExistEle(sele[0], true, 2000)) {
-    //   ele = await this.getEle(sele[0], 2000);
-    //   await this.clickEle(ele, 2000);
-    // }
-    await this.openUrl("https://www.infoseek.co.jp/mission/list/");
-    await this.driver.navigate().back(); // 戻って
-    await this.driver.navigate().forward(); // 行く
-    if (await this.isExistEle(sele[5], true, 2000)) {
-      await this.hideOverlay2();
-      ele = await this.getEle(sele[5], 2000);
-      await this.clickEle(ele, 2000); // タブの切り替え
+      readedList = [], isLimit10 = false;
+      
+    try {
+      await this.openUrl("https://www.infoseek.co.jp/mission/list/");
+      // ループ完了後、ミッションページでポイント獲得ボタンを押下（押せるやつのみ）
+      if (await this.isExistEle(sele[6], true, 2000)) {
+        isLimit10 = true;
+      }
+    } catch (e) {
+      this.logger.warn(e);
     }
-    // if (await this.isExistEle(sele[4], true, 2000)) {
-    //   eles = await this.getEles(sele[4], 2000);
-    //   for (let el of eles) {
-    //     let text = await el.getText();
-    //     if ("週に3日アクセスで1ポイント" === text.trim()) {
-    //       // let ele2 = await this.getElesXFromEle(el, sele[4], 2000);
-    //       // ele2 = await this.getElesFromEle(ele2[0], sele[3]);
-    //     }
-    //   }
-    // }
-
-    // TODO　月1？月初にミッションの参加をしないとあかんぽい
-    // TODO 週3回アクセスは先にアクセス
     let cSeleList = [
       "#topics-category-entertainment",
       "#topics-category-poli-soci",
@@ -364,8 +349,7 @@ class RakuNews extends RakuMissonSupper {
     ];
     await this.openUrl(this.firstUrl); // 操作ページ表示
     try {
-      let limit = 25;
-      // let limit = 50;
+      let limit = isLimit10 ? 10: 25;
       var cnt = 0;
       for (let cSele of cSeleList) {
         await this.hideOverlay();
