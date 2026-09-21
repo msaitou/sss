@@ -36,7 +36,7 @@ class PartsQuizDaily extends BaseWebDriverWrapper {
       if (await this.isExistEle(sele[0], true, 2000)) {
         await this.hideOverlay();
         let ele = await this.getEle(sele[0], 3000);
-        await this.lickEle(ele, 2000, 200);
+        await this.clickEle(ele, 2000, 200);
         let wid = await driver.getWindowHandle();
         await this.changeWindow(wid); // 別タブに移動する
         await this.hideOverlay();
