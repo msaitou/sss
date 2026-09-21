@@ -2164,7 +2164,7 @@ await driver.sendAndGetDevToolsCommand('Network.setCacheDisabled', { cacheDisabl
         }
       } else if (["#pfx_interstitial_close"].indexOf(s) > -1) {
         let iSele = ["iframe.profitx-ad-frame-markup"];
-        if (await this.silentIsExistEle(iSele[0], true, 3000)) {
+        if (await this.silentIsExistEle(iSele[0], true, 1000)) {
           let iframe = await this.getEles(iSele[0], 1000);
           if (await iframe[0].isDisplayed()) {
             await this.driver.switchTo().frame(iframe[0]); // 違うフレームなのでそっちをターゲットに

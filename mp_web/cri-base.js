@@ -1163,6 +1163,7 @@ class CriPointMoll extends CriMissonSupper {
     logger.info(`${this.constructor.name} START`);
     let res = D.STATUS.FAIL;
     await this.openUrl(this.targetUrl); // 操作ページ表示
+    const oriWid = await driver.getWindowHandle();
     let sele = ["img[alt='メダルモール']"];
     if (await this.isExistEle(sele[0], true, 2000)) {
       let ele = await this.getEle(sele[0], 3000);
@@ -1224,9 +1225,25 @@ class CriPointMoll extends CriMissonSupper {
           dirtyFlg = true;
           if (await this.isExistEle(cSele, true, 2000)) {
             ele = await this.getEle(cSele, 3000);
-            await this.clickEle(ele, 300);
+            // #region 別タブにする--
+            let windowHandles = await driver.getAllWindowHandles();
+            let targetUrl = await driver.executeScript(
+              "const link = arguments[0].closest('a'); return link ? link.href : null;",
+              ele,
+            );
+            if (targetUrl) {
+              await driver.executeScript("window.open(arguments[0], '_blank');", targetUrl);
+            } else {
+              await driver.actions().keyDown(Key.CONTROL).click(ele).keyUp(Key.CONTROL).perform();
+            }
+            await driver.wait(
+              async () => (await driver.getAllWindowHandles()).length > windowHandles.length,
+              3000,
+            );
             let wid2 = await driver.getWindowHandle();
-            await this.changeWindow(wid2); // 別タブに移動する
+            await this.changeWindow(wid2); // 別タブに移動できていない。。
+            // #endregion--
+
             if (cSele.indexOf("img_quiz0") > -1) {
               // クイズ検定系
               res = await QuizKentei.startKentei();
@@ -1311,7 +1328,7 @@ class CriPointMoll extends CriMissonSupper {
       } finally {
         try {
           await driver.close(); // このタブを閉じて(picはこの前に閉じちゃう)
-          await driver.switchTo().window(wid); // 元のウインドウIDにスイッチ
+          await driver.switchTo().window(oriWid); // 元のウインドウIDにスイッチ
         } catch (e) {}
       }
     }
