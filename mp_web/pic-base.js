@@ -103,7 +103,7 @@ class PicBase extends BaseExecuter {
   async saveNowPoint() {
     let startPage = "https://pointi.jp/";
     let sele = ["span.red.pt_count"];
-    if (this.isMob) (startPage = "https://sp.pointi.jp/"), (sele = ["span.pt_count"]);
+    if (this.isMob) (startPage = "https://sp.pointi.jp/"), (sele = ["span.js-pt-count"]);
     await this.openUrl(startPage); // 操作ページ表示
     await this.driver.sleep(1000);
     if (await this.isExistEle(sele[0], true, 2000)) {
@@ -186,8 +186,8 @@ class PicCommon extends PicMissonSupper {
       login: "input[name='Submit']",
     };
     if (this.isMob)
-      (seleIsLoggedIn = "span.pt_count"),
-        (seleLoginLink = "a.login_btn>div.nav_img"),
+      (seleIsLoggedIn = "span.js-pt-count"),
+        (seleLoginLink = "a.login>span"),
         (seleInput.login = "input[name='subject']");
     logger.debug(11100);
     // ログインしてるかチェック(ログインの印がないことを確認)
@@ -360,7 +360,7 @@ class PicClick extends PicMissonSupper {
     if (await this.isExistEle(sele[0], true, 2000)) {
       let eles = await this.getEles(sele[0], 2000);
       for (let i = 0; i < eles.length; i++) {
-        await this.clickEle(eles[i], 2000);
+        await this.clickEle(eles[i], 2000, 200);
         if (this.isMob) {
           if (await this.isExistEle(sele[1], true, 2000)) {
             let eles2 = await this.getEles(sele[1], 2000);
