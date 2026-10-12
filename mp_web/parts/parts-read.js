@@ -78,9 +78,12 @@ class PartsRead extends BaseWebDriverWrapper {
                   // 次へボタンの分
                   if (await eles[i].isDisplayed()) {
                     // await this.exeScriptNoTimeOut(`arguments[0].click()`, eles[i]);
-                    const clicked = await this.clickEle(eles[i], 2000, 150);
+                    const clicked = await this.clickEle(eles[i], 1500, 150);
                     if (!clicked) break;
-                    eles = await this.getEles(sele[6], 3000);
+                    if (await this.isExistEle(sele[6], true, 1000)) {
+                      eles = await this.getEles(sele[6], 2000);
+                      if (eles.length == i+1) i--;
+                    } else break;
                   } else {
                     break;
                   }
@@ -107,7 +110,7 @@ class PartsRead extends BaseWebDriverWrapper {
             await this.movePrevPage();
             isReaded = false;
             i--; // ノーカン
-            if (superBreakCnt++ > 100) throw "無限ループしてるので失敗にします";
+            if (superBreakCnt++ > 30) throw "無限ループしてるので失敗にします";
           }
         }
         res = D.STATUS.DONE;
@@ -243,6 +246,7 @@ class PartsReadPic extends BaseWebDriverWrapper {
             await this.exeScriptNoTimeOut(`window.open('${href}')`);
           } 
           else {
+            await this.slowScroll();
             let action = await driver.actions();
             await action.keyDown(Key.CONTROL).click(eles[choiceNum]).keyUp(Key.CONTROL).perform();
           }

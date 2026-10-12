@@ -209,7 +209,7 @@ class PicCommon extends PicMissonSupper {
         inputEle.sendKeys(account[this.code].loginpass);
 
         ele = await this.getEle(seleInput.login, 1000);
-        await this.clickEle(ele, 4000);
+        await this.clickEle(ele, 4000, 100);
         if (this.isMob) {
           let sele = ["label[for='checkcrr4']", "#form_btn"];
           if (await this.isExistEle(sele[0], true, 2000)) {
@@ -667,7 +667,7 @@ class PicRead extends PicMissonSupper {
     //   let eles = await this.getEles(sele[0], 3000);
     if (await this.isExistEle(se[this.main], true, 2000)) {
       let eles = await this.getEles(se[this.main], 3000);
-      await this.clickEle(eles[0], 2000);
+      await this.clickEle(eles[0], 2000, 200);
       let PartsReadCls = new PartsReadPic(this.para, this.main);
       res = await PartsReadCls.do();
     }
